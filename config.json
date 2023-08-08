@@ -1,0 +1,10 @@
+{
+    "smtp_server": "smtp.example.com",
+    "smtp_port": 587,
+    "smtp_username": "your_smtp_username",
+    "smtp_password": "your_smtp_password",
+    "venues_csv_path": "venues.csv",
+    "email_password": "your_email_password",
+    "sender_email": "your_sender_email@example.com",
+    "sender_smtp_port": 587
+}
