@@ -407,15 +407,12 @@ int main() {
         } else if (choice == static_cast<int>(MenuOption::ViewSelectedVenues)) {
             // View Selected Venues
             displaySelectedVenues(selectedVenuesForEmail);
+         } else if (choice == static_cast<int>(MenuOption::ClearSelectedVenues)) {
+            // Clear Selected Venues
+            selectedVenuesForEmail.clear();
+            std::cout << "Selected venues cleared." << std::endl;
         } else if (choice == static_cast<int>(MenuOption::FinishAndSendEmails)) {
             // Finish and Send Emails
-
-            // Check if subject and message are empty
-            if (subject.empty() || message.empty()) {
-                std::cout << "Subject and Message are required. Please set them before sending emails." << std::endl;
-                getEmailSubjectAndMessage(subject, message); // Prompt the user to enter the subject and message
-                continue; // Return to the main menu
-            }
 
             // Check if selectedVenuesForEmail is empty
             if (selectedVenuesForEmail.empty()) {
@@ -423,6 +420,13 @@ int main() {
                 continue; // Return to the main menu
             }
 
+            // Check if subject and message are empty
+            if (subject.empty() || message.empty()) {
+                std::cout << "Subject and Message are required. Please set them before sending emails." << std::endl;
+                getEmailSubjectAndMessage(subject, message); // Prompt the user to enter the subject and message
+                continue; // Return to the main menu
+            }
+            
             // Prompt for confirmation
             std::cout << "Confirm sending the email (Y/N): ";
             char confirmSend;

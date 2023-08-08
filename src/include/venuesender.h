@@ -27,7 +27,7 @@ enum class MenuOption {
     FilterByState,
     FilterByCity,
     FilterByCapacity,
-    ViewFilteredVenues,
+    ClearSelectedVenues,
     ViewSelectedVenues,
     FinishAndSendEmails,
     Exit
