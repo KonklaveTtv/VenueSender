@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <limits>
+#include <map>
 #include <vector>
 #include <sstream>
 
@@ -23,23 +24,49 @@ int getCapacityFromUser() {
     return capacity;
 }
 
-// Function to convert a single Venue object to SelectedVenue object
+// Convert Venue to SelectedVenue
 SelectedVenue convertToSelectedVenue(const Venue& venue) {
     SelectedVenue selectedVenue;
     selectedVenue.name = venue.name;
     selectedVenue.email = venue.email;
     selectedVenue.city = venue.city;
-    // Add other fields as needed
+    selectedVenue.genre = venue.genre;
+    selectedVenue.state = venue.state;
+    selectedVenue.capacity = venue.capacity;
     return selectedVenue;
 }
 
-// Function to convert vector of Venue objects to vector of SelectedVenue objects
-std::vector<SelectedVenue> convertToSelectedVenues(const std::vector<Venue>& venues) {
-    std::vector<SelectedVenue> selectedVenues;
-    for (const auto& venue : venues) {
-        selectedVenues.push_back(convertToSelectedVenue(venue));
+int getGenreIndexFromName(const std::string& genreName, const std::set<std::string>& uniqueGenres) {
+    int index = 1;
+    for (const std::string& genre : uniqueGenres) {
+        if (genre == genreName) {
+            return index;
+        }
+        ++index;
     }
-    return selectedVenues;
+    return -1; // Return an invalid index if genreName is not found
+}
+
+int getStateIndexFromName(const std::string& stateName, const std::set<std::string>& uniqueStates) {
+    int index = 1;
+    for (const std::string& state : uniqueStates) {
+        if (state == stateName) {
+            return index;
+        }
+        ++index;
+    }
+    return -1; // Return an invalid index if stateName is not found
+}
+
+int getCityIndexFromName(const std::string& cityName, const std::set<std::string>& uniqueCities) {
+    int index = 1;
+    for (const std::string& city : uniqueCities) {
+        if (city == cityName) {
+            return index;
+        }
+        ++index;
+    }
+    return -1; // Return an invalid index if cityName is not found
 }
 
 // Function to filter venues based on the selected criteria
@@ -120,49 +147,55 @@ int displayMenuOptions() {
     return choice;
 }
 
-void filterByGenre(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues, const std::vector<std::string>& uniqueGenres) {
+void filterByGenre(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues) {
     std::cout << "===== Filter By Genre =====" << std::endl;
 
-    // Display unique genres to the user
-    for (size_t i = 0; i < uniqueGenres.size(); ++i) {
-        std::cout << i + 1 << ". " << uniqueGenres[i] << std::endl;
-    }
-
-    // Get user's selected genre indices
-    std::cout << "Enter the indices of genres to filter by (comma-separated, e.g., 1,2,3): ";
-    std::string input;
-    std::getline(std::cin, input);
-    std::istringstream iss(input);
-    std::string genreIndexStr;
-    std::vector<std::string> selectedGenres;
-    while (std::getline(iss, genreIndexStr, ',')) {
-        int genreIndex = std::stoi(genreIndexStr);
-        if (genreIndex >= 1 && genreIndex <= static_cast<int>(uniqueGenres.size())) {
-        selectedGenres.push_back(uniqueGenres[static_cast<size_t>(genreIndex) - 1]);
-        }
-    }
-
-    // Filter venues based on selected genres
-    std::vector<SelectedVenue> filteredVenues;
+    // Extract unique genres from the venue data
+    std::set<std::string> uniqueGenres;
     for (const Venue& venue : venues) {
-        if (std::find(selectedGenres.begin(), selectedGenres.end(), venue.genre) != selectedGenres.end()) {
-            filteredVenues.push_back(convertToSelectedVenue(venue));
-        }
+        uniqueGenres.insert(venue.genre);
     }
 
-    // Display filtered venues and let the user select venues to add to selectedVenuesForEmail
-    std::vector<SelectedVenue> selectedVenues = selectVenuesFromFilteredResults(filteredVenues);
+    // Display unique genres to the user
+    int genreIndex = 1;
+    for (const std::string& genre : uniqueGenres) {
+        std::cout << genreIndex << ". " << genre << std::endl;
+        ++genreIndex;
+    }
 
-    // Add selected venues to selectedVenuesForEmail
-    selectedVenuesForEmail.insert(selectedVenuesForEmail.end(), selectedVenues.begin(), selectedVenues.end());
+    // Get user input for genre choice
+    int chosenGenreIndex;
+    std::cout << "Enter the genre number to filter by: ";
+    std::cin >> chosenGenreIndex;
+
+    // Filter venues by chosen genre and add them to selectedVenuesForEmail
+    const std::string& chosenGenre = *std::next(uniqueGenres.begin(), chosenGenreIndex - 1);
+    for (const Venue& venue : venues) {
+        if (venue.genre == chosenGenre) {
+            SelectedVenue selectedVenue;
+            selectedVenue.name = venue.name;
+            selectedVenue.city = venue.city;
+            selectedVenue.state = venue.state;
+            selectedVenue.genre = venue.genre;
+            selectedVenuesForEmail.push_back(selectedVenue);
+        }
+    }
 }
 
-void filterByState(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues, const std::vector<std::string>& uniqueStates) {
+void filterByState(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues) {
     std::cout << "===== Filter By State =====" << std::endl;
 
+    // Extract unique states from the venue data
+    std::set<std::string> uniqueStates;
+    for (const Venue& venue : venues) {
+        uniqueStates.insert(venue.state);
+    }
+
     // Display unique states to the user
-    for (size_t i = 0; i < uniqueStates.size(); ++i) {
-        std::cout << i + 1 << ". " << uniqueStates[i] << std::endl;
+    int stateIndex = 1;
+    for (const std::string& state : uniqueStates) {
+        std::cout << stateIndex << ". " << state << std::endl;
+        ++stateIndex;
     }
 
     // Get user's selected state indices
@@ -171,44 +204,54 @@ void filterByState(std::vector<SelectedVenue>& selectedVenuesForEmail, const std
     std::getline(std::cin, input);
     std::istringstream iss(input);
     std::string stateIndexStr;
-    std::vector<std::string> selectedStates;
+    std::vector<int> selectedIndices;
     while (std::getline(iss, stateIndexStr, ',')) {
         int stateIndex = std::stoi(stateIndexStr);
         if (stateIndex >= 1 && stateIndex <= static_cast<int>(uniqueStates.size())) {
-            selectedStates.push_back(uniqueStates[static_cast<size_t>(stateIndex) - 1]);
+            selectedIndices.push_back(stateIndex);
         }
     }
 
     // Filter venues based on selected states
-    std::vector<SelectedVenue> filteredVenues;
+    std::vector<SelectedVenue> filteredVenuesByState;
     for (const Venue& venue : venues) {
-        if (std::find(selectedStates.begin(), selectedStates.end(), venue.state) != selectedStates.end()) {
-            filteredVenues.push_back(convertToSelectedVenue(venue));
+        int stateIndex = getStateIndexFromName(venue.state, uniqueStates);
+        if (std::find(selectedIndices.begin(), selectedIndices.end(), stateIndex) != selectedIndices.end()) {
+            filteredVenuesByState.push_back(convertToSelectedVenue(venue));
         }
     }
 
     // Display filtered venues and let the user select venues to add to selectedVenuesForEmail
-    std::vector<SelectedVenue> selectedVenues = selectVenuesFromFilteredResults(filteredVenues);
+    std::vector<SelectedVenue> selectedVenues = selectVenuesFromFilteredResults(filteredVenuesByState);
 
-    // Add selected venues to selectedVenuesForEmail
-    selectedVenuesForEmail.insert(selectedVenuesForEmail.end(), selectedVenues.begin(), selectedVenues.end());
+    // Get user's selected indices to add to selectedVenuesForEmail
+    std::cout << "Enter the indices of venues to add (comma-separated, e.g., 1,2,3): ";
+    std::getline(std::cin, input);
+    iss.clear();
+    iss.str(input);
+    std::string venueIndexStr;
+    while (std::getline(iss, venueIndexStr, ',')) {
+        int venueIndex = std::stoi(venueIndexStr);
+        if (venueIndex >= 1 && venueIndex <= static_cast<int>(selectedVenues.size())) {
+            selectedVenuesForEmail.push_back(selectedVenues[static_cast<size_t>(venueIndex) - 1]);
+        }
+    }
 }
 
-// Function to interactively filter venues based on city
 void filterByCity(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues) {
     std::cout << "===== Filter By City =====" << std::endl;
 
-    // Collect unique cities from venues
-    std::vector<std::string> uniqueCities;
+    // Extract unique cities from the venue data
+    std::set<std::string> uniqueCities;
     for (const Venue& venue : venues) {
-        if (std::find(uniqueCities.begin(), uniqueCities.end(), venue.city) == uniqueCities.end()) {
-            uniqueCities.push_back(venue.city);
-        }
+        uniqueCities.insert(venue.city);
     }
 
-    // Display indexed city names to the user
-    for (size_t i = 0; i < uniqueCities.size(); ++i) {
-        std::cout << i + 1 << ". " << uniqueCities[i] << std::endl;
+    // Display unique cities to the user
+    int cityIndex = 1;
+    for (const std::string& city : uniqueCities) {
+        std::cout << cityIndex << ". " << city << std::endl;
+        ++cityIndex;
     }
 
     // Get user's selected city indices
@@ -217,44 +260,85 @@ void filterByCity(std::vector<SelectedVenue>& selectedVenuesForEmail, const std:
     std::getline(std::cin, input);
     std::istringstream iss(input);
     std::string cityIndexStr;
-    std::vector<std::string> selectedCities;
+    std::vector<int> selectedIndices;
     while (std::getline(iss, cityIndexStr, ',')) {
         int cityIndex = std::stoi(cityIndexStr);
         if (cityIndex >= 1 && cityIndex <= static_cast<int>(uniqueCities.size())) {
-        selectedCities.push_back(uniqueCities[static_cast<size_t>(cityIndex) - 1]);
+            selectedIndices.push_back(cityIndex);
         }
     }
 
     // Filter venues based on selected cities
-    std::vector<SelectedVenue> filteredVenues;
+    std::vector<SelectedVenue> filteredVenuesByCity;
     for (const Venue& venue : venues) {
-        if (std::find(selectedCities.begin(), selectedCities.end(), venue.city) != selectedCities.end()) {
-        filteredVenues.push_back(SelectedVenue(venue));
+        int cityIndex = getStateIndexFromName(venue.city, uniqueCities);
+        if (std::find(selectedIndices.begin(), selectedIndices.end(), cityIndex) != selectedIndices.end()) {
+            filteredVenuesByCity.push_back(convertToSelectedVenue(venue));
         }
     }
 
     // Display filtered venues and let the user select venues to add to selectedVenuesForEmail
-    std::vector<SelectedVenue> selectedVenues = selectVenuesFromFilteredResults(filteredVenues);
+    std::vector<SelectedVenue> selectedVenues = selectVenuesFromFilteredResults(filteredVenuesByCity);
 
-    // Add selected venues to selectedVenuesForEmail
-    selectedVenuesForEmail.insert(selectedVenuesForEmail.end(), selectedVenues.begin(), selectedVenues.end());
+    // Get user's selected indices to add to selectedVenuesForEmail
+    std::cout << "Enter the indices of venues to add (comma-separated, e.g., 1,2,3): ";
+    std::getline(std::cin, input);
+    iss.clear();
+    iss.str(input);
+    std::string venueIndexStr;
+    while (std::getline(iss, venueIndexStr, ',')) {
+        int venueIndex = std::stoi(venueIndexStr);
+        if (venueIndex >= 1 && venueIndex <= static_cast<int>(selectedVenues.size())) {
+            selectedVenuesForEmail.push_back(selectedVenues[static_cast<size_t>(venueIndex) - 1]);
+        }
+    }
 }
 
-
-void filterByCapacity(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues) {
+void filterByCapacity(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues, const std::vector<int>& uniqueCapacities) {
     std::cout << "===== Filter By Capacity =====" << std::endl;
 
-    int capacity = getCapacityFromUser(); // Use the existing function to get capacity from the user
-    FilterCriteria criteria;
-    criteria.filterByCapacity = true;
-    criteria.capacity = capacity;
-    std::vector<SelectedVenue> filteredVenues = filterVenues(venues, criteria);
+    // Display unique capacities to the user
+    for (size_t i = 0; i < uniqueCapacities.size(); ++i) {
+        std::cout << i + 1 << ". " << uniqueCapacities[i] << std::endl;
+    }
+
+    // Get user's selected capacity indices
+    std::cout << "Enter the indices of capacities to filter by (comma-separated, e.g., 1,2,3): ";
+    std::string input;
+    std::getline(std::cin, input);
+    std::istringstream iss(input);
+    std::string capacityIndexStr;
+    std::vector<int> selectedIndices;
+    while (std::getline(iss, capacityIndexStr, ',')) {
+        int capacityIndex = std::stoi(capacityIndexStr);
+        if (capacityIndex >= 1 && capacityIndex <= static_cast<int>(uniqueCapacities.size())) {
+            selectedIndices.push_back(capacityIndex - 1); // Adjust the index to match the vector indices
+        }
+    }
+
+    // Filter venues based on selected capacities
+    std::vector<SelectedVenue> filteredVenuesByCapacity;
+    for (const Venue& venue : venues) {
+        if (std::find(selectedIndices.begin(), selectedIndices.end(), venue.capacity) != selectedIndices.end()) {
+            filteredVenuesByCapacity.push_back(convertToSelectedVenue(venue));
+        }
+    }
 
     // Display filtered venues and let the user select venues to add to selectedVenuesForEmail
-    std::vector<SelectedVenue> selectedVenues = selectVenuesFromFilteredResults(filteredVenues);
+    std::vector<SelectedVenue> selectedVenues = selectVenuesFromFilteredResults(filteredVenuesByCapacity);
 
-    // Add selected venues to selectedVenuesForEmail
-    selectedVenuesForEmail.insert(selectedVenuesForEmail.end(), selectedVenues.begin(), selectedVenues.end());
+    // Get user's selected indices to add to selectedVenuesForEmail
+    std::cout << "Enter the indices of venues to add (comma-separated, e.g., 1,2,3): ";
+    std::getline(std::cin, input);
+    iss.clear();
+    iss.str(input);
+    std::string venueIndexStr;
+    while (std::getline(iss, venueIndexStr, ',')) {
+        int venueIndex = std::stoi(venueIndexStr);
+        if (venueIndex >= 1 && venueIndex <= static_cast<int>(selectedVenues.size())) {
+            selectedVenuesForEmail.push_back(selectedVenues[static_cast<size_t>(venueIndex) - 1]);
+        }
+    }
 }
 
 // Function to display selected venues to the user

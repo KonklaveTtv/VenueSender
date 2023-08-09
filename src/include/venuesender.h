@@ -64,9 +64,6 @@ bool sendIndividualEmail(CURL* curl,
 // New function to filter selected venues based on user's selected criteria
 std::vector<SelectedVenue> filteredSelectedVenues(const std::vector<Venue>& venues, const FilterCriteria& selectedCriteria);
 
-// Function to convert vector of Venue objects to vector of SelectedVenue objects
-std::vector<SelectedVenue> convertToSelectedVenues(const std::vector<Venue>& venues);
-
 // Function to clear input buffer
 void clearInputBuffer();
 

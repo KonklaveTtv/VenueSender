@@ -3,6 +3,7 @@
 
 #include "venue.h"
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -37,5 +38,9 @@ std::vector<SelectedVenue> filterVenues(const std::vector<Venue>& venues, const 
 
 // Function to filter selected venues based on user's selected criteria
 std::vector<SelectedVenue> filterSelectedVenues(const std::vector<Venue>& venues, const FilterCriteria& selectedCriteria);
+
+int getGenreIndexFromName(const std::string& genreName, const std::set<std::string>& uniqueGenres);
+int getStateIndexFromName(const std::string& stateName, const std::set<std::string>& uniqueStates);
+int getCityIndexFromName(const std::string& cityName, const std::set<std::string>& uniqueCities);
 
 #endif // FILTERCRITERIA_H

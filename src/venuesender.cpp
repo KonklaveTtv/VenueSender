@@ -169,175 +169,21 @@ bool isValidEmail(const std::string& email) {
     return std::regex_match(email, emailPattern);
 }
 
-
-// Function to allow the user to select venues from filtered results
+// Venue selection logic
 std::vector<SelectedVenue> selectVenuesFromFilteredResults(const std::vector<SelectedVenue>& filteredVenues) {
     std::vector<SelectedVenue> selectedVenues;
-    char choice;
-
-    std::cout << "Do you want to select venues from the filtered results? (y/n): ";
-    std::cin >> choice;
-    clearInputBuffer(); // Clear input buffer after reading confirmation character
-
-    if (std::tolower(choice) == 'y') {
-        std::cout << "Enter the indices of the venues you want to select (separated by spaces, e.g., 1 2 3): ";
-        std::string input;
-        std::getline(std::cin, input);
-        std::istringstream iss(input);
-        int venueIndex;
-        while (iss >> venueIndex) {
-            if (venueIndex >= 1 && venueIndex <= static_cast<int>(filteredVenues.size())) {
-                selectedVenues.push_back(filteredVenues[venueIndex - 1]);
-            } else {
-                std::cout << "Invalid index. Please enter valid indices or press Enter to stop selecting." << std::endl;
-                break;
-            }
-        }
-    }
-
-    return selectedVenues;
-}
-
-// Function to filter venues based on genre
-std::vector<SelectedVenue> filterVenuesByGenre(const std::vector<Venue>& venues, const std::vector<std::string>& uniqueGenres) {
-    std::vector<SelectedVenue> selectedVenues;
-
-    std::cout << "===== Filter by Genre =====" << std::endl;
-    for (size_t i = 0; i < uniqueGenres.size(); ++i) {
-        std::cout << i + 1 << ". " << uniqueGenres[i] << std::endl;
-    }
-
-    std::cout << "Enter the numbers of genres to filter by (comma-separated, e.g., 1,2,3): ";
+    std::cout << "Select venues to add (comma-separated indices, e.g., 1,2,3): ";
     std::string input;
     std::getline(std::cin, input);
     std::istringstream iss(input);
-    std::string genreIndexStr;
-    while (std::getline(iss, genreIndexStr, ',')) {
-        int genreIndex = std::stoi(genreIndexStr);
-        if (genreIndex >= 1 && genreIndex <= static_cast<int>(uniqueGenres.size())) {
-            std::string selectedGenre = uniqueGenres[genreIndex - 1];
-            std::copy_if(venues.begin(), venues.end(), std::back_inserter(selectedVenues),
-                         [&](const Venue& venue) { return venue.genre == selectedGenre; });
+    std::string indexStr;
+    while (std::getline(iss, indexStr, ',')) {
+        int venueIndex = std::stoi(indexStr);
+        if (venueIndex >= 1 && venueIndex <= static_cast<int>(filteredVenues.size())) {
+            selectedVenues.push_back(filteredVenues[static_cast<size_t>(venueIndex) - 1]);
         }
     }
-
     return selectedVenues;
-}
-
-// Function to filter venues based on state
-std::vector<SelectedVenue> filterVenuesByState(const std::vector<Venue>& venues, const std::vector<std::string>& uniqueStates) {
-    std::vector<SelectedVenue> selectedVenues;
-
-    std::cout << "===== Filter by State =====" << std::endl;
-    for (size_t i = 0; i < uniqueStates.size(); ++i) {
-        std::cout << i + 1 << ". " << uniqueStates[i] << std::endl;
-    }
-
-    std::cout << "Enter the numbers of states to filter by (comma-separated, e.g., 1,2,3): ";
-    std::string input;
-    std::getline(std::cin, input);
-    std::istringstream iss(input);
-    std::string stateIndexStr;
-    while (std::getline(iss, stateIndexStr, ',')) {
-        int stateIndex = std::stoi(stateIndexStr);
-        if (stateIndex >= 1 && stateIndex <= static_cast<int>(uniqueStates.size())) {
-            std::string selectedState = uniqueStates[stateIndex - 1];
-            std::copy_if(venues.begin(), venues.end(), std::back_inserter(selectedVenues),
-                         [&](const Venue& venue) { return venue.state == selectedState; });
-        }
-    }
-
-    return selectedVenues;
-}
-
-// Function to filter venues based on city
-std::vector<SelectedVenue> filterVenuesByCity(const std::vector<Venue>& venues, const std::vector<std::string>& uniqueCities) {
-    std::vector<SelectedVenue> selectedVenues;
-
-    std::cout << "===== Filter by City =====" << std::endl;
-    for (size_t i = 0; i < uniqueCities.size(); ++i) {
-        std::cout << i + 1 << ". " << uniqueCities[i] << std::endl;
-    }
-
-    std::cout << "Enter the numbers of cities to filter by (comma-separated, e.g., 1,2,3): ";
-    std::string input;
-    std::getline(std::cin, input);
-    std::istringstream iss(input);
-    std::string cityIndexStr;
-    while (std::getline(iss, cityIndexStr, ',')) {
-        int cityIndex = std::stoi(cityIndexStr);
-        if (cityIndex >= 1 && cityIndex <= static_cast<int>(uniqueCities.size())) {
-            std::string selectedCity = uniqueCities[cityIndex - 1];
-            std::copy_if(venues.begin(), venues.end(), std::back_inserter(selectedVenues),
-                         [&](const Venue& venue) { return venue.city == selectedCity; });
-        }
-    }
-
-    return selectedVenues;
-}
-
-// Function to filter venues based on capacity
-std::vector<SelectedVenue> filterVenuesByCapacity(const std::vector<Venue>& venues, int capacity, const FilterCriteria& criteria) {
-    std::vector<SelectedVenue> selectedVenues;
-
-    // Filter venues based on the selected capacity and criteria
-    std::copy_if(venues.begin(), venues.end(), std::back_inserter(selectedVenues),
-                 [&](const Venue& venue) {
-                     return (!criteria.filterByCapacity || (venue.capacity >= capacity));
-                 });
-
-    return selectedVenues;
-}
-
-std::vector<SelectedVenue> selectFilteredVenues(const std::vector<Venue>& filteredVenues) {
-    std::vector<SelectedVenue> selectedVenues;
-    int numVenues = static_cast<int>(filteredVenues.size());
-
-    if (numVenues == 0) {
-        std::cout << "No venues to select from." << std::endl;
-        return selectedVenues;
-    }
-
-    std::cout << "===== Select Venues from Filtered Results =====" << std::endl;
-
-    // Display the list of filtered venues to the user
-    for (int i = 0; i < numVenues; ++i) {
-        std::cout << i + 1 << ". Venue: " << filteredVenues[i].name << std::endl;
-        std::cout << "   Email: " << filteredVenues[i].email << std::endl;
-        std::cout << "   City: " << filteredVenues[i].city << std::endl;
-        std::cout << "--------------------------" << std::endl;
-    }
-
-    // Ask the user to select venues to add to the selectedVenues vector
-    std::cout << "Enter the numbers of venues to include (comma-separated, e.g., 1,2,3): ";
-    std::string input;
-    std::getline(std::cin, input);
-    std::istringstream iss(input);
-    int venueIndex;
-    while (iss >> venueIndex) {
-        if (venueIndex >= 1 && venueIndex <= numVenues) {
-            selectedVenues.push_back(SelectedVenue()); // Use the default constructor
-            selectedVenues.back().name = filteredVenues[venueIndex - 1].name;
-            selectedVenues.back().email = filteredVenues[venueIndex - 1].email;
-            selectedVenues.back().city = filteredVenues[venueIndex - 1].city;
-        }
-    }
-
-    return selectedVenues;
-}
-
-void displayVenueConfirmation(const std::vector<SelectedVenue>& selectedVenues,
-                              const std::string& subject,
-                              const std::string& message) {
-    // Display the email subject and message
-    std::cout << "Subject: " << subject << std::endl;
-    std::cout << "Message: " << message << std::endl;
-
-    // Display the selected venues
-    std::cout << "Selected Venues:" << std::endl;
-    for (const auto& venue : selectedVenues) {
-        std::cout << "Name: " << venue.name << ", Email: " << venue.email << ", City: " << venue.city<< std::endl;
-    }
 }
 
 // Function to get user's email credentials and SMTP settings
