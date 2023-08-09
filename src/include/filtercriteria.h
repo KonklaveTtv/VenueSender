@@ -17,10 +17,25 @@ struct FilterCriteria {
     int capacity = 0;
 };
 
-// Function signatures for filter functions
-std::vector<Venue> filterByGenre(const std::vector<Venue>& venues, const std::vector<std::string>& uniqueGenres, const FilterCriteria& criteria);
-std::vector<Venue> filterByState(const std::vector<Venue>& venues, const std::vector<std::string>& uniqueStates, const FilterCriteria& criteria);
-std::vector<Venue> filterByCity(const std::vector<Venue>& venues, const std::vector<std::string>& uniqueCities, const FilterCriteria& criteria);
-std::vector<Venue> filterByCapacity(const std::vector<Venue>& venues, const std::vector<int>& uniqueCapacities, const FilterCriteria& criteria);
+// Function to allow the user to select venues from filtered results
+std::vector<SelectedVenue> selectVenuesFromFilteredResults(const std::vector<SelectedVenue>& filteredVenues);
+
+// Declaration for interactively filtering venues based on genre
+void filterByGenre(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues, const std::vector<std::string>& uniqueGenres);
+
+// Declaration for interactively filtering venues based on state
+void filterByState(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues, const std::vector<std::string>& uniqueStates);
+
+// Declaration for interactively filtering venues based on city
+void filterByCity(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues);
+
+// Declaration for interactively filtering venues based on capacity
+void filterByCapacity(std::vector<SelectedVenue>& selectedVenuesForEmail, const std::vector<Venue>& venues);
+
+// Function to filter venues based on the selected criteria
+std::vector<SelectedVenue> filterVenues(const std::vector<Venue>& venues, const FilterCriteria& criteria);
+
+// Function to filter selected venues based on user's selected criteria
+std::vector<SelectedVenue> filterSelectedVenues(const std::vector<Venue>& venues, const FilterCriteria& selectedCriteria);
 
 #endif // FILTERCRITERIA_H

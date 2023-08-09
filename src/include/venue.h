@@ -36,9 +36,7 @@ struct SelectedVenue {
 
     // Copy constructor to initialize from a Venue object
     SelectedVenue(const Venue& venue)
-        : name(venue.name), email(venue.email), city(venue.city), genre(venue.genre),
-          state(venue.state), capacity(venue.capacity) {
-        // Initialize other members if needed
-    }
+        : name(venue.name), email(venue.email), city(venue.city),
+          genre(venue.genre), state(venue.state), capacity(venue.capacity) {}
 };
 #endif // VENUE_H

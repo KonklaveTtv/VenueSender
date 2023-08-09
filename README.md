@@ -1,6 +1,6 @@
-# Venue Sender Project
+# VenueSender Project
 
-The Venue Sender is a command-line tool that helps you send emails to different venues based on specific criteria. It allows you to filter venues by genre, city, state, and capacity and send custom email messages to the selected venues.
+VenueSender is a command-line tool that helps you send emails to different venues based on specific criteria. It allows you to filter venues by genre, city, state, and capacity and send custom email messages to the selected venues.
 
 ## Getting Started
 
