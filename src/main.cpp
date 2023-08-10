@@ -35,11 +35,12 @@ void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDi
     }
 
     std::cout << "Filtered Venues: " << std::endl;
-    for (const auto& venue : selectedVenuesForDisplay) {
-        std::cout << "Name: " << venue.name << std::endl;
-        std::cout << "Email: " << venue.email << std::endl;
-        std::cout << "City: " << venue.city << std::endl;
-        std::cout << "Capacity: " << venue.capacity << std::endl;
+    for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
+        const auto& venue = selectedVenuesForDisplay[i];
+        std::cout << i + 1 << ". Name: " << venue.name << std::endl;
+        std::cout << "   Email: " << venue.email << std::endl;
+        std::cout << "   City: " << venue.city << std::endl;
+        std::cout << "   Capacity: " << venue.capacity << std::endl;
         // Add any other members you want to display here
         std::cout << std::endl;
     }
@@ -286,8 +287,8 @@ int main() {
             std::string indexStr;
             while (std::getline(iss, indexStr, ',')) {
                 size_t selectedIndex = std::stoi(indexStr) - 1;
-                if (selectedIndex < filteredVenues.size()) {
-                    selectedVenuesForEmail.push_back(filteredVenues[selectedIndex]);
+                if (selectedIndex < temporaryFilteredVenues.size()) {
+                    selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
                 } else {
                     std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
                 }
