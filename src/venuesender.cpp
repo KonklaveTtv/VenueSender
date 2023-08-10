@@ -1,9 +1,5 @@
-#include <iostream>
 #include <fstream>
 #include <limits>
-#include <vector>
-#include <string>
-#include <sstream>
 #include <regex>
 
 #include "json/json.h"
@@ -13,71 +9,6 @@
 #include "venueutils.h"
 #include "venue.h"
 #include "venuesender.h"
-
-// Function to get a string input from the user
-std::string getStringInput(const std::string& prompt) {
-    std::string input;
-    std::cout << prompt;
-    std::getline(std::cin, input);
-    return input;
-}
-
-// Function to get an integer input from the user
-int getIntInput(const std::string& prompt) {
-    int input = 0;
-    std::string inputStr;
-    bool validInput = false;
-
-    while (!validInput) {
-        std::cout << prompt;
-        std::getline(std::cin, inputStr);
-        std::stringstream ss(inputStr);
-        if (ss >> input && ss.eof()) {
-            validInput = true;
-        } else {
-            std::cout << "Invalid input. Please enter a valid integer." << std::endl;
-        }
-    }
-
-    return input;
-}
-
-std::vector<SelectedVenue> selectVenuesForEmail(const std::vector<SelectedVenue>& venues) {
-    std::vector<SelectedVenue> selectedVenuesForEmail;
-    int numVenues = static_cast<int>(venues.size());
-
-    if (numVenues == 0) {
-        std::cout << "No venues to select from." << std::endl;
-        return selectedVenuesForEmail;
-    }
-
-    std::cout << "===== Select Venues to Email =====" << std::endl;
-
-    // Display the list of filtered venues to the user
-    for (int i = 0; i < numVenues; ++i) {
-        std::cout << i + 1 << ". Venue: " << venues[i].name << std::endl;
-        std::cout << "   Email: " << venues[i].email << std::endl;
-        std::cout << "   City: " << venues[i].city << std::endl;
-        std::cout << "--------------------------" << std::endl;
-    }
-
-    // Ask the user to select venues to add to the selectedVenuesForEmail vector
-    std::cout << "Enter the numbers of venues to email (comma-separated, e.g., 1,2,3): ";
-    std::string input;
-    std::getline(std::cin, input);
-    std::istringstream iss(input);
-    int venueIndex;
-    while (iss >> venueIndex) {
-        if (venueIndex >= 1 && venueIndex <= numVenues) {
-            selectedVenuesForEmail.push_back(SelectedVenue()); // Use the default constructor
-            selectedVenuesForEmail.back().name = venues[venueIndex - 1].name;
-            selectedVenuesForEmail.back().email = venues[venueIndex - 1].email;
-            selectedVenuesForEmail.back().city = venues[venueIndex - 1].city;
-        }
-    }
-
-    return selectedVenuesForEmail;
-}
 
 // Load configuration settings from config.json
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
@@ -167,23 +98,6 @@ bool isValidEmail(const std::string& email) {
     // A simple regex pattern to check the format of the email
     static const std::regex emailPattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
     return std::regex_match(email, emailPattern);
-}
-
-// Venue selection logic
-std::vector<SelectedVenue> selectVenuesFromFilteredResults(const std::vector<SelectedVenue>& filteredVenues) {
-    std::vector<SelectedVenue> selectedVenues;
-    std::cout << "Select venues to add (comma-separated indices, e.g., 1,2,3): ";
-    std::string input;
-    std::getline(std::cin, input);
-    std::istringstream iss(input);
-    std::string indexStr;
-    while (std::getline(iss, indexStr, ',')) {
-        int venueIndex = std::stoi(indexStr);
-        if (venueIndex >= 1 && venueIndex <= static_cast<int>(filteredVenues.size())) {
-            selectedVenues.push_back(filteredVenues[static_cast<size_t>(venueIndex) - 1]);
-        }
-    }
-    return selectedVenues;
 }
 
 // Function to get user's email credentials and SMTP settings
@@ -288,48 +202,10 @@ void sendEmails(CURL* curl,
     }
 }
 
-void displayConfirmation(const std::vector<SelectedVenue>& selectedVenues,
-                         const std::string& selectedGenre,
-                         const std::string& selectedState,
-                         const std::string& selectedCity,
-                         int selectedCapacity,
-                         const std::string& subject,
-                         const std::string& message) {
-    std::cout << "===== Confirmation =====" << std::endl;
-    std::cout << "Selected Venues: " << std::endl;
-    for (const auto& venue : selectedVenues) {
-        std::cout << venue.name << " (" << venue.email << ")" << venue.city << std::endl;
-    }
-    std::cout << "Selected Genre: " << selectedGenre << std::endl;
-    std::cout << "Selected State: " << selectedState << std::endl;
-    std::cout << "Selected City: " << selectedCity << std::endl;
-    std::cout << "Selected Capacity: " << selectedCapacity << std::endl;
-    std::cout << "Email Subject: " << subject << std::endl;
-    std::cout << "Email Message: " << message << std::endl;
-    std::cout << "========================" << std::endl;
-}
-
 // Clear the input buffer
 void clearInputBuffer() {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
-
-// Function to filter venues based on the selected criteria
-std::vector<SelectedVenue> filterSelectedVenues(const std::vector<Venue>& venues, const FilterCriteria& criteria) {
-    std::vector<SelectedVenue> filteredSelectedVenues; // Create a new vector of SelectedVenue objects
-    std::copy_if(venues.begin(), venues.end(), std::back_inserter(filteredSelectedVenues),
-        [&](const Venue& venue) {
-            return (criteria.genre.empty() || venue.genre == criteria.genre) &&
-                   (criteria.state.empty() || venue.state == criteria.state) &&
-                   (criteria.city.empty() || venue.city == criteria.city) &&
-                   (criteria.capacity == 0 || venue.capacity >= criteria.capacity);
-        }
-    );
-
-    // Display the filtered venues to the user
-    displaySelectedVenues(filteredSelectedVenues);
-    return filteredSelectedVenues;
 }
 
 // Function to get user input for email subject and message
@@ -340,22 +216,4 @@ void getEmailSubjectAndMessage(std::string& subject, std::string& message) {
 
     std::cout << "Enter message for the email: ";
     std::getline(std::cin, message);
-}
-
-// Function to get confirmation from the user to send emails
-bool getSendConfirmation() {
-    char confirmSend;
-    std::cout << "Do you want to send these emails? (Y/N): ";
-    std::cin >> confirmSend;
-    clearInputBuffer(); // Clear input buffer after reading confirmation character
-    return (confirmSend == 'Y' || confirmSend == 'y');
-}
-
-// Function to get confirmation from the user to continue filtering
-bool getContinueFilteringConfirmation() {
-    char continueFiltering;
-    std::cout << "Do you want to continue filtering? (Y/N): ";
-    std::cin >> continueFiltering;
-    clearInputBuffer(); // Clear input buffer after reading continuation character
-    return (continueFiltering == 'Y' || continueFiltering == 'y');
 }

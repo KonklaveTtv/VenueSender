@@ -3,9 +3,7 @@
 
 #include "filtercriteria.h"
 
-#include <set>
 #include <string>
-#include <vector>
 
 #include <curl/curl.h>
 
@@ -33,16 +31,14 @@ enum class MenuOption {
     Exit
 };
 
-std::string getStringInput(const std::string& prompt);
-
-int getIntInput(const std::string& prompt);
-
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
                         std::string& smtpPassword, std::string& venuesCsvPath, 
                         std::string& emailPassword, std::string& senderEmail, int& senderSmtpPort);
 
 // Function to read CSV file and populate data
 void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
+
+std::string getVenuesCsvPathFromConfig();
 
 // Function to display the menu
 int displayMenuOptions();
@@ -61,41 +57,14 @@ bool sendIndividualEmail(CURL* curl,
                          const std::string& smtpServer,
                          int smtpPort);
 
-// New function to filter selected venues based on user's selected criteria
-std::vector<SelectedVenue> filteredSelectedVenues(const std::vector<Venue>& venues, const FilterCriteria& selectedCriteria);
-
 // Function to clear input buffer
 void clearInputBuffer();
 
-// Function to display confirmation of selected filters and email details
-void displayConfirmation(const std::vector<SelectedVenue>& selectedVenues,
-                         const std::string& selectedGenre,
-                         const std::string& selectedState,
-                         const std::string& selectedCity,
-                         int selectedCapacity,
-                         const std::string& subject,
-                         const std::string& message);
-
-void displayVenueConfirmation(const std::vector<SelectedVenue>& selectedVenues,
-                              const std::string& subject,
-                              const std::string& message);
-
 void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
-
-std::vector<SelectedVenue> selectVenuesForEmail(const std::vector<SelectedVenue>& venues);
 
 // Function to send bulk emails to recipients with custom subject and message using libcurl
 void sendEmails(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail, const std::string& senderEmail, const std::string& subject, const std::string& message, const std::string& smtpServer, int smtpPort);
 
 void getEmailSubjectAndMessage(std::string& subject, std::string& message);
-
-bool getSendConfirmation();
-
-bool getContinueFilteringConfirmation();
-
-std::string getVenuesCsvPathFromConfig();
-void testReadCSV();
-void testIsValidEmail();
-void testGetUniqueValues();
 
 #endif // VENUESENDER_H
