@@ -11,12 +11,14 @@ To run this project, you need the following installed on your system:
 - GCC (GNU Compiler Collection)
 - C++17 compatible compiler
 - JSONCpp library (https://github.com/open-source-parsers/jsoncpp)
+- libcurl
+- libsodium
 - Catch2
 
 ### Dependencies
 
       sudo apt-get update
-      sudo apt-get install g++ libjsoncpp-dev catch2
+      sudo apt-get install g++ libjsoncpp-dev libcurl4-openssl-dev libsodium-dev catch2
 
 
       git clone https://github.com/catchorg/Catch2.git

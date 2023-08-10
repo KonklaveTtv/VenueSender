@@ -2,6 +2,8 @@
 #include <limits>
 #include <regex>
 
+#include <sodium.h> // Encryption/Decryption libraries
+
 #include "json/json.h"
 #include <curl/curl.h>
 
@@ -46,6 +48,13 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
 const char CSV_DELIMITER = ',';
 const int MAX_EMAIL_LENGTH = 320; // An example value, adjust as needed
 const int INVALID_CAPACITY = -1;  // To indicate an invalid capacity
+
+// Function to check if an email address is in a valid format
+bool isValidEmail(const std::string& email) {
+    // A simple regex pattern to check the format of the email
+    static const std::regex emailPattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+    return std::regex_match(email, emailPattern);
+}
 
 // Trim leading and trailing spaces from a string
 std::string trim(const std::string& str){
@@ -97,13 +106,6 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
     file.close();
 }
 
-// Function to check if an email address is in a valid format
-bool isValidEmail(const std::string& email) {
-    // A simple regex pattern to check the format of the email
-    static const std::regex emailPattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
-    return std::regex_match(email, emailPattern);
-}
-
 // Function to get user's email credentials and SMTP settings
 void getUserEmailSettings(std::string& emailPassword, std::string& smtpServer, int& smtpPort,
                           std::string& senderEmail, int& senderSmtpPort) {
@@ -116,6 +118,31 @@ void getUserEmailSettings(std::string& emailPassword, std::string& smtpServer, i
         std::cerr << "Failed to load email settings from config.json." << std::endl;
         exit(1); // You might handle this error more gracefully
     }
+
+    // Get encryption key and nonce from environment variables
+    const char* hexEncryptionKey = getenv("ENCRYPTION_KEY");
+    const char* hexEncryptionNonce = getenv("ENCRYPTION_NONCE");
+
+    // Convert hexadecimal strings to binary
+    unsigned char encryptionKey[crypto_secretbox_KEYBYTES];
+    unsigned char encryptionNonce[crypto_secretbox_NONCEBYTES];
+    sodium_hex2bin(encryptionKey, sizeof(encryptionKey), hexEncryptionKey, strlen(hexEncryptionKey), nullptr, nullptr, nullptr);
+    sodium_hex2bin(encryptionNonce, sizeof(encryptionNonce), hexEncryptionNonce, strlen(hexEncryptionNonce), nullptr, nullptr, nullptr);
+
+    // Decrypt the email password using encryption key and nonce
+    std::string decryptedEmailPassword;
+
+    if (crypto_secretbox_open_easy(
+            reinterpret_cast<unsigned char*>(decryptedEmailPassword.data()),
+            reinterpret_cast<const unsigned char*>(emailPassword.data()),
+            emailPassword.size(),
+            encryptionNonce, encryptionKey) != 0) {
+        std::cerr << "Failed to decrypt email password." << std::endl;
+        // Handle decryption error gracefully
+        exit(1);
+    }
+
+    emailPassword = decryptedEmailPassword;
 }
 
 // Function to construct an email by providing subject and message
@@ -188,6 +215,7 @@ bool sendIndividualEmail(CURL* curl,
 
     if (res != CURLE_OK) {
         std::cerr << "Failed to send email: " << curl_easy_strerror(res) << std::endl;
+        // Handle the error gracefully (e.g., return false or throw an exception)
         return false;
     }
 

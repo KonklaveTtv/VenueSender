@@ -24,7 +24,7 @@ OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 
 # Libraries
-LIBS = -lcurl -ljsoncpp
+LIBS = -lcurl -ljsoncpp -lsodium
 
 # Catch2 library
 CATCH2_LIB = catch2

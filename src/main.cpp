@@ -3,8 +3,11 @@
 #include "venue.h"
 #include "venuesender.h"
 
+#include <cstring>
 #include <limits>
 #include <map>
+
+#include <sodium.h> // Encryption/Decryption libraries
 
 #include <curl/curl.h>
 
@@ -183,6 +186,12 @@ void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues) {
 }
 
 int main() {
+    // Initialize libcurl
+    CURLcode initRes = curl_global_init(CURL_GLOBAL_DEFAULT);
+    if (initRes != CURLE_OK) {
+        std::cerr << "Failed to initialize libcurl: " << curl_easy_strerror(initRes) << std::endl;
+        return 1;
+    }
     // Initialize data and configuration settings
     std::vector<Venue> venues;
     std::string venuesCsvPath;
@@ -203,21 +212,42 @@ int main() {
     }
     readCSV(venues, venuesCsvPath);
 
+    // Initialize the CURL handle
+    CURL *curl = curl_easy_init();
+    if (!curl) {
+        std::cerr << "Failed to initialize libcurl easy handle." << std::endl;
+        curl_global_cleanup(); // Clean up libcurl before exiting
+        return 1;
+    }
+
     // Extract unique genres, states, cities, and capacities from the venues data
     std::set<std::string> uniqueGenres = getUniqueGenres(venues);
     std::set<std::string> uniqueStates = getUniqueStates(venues);
     std::set<std::string> uniqueCities = getUniqueCities(venues);
     std::set<int> uniqueCapacities = getUniqueCapacities(venues);
 
-    // Get user's email credentials and SMTP settings
-    getUserEmailSettings(emailPassword, smtpServer, smtpPort, senderEmail, senderSmtpPort); // Remove smtpUsername and smtpPassword from this line
+    // Get encryption key and nonce from environment variables
+    const char* hexEncryptionKey = getenv("ENCRYPTION_KEY");
+    const char* hexEncryptionNonce = getenv("ENCRYPTION_NONCE");
 
-    // Create a libcurl easy handle for sending emails
-    CURL *curl = curl_easy_init();
-    if (!curl) {
-        std::cerr << "Failed to initialize libcurl." << std::endl;
+    // Convert hexadecimal strings to binary
+    unsigned char encryptionKey[crypto_secretbox_KEYBYTES];
+    unsigned char encryptionNonce[crypto_secretbox_NONCEBYTES];
+    sodium_hex2bin(encryptionKey, sizeof(encryptionKey), hexEncryptionKey, strlen(hexEncryptionKey), nullptr, nullptr, nullptr);
+    sodium_hex2bin(encryptionNonce, sizeof(encryptionNonce), hexEncryptionNonce, strlen(hexEncryptionNonce), nullptr, nullptr, nullptr);
+
+    // Decrypt email password using encryption key and nonce
+    if (crypto_secretbox_open_easy(
+            reinterpret_cast<unsigned char*>(emailPassword.data()),
+            reinterpret_cast<const unsigned char*>(emailPassword.data()),
+            emailPassword.size(),
+            encryptionNonce, encryptionKey) != 0) {
+        std::cerr << "Failed to decrypt email password." << std::endl;
         return 1;
     }
+
+    // Get user's email credentials and SMTP settings
+    getUserEmailSettings(emailPassword, smtpServer, smtpPort, senderEmail, senderSmtpPort); // Remove smtpUsername and smtpPassword from this line
 
     // Connect to the SMTP server
     CURLcode res;
@@ -331,6 +361,7 @@ int main() {
                 // Reset subject and message after sending emails
                 subject.clear();
                 message.clear();
+
             } else if (confirmSend == 'N' || confirmSend == 'n') {
                 std::cout << "Email not sent. Returning to the main menu." << std::endl;
                 // The user chose not to send the email, return to the main menu without clearing the selectedVenuesForEmail vector
@@ -339,15 +370,19 @@ int main() {
                 // The user entered an invalid choice, return to the main menu without clearing the selectedVenuesForEmail vector
             }
         } else if (choice == static_cast<int>(MenuOption::Exit)) {
-        // Exit VenueSender
-        std::cout << "Exiting the program." << std::endl;
-        break;
-    } else {
-        std::cout << "Invalid choice. Please try again." << std::endl;
-    }
-}
+            // Clean up the CURL handle before exiting
+            curl_easy_cleanup(curl);
 
-    // Clean up and exit
+            // Exit VenueSender
+            std::cout << "Exiting the program." << std::endl;
+            break;
+        } else {
+            std::cout << "Invalid choice. Please try again." << std::endl;
+        }
+    }
+
+    // Clean up libcurl at the end of the program
     curl_global_cleanup();
+
     return 0;
 }
