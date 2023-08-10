@@ -166,31 +166,6 @@ int main() {
     std::set<std::string> uniqueCities = getUniqueCities(venues);
     std::set<int> uniqueCapacities = getUniqueCapacities(venues);
 
-    // Print the unique values for verification
-    std::cout << "Unique Genres: ";
-    for (const auto& genre : uniqueGenres) {
-        std::cout << genre << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Unique States: ";
-    for (const auto& state : uniqueStates) {
-        std::cout << state << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Unique Cities: ";
-    for (const auto& city : uniqueCities) {
-        std::cout << city << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Unique Capacities: ";
-    for (const auto& capacity : uniqueCapacities) {
-        std::cout << capacity << " ";
-    }
-    std::cout << std::endl;
-
     // Get user's email credentials and SMTP settings
     getUserEmailSettings(emailPassword, smtpServer, smtpPort, senderEmail, senderSmtpPort); // Remove smtpUsername and smtpPassword from this line
 
