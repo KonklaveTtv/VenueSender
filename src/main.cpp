@@ -10,11 +10,13 @@
 
 // Function to validate the user's choice
 bool isValidMenuChoice(int choice) {
+    // Validate if the choice is within valid menu options
     return choice >= static_cast<int>(MenuOption::FilterByGenre) && choice <= static_cast<int>(MenuOption::Exit);
 }
 
 // Convert Venue to SelectedVenue
 SelectedVenue convertToSelectedVenue(const Venue& venue) {
+    // Create a SelectedVenue instance based on Venue data
     SelectedVenue selectedVenue;
     selectedVenue.name = venue.name;
     selectedVenue.email = venue.email;
@@ -46,7 +48,6 @@ void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDi
 // Function to display the menu options
 int displayMenuOptions() {
     int choice;
-
     do {
         std::cout << "===== Main Menu =====" << std::endl;
         std::cout << "1. Filter by Genre" << std::endl;
@@ -75,74 +76,9 @@ template <typename T>
 std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
                                           const std::string& optionType,
                                           const std::set<T>& uniqueOptions,
-                                          bool& filterFlag, T filterValue) {
+                                          T filterValue) {
+    std::vector<T> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
     std::cout << "===== Filter By " << optionType << " =====" << std::endl;
-
-    std::vector<T> filterOptions;
-    for (const auto& option : uniqueOptions) {
-        filterOptions.push_back(option);
-    }
-
-    std::cout << "Available Options: " << std::endl;
-    for (size_t i = 0; i < filterOptions.size(); ++i) {
-        std::cout << i + 1 << ". " << filterOptions[i] << std::endl;
-    }
-
-    std::cout << "Enter comma-separated indices of options to select: ";
-    std::string input;
-    std::cin.ignore();
-    std::getline(std::cin, input);
-
-    std::vector<size_t> selectedIndices; // Use size_t for indices
-    std::istringstream iss(input);
-    std::string indexStr;
-    while (std::getline(iss, indexStr, ',')) {
-        size_t selectedIndex = std::stoi(indexStr) - 1; // Subtract 1 to convert to 0-based indexing
-        if (selectedIndex < filterOptions.size()) {
-            selectedIndices.push_back(selectedIndex);
-        } else {
-            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
-        }
-    }
-
-    filterFlag = true;
-    std::vector<SelectedVenue> filteredVenues;
-
-    for (size_t selectedIndex : selectedIndices) {
-        if (selectedIndex < filterOptions.size()) {
-            filterValue = filterOptions[selectedIndex];
-            for (const Venue& venue : venues) {
-                if constexpr (std::is_same_v<T, int>) {
-                    if (optionType == "Capacity" && venue.capacity == filterValue) {
-                        SelectedVenue selectedVenue = convertToSelectedVenue(venue);
-                        filteredVenues.push_back(selectedVenue);
-                    }
-                } else if constexpr (std::is_same_v<T, std::string>) {
-                    if ((optionType == "Genre" && venue.genre == filterValue) ||
-                        (optionType == "State" && venue.state == filterValue) ||
-                        (optionType == "City" && venue.city == filterValue)) {
-                        SelectedVenue selectedVenue = convertToSelectedVenue(venue);
-                        filteredVenues.push_back(selectedVenue);
-                    }
-                }
-            }
-        } else {
-            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
-        }
-    }
-
-    return filteredVenues;
-}
-
-std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
-                                            const std::set<int>& uniqueCapacities,
-                                            bool& filterFlag, int filterValue) {
-    std::cout << "===== Filter By Capacity =====" << std::endl;
-
-    std::vector<int> filterOptions;
-    for (const int option : uniqueCapacities) {
-        filterOptions.push_back(option);
-    }
 
     std::cout << "Available Options: " << std::endl;
     for (size_t i = 0; i < filterOptions.size(); ++i) {
@@ -166,7 +102,57 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
         }
     }
 
-    filterFlag = true;
+    std::vector<SelectedVenue> filteredVenues;
+
+    for (size_t selectedIndex : selectedIndices) {
+        if (selectedIndex < filterOptions.size()) {
+            filterValue = filterOptions[selectedIndex];
+            for (const Venue& venue : venues) {
+                if constexpr (std::is_same_v<T, std::string>) {
+                    if ((optionType == "Genre" && venue.genre == filterValue) ||
+                        (optionType == "State" && venue.state == filterValue) ||
+                        (optionType == "City" && venue.city == filterValue)) {
+                        SelectedVenue selectedVenue = convertToSelectedVenue(venue);
+                        filteredVenues.push_back(selectedVenue);
+                    }
+                }
+            }
+        } else {
+            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+        }
+    }
+
+    return filteredVenues;
+}
+
+std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
+                                            const std::set<int>& uniqueCapacities,
+                                            int filterValue) {
+    std::vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
+    std::cout << "===== Filter By Capacity =====" << std::endl;
+
+    std::cout << "Available Options: " << std::endl;
+    for (size_t i = 0; i < filterOptions.size(); ++i) {
+        std::cout << i + 1 << ". " << filterOptions[i] << std::endl;
+    }
+
+    std::cout << "Enter comma-separated indices of options to select: ";
+    std::string input;
+    std::cin.ignore();
+    std::getline(std::cin, input);
+
+    std::vector<size_t> selectedIndices;
+    std::istringstream iss(input);
+    std::string indexStr;
+    while (std::getline(iss, indexStr, ',')) {
+        size_t selectedIndex = std::stoi(indexStr) - 1;
+        if (selectedIndex < filterOptions.size()) {
+            selectedIndices.push_back(selectedIndex);
+        } else {
+            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+        }
+    }
+
     std::vector<SelectedVenue> filteredVenues;
 
     for (size_t selectedIndex : selectedIndices) {
@@ -203,7 +189,7 @@ void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues) {
 }
 
 int main() {
-    // Initialize
+    // Initialize data and configuration settings
     std::vector<Venue> venues;
     std::string venuesCsvPath;
     std::string smtpServer;
@@ -269,26 +255,34 @@ int main() {
     std::vector<SelectedVenue> selectedVenuesForEmail;
     std::vector<SelectedVenue> filteredVenues;
 
+    // Main loop for interacting with the user
     while (true) {
+        // Display menu options and get user's choice
         int choice = displayMenuOptions();
 
+        // Handle menu choices
         if (choice >= static_cast<int>(MenuOption::FilterByGenre) &&
             choice <= static_cast<int>(MenuOption::FilterByCapacity)) {
-            // Filter options
+            // Handle filtering options
             if (choice == static_cast<int>(MenuOption::FilterByGenre)) {
+                // Filter by Genre
                 selectedVenuesForEmail = filterByOption(venues, "Genre", uniqueGenres,
-                                        criteria.filterByGenre, criteria.genre);
+                                                criteria.genre);
             } else if (choice == static_cast<int>(MenuOption::FilterByState)) {
+                // Filter by State
                 selectedVenuesForEmail = filterByOption(venues, "State", uniqueStates,
-                                        criteria.filterByState, criteria.state);
+                                                criteria.state);
             } else if (choice == static_cast<int>(MenuOption::FilterByCity)) {
+                // Filter by City
                 selectedVenuesForEmail = filterByOption(venues, "City", uniqueCities,
-                                        criteria.filterByCity, criteria.city);
+                                                criteria.city);
             } else if (choice == static_cast<int>(MenuOption::FilterByCapacity)) {
+                // Filter by Capacity
                 selectedVenuesForEmail = filterByCapacity(venues, uniqueCapacities,
-                                          criteria.filterByCapacity, criteria.capacity);
+                                            criteria.capacity);
             }
 
+            // Display filtered venues
             displayFilteredVenues(selectedVenuesForEmail);
 
         } else if (choice == static_cast<int>(MenuOption::ViewSelectedVenues)) {

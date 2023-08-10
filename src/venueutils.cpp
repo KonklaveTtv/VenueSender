@@ -5,7 +5,7 @@
 std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues) {
     std::set<std::string> uniqueGenres;
     for (const auto& venue : venues) {
-        if (uniqueGenres.find(venue.genre) == uniqueGenres.end()) {
+        if (venue.genre != "all") {  // Exclude the "all" genre
             uniqueGenres.insert(venue.genre);
         }
     }
@@ -43,7 +43,7 @@ std::set<int> getUniqueCapacities(const std::vector<Venue>& venues) {
     return uniqueCapacities;
 }
 
-// getUniqueValues with a member pointer to a string
+// Utility function to get unique values of a member using a member pointer
 std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::string Venue::* memberPtr) {
     std::vector<std::string> uniqueValues;
     for (const Venue& venue : venues) {
@@ -55,7 +55,7 @@ std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::
     return uniqueValues;
 }
 
-// getUniqueValues with a member pointer to an integer
+// Utility function to get unique values of a member using a member pointer
 std::vector<int> getUniqueValues(const std::vector<Venue>& venues, int Venue::* memberPtr) {
     std::vector<int> uniqueValues;
     for (const Venue& venue : venues) {

@@ -26,6 +26,7 @@ std::vector<int> getUniqueValues(const std::vector<Venue>& venues, int Venue::* 
 // Definition of getSelectedIndices for vector of any type
 template<class T>
 std::vector<int> getSelectedIndices(const std::vector<T>& options, std::istream& input) {
+    // Get selected indices from user input and return as vector
     std::cout << "Enter the indices of options (comma-separated): ";
     std::string inputStr;
     std::getline(input, inputStr);

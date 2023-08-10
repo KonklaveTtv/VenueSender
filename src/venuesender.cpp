@@ -15,6 +15,8 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
                         std::string& smtpUsername, std::string& smtpPassword,
                         std::string& venuesCsvPath, std::string& emailPassword,
                         std::string& senderEmail, int& senderSmtpPort) {
+    // Load configuration settings from config.json into respective variables
+    // Return true if successful, false otherwise
     Json::Value config;
     std::ifstream configFile("config.json");
 
@@ -45,7 +47,9 @@ const char CSV_DELIMITER = ',';
 const int MAX_EMAIL_LENGTH = 320; // An example value, adjust as needed
 const int INVALID_CAPACITY = -1;  // To indicate an invalid capacity
 
+// Trim leading and trailing spaces from a string
 std::string trim(const std::string& str){
+    // Trimming function
     const auto notSpace = [](int ch) {return !std::isspace(ch); };
     auto first = std::find_if(str.begin(), str.end(), notSpace);
     auto last = std::find_if(str.rbegin(), str.rend(), notSpace).base();
@@ -136,6 +140,7 @@ bool sendIndividualEmail(CURL* curl,
                         const std::string& message,
                         const std::string& smtpServer,
                         int smtpPort) {
+    // Set up and send an email using libcurl
     if (!curl) {
         std::cerr << "Failed to initialize libcurl." << std::endl;
         return false;
@@ -197,6 +202,7 @@ void sendEmails(CURL* curl,
                 const std::string& message,
                 const std::string& smtpServer,
                 int smtpPort) {
+    // Iterate through selected venues and send individual emails
     for (const SelectedVenue& venue : selectedVenuesForEmail) {
         sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort);
     }
@@ -204,12 +210,14 @@ void sendEmails(CURL* curl,
 
 // Clear the input buffer
 void clearInputBuffer() {
+    // Clear the input buffer
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // Function to get user input for email subject and message
 void getEmailSubjectAndMessage(std::string& subject, std::string& message) {
+    // Prompt user to enter email subject and message
     std::cin.ignore(); // Clear input buffer
     std::cout << "Enter subject for the email: ";
     std::getline(std::cin, subject);

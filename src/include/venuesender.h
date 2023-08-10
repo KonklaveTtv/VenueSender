@@ -31,6 +31,7 @@ enum class MenuOption {
     Exit
 };
 
+// Load configuration settings from config.json
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
                         std::string& smtpPassword, std::string& venuesCsvPath, 
                         std::string& emailPassword, std::string& senderEmail, int& senderSmtpPort);
@@ -43,6 +44,7 @@ std::string getVenuesCsvPathFromConfig();
 // Function to display the menu
 int displayMenuOptions();
 
+// Check if an email address is in a valid format
 bool isValidEmail(const std::string& email);
 
 // Function to get user's email credentials and SMTP settings
