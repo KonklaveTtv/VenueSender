@@ -72,13 +72,12 @@ int displayMenuOptions() {
     return choice;
 }
 
-template <typename T>
 std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
-                                          const std::string& optionType,
-                                          const std::set<T>& uniqueOptions,
-                                          T filterValue) {
-    std::vector<T> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
-    std::cout << "===== Filter By " << optionType << " =====" << std::endl;
+                                          const std::string& filterType,
+                                          const std::set<std::string>& uniqueOptions,
+                                          std::vector<SelectedVenue>& temporaryFilteredVenues) {
+    std::vector<std::string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
+    std::cout << "===== Filter By " << filterType << " =====" << std::endl;
 
     std::cout << "Available Options: " << std::endl;
     for (size_t i = 0; i < filterOptions.size(); ++i) {
@@ -102,19 +101,15 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
         }
     }
 
-    std::vector<SelectedVenue> filteredVenues;
-
     for (size_t selectedIndex : selectedIndices) {
         if (selectedIndex < filterOptions.size()) {
-            filterValue = filterOptions[selectedIndex];
+            std::string filterValue = filterOptions[selectedIndex];
             for (const Venue& venue : venues) {
-                if constexpr (std::is_same_v<T, std::string>) {
-                    if ((optionType == "Genre" && venue.genre == filterValue) ||
-                        (optionType == "State" && venue.state == filterValue) ||
-                        (optionType == "City" && venue.city == filterValue)) {
-                        SelectedVenue selectedVenue = convertToSelectedVenue(venue);
-                        filteredVenues.push_back(selectedVenue);
-                    }
+                if ((filterType == "Genre" && venue.genre == filterValue) ||
+                    (filterType == "State" && venue.state == filterValue) ||
+                    (filterType == "City" && venue.city == filterValue)) {
+                    SelectedVenue selectedVenue = convertToSelectedVenue(venue);
+                    temporaryFilteredVenues.push_back(selectedVenue);
                 }
             }
         } else {
@@ -122,12 +117,12 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
         }
     }
 
-    return filteredVenues;
+    return temporaryFilteredVenues;
 }
 
 std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                                             const std::set<int>& uniqueCapacities,
-                                            int filterValue) {
+                                            std::vector<SelectedVenue>& temporaryFilteredVenues) {
     std::vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
     std::cout << "===== Filter By Capacity =====" << std::endl;
 
@@ -153,15 +148,13 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
         }
     }
 
-    std::vector<SelectedVenue> filteredVenues;
-
     for (size_t selectedIndex : selectedIndices) {
         if (selectedIndex < filterOptions.size()) {
-            filterValue = filterOptions[selectedIndex];
+            int filterValue = filterOptions[selectedIndex];
             for (const Venue& venue : venues) {
                 if (venue.capacity == filterValue) {
                     SelectedVenue selectedVenue = convertToSelectedVenue(venue);
-                    filteredVenues.push_back(selectedVenue);
+                    temporaryFilteredVenues.push_back(selectedVenue);
                 }
             }
         } else {
@@ -169,7 +162,7 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
         }
     }
 
-    return filteredVenues;
+    return temporaryFilteredVenues;
 }
 
 // Function to display selected venues to the user
@@ -260,31 +253,45 @@ int main() {
         // Display menu options and get user's choice
         int choice = displayMenuOptions();
 
-        // Handle menu choices
-        if (choice >= static_cast<int>(MenuOption::FilterByGenre) &&
-            choice <= static_cast<int>(MenuOption::FilterByCapacity)) {
-            // Handle filtering options
-            if (choice == static_cast<int>(MenuOption::FilterByGenre)) {
-                // Filter by Genre
-                selectedVenuesForEmail = filterByOption(venues, "Genre", uniqueGenres,
-                                                criteria.genre);
-            } else if (choice == static_cast<int>(MenuOption::FilterByState)) {
-                // Filter by State
-                selectedVenuesForEmail = filterByOption(venues, "State", uniqueStates,
-                                                criteria.state);
-            } else if (choice == static_cast<int>(MenuOption::FilterByCity)) {
-                // Filter by City
-                selectedVenuesForEmail = filterByOption(venues, "City", uniqueCities,
-                                                criteria.city);
-            } else if (choice == static_cast<int>(MenuOption::FilterByCapacity)) {
-                // Filter by Capacity
-                selectedVenuesForEmail = filterByCapacity(venues, uniqueCapacities,
-                                            criteria.capacity);
-            }
+            // Handle menu choices
+            if (choice >= static_cast<int>(MenuOption::FilterByGenre) &&
+                choice <= static_cast<int>(MenuOption::FilterByCapacity)) {
+                // Declare a temporary vector to store filtered venues
+                std::vector<SelectedVenue> temporaryFilteredVenues;
+
+                // Handle filtering options
+                if (choice == static_cast<int>(MenuOption::FilterByGenre)) {
+                    // Filter by Genre
+                    temporaryFilteredVenues = filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
+                } else if (choice == static_cast<int>(MenuOption::FilterByState)) {
+                    // Filter by State
+                    temporaryFilteredVenues = filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
+                } else if (choice == static_cast<int>(MenuOption::FilterByCity)) {
+                    // Filter by City
+                    temporaryFilteredVenues = filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
+                } else if (choice == static_cast<int>(MenuOption::FilterByCapacity)) {
+                    // Filter by Capacity
+                    temporaryFilteredVenues = filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
+                }
 
             // Display filtered venues
-            displayFilteredVenues(selectedVenuesForEmail);
+            displayFilteredVenues(temporaryFilteredVenues);
 
+            // Allow user to select venues to add to selectedVenuesForEmail
+            std::cout << "Select venues to add (comma-separated indices): ";
+            std::string input;
+            std::getline(std::cin, input);
+
+            std::istringstream iss(input);
+            std::string indexStr;
+            while (std::getline(iss, indexStr, ',')) {
+                size_t selectedIndex = std::stoi(indexStr) - 1;
+                if (selectedIndex < filteredVenues.size()) {
+                    selectedVenuesForEmail.push_back(filteredVenues[selectedIndex]);
+                } else {
+                    std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+                }
+            }
         } else if (choice == static_cast<int>(MenuOption::ViewSelectedVenues)) {
             // View Selected Venues
             displaySelectedVenues(selectedVenuesForEmail);

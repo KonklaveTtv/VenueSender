@@ -28,11 +28,10 @@ struct FilterCriteria {
  * @param filterValue The value of the selected option to filter by.
  * @return A vector of SelectedVenue objects that match the filter criteria.
  */
-template <typename T>
 std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
-                                          const std::string& optionType,
-                                          const std::set<T>& uniqueOptions,
-                                          T filterValue);
+                                          const std::string& filterType,
+                                          const std::set<std::string>& uniqueOptions,
+                                          std::vector<SelectedVenue>& temporaryFilteredVenues);
 
 /**
  * Filters a vector of venues based on the capacity.
@@ -44,6 +43,6 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
  */
 std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                                             const std::set<int>& uniqueCapacities,
-                                            int filterValue);
+                                            std::vector<SelectedVenue>& temporaryFilteredVenues);
 
 #endif // FILTERCRITERIA_H
