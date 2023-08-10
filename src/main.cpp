@@ -89,14 +89,23 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
 
     std::cout << "Enter comma-separated indices of options to select: ";
     std::string input;
-    std::cin.ignore();
     std::getline(std::cin, input);
 
+    // Validate and process the user's input
     std::vector<size_t> selectedIndices;
     std::istringstream iss(input);
     std::string indexStr;
     while (std::getline(iss, indexStr, ',')) {
-        size_t selectedIndex = std::stoi(indexStr) - 1;
+        size_t selectedIndex;
+        std::istringstream indexStream(indexStr);
+        if (!(indexStream >> selectedIndex)) {
+            std::cout << "Invalid index format: " << indexStr << ". Skipping." << std::endl;
+            continue; // Handle the error appropriately
+        }
+        selectedIndex--; // Decrement index to match 0-based indexing
+
+        // Validate the selected index further if needed
+        // For example, check if it's within a valid range
         if (selectedIndex < filterOptions.size()) {
             selectedIndices.push_back(selectedIndex);
         } else {
@@ -104,6 +113,7 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
         }
     }
 
+    // Now you have the validated selectedIndices vector to work with
     for (size_t selectedIndex : selectedIndices) {
         if (selectedIndex < filterOptions.size()) {
             std::string filterValue = filterOptions[selectedIndex];
@@ -136,14 +146,23 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
 
     std::cout << "Enter comma-separated indices of options to select: ";
     std::string input;
-    std::cin.ignore();
     std::getline(std::cin, input);
 
+    // Validate and process the user's input
     std::vector<size_t> selectedIndices;
     std::istringstream iss(input);
     std::string indexStr;
     while (std::getline(iss, indexStr, ',')) {
-        size_t selectedIndex = std::stoi(indexStr) - 1;
+        size_t selectedIndex;
+        std::istringstream indexStream(indexStr);
+        if (!(indexStream >> selectedIndex)) {
+            std::cout << "Invalid index format: " << indexStr << ". Skipping." << std::endl;
+            continue; // Handle the error appropriately
+        }
+        selectedIndex--; // Decrement index to match 0-based indexing
+
+        // Validate the selected index further if needed
+        // For example, check if it's within a valid range
         if (selectedIndex < filterOptions.size()) {
             selectedIndices.push_back(selectedIndex);
         } else {
@@ -151,6 +170,7 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
         }
     }
 
+    // Now you have the validated selectedIndices vector to work with
     for (size_t selectedIndex : selectedIndices) {
         if (selectedIndex < filterOptions.size()) {
             int filterValue = filterOptions[selectedIndex];
@@ -209,6 +229,8 @@ int main() {
         std::cerr << "Failed to load configuration settings from config.json." << std::endl;
         return 1;
     }
+
+    // Read venues data from CSV file
     readCSV(venues, venuesCsvPath);
 
     // Initialize the CURL handle
@@ -310,12 +332,23 @@ int main() {
             // Allow user to select venues to add to selectedVenuesForEmail
             std::cout << "Select venues to add (comma-separated indices): ";
             std::string input;
+            const int maxInputLength = 256;
             std::getline(std::cin, input);
+            if (input.length() > maxInputLength) {
+                std::cout << "Input too long. Please try again." << std::endl;
+                continue; // Or handle the error appropriately
+            }
 
             std::istringstream iss(input);
             std::string indexStr;
             while (std::getline(iss, indexStr, ',')) {
-                size_t selectedIndex = std::stoi(indexStr) - 1;
+                size_t selectedIndex;
+                std::istringstream iss(indexStr);
+                if (!(iss >> selectedIndex)) {
+                    std::cout << "Invalid index format. Skipping." << std::endl;
+                    continue; // Or handle the error appropriately
+                }
+                selectedIndex--; // Decrement index to match 0-based indexing
                 if (selectedIndex < temporaryFilteredVenues.size()) {
                     selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
                 } else {
@@ -353,7 +386,6 @@ int main() {
 
             if (confirmSend == 'Y' || confirmSend == 'y') {
                 // Proceed to send emails if confirmed
-                filteredVenues.insert(filteredVenues.end(), selectedVenuesForEmail.begin(), selectedVenuesForEmail.end());
                 sendEmails(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort);
                 filteredVenues.clear(); // Clear the filtered venues for the next round of emails
 
