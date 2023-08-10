@@ -31,6 +31,18 @@ enum class MenuOption {
     Exit
 };
 
+// Constants
+const char CSV_DELIMITER = ',';
+const int MAX_EMAIL_LENGTH = 320; // An example value, adjust as needed
+const int FILTER_BY_GENRE_OPTION = static_cast<int>(MenuOption::FilterByGenre);
+const int FILTER_BY_STATE_OPTION = static_cast<int>(MenuOption::FilterByState);
+const int FILTER_BY_CITY_OPTION = static_cast<int>(MenuOption::FilterByCity);
+const int FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuOption::FilterByCapacity);
+const int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
+const int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
+const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmails);
+const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
+
 // Load configuration settings from config.json
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
                         std::string& smtpPassword, std::string& venuesCsvPath, 

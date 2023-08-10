@@ -95,7 +95,7 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
     std::vector<size_t> selectedIndices;
     std::istringstream iss(input);
     std::string indexStr;
-    while (std::getline(iss, indexStr, ',')) {
+    while (std::getline(iss, indexStr, CSV_DELIMITER)) {
         size_t selectedIndex;
         std::istringstream indexStream(indexStr);
         if (!(indexStream >> selectedIndex)) {
@@ -307,21 +307,21 @@ int main() {
 
             // Handle menu choices
             if (choice >= static_cast<int>(MenuOption::FilterByGenre) &&
-                choice <= static_cast<int>(MenuOption::FilterByCapacity)) {
+                choice <= FILTER_BY_CAPACITY_OPTION) {
                 // Declare a temporary vector to store filtered venues
                 std::vector<SelectedVenue> temporaryFilteredVenues;
 
                 // Handle filtering options
-                if (choice == static_cast<int>(MenuOption::FilterByGenre)) {
+                if (choice == FILTER_BY_GENRE_OPTION) {
                     // Filter by Genre
                     temporaryFilteredVenues = filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
-                } else if (choice == static_cast<int>(MenuOption::FilterByState)) {
+                } else if (choice == FILTER_BY_STATE_OPTION) {
                     // Filter by State
                     temporaryFilteredVenues = filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
-                } else if (choice == static_cast<int>(MenuOption::FilterByCity)) {
+                } else if (choice == FILTER_BY_CITY_OPTION) {
                     // Filter by City
                     temporaryFilteredVenues = filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
-                } else if (choice == static_cast<int>(MenuOption::FilterByCapacity)) {
+                } else if (choice == FILTER_BY_CAPACITY_OPTION) {
                     // Filter by Capacity
                     temporaryFilteredVenues = filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
                 }
@@ -355,14 +355,14 @@ int main() {
                     std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
                 }
             }
-        } else if (choice == static_cast<int>(MenuOption::ViewSelectedVenues)) {
+        } else if (choice == VIEW_SELECTED_VENUES_OPTION) {
             // View Selected Venues
             displaySelectedVenues(selectedVenuesForEmail);
-        } else if (choice == static_cast<int>(MenuOption::ClearSelectedVenues)) {
+        } else if (choice == CLEAR_SELECTED_VENUES_OPTION) {
             // Clear Selected Venues
             selectedVenuesForEmail.clear();
             std::cout << "Selected venues cleared." << std::endl;
-        } else if (choice == static_cast<int>(MenuOption::FinishAndSendEmails)) {
+        } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
 
             // Check if selectedVenuesForEmail is empty
@@ -400,7 +400,7 @@ int main() {
                 std::cout << "Invalid choice. Please try again." << std::endl;
                 // The user entered an invalid choice, return to the main menu without clearing the selectedVenuesForEmail vector
             }
-        } else if (choice == static_cast<int>(MenuOption::Exit)) {
+        } else if (choice == EXIT_OPTION) {
             // Clean up the CURL handle before exiting
             curl_easy_cleanup(curl);
 

@@ -44,11 +44,6 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     return true;
 }
 
-// Constants
-const char CSV_DELIMITER = ',';
-const int MAX_EMAIL_LENGTH = 320; // An example value, adjust as needed
-const int INVALID_CAPACITY = -1;  // To indicate an invalid capacity
-
 // Function to check if an email address is in a valid format
 bool isValidEmail(const std::string& email) {
     // A simple regex pattern to check the format of the email
