@@ -44,7 +44,6 @@ void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDi
         std::cout << "   Email: " << venue.email << std::endl;
         std::cout << "   City: " << venue.city << std::endl;
         std::cout << "   Capacity: " << venue.capacity << std::endl;
-        // Add any other members you want to display here
         std::cout << std::endl;
     }
 }

@@ -215,7 +215,6 @@ bool sendIndividualEmail(CURL* curl,
 
     if (res != CURLE_OK) {
         std::cerr << "Failed to send email: " << curl_easy_strerror(res) << std::endl;
-        // Handle the error gracefully (e.g., return false or throw an exception)
         return false;
     }
 
