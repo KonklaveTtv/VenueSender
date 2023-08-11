@@ -37,13 +37,6 @@ void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVe
                            std::vector<SelectedVenue>& selectedVenuesForEmail) {
     std::cout << "Select venues to add (comma-separated indices): ";
     std::string input;
-    const int maxInputLength = 256;
-    std::getline(std::cin, input);
-    if (input.length() > maxInputLength) {
-        std::cout << "Input too long. Please try again." << std::endl;
-        return; // Or handle the error appropriately
-    }
-
     std::istringstream iss(input);
     std::string indexStr;
     while (std::getline(iss, indexStr, ',')) {
@@ -107,7 +100,7 @@ int displayMenuOptions() {
         std::cout << "Enter your choice: ";
 
         if (!(std::cin >> choice) || !isValidMenuChoice(choice)) {
-            std::cout << "Invalid choice. Please enter a number between 1 and 8." << std::endl;
+            std::cout << "Invalid choice. Please enter a number between 1 and 9." << std::endl;
             std::cin.clear();
             clearInputBuffer();
         } else {
