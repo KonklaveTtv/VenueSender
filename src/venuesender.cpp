@@ -10,6 +10,31 @@
 #include "json/json.h"
 #include <curl/curl.h>
 
+/* CurlHandleWrapper*/
+/*-------------------*/
+CurlHandleWrapper::CurlHandleWrapper() {
+    curl = curl_easy_init();
+}
+
+CurlHandleWrapper::~CurlHandleWrapper() {
+    if (curl) {
+        curl_easy_cleanup(curl);
+    }
+}
+
+CURL* CurlHandleWrapper::get() const {
+    return curl;
+}
+
+void CurlHandleWrapper::init() {
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+}
+
+void CurlHandleWrapper::cleanup() {
+    curl_global_cleanup();
+}
+/*-------------------*/
+
 // Load configuration settings from config.json
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
                         std::string& smtpUsername, std::string& smtpPass,

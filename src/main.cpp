@@ -246,17 +246,14 @@ int main() {
     }
 
     // Initialize libcurl
-    CURLcode initRes = curl_global_init(CURL_GLOBAL_DEFAULT);
-    if (initRes != CURLE_OK) {
-        std::cerr << "Failed to initialize libcurl: " << curl_easy_strerror(initRes) << std::endl;
-        return 1;
-    }
+    CurlHandleWrapper::init();
 
-    // Initialize the CURL handle
-    CURL *curl = curl_easy_init();
+    // Create and manage CURL handle using CurlHandleWrapper
+    CurlHandleWrapper curlWrapper;
+    CURL* curl = curlWrapper.get();
+    
     if (!curl) {
         std::cerr << "Failed to initialize libcurl easy handle." << std::endl;
-        curl_global_cleanup(); // Clean up libcurl before exiting
         return 1;
     }
 
@@ -266,7 +263,6 @@ int main() {
     res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
     if (res != CURLE_OK) {
         std::cerr << "Failed to set libcurl URL option." << std::endl;
-        curl_easy_cleanup(curl);
         return 1;
     }
 
@@ -386,8 +382,6 @@ int main() {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
             if (confirmExit == 'Y' || confirmExit == 'y') {
-                // Clean up the CURL handle before exiting
-                curl_easy_cleanup(curl);
 
                 // Exit VenueSender
                 std::cout << "Exiting the program." << std::endl;
@@ -403,9 +397,6 @@ int main() {
             std::cout << "Invalid choice. Please try again." << std::endl;
         }
     }
-
-    // Clean up libcurl at the end of the program
-    curl_global_cleanup();
 
     return 0;
 }

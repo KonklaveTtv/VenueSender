@@ -7,6 +7,18 @@
 
 #include <curl/curl.h>
 
+class CurlHandleWrapper {
+public:
+    CurlHandleWrapper();
+    ~CurlHandleWrapper();
+    CURL* get() const;
+    static void init();
+    static void cleanup();
+
+private:
+    CURL* curl;
+};
+
 // Forward declaration of the Venue struct
 struct Venue;
 
