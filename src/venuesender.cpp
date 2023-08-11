@@ -36,10 +36,31 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     senderEmail = config["sender_email"].asString();
     senderSmtpPort = config["sender_smtp_port"].asInt();
 
-    // Notify the user that the config.json has been read successfully
-    std::cout << "Configuration settings loaded from config.json." << std::endl;
+    // Define and initialize variables to track loaded settings
+    bool smtpServerLoaded = !smtpServer.empty();
+    bool smtpPortLoaded = smtpPort > 0;
+    bool smtpUsernameLoaded = !smtpUsername.empty();
+    bool smtpPassLoaded = !smtpPass.empty();
+    bool venuesCsvPathLoaded = !venuesCsvPath.empty();
+    bool emailPasswordLoaded = !emailPassword.empty();
+    bool senderEmailLoaded = !senderEmail.empty();
+    bool senderSmtpPortLoaded = senderSmtpPort > 0;
 
-    return true;
+    bool configLoadedSuccessfully = smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded &&
+                                    smtpPassLoaded && venuesCsvPathLoaded && emailPasswordLoaded &&
+                                    senderEmailLoaded && senderSmtpPortLoaded;
+
+    if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || smtpPassLoaded || 
+        venuesCsvPathLoaded || emailPasswordLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
+        std::cout << "Configuration settings loaded from config.json." << std::endl;
+        configLoadedSuccessfully = true;
+    } else if (smtpServerLoaded || smtpPortLoaded || smtpPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
+        std::cout << "Email settings loaded from config.json." << std::endl;
+    } else if (!configLoadedSuccessfully) {
+        std::cerr << "Failed to load configuration settings from config.json." << std::endl;
+    }
+
+    return configLoadedSuccessfully;
 }
 
 // Function to check if an email address is in a valid format
@@ -98,22 +119,6 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
 
     file.close();
 }
-
-// Function to get user's email credentials and SMTP settings
-ReturnCode getUserEmailSettings(std::string& smtpServer, int smtpPort, std::string& smtpPass, std::string& senderEmail, int senderSmtpPort) {
-    std::cout << "Reading user email settings from config.json..." << std::endl;
-
-    // Load email settings from config.json
-    std::string smtpUsername, venuesCsvPath, emailPassword;
-    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
-                            emailPassword, senderEmail, senderSmtpPort)) {
-        std::cerr << "Error loading config settings." << std::endl;
-        return ReturnCode::ConfigLoadError;
-    }
-
-    return ReturnCode::Success;
-}
-
 
 // Function to construct an email by providing subject and message
 void constructEmail(std::string& subject, std::string& message) {

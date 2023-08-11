@@ -43,6 +43,7 @@ enum class MenuOption {
     FilterByCapacity,
     ClearSelectedVenues,
     ViewSelectedVenues,
+    ShowEmailSettings,
     FinishAndSendEmails,
     Exit
 };
@@ -74,9 +75,6 @@ int displayMenuOptions();
 
 // Check if an email address is in a valid format
 bool isValidEmail(const std::string& email);
-
-// Function to get user's email credentials and SMTP settings
-ReturnCode getUserEmailSettings(std::string& smtpServer, int smtpPort, std::string& smtpPass, std::string& senderEmail, int senderSmtpPort);
 
 // Function to send an individual email to a recipient with custom subject and message
 bool sendIndividualEmail(CURL* curl,

@@ -80,6 +80,16 @@ void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDi
     }
 }
 
+void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
+                       int senderSmtpPort) {
+    std::cout << "===== Email Settings =====" << std::endl;
+    std::cout << "SMTP Server: " << smtpServer << std::endl;
+    std::cout << "SMTP Port: " << smtpPort << std::endl;
+    std::cout << "Sender Email: " << senderEmail << std::endl;
+    std::cout << "Sender SMTP Port: " << senderSmtpPort << std::endl;
+    std::cout << "===========================" << std::endl;
+}
+
 // Function to display the menu options
 int displayMenuOptions() {
     int choice;
@@ -91,8 +101,9 @@ int displayMenuOptions() {
         std::cout << "4. Filter by Capacity" << std::endl;
         std::cout << "5. Clear Selected Venues" << std::endl;
         std::cout << "6. View Selected Venues" << std::endl;
-        std::cout << "7. Finish & Send Emails" << std::endl;
-        std::cout << "8. Exit VenueSender" << std::endl;
+        std::cout << "7. Show Email Settings" << std::endl;
+        std::cout << "8. Finish & Send Emails" << std::endl;
+        std::cout << "9. Exit VenueSender" << std::endl;
         std::cout << "Enter your choice: ";
 
         if (!(std::cin >> choice) || !isValidMenuChoice(choice)) {
@@ -234,6 +245,13 @@ int main() {
     std::string subject;
     std::string message;
 
+    // Load configuration settings from config.json
+    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
+                            emailPassword, senderEmail, senderSmtpPort)) {
+        std::cerr << "Failed to load configuration settings from config.json." << std::endl;
+        exit(1); // Handle the error appropriately
+    }
+
     // Initialize libcurl
     CURLcode initRes = curl_global_init(CURL_GLOBAL_DEFAULT);
     if (initRes != CURLE_OK) {
@@ -247,22 +265,6 @@ int main() {
         std::cerr << "Failed to initialize libcurl easy handle." << std::endl;
         curl_global_cleanup(); // Clean up libcurl before exiting
         return 1;
-    }
-
-    // Load email settings from config.json
-    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
-                            emailPassword, senderEmail, senderSmtpPort)) {
-        std::cerr << "Failed to load email settings from config.json." << std::endl;
-        exit(1); // You might handle this error more gracefully
-    }
-
-    // Call getUserEmailSettings and handle return value
-    ReturnCode result = getUserEmailSettings(smtpServer, smtpPort, smtpPass, senderEmail, senderSmtpPort);
-    if (result != ReturnCode::Success) {
-        // Handle the error condition
-        std::cerr << "Error while getting user email settings." << std::endl;
-        curl_easy_cleanup(curl); // Clean up libcurl resources
-        return static_cast<int>(result); // Return an error code
     }
 
     // Connect to the SMTP server
@@ -289,15 +291,6 @@ int main() {
         std::cerr << "Failed to set libcurl email password option." << std::endl;
         curl_easy_cleanup(curl);
         return 1;
-    }
-
-    // Call getUserEmailSettings and handle return value
-    ReturnCode result2 = getUserEmailSettings(smtpServer, smtpPort, smtpPass, senderEmail, senderSmtpPort);
-    if (result2 != ReturnCode::Success) {
-        // Handle the error condition
-        std::cerr << "Error while getting user email settings." << std::endl;
-        curl_easy_cleanup(curl); // Clean up libcurl resources
-        return static_cast<int>(result2); // Return an error code
     }
 
     // Read venues data from CSV file
@@ -351,6 +344,9 @@ int main() {
                 // Clear Selected Venues
                 selectedVenuesForEmail.clear();
                 std::cout << "Selected venues cleared." << std::endl;
+            } else if (choice == static_cast<int>(MenuOption::ShowEmailSettings)) {
+                // View Email Settings
+                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort);
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
 
@@ -390,12 +386,26 @@ int main() {
                 // The user entered an invalid choice, return to the main menu without clearing the selectedVenuesForEmail vector
             }
         } else if (choice == EXIT_OPTION) {
-            // Clean up the CURL handle before exiting
-            curl_easy_cleanup(curl);
+            // Prompt for confirmation before exiting
+            std::cout << "Are you sure you want to exit? (Y/N): ";
+            char confirmExit;
+            std::cin >> confirmExit;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-            // Exit VenueSender
-            std::cout << "Exiting the program." << std::endl;
-            break;
+            if (confirmExit == 'Y' || confirmExit == 'y') {
+                // Clean up the CURL handle before exiting
+                curl_easy_cleanup(curl);
+
+                // Exit VenueSender
+                std::cout << "Exiting the program." << std::endl;
+                break;
+            } else if (confirmExit == 'N' || confirmExit == 'n') {
+                std::cout << "Returning to the main menu." << std::endl;
+                // The user chose not to exit, return to the main menu
+            } else {
+                std::cout << "Invalid choice. Please try again." << std::endl;
+                // The user entered an invalid choice, return to the main menu
+            }
         } else {
             std::cout << "Invalid choice. Please try again." << std::endl;
         }
