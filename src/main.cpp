@@ -106,11 +106,12 @@ int displayMenuOptions() {
         std::cout << "6. View Selected Venues" << std::endl;
         std::cout << "7. Show Email Settings" << std::endl;
         std::cout << "8. Finish & Send Emails" << std::endl;
-        std::cout << "9. Exit VenueSender" << std::endl;
+        std::cout << "9. View Email Sending Progress" << std::endl;
+        std::cout << "10. Exit VenueSender" << std::endl;
         std::cout << "Enter your choice: ";
 
         if (!(std::cin >> choice) || !isValidMenuChoice(choice)) {
-            std::cout << "Invalid choice. Please enter a number between 1 and 9." << std::endl;
+            std::cout << "Invalid choice. Please enter a number between 1 and 10." << std::endl;
             std::cin.clear();
             clearInputBuffer();
         } else {
@@ -320,6 +321,13 @@ int main() {
     std::vector<SelectedVenue> selectedVenuesForEmail;
     std::vector<SelectedVenue> filteredVenues;
 
+    // Set up progress callback using the progressCallback function
+    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &curlWrapper);
+
+    int totalSelectedVenues = selectedVenuesForEmail.size();
+    int emailSendProgress = 0;
+
     // Main loop for interacting with the user
     while (true) {
         // Display menu options and get user's choice
@@ -385,7 +393,17 @@ int main() {
 
             if (confirmSend == 'Y' || confirmSend == 'y') {
                 // Proceed to send emails if confirmed
-                sendEmails(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort);
+                emailSendProgress = 0; // Reset progress
+                for (const SelectedVenue& venue : selectedVenuesForEmail) {
+                    sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message, smtpServer, smtpPort);
+                    ++emailSendProgress;
+
+                    // Update the progress
+                    curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
+
+                    // Simulate processing time
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                }
                 filteredVenues.clear(); // Clear the filtered venues for the next round of emails
 
                 // Reset subject and message after sending emails
@@ -399,29 +417,32 @@ int main() {
                 std::cout << "Invalid choice. Please try again." << std::endl;
                 // The user entered an invalid choice, return to the main menu without clearing the selectedVenuesForEmail vector
             }
-        } else if (choice == EXIT_OPTION) {
-            // Prompt for confirmation before exiting
-            std::cout << "Are you sure you want to exit? (Y/N): ";
-            char confirmExit;
-            std::cin >> confirmExit;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+         } else if (choice == SHOW_EMAIL_SENDING_PROGRESS) {
+                // View Email Sending Progress
+                viewEmailSendingProgress(curl, selectedVenuesForEmail);
+            } else if (choice == EXIT_OPTION) {
+                // Prompt for confirmation before exiting
+                std::cout << "Are you sure you want to exit? (Y/N): ";
+                char confirmExit;
+                std::cin >> confirmExit;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-            if (confirmExit == 'Y' || confirmExit == 'y') {
+                if (confirmExit == 'Y' || confirmExit == 'y') {
 
-                // Exit VenueSender
-                std::cout << "Exiting the program." << std::endl;
-                break;
-            } else if (confirmExit == 'N' || confirmExit == 'n') {
-                std::cout << "Returning to the main menu." << std::endl;
-                // The user chose not to exit, return to the main menu
+                    // Exit VenueSender
+                    std::cout << "Exiting the program." << std::endl;
+                    break;
+                } else if (confirmExit == 'N' || confirmExit == 'n') {
+                    std::cout << "Returning to the main menu." << std::endl;
+                    // The user chose not to exit, return to the main menu
+                } else {
+                    std::cout << "Invalid choice. Please try again." << std::endl;
+                    // The user entered an invalid choice, return to the main menu
+                }
             } else {
                 std::cout << "Invalid choice. Please try again." << std::endl;
-                // The user entered an invalid choice, return to the main menu
             }
-        } else {
-            std::cout << "Invalid choice. Please try again." << std::endl;
         }
-    }
 
     return 0;
 }

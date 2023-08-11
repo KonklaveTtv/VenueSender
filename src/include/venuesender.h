@@ -3,7 +3,9 @@
 
 #include "filtercriteria.h"
 
+#include <chrono>
 #include <string>
+#include <thread>
 
 #include <curl/curl.h>
 
@@ -60,6 +62,7 @@ enum class MenuOption {
     ViewSelectedVenues,
     ShowEmailSettings,
     FinishAndSendEmails,
+    ShowEmailSendingProgress,
     Exit
 };
 
@@ -77,6 +80,7 @@ const int FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuOption::FilterByCapac
 const int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
 const int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
 const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmails);
+const int SHOW_EMAIL_SENDING_PROGRESS = static_cast<int>(MenuOption::ShowEmailSendingProgress);
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
 // Load configuration settings from config.json
@@ -111,6 +115,9 @@ void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
 
 // Function to send bulk emails to recipients with custom subject and message using libcurl
 void sendEmails(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail, const std::string& senderEmail, const std::string& subject, const std::string& message, const std::string& smtpServer, int smtpPort);
+
+// Function to view the progress of email sending done by sendIndividualEmail()
+void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail);
 
 void getEmailSubjectAndMessage(std::string& subject, std::string& message);
 

@@ -274,6 +274,20 @@ void sendEmails(CURL* curl,
     }
 }
 
+void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail) {
+    // Set the custom progress callback function from CurlHandleWrapper
+    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+
+    for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
+        const SelectedVenue& venue = selectedVenuesForEmail[i];
+        std::cout << "Sending email to: " << venue.email << std::endl;
+
+        // Simulate processing time
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+    std::cout << "Email sending progress completed." << std::endl;
+}
+
 // Clear the input buffer
 void clearInputBuffer() {
     // Clear the input buffer
