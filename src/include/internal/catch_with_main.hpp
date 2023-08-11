@@ -9,6 +9,6 @@
 #define TWOBLUECUBES_CATCH_WITH_MAIN_HPP_INCLUDED
 
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "../catch.hpp"
 
 #endif // TWOBLUECUBES_CATCH_WITH_MAIN_HPP_INCLUDED

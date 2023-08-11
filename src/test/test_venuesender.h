@@ -1,7 +1,7 @@
 #ifndef TEST_VENUESENDER_H
 #define TEST_VENUESENDER_H
 
-#include "catch.hpp"
+#include "../include/catch.hpp"
 #include "venuesender.h"
 
 #include <fstream>

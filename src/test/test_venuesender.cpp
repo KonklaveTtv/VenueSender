@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 
 #include "../include/internal/catch_with_main.hpp"
-#include "venuesender.h"
+#include "../include/venuesender.h"
 
 #include <fstream>
 
