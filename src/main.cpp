@@ -6,6 +6,7 @@
 #include <cstring>
 #include <limits>
 #include <map>
+#include <iomanip>
 
 #include <curl/curl.h>
 
@@ -35,7 +36,7 @@ SelectedVenue convertToSelectedVenue(const Venue& venue) {
 // Function to process user input and select venues
 void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                            std::vector<SelectedVenue>& selectedVenuesForEmail) {
-    std::cout << "Select venues to add (comma-separated indices): ";
+    std::cout << "Select venues to add (comma-separated indices)";
     std::string input;
     std::istringstream iss(input);
     std::string indexStr;
@@ -53,6 +54,8 @@ void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVe
             std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
         }
     }
+    // Add a newline to separate the filtered venues from the main menu
+    std::cout << std::endl;
 }
 
 // Function to display filtered venues to the user
@@ -65,7 +68,7 @@ void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDi
     std::cout << "Filtered Venues: " << std::endl;
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
-        std::cout << i + 1 << ". Name: " << venue.name << std::endl;
+        std::cout << std::setw(2) << i + 1 << ". Name: " << venue.name << std::endl;
         std::cout << "   Email: " << venue.email << std::endl;
         std::cout << "   City: " << venue.city << std::endl;
         std::cout << "   Capacity: " << venue.capacity << std::endl;
@@ -111,10 +114,11 @@ int displayMenuOptions() {
     return choice;
 }
 
-std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
-                                          const std::string& filterType,
-                                          const std::set<std::string>& uniqueOptions,
-                                          std::vector<SelectedVenue>& temporaryFilteredVenues) {
+// Common function for filtering by an option (Genre, State, City)
+std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
+                                                const std::set<std::string>& uniqueOptions,
+                                                const std::string& filterType,
+                                                std::vector<SelectedVenue>& temporaryFilteredVenues) {
     std::vector<std::string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
     std::cout << "===== Filter By " << filterType << " =====" << std::endl;
 
@@ -127,6 +131,8 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
     std::string input;
     std::cin.ignore();
     std::getline(std::cin, input);
+
+    std::cout << std::endl; // Add a line of space
 
     // Validate and process the user's input
     std::vector<size_t> selectedIndices;
@@ -161,11 +167,21 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
     return temporaryFilteredVenues;
 }
 
+// Function to filter by Genre, State, or City
+std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
+                                          const std::string& filterType,
+                                          const std::set<std::string>& uniqueOptions,
+                                          std::vector<SelectedVenue>& temporaryFilteredVenues) {
+    return filterByOptionCommon(venues, uniqueOptions, filterType, temporaryFilteredVenues);
+}
+
+// Function to filter by Capacity
 std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                                             const std::set<int>& uniqueCapacities,
                                             std::vector<SelectedVenue>& temporaryFilteredVenues) {
     std::vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
     std::cout << "===== Filter By Capacity =====" << std::endl;
+
 
     std::cout << "Available Options: " << std::endl;
     for (size_t i = 0; i < filterOptions.size(); ++i) {
@@ -176,6 +192,8 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
     std::string input;
     std::cin.ignore();
     std::getline(std::cin, input);
+
+    std::cout << std::endl; // Add a line of space
 
     // Validate and process the user's input
     std::vector<size_t> selectedIndices;
