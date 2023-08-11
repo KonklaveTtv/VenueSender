@@ -61,6 +61,8 @@ void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVe
             std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
         }
     }
+    // Add a newline to separate the filtered venues from the main menu
+    std::cout << std::endl;
 }
 
 // Function to display filtered venues to the user
