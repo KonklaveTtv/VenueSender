@@ -1,2 +1,2 @@
 #!/bin/bash
-./test_runner
+./venuesender_test

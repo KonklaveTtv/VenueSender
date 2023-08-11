@@ -13,11 +13,27 @@ struct Venue;
 // Forward declaration of the SelectedVenue struct
 struct SelectedVenue;
 
+// Forward declare the processVenueSelection function
+void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
+                           std::vector<SelectedVenue>& selectedVenuesForEmail);
+
 // Add these member pointers as static constexpr members in the Venue struct
 static constexpr auto genreMemberPtr = &Venue::genre;
 static constexpr auto stateMemberPtr = &Venue::state;
 static constexpr auto cityMemberPtr = &Venue::city;
 static constexpr auto capacityMemberPtr = &Venue::capacity;
+
+/* getUserEmailSettings Error Handling & Return Codes */
+/*----------------------------------------------------*/
+
+// Define enums for return codes
+enum class ReturnCode {
+    Success,
+    ConfigLoadError,
+    EmailDecryptionError,
+    SmtpPassDecryptionError
+};
+/*End of getUserEmailSettingsError Handling*/
 
 // Constants for menu options
 enum class MenuOption {
@@ -45,7 +61,7 @@ const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
 // Load configuration settings from config.json
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
-                        std::string& smtpPassword, std::string& venuesCsvPath, 
+                        std::string& smtpPass, std::string& venuesCsvPath, 
                         std::string& emailPassword, std::string& senderEmail, int& senderSmtpPort);
 
 // Function to read CSV file and populate data
@@ -60,7 +76,7 @@ int displayMenuOptions();
 bool isValidEmail(const std::string& email);
 
 // Function to get user's email credentials and SMTP settings
-void getUserEmailSettings(std::string& emailPassword, std::string& smtpServer, int& smtpPort, std::string& senderEmail, int& senderSmtpPort);
+ReturnCode getUserEmailSettings(std::string& smtpServer, int smtpPort, std::string& smtpPass, std::string& senderEmail, int senderSmtpPort);
 
 // Function to send an individual email to a recipient with custom subject and message
 bool sendIndividualEmail(CURL* curl,

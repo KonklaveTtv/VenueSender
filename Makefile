@@ -2,17 +2,20 @@
 
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -Isrc/include -Isrc -L/usr/lib
+CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -Isrc/include -Isrc -L/usr/lib -g
 INCLUDES = -Isrc/include -Isrc
 
 # Directories
 SRCDIR = src
 TESTDIR = src/test
 OBJDIR = obj
+DEBUGOBJDIR = obj/debug
 BINDIR = bin
+DEBUGBINDIR = bin/debug
 
 # Targets
 TARGET = $(BINDIR)/venuesender
+DEBUG_TARGET = $(DEBUGBINDIR)/venuesender_debug
 TEST_TARGET = $(BINDIR)/test_runner
 
 # Source files
@@ -21,6 +24,7 @@ TEST_SRCS = $(wildcard $(TESTDIR)/*.cpp)
 
 # Object files
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
+DEBUG_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(DEBUGOBJDIR)/%.o, $(SRCS))
 TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 
 # Libraries
@@ -33,25 +37,37 @@ CATCH2_LIB = catch2
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
+$(DEBUGOBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
 $(OBJDIR)/%.o: $(TESTDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # Default target
 all: directories $(TARGET)
 
+# Debug target
+debug: directories $(DEBUG_TARGET)
+
+# Test target
+test: directories $(TEST_TARGET)
+
 # Create necessary directories
 directories:
 	mkdir -p $(OBJDIR)
+	mkdir -p $(DEBUGOBJDIR)
 	mkdir -p $(BINDIR)
+	mkdir -p $(DEBUGBINDIR)
 
 # Link the main executable
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBS)
 
-# Build the test objects
-test: directories $(TEST_OBJS)
+# Link the debug executable
+$(DEBUG_TARGET): $(DEBUG_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(DEBUG_OBJS) $(LIBS)
 
-# Link the test runner
+# Link the venuesender_test
 $(TEST_TARGET): $(TEST_OBJS) $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) -l$(CATCH2_LIB) $(LIBS)
 
@@ -61,6 +77,6 @@ run_tests: test $(TEST_TARGET)
 
 # Clean up
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	rm -rf $(OBJDIR) $(DEBUGOBJDIR) $(BINDIR) $(DEBUGBINDIR)
 
-.PHONY: all directories clean test run_tests
+.PHONY: all debug directories clean test run_tests

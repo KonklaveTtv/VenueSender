@@ -9,13 +9,40 @@
 #include <sstream>
 #include <vector>
 
+#include <sodium.h>
+
 class Venue;
 
-// Get a set of unique genres/states/cities/capacities from a vector of venues
-std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
-std::set<std::string> getUniqueStates(const std::vector<Venue>& venues);
-std::set<std::string> getUniqueCities(const std::vector<Venue>& venues);
-std::set<int> getUniqueCapacities(const std::vector<Venue>& venues);
+
+//*Password Conversion Function*//
+//---------------------------------//
+
+// Utility function to convert binary data to hex
+std::string binToHex(const std::string& input);
+
+// Utility function to convert hex data to string
+std::string hexToString(const std::string& hex);
+
+// Convert plain-text password to hex
+std::string stringToHex(const std::string& input);
+
+// Convert the Email Password from Plain Text to Hex(stringToHex)
+std::string EmailPassToHex(const std::string& emailPassword);
+
+// Convert the Smtp Password from Plain Text to Hex (stringToHex)
+std::string SmtpPassToHex(const std::string& smtpPass);
+
+// Convert the Email Password from Hex to Plain Text (hexToString)
+std::string EmailPassHexToString(const std::string& emailPassHex);
+
+// Convert the Smtp Password from Hex to Plain Text (hexToString)
+std::string SmtpPassHexToString(const std::string& smtpPassHex);
+
+/*End of Password Conversion Function Declarations*/
+
+// Function to initialize encryption key and nonce
+void initializeEncryptionParams(std::array<unsigned char, crypto_secretbox_KEYBYTES>& encryptionKey,
+                                 std::array<unsigned char, crypto_secretbox_NONCEBYTES>& encryptionNonce);
 
 // Declaration for getUniqueValues with a member pointer to a string
 std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::string Venue::* memberPtr);
@@ -45,6 +72,5 @@ std::vector<int> getSelectedIndices(const std::vector<T>& options, std::istream&
 // Definition of getSelectedIndices
 template<class T>
 std::vector<int> getSelectedIndices(const std::vector<T>& options, std::istream& input);
-
 
 #endif // VENUEUTILS_H

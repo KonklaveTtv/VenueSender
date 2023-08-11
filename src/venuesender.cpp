@@ -1,20 +1,18 @@
+#include "venueutils.h"
+#include "filtercriteria.h"
+#include "venue.h"
+#include "venuesender.h"
+
 #include <fstream>
 #include <limits>
 #include <regex>
 
-#include <sodium.h> // Encryption/Decryption libraries
-
 #include "json/json.h"
 #include <curl/curl.h>
 
-#include "filtercriteria.h"
-#include "venueutils.h"
-#include "venue.h"
-#include "venuesender.h"
-
 // Load configuration settings from config.json
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
-                        std::string& smtpUsername, std::string& smtpPassword,
+                        std::string& smtpUsername, std::string& smtpPass,
                         std::string& venuesCsvPath, std::string& emailPassword,
                         std::string& senderEmail, int& senderSmtpPort) {
     // Load configuration settings from config.json into respective variables
@@ -32,7 +30,7 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     smtpServer = config["smtp_server"].asString();
     smtpPort = config["smtp_port"].asInt();
     smtpUsername = config["smtp_username"].asString();
-    smtpPassword = config["smtp_password"].asString();
+    smtpPass = config["smtp_password"].asString();
     venuesCsvPath = config["venues_csv_path"].asString();
     emailPassword = config["email_password"].asString();
     senderEmail = config["sender_email"].asString();
@@ -102,53 +100,43 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
 }
 
 // Function to get user's email credentials and SMTP settings
-void getUserEmailSettings(std::string& emailPassword, std::string& smtpServer, int& smtpPort,
-                          std::string& senderEmail, int& senderSmtpPort) {
+ReturnCode getUserEmailSettings(std::string& smtpServer, int smtpPort, std::string& smtpPass, std::string& senderEmail, int senderSmtpPort) {
     std::cout << "Reading user email settings from config.json..." << std::endl;
 
     // Load email settings from config.json
-    std::string smtpUsername, smtpPassword, venuesCsvPath;
-    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPassword, venuesCsvPath,
+    std::string smtpUsername, venuesCsvPath, emailPassword;
+    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
                             emailPassword, senderEmail, senderSmtpPort)) {
-        std::cerr << "Failed to load email settings from config.json." << std::endl;
-        exit(1); // You might handle this error more gracefully
+        std::cerr << "Error loading config settings." << std::endl;
+        return ReturnCode::ConfigLoadError;
     }
 
-    // Get encryption key and nonce from environment variables
-    const char* hexEncryptionKey = getenv("ENCRYPTION_KEY");
-    const char* hexEncryptionNonce = getenv("ENCRYPTION_NONCE");
-
-    // Convert hexadecimal strings to binary
-    unsigned char encryptionKey[crypto_secretbox_KEYBYTES];
-    unsigned char encryptionNonce[crypto_secretbox_NONCEBYTES];
-    sodium_hex2bin(encryptionKey, sizeof(encryptionKey), hexEncryptionKey, strlen(hexEncryptionKey), nullptr, nullptr, nullptr);
-    sodium_hex2bin(encryptionNonce, sizeof(encryptionNonce), hexEncryptionNonce, strlen(hexEncryptionNonce), nullptr, nullptr, nullptr);
-
-    // Decrypt the email password using encryption key and nonce
-    std::string decryptedEmailPassword;
-
-    if (crypto_secretbox_open_easy(
-            reinterpret_cast<unsigned char*>(decryptedEmailPassword.data()),
-            reinterpret_cast<const unsigned char*>(emailPassword.data()),
-            emailPassword.size(),
-            encryptionNonce, encryptionKey) != 0) {
-        std::cerr << "Failed to decrypt email password." << std::endl;
-        // Handle decryption error gracefully
-        exit(1);
-    }
-
-    emailPassword = decryptedEmailPassword;
+    return ReturnCode::Success;
 }
+
 
 // Function to construct an email by providing subject and message
 void constructEmail(std::string& subject, std::string& message) {
     std::cout << "===== Construct Email =====" << std::endl;
+    
+    // Limit the input length for the subject
+    const int maxSubjectLength = 100; // Adjust as needed
     std::cout << "Enter the subject for the email: ";
     std::getline(std::cin, subject);
+    if (subject.length() > maxSubjectLength) {
+        std::cout << "Subject too long. Please try again." << std::endl;
+        return; // Or handle the error appropriately
+    }
 
+    // Limit the input length for the message
+    const int maxMessageLength = 1000; // Adjust as needed
     std::cout << "Enter the message for the email (press Enter on a new line to finish):\n";
     std::string line;
     while (std::getline(std::cin, line) && !line.empty()) {
+        if (message.length() + line.length() > maxMessageLength) {
+            std::cout << "Message too long. Continuing with current input." << std::endl;
+            break; // Or handle the error appropriately
+        }
         message += line + "\n";
     }
     std::cout << "============================" << std::endl;
