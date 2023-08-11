@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 
-#include "catch.hpp"
+#include "../include/internal/catch_with_main.hpp"
 #include "venuesender.h"
 
 #include <fstream>
@@ -58,31 +58,31 @@ TEST_CASE("Get unique values from venues") {
     };
 
     // Get unique genres, cities, states, and capacities
-    std::vector<std::string> uniqueGenres = getUniqueValues(venues, "genre");
-    std::vector<std::string> uniqueStates = getUniqueValues(venues, "state");
-    std::vector<std::string> uniqueCities = getUniqueValues(venues, "city");
-    std::vector<std::string> uniqueCapacities = getUniqueValues(venues, "capacity");
+    std::set<std::string> uniqueGenres = getUniqueGenres(venues);
+    std::set<std::string> uniqueStates = getUniqueStates(venues);
+    std::set<std::string> uniqueCities = getUniqueCities(venues);
+    std::set<int> uniqueCapacities = getUniqueCapacities(venues);
 
     // Add assertions to check the uniqueness of values
-    REQUIRE(uniqueGenres.size() == 3); // Rock, Pop, Jazz
-    REQUIRE(std::find(uniqueGenres.begin(), uniqueGenres.end(), "Rock") != uniqueGenres.end());
-    REQUIRE(std::find(uniqueGenres.begin(), uniqueGenres.end(), "Pop") != uniqueGenres.end());
-    REQUIRE(std::find(uniqueGenres.begin(), uniqueGenres.end(), "Jazz") != uniqueGenres.end());
+    REQUIRE(uniqueGenres.size() == 3);
+    REQUIRE(uniqueGenres.find("Rock") != uniqueGenres.end());
+    REQUIRE(uniqueGenres.find("Pop") != uniqueGenres.end());
+    REQUIRE(uniqueGenres.find("Jazz") != uniqueGenres.end());
 
-    REQUIRE(uniqueStates.size() == 3); // State 1, State 2, State 3
-    REQUIRE(std::find(uniqueStates.begin(), uniqueStates.end(), "State 1") != uniqueStates.end());
-    REQUIRE(std::find(uniqueStates.begin(), uniqueStates.end(), "State 2") != uniqueStates.end());
-    REQUIRE(std::find(uniqueStates.begin(), uniqueStates.end(), "State 3") != uniqueStates.end());
+    REQUIRE(uniqueStates.size() == 3);
+    REQUIRE(uniqueStates.find("State 1") != uniqueStates.end());
+    REQUIRE(uniqueStates.find("State 2") != uniqueStates.end());
+    REQUIRE(uniqueStates.find("State 3") != uniqueStates.end());
 
-    REQUIRE(uniqueCities.size() == 3); // City 1, City 2, City 3
-    REQUIRE(std::find(uniqueCities.begin(), uniqueCities.end(), "City 1") != uniqueCities.end());
-    REQUIRE(std::find(uniqueCities.begin(), uniqueCities.end(), "City 2") != uniqueCities.end());
-    REQUIRE(std::find(uniqueCities.begin(), uniqueCities.end(), "City 3") != uniqueCities.end());
+    REQUIRE(uniqueCities.size() == 3);
+    REQUIRE(uniqueCities.find("City 1") != uniqueCities.end());
+    REQUIRE(uniqueCities.find("City 2") != uniqueCities.end());
+    REQUIRE(uniqueCities.find("City 3") != uniqueCities.end());
 
-    REQUIRE(uniqueCapacities.size() == 4); // 100, 150, 200, 120
-    REQUIRE(std::find(uniqueCapacities.begin(), uniqueCapacities.end(), "100") != uniqueCapacities.end());
-    REQUIRE(std::find(uniqueCapacities.begin(), uniqueCapacities.end(), "150") != uniqueCapacities.end());
-    REQUIRE(std::find(uniqueCapacities.begin(), uniqueCapacities.end(), "200") != uniqueCapacities.end());
-    REQUIRE(std::find(uniqueCapacities.begin(), uniqueCapacities.end(), "120") != uniqueCapacities.end());
+    REQUIRE(uniqueCapacities.size() == 4);
+    REQUIRE(uniqueCapacities.find(100) != uniqueCapacities.end());
+    REQUIRE(uniqueCapacities.find(150) != uniqueCapacities.end());
+    REQUIRE(uniqueCapacities.find(200) != uniqueCapacities.end());
+    REQUIRE(uniqueCapacities.find(120) != uniqueCapacities.end());
     // ... Add more test cases for other filtering functions if needed
 }

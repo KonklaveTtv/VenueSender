@@ -16,7 +16,7 @@ DEBUGBINDIR = bin/debug
 # Targets
 TARGET = $(BINDIR)/venuesender
 DEBUG_TARGET = $(DEBUGBINDIR)/venuesender_debug
-TEST_TARGET = $(BINDIR)/test_runner
+TEST_TARGET = $(BINDIR)/venuesender_test
 
 # Source files
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
@@ -31,7 +31,7 @@ TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 LIBS = -lcurl -ljsoncpp -lsodium
 
 # Catch2 library
-CATCH2_LIB = catch2
+CATCH2_LIB = catch_with_main
 
 # Compile rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
