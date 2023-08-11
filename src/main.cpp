@@ -36,8 +36,15 @@ SelectedVenue convertToSelectedVenue(const Venue& venue) {
 // Function to process user input and select venues
 void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                            std::vector<SelectedVenue>& selectedVenuesForEmail) {
-    std::cout << "Select venues to add (comma-separated indices)";
+    std::cout << "Select venues to add (comma-separated indices): ";
     std::string input;
+    const int maxInputLength = 256;
+    std::getline(std::cin, input);
+    if (input.length() > maxInputLength) {
+        std::cout << "Input too long. Please try again." << std::endl;
+        return; // Or handle the error appropriately
+    }
+
     std::istringstream iss(input);
     std::string indexStr;
     while (std::getline(iss, indexStr, ',')) {
@@ -54,8 +61,6 @@ void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVe
             std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
         }
     }
-    // Add a newline to separate the filtered venues from the main menu
-    std::cout << std::endl;
 }
 
 // Function to display filtered venues to the user

@@ -26,26 +26,12 @@ std::set<std::string> getUniqueCities(const std::vector<Venue>& venues);
 std::set<int> getUniqueCapacities(const std::vector<Venue>& venues);
 
 /**
- * Common function for filtering by an option (Genre, State, City)
- *
- * @param venues The vector of Venue objects to filter.
- * @param uniqueOptions A set of unique options for the selected type (e.g., unique genres, states).
- * @param filterType The type of option being filtered (e.g., "Genre", "State").
- * @param temporaryFilteredVenues A vector to store the filtered venues.
- * @return A vector of SelectedVenue objects that match the filter criteria.
- */
-std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
-                                                const std::set<std::string>& uniqueOptions,
-                                                const std::string& filterType,
-                                                std::vector<SelectedVenue>& temporaryFilteredVenues);
-
-/**
  * Filters a vector of venues based on the selected option.
  *
  * @param venues The vector of Venue objects to filter.
- * @param filterType The type of option being filtered (e.g., "Genre", "State").
+ * @param optionType The type of option being filtered (e.g., "Genre", "State").
  * @param uniqueOptions A set of unique options for the selected type (e.g., unique genres, states).
- * @param temporaryFilteredVenues A vector to store the filtered venues.
+ * @param filterValue The value of the selected option to filter by.
  * @return A vector of SelectedVenue objects that match the filter criteria.
  */
 std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
@@ -58,7 +44,7 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
  *
  * @param venues The vector of Venue objects to filter.
  * @param uniqueCapacities A set of unique capacity values.
- * @param temporaryFilteredVenues A vector to store the filtered venues.
+ * @param filterValue The value of the selected capacity to filter by.
  * @return A vector of SelectedVenue objects that match the filter criteria.
  */
 std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
