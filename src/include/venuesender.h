@@ -15,6 +15,9 @@ public:
     static void init();
     static void cleanup();
 
+    // Change visibility of progressCallback to public
+    int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
+
 private:
     CURL* curl;
 };

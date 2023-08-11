@@ -8,12 +8,28 @@
 #include <regex>
 
 #include "json/json.h"
-#include <curl/curl.h>
 
 /* CurlHandleWrapper*/
 /*-------------------*/
+int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
+    // You can calculate the progress percentage based on the parameters provided
+    // and provide updates to the user here
+    // Example: Print the progress every 10% completion
+    if (dltotal > 0) {
+        double progress = (dlnow / dltotal) * 100;
+        if (progress >= 10) {
+            std::cout << "Email sending progress: " << progress << "%" << std::endl;
+        }
+    }
+    return 0;
+}
+
 CurlHandleWrapper::CurlHandleWrapper() {
     curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L); // Enable progress callback
+        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+    }
 }
 
 CurlHandleWrapper::~CurlHandleWrapper() {
@@ -219,6 +235,11 @@ bool sendIndividualEmail(CURL* curl,
     std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 
+    // Set the progress callback function
+    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, nullptr);
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+
     // Perform the email sending
     CURLcode res = curl_easy_perform(curl);
 
@@ -242,6 +263,11 @@ void sendEmails(CURL* curl,
                 const std::string& message,
                 const std::string& smtpServer,
                 int smtpPort) {
+    // Set progress callback for the bulk email sending process
+    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, nullptr);
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+
     // Iterate through selected venues and send individual emails
     for (const SelectedVenue& venue : selectedVenuesForEmail) {
         sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort);
