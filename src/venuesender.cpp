@@ -98,8 +98,17 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
             std::cerr << "Failed to decrypt SMTP password. Please re-enter passwords in config.json." << std::endl;
             return false;
         }
+        smtpPass = smtpPassDecrypted;
     } else {
-        smtpPassDecrypted = smtpPassEncrypted;
+        smtpPass = smtpPassEncrypted;
+        if (encryptPassword(smtpPass, smtpPassEncrypted, encryptionKey)) {
+            config["smtp_password"] = smtpPassEncrypted;
+            config["smtp_pass_encrypted"] = true; // Mark the password as encrypted
+            std::cout << "SMTP password encrypted. Set true to false & reenter the password next session." << std::endl;
+        } else {
+            std::cerr << "Failed to encrypt SMTP password for saving in config.json." << std::endl;
+            return false;
+        }
     }
 
     if (isEmailPassEncrypted) {
@@ -107,8 +116,17 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
             std::cerr << "Failed to decrypt email password. Please re-enter passwords in config.json." << std::endl;
             return false;
         }
+        emailPassword = emailPassDecrypted;
     } else {
-        emailPassDecrypted = emailPassEncrypted;
+        emailPassword = emailPassEncrypted;
+        if (encryptPassword(emailPassword, emailPassEncrypted, encryptionKey)) {
+            config["email_password"] = emailPassEncrypted;
+            config["email_pass_encrypted"] = true; // Mark the password as encrypted
+            std::cout << "Email password encrypted. Set true to false & reenter the password next session." << std::endl;
+        } else {
+            std::cerr << "Failed to encrypt email password for saving in config.json." << std::endl;
+            return false;
+        }
     }
 
     smtpPass = smtpPassDecrypted;
@@ -172,7 +190,6 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
 
     return configLoadedSuccessfully;
 }
-
 
 // Function to check if an email address is in a valid format
 bool isValidEmail(const std::string& email) {
