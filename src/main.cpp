@@ -381,7 +381,7 @@ int main() {
                 // Check if subject and message are empty
                 if (subject.empty() || message.empty()) {
                     std::cout << "Subject and Message are required. Please set them before sending emails." << std::endl;
-                    getEmailSubjectAndMessage(subject, message); // Prompt the user to enter the subject and message
+                    constructEmail(subject, message); // Prompt the user to enter the subject and message
                     continue; // Return to the main menu
                 }
                 

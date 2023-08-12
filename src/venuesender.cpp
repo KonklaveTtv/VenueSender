@@ -286,17 +286,20 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
 void constructEmail(std::string& subject, std::string& message) {
     std::cout << "===== Construct Email =====" << std::endl;
     
-    // Limit the input length for the subject
+    // Limit the input length for the subject and message
     const int maxSubjectLength = 100; // Adjust as needed
-    std::cout << "Enter the subject for the email: ";
+    const int maxMessageLength = 2000; // Adjust as needed
+
+    // Prompt user to enter email subject and message
+    std::cin.ignore(); // Clear input buffer
+    std::cout << "Enter subject for the email: ";
     std::getline(std::cin, subject);
+
     if (subject.length() > maxSubjectLength) {
         std::cout << "Subject too long. Please try again." << std::endl;
         return; // Or handle the error appropriately
     }
 
-    // Limit the input length for the message
-    const int maxMessageLength = 1000; // Adjust as needed
     std::cout << "Enter the message for the email (press Enter on a new line to finish):\n";
     std::string line;
     while (std::getline(std::cin, line) && !line.empty()) {
@@ -380,28 +383,6 @@ bool sendIndividualEmail(CURL* curl,
     return true;
 }
 
-// Function to send emails to selected venues
-void sendEmails(CURL* curl,
-                const std::vector<SelectedVenue>& selectedVenuesForEmail,
-                const std::string& senderEmail,
-                const std::string& subject,
-                const std::string& message,
-                const std::string& smtpServer,
-                int smtpPort,
-                const std::string& smtpUsername,
-                const std::string& smtpPass,
-                double& progress) {
-    // Set progress callback for the bulk email sending process
-    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, nullptr);
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-
-    // Iterate through selected venues and send individual emails
-    for (const SelectedVenue& venue : selectedVenuesForEmail) {
-        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass, progress);
-    }
-}
-
 void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
                               const std::string& senderEmail,
                               const std::string& subject,
@@ -435,13 +416,3 @@ void clearInputBuffer() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-// Function to get user input for email subject and message
-void getEmailSubjectAndMessage(std::string& subject, std::string& message) {
-    // Prompt user to enter email subject and message
-    std::cin.ignore(); // Clear input buffer
-    std::cout << "Enter subject for the email: ";
-    std::getline(std::cin, subject);
-
-    std::cout << "Enter message for the email: ";
-    std::getline(std::cin, message);
-}
