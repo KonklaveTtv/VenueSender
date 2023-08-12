@@ -51,7 +51,7 @@ void CurlHandleWrapper::cleanup() {
 }
 /*-------------------*/
 
-// Load configuration settings from config.json
+// Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
                         std::string& smtpUsername, std::string& smtpPass,
                         std::string& venuesCsvPath, std::string& emailPassword,
@@ -71,11 +71,48 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     smtpServer = config["smtp_server"].asString();
     smtpPort = config["smtp_port"].asInt();
     smtpUsername = config["smtp_username"].asString();
-    smtpPass = config["smtp_password"].asString();
+
+    // Load encrypted passwords from config.json
+    std::string smtpPassEncrypted = config["smtp_password"].asString();
+    std::string emailPassEncrypted = config["email_password"].asString();
+
     venuesCsvPath = config["venues_csv_path"].asString();
-    emailPassword = config["email_password"].asString();
     senderEmail = config["sender_email"].asString();
     senderSmtpPort = config["sender_smtp_port"].asInt();
+
+    // Initialize encryption key and nonce
+    std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
+    std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
+    initializeEncryptionParams(encryptionKey, encryptionNonce);
+
+    std::string smtpPassDecrypted;
+    std::string emailPassDecrypted;
+
+    // Check if the passwords are already encrypted
+    bool isSmtpPassEncrypted = config.isMember("smtp_pass_encrypted") ? config["smtp_pass_encrypted"].asBool() : false;
+    bool isEmailPassEncrypted = config.isMember("email_pass_encrypted") ? config["email_pass_encrypted"].asBool() : false;
+
+    // Decrypt or use decrypted passwords
+    if (isSmtpPassEncrypted) {
+        if (!decryptPassword(smtpPassEncrypted, smtpPassDecrypted, encryptionKey)) {
+            std::cerr << "Failed to decrypt SMTP password. Please re-enter passwords in config.json." << std::endl;
+            return false;
+        }
+    } else {
+        smtpPassDecrypted = smtpPassEncrypted;
+    }
+
+    if (isEmailPassEncrypted) {
+        if (!decryptPassword(emailPassEncrypted, emailPassDecrypted, encryptionKey)) {
+            std::cerr << "Failed to decrypt email password. Please re-enter passwords in config.json." << std::endl;
+            return false;
+        }
+    } else {
+        emailPassDecrypted = emailPassEncrypted;
+    }
+
+    smtpPass = smtpPassDecrypted;
+    emailPassword = emailPassDecrypted;
 
     // Define and initialize variables to track loaded settings
     bool smtpServerLoaded = !smtpServer.empty();
@@ -87,10 +124,12 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     bool senderEmailLoaded = !senderEmail.empty();
     bool senderSmtpPortLoaded = senderSmtpPort > 0;
 
+    // Check if the configuration settings are loaded successfully
     bool configLoadedSuccessfully = smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded &&
                                     smtpPassLoaded && venuesCsvPathLoaded && emailPasswordLoaded &&
                                     senderEmailLoaded && senderSmtpPortLoaded;
 
+    // Display messages based on loaded settings
     if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || smtpPassLoaded || 
         venuesCsvPathLoaded || emailPasswordLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
         std::cout << "Configuration settings loaded from config.json." << std::endl;
@@ -101,8 +140,39 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
         std::cerr << "Failed to load configuration settings from config.json." << std::endl;
     }
 
+    // Encrypt the passwords if they are not already encrypted
+    if (!isSmtpPassEncrypted) {
+        std::string smtpPassEncryptedNew;
+        if (!encryptPassword(smtpPass, smtpPassEncryptedNew, encryptionKey)) {
+            std::cerr << "Failed to encrypt SMTP password for saving in config.json." << std::endl;
+            return false;
+        }
+        config["smtp_password"] = smtpPassEncryptedNew;
+        config["smtp_pass_encrypted"] = true;
+    }
+
+    if (!isEmailPassEncrypted) {
+        std::string emailPassEncryptedNew;
+        if (!encryptPassword(emailPassword, emailPassEncryptedNew, encryptionKey)) {
+            std::cerr << "Failed to encrypt email password for saving in config.json." << std::endl;
+            return false;
+        }
+        config["email_password"] = emailPassEncryptedNew;
+        config["email_pass_encrypted"] = true;
+    }
+
+    // Open the config file for writing and save the updated JSON object
+    std::ofstream configFileOut("config.json");
+    if (!configFileOut.is_open()) {
+        std::cerr << "Failed to open config.json for writing." << std::endl;
+        return false;
+    }
+    configFileOut << config;
+    configFileOut.close();
+
     return configLoadedSuccessfully;
 }
+
 
 // Function to check if an email address is in a valid format
 bool isValidEmail(const std::string& email) {
@@ -195,7 +265,9 @@ bool sendIndividualEmail(CURL* curl,
                         const std::string& subject,
                         const std::string& message,
                         const std::string& smtpServer,
-                        int smtpPort) {
+                        int smtpPort,
+                        const std::string& smtpUsername,
+                        const std::string& smtpPass) {
     // Set up and send an email using libcurl
     if (!curl) {
         std::cerr << "Failed to initialize libcurl." << std::endl;
@@ -220,20 +292,14 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, nullptr);
     curl_easy_setopt(curl, CURLOPT_READDATA, nullptr);
     curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(message.length()));
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, nullptr);
-    curl_easy_setopt(curl, CURLOPT_READDATA, nullptr);
-    curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(message.length()));
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, nullptr);
-    curl_easy_setopt(curl, CURLOPT_READDATA, nullptr);
-    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(message.length()));
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, nullptr);
-    curl_easy_setopt(curl, CURLOPT_READDATA, nullptr);
-    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(message.length()));
 
     // Set the URL for the SMTP server
     std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
+
+    // Set SMTP username and password
+    std::string smtpUserPass = smtpUsername + ":" + smtpPass;
+    curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUserPass.c_str());
 
     // Set the progress callback function
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
@@ -262,7 +328,9 @@ void sendEmails(CURL* curl,
                 const std::string& subject,
                 const std::string& message,
                 const std::string& smtpServer,
-                int smtpPort) {
+                int smtpPort,
+                const std::string& smtpUsername,
+                const std::string& smtpPass) {
     // Set progress callback for the bulk email sending process
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
     curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, nullptr);
@@ -270,7 +338,7 @@ void sendEmails(CURL* curl,
 
     // Iterate through selected venues and send individual emails
     for (const SelectedVenue& venue : selectedVenuesForEmail) {
-        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort);
+        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass);
     }
 }
 

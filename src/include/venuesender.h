@@ -83,7 +83,7 @@ const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAnd
 const int SHOW_EMAIL_SENDING_PROGRESS = static_cast<int>(MenuOption::ShowEmailSendingProgress);
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
-// Load configuration settings from config.json
+// Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
                         std::string& smtpPass, std::string& venuesCsvPath, 
                         std::string& emailPassword, std::string& senderEmail, int& senderSmtpPort);
@@ -101,20 +101,30 @@ bool isValidEmail(const std::string& email);
 
 // Function to send an individual email to a recipient with custom subject and message
 bool sendIndividualEmail(CURL* curl,
-                         const SelectedVenue& selectedVenue,
-                         const std::string& senderEmail,
-                         const std::string& subject,
-                         const std::string& message,
-                         const std::string& smtpServer,
-                         int smtpPort);
+                        const SelectedVenue& selectedVenue,
+                        const std::string& senderEmail,
+                        const std::string& subject,
+                        const std::string& message,
+                        const std::string& smtpServer,
+                        int smtpPort,
+                        const std::string& smtpUsername,
+                        const std::string& smtpPass);
+
+// Function to send bulk emails to recipients with custom subject and message using libcurl
+void sendEmails(CURL* curl,
+                const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                const std::string& senderEmail,
+                const std::string& subject,
+                const std::string& message,
+                const std::string& smtpServer,
+                int smtpPort,
+                const std::string& smtpUsername,
+                const std::string& smtpPass);
 
 // Function to clear input buffer
 void clearInputBuffer();
 
 void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
-
-// Function to send bulk emails to recipients with custom subject and message using libcurl
-void sendEmails(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail, const std::string& senderEmail, const std::string& subject, const std::string& message, const std::string& smtpServer, int smtpPort);
 
 // Function to view the progress of email sending done by sendIndividualEmail()
 void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail);

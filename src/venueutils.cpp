@@ -69,74 +69,72 @@ std::vector<int> getUniqueValues(const std::vector<Venue>& venues, int Venue::* 
     return uniqueValues;
 }
 
-// Convert plain-text password to hex
-std::string stringToHex(const std::string& input) {
-    std::string hex;
-    for (char c : input) {
-        hex += "0123456789ABCDEF"[((c >> 4) & 0xF)];
-        hex += "0123456789ABCDEF"[((c >> 0) & 0xF)];
-    }
-    return hex; // Return hex, not stringToHex
-}
-
-// Utility function to convert hex data to string
-std::string hexToString(const std::string& hex) {
-    std::string str;
-    str.reserve(hex.size() / 2);
-
-    for (size_t i = 0; i < hex.size(); i += 2) {
-        char byte = (hex[i] <= '9' ? hex[i] - '0' : hex[i] - 'A' + 10) << 4;
-        byte |= hex[i + 1] <= '9' ? hex[i + 1] - '0' : hex[i + 1] - 'A' + 10;
-        str.push_back(byte);
+bool decryptPassword(const std::string& encryptedPassword, std::string& decryptedPassword,
+                      const std::array<unsigned char, crypto_secretbox_KEYBYTES>& encryptionKey) {
+    // Check if libsodium has been properly initialized
+    if (sodium_init() < 0) {
+        std::cerr << "Error initializing libsodium." << std::endl;
+        return false;
     }
 
-    return str; // Return str, not hexToString
-}
+    // Define the encryption nonce length
+    const size_t NONCE_LENGTH = crypto_secretbox_NONCEBYTES;
 
-// Utility function to convert binary data to hex
-std::string binToHex(const std::string& input) {
-    static const char* hex_chars = "0123456789ABCDEF";
-    std::string hex;
-    hex.reserve(input.size() * 2);
-
-    for (unsigned char c : input) {
-        hex.push_back(hex_chars[c >> 4]);
-        hex.push_back(hex_chars[c & 0xF]);
+    // Check if the encrypted password is long enough to contain the nonce
+    if (encryptedPassword.size() < NONCE_LENGTH) {
+        std::cerr << "Invalid encrypted password format." << std::endl;
+        return false;
     }
 
-    return hex;
+    // Extract the encryption nonce from the encrypted password
+    std::string nonce = encryptedPassword.substr(0, NONCE_LENGTH);
+
+    // Extract the ciphertext from the encrypted password
+    std::string ciphertext = encryptedPassword.substr(NONCE_LENGTH);
+
+    // Initialize a buffer for the decrypted password
+    unsigned char decryptedBuffer[ciphertext.size()];
+
+    // Decrypt the ciphertext
+    if (crypto_secretbox_open_easy(decryptedBuffer, reinterpret_cast<const unsigned char*>(ciphertext.c_str()), ciphertext.size(),
+                                   reinterpret_cast<const unsigned char*>(nonce.c_str()), encryptionKey.data()) != 0) {
+        std::cerr << "Error decrypting password." << std::endl;
+        return false;
+    }
+
+    // Convert the decrypted buffer to a string
+    decryptedPassword.assign(reinterpret_cast<char*>(decryptedBuffer), ciphertext.size());
+
+    return true;
 }
 
-// Convert the Email Password from Plain Text to Hex (stringToHex)
-std::string EmailPassToHex(const std::string& emailPassword) {
-    // Convert plain-text email password to hex
-    std::string emailPassHex = stringToHex(emailPassword);
+bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword,
+                     const std::array<unsigned char, crypto_secretbox_KEYBYTES>& encryptionKey) {
+    // Check if libsodium has been properly initialized
+    if (sodium_init() < 0) {
+        std::cerr << "Error initializing libsodium." << std::endl;
+        return false;
+    }
 
-    return emailPassHex;
-}
+    // Generate a random nonce
+    std::array<unsigned char, crypto_secretbox_NONCEBYTES> nonce;
+    randombytes_buf(nonce.data(), nonce.size());
 
-// Convert the Smtp Password from Plain Text to Hex (stringToHex)
-std::string SmtpPassToHex(const std::string& smtpPass) {
-    // Convert plain-text SMTP password to hex
-    std::string smtpPassHex = stringToHex(smtpPass);
+    // Initialize a buffer for the ciphertext
+    unsigned char encryptedBuffer[decryptedPassword.size()];
 
-    return smtpPassHex;
-}
+    // Encrypt the password
+    if (crypto_secretbox_easy(encryptedBuffer, reinterpret_cast<const unsigned char*>(decryptedPassword.c_str()), decryptedPassword.size(),
+                              nonce.data(), encryptionKey.data()) != 0) {
+        std::cerr << "Error encrypting password." << std::endl;
+        return false;
+    }
 
-// Convert the Email Password from Plain Text to Hex (stringToHex)
-std::string EmailPassHexToString(const std::string& emailPassHex) {
-    // Convert plain-text email password to hex
-    std::string emailPass = hexToString(emailPassHex);
+    // Combine the nonce and ciphertext into the encrypted password
+    encryptedPassword = std::string(reinterpret_cast<char*>(nonce.data()), nonce.size()) +
+                        std::string(reinterpret_cast<char*>(encryptedBuffer), decryptedPassword.size());
 
-    return emailPassHex;
-}
-
-// Convert the Smtp Password from Plain Text to Hex (stringToHex)
-std::string SmtpPassHexToString(const std::string& smtpPassHex) {
-    // Convert plain-text SMTP password to hex
-    std::string smtpPass = hexToString(smtpPassHex);
-
-    return smtpPassHex;
+    return true;
 }
 
 // Initialize the encryption key and nonce

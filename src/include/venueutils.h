@@ -14,35 +14,22 @@
 class Venue;
 
 
-//*Password Conversion Function*//
+//*Password Encryption Function*//
 //---------------------------------//
 
-// Utility function to convert binary data to hex
-std::string binToHex(const std::string& input);
+// Utility function to decrypt the email and smtp passwords
+bool decryptPassword(const std::string& encryptedPassword, std::string& decryptedPassword,
+                      const std::array<unsigned char, crypto_secretbox_KEYBYTES>& encryptionKey);
 
-// Utility function to convert hex data to string
-std::string hexToString(const std::string& hex);
-
-// Convert plain-text password to hex
-std::string stringToHex(const std::string& input);
-
-// Convert the Email Password from Plain Text to Hex(stringToHex)
-std::string EmailPassToHex(const std::string& emailPassword);
-
-// Convert the Smtp Password from Plain Text to Hex (stringToHex)
-std::string SmtpPassToHex(const std::string& smtpPass);
-
-// Convert the Email Password from Hex to Plain Text (hexToString)
-std::string EmailPassHexToString(const std::string& emailPassHex);
-
-// Convert the Smtp Password from Hex to Plain Text (hexToString)
-std::string SmtpPassHexToString(const std::string& smtpPassHex);
-
-/*End of Password Conversion Function Declarations*/
+// Utility function to encrypt the email and smtp passwords
+bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword,
+                     const std::array<unsigned char, crypto_secretbox_KEYBYTES>& encryptionKey);
 
 // Function to initialize encryption key and nonce
 void initializeEncryptionParams(std::array<unsigned char, crypto_secretbox_KEYBYTES>& encryptionKey,
                                  std::array<unsigned char, crypto_secretbox_NONCEBYTES>& encryptionNonce);
+
+/*End of Password Encryption Function Declarations*/
 
 // Declaration for getUniqueValues with a member pointer to a string
 std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::string Venue::* memberPtr);

@@ -372,18 +372,24 @@ int main() {
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
 
-            // Check if selectedVenuesForEmail is empty
-            if (selectedVenuesForEmail.empty()) {
-                std::cout << "No venues selected. Please add venues before sending emails." << std::endl;
-                continue; // Return to the main menu
-            }
+                // Check if selectedVenuesForEmail is empty
+                if (selectedVenuesForEmail.empty()) {
+                    std::cout << "No venues selected. Please add venues before sending emails." << std::endl;
+                    continue; // Return to the main menu
+                }
 
-            // Check if subject and message are empty
-            if (subject.empty() || message.empty()) {
-                std::cout << "Subject and Message are required. Please set them before sending emails." << std::endl;
-                getEmailSubjectAndMessage(subject, message); // Prompt the user to enter the subject and message
-                continue; // Return to the main menu
-            }
+                // Check if subject and message are empty
+                if (subject.empty() || message.empty()) {
+                    std::cout << "Subject and Message are required. Please set them before sending emails." << std::endl;
+                    getEmailSubjectAndMessage(subject, message); // Prompt the user to enter the subject and message
+                    continue; // Return to the main menu
+                }
+                
+                // Check if SMTP password is empty
+                if (smtpPass.empty()) {
+                    std::cout << "SMTP Password is required. Please set it before sending emails." << std::endl;
+                    continue; // Return to the main menu
+                }
             
             // Prompt for confirmation
             std::cout << "Confirm sending the email (Y/N): ";
@@ -394,9 +400,10 @@ int main() {
             if (confirmSend == 'Y' || confirmSend == 'y') {
                 // Proceed to send emails if confirmed
                 emailSendProgress = 0; // Reset progress
-                for (const SelectedVenue& venue : selectedVenuesForEmail) {
-                    sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message, smtpServer, smtpPort);
-                    ++emailSendProgress;
+                    for (const SelectedVenue& venue : selectedVenuesForEmail) {
+                        sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
+                                            smtpServer, smtpPort, smtpUsername, smtpPass);
+                        ++emailSendProgress;
 
                     // Update the progress
                     curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
