@@ -316,7 +316,8 @@ bool sendIndividualEmail(CURL* curl,
                         const std::string& smtpServer,
                         int smtpPort,
                         const std::string& smtpUsername,
-                        const std::string& smtpPass) {
+                        const std::string& smtpPass,
+                        double& progress) {
     // Set up and send an email using libcurl
     if (!curl) {
         std::cerr << "Failed to initialize libcurl." << std::endl;
@@ -352,7 +353,7 @@ bool sendIndividualEmail(CURL* curl,
 
     // Set the progress callback function
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, nullptr);
+    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 
     // Perform the email sending
@@ -379,7 +380,8 @@ void sendEmails(CURL* curl,
                 const std::string& smtpServer,
                 int smtpPort,
                 const std::string& smtpUsername,
-                const std::string& smtpPass) {
+                const std::string& smtpPass,
+                double& progress) {
     // Set progress callback for the bulk email sending process
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
     curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, nullptr);
@@ -387,17 +389,29 @@ void sendEmails(CURL* curl,
 
     // Iterate through selected venues and send individual emails
     for (const SelectedVenue& venue : selectedVenuesForEmail) {
-        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass);
+        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass, progress);
     }
 }
 
-void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail) {
+void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                              const std::string& senderEmail,
+                              const std::string& subject,
+                              const std::string& message,
+                              const std::string& smtpServer,
+                              int smtpPort,
+                              const std::string& smtpUsername,
+                              const std::string& smtpPass) {
     // Set the custom progress callback function from CurlHandleWrapper
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+
+    double progress = 0.0; // Initialize progress
 
     for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
         const SelectedVenue& venue = selectedVenuesForEmail[i];
         std::cout << "Sending email to: " << venue.email << std::endl;
+
+        // Send the individual email with progress tracking
+        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass, progress);
 
         // Simulate processing time
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

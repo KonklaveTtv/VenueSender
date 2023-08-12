@@ -106,12 +106,11 @@ int displayMenuOptions() {
         std::cout << "6. View Selected Venues" << std::endl;
         std::cout << "7. Show Email Settings" << std::endl;
         std::cout << "8. Finish & Send Emails" << std::endl;
-        std::cout << "9. View Email Sending Progress" << std::endl;
-        std::cout << "10. Exit VenueSender" << std::endl;
+        std::cout << "9. Exit VenueSender" << std::endl;
         std::cout << "Enter your choice: ";
 
         if (!(std::cin >> choice) || !isValidMenuChoice(choice)) {
-            std::cout << "Invalid choice. Please enter a number between 1 and 10." << std::endl;
+            std::cout << "Invalid choice. Please enter a number between 1 and 9." << std::endl;
             std::cin.clear();
             clearInputBuffer();
         } else {
@@ -263,6 +262,7 @@ int main() {
     int senderSmtpPort;
     std::string subject;
     std::string message;
+    double progress;
 
     // Load configuration settings from config.json
     if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
@@ -402,15 +402,16 @@ int main() {
                 emailSendProgress = 0; // Reset progress
                     for (const SelectedVenue& venue : selectedVenuesForEmail) {
                         sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
-                                            smtpServer, smtpPort, smtpUsername, smtpPass);
+                                            smtpServer, smtpPort, smtpUsername, smtpPass, progress);
                         ++emailSendProgress;
 
                     // Update the progress
                     curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
 
-                    // Simulate processing time
-                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                    // Display email sending progress
+                    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass);
                 }
+
                 filteredVenues.clear(); // Clear the filtered venues for the next round of emails
 
                 // Reset subject and message after sending emails
@@ -423,10 +424,7 @@ int main() {
             } else {
                 std::cout << "Invalid choice. Please try again." << std::endl;
                 // The user entered an invalid choice, return to the main menu without clearing the selectedVenuesForEmail vector
-            }
-         } else if (choice == SHOW_EMAIL_SENDING_PROGRESS) {
-                // View Email Sending Progress
-                viewEmailSendingProgress(curl, selectedVenuesForEmail);
+                }
             } else if (choice == EXIT_OPTION) {
                 // Prompt for confirmation before exiting
                 std::cout << "Are you sure you want to exit? (Y/N): ";

@@ -62,7 +62,6 @@ enum class MenuOption {
     ViewSelectedVenues,
     ShowEmailSettings,
     FinishAndSendEmails,
-    ShowEmailSendingProgress,
     Exit
 };
 
@@ -80,7 +79,6 @@ const int FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuOption::FilterByCapac
 const int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
 const int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
 const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmails);
-const int SHOW_EMAIL_SENDING_PROGRESS = static_cast<int>(MenuOption::ShowEmailSendingProgress);
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
 // Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
@@ -108,7 +106,8 @@ bool sendIndividualEmail(CURL* curl,
                         const std::string& smtpServer,
                         int smtpPort,
                         const std::string& smtpUsername,
-                        const std::string& smtpPass);
+                        const std::string& smtpPass,
+                        double& progress);
 
 // Function to send bulk emails to recipients with custom subject and message using libcurl
 void sendEmails(CURL* curl,
@@ -119,7 +118,8 @@ void sendEmails(CURL* curl,
                 const std::string& smtpServer,
                 int smtpPort,
                 const std::string& smtpUsername,
-                const std::string& smtpPass);
+                const std::string& smtpPass,
+                double& progress);
 
 // Function to clear input buffer
 void clearInputBuffer();
@@ -127,7 +127,14 @@ void clearInputBuffer();
 void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
 
 // Function to view the progress of email sending done by sendIndividualEmail()
-void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail);
+void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                              const std::string& senderEmail,
+                              const std::string& subject,
+                              const std::string& message,
+                              const std::string& smtpServer,
+                              int smtpPort,
+                              const std::string& smtpUsername,
+                              const std::string& smtpPass);
 
 void getEmailSubjectAndMessage(std::string& subject, std::string& message);
 
