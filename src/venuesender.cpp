@@ -113,7 +113,7 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
 
     if (isEmailPassEncrypted) {
         if (!decryptPassword(emailPassEncrypted, emailPassDecrypted, encryptionKey)) {
-            std::cerr << "Failed to decrypt email password. Please re-enter passwords in config.json." << std::endl;
+            std::cerr << "Failed to decrypt email password. Please re-enter passwords next session in config.json." << std::endl;
             return false;
         }
         emailPassword = emailPassDecrypted;
@@ -122,7 +122,7 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
         if (encryptPassword(emailPassword, emailPassEncrypted, encryptionKey)) {
             config["email_password"] = emailPassEncrypted;
             config["email_pass_encrypted"] = true; // Mark the password as encrypted
-            std::cout << "Email password encrypted. Set true to false & reenter the password next session." << std::endl;
+            std::cout << "Email password encrypted. Set true to false & reenter the password next session in config.json." << std::endl;
         } else {
             std::cerr << "Failed to encrypt email password for saving in config.json." << std::endl;
             return false;
