@@ -70,6 +70,8 @@ enum class MenuOption {
 // Constants
 const char CSV_DELIMITER = ','; // Delimiter used in CSV files
 const int MAX_EMAIL_LENGTH = 320; // Maximum length for an email address, adjust as needed
+const int MAX_MESSAGE_LENGTH = 100; // Maximum length for the email subject, adjust as needed
+const int MAX_MESSAGE_LENGTH = 2000; // Maximum length for an email address, adjust as needed
 
 // Options for filtering venues by different criteria
 const int FILTER_BY_GENRE_OPTION = static_cast<int>(MenuOption::FilterByGenre);

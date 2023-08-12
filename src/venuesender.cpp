@@ -287,8 +287,8 @@ void constructEmail(std::string& subject, std::string& message) {
     std::cout << "===== Construct Email =====" << std::endl;
     
     // Limit the input length for the subject and message
-    const int maxSubjectLength = 100; // Adjust as needed
-    const int maxMessageLength = 2000; // Adjust as needed
+    const int maxSubjectLength = MAX_SUBJECT_LENGTH; // Adjust as needed
+    const int maxMessageLength = MAX_MESSAGE_LENGTH; // Adjust as needed
 
     // Prompt user to enter email subject and message
     std::cin.ignore(); // Clear input buffer
