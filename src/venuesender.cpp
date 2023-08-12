@@ -80,6 +80,9 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     senderEmail = config["sender_email"].asString();
     senderSmtpPort = config["sender_smtp_port"].asInt();
 
+
+// SMTP/Mail Password Encryption Check
+
     // Initialize encryption key and nonce
     std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
     std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
@@ -88,49 +91,39 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     std::string smtpPassDecrypted;
     std::string emailPassDecrypted;
 
-    // Check if the passwords are already encrypted
+
     bool isSmtpPassEncrypted = config.isMember("smtp_pass_encrypted") ? config["smtp_pass_encrypted"].asBool() : false;
     bool isEmailPassEncrypted = config.isMember("email_pass_encrypted") ? config["email_pass_encrypted"].asBool() : false;
 
-    // Decrypt or use decrypted passwords
-    if (isSmtpPassEncrypted) {
-        if (!decryptPassword(smtpPassEncrypted, smtpPassDecrypted, encryptionKey)) {
-            std::cerr << "Failed to decrypt SMTP password. Please re-enter passwords in config.json." << std::endl;
+
+    if (isSmtpPassEncrypted || isEmailPassEncrypted) {
+            std::cerr << "Password decryption failed. Set 'smtp_pass_encrypted' and 'email_pass_encrypted' to false in config.json and re-enter both passwords" << std::endl;
             return false;
-        }
-        smtpPass = smtpPassDecrypted;
-    } else {
-        smtpPass = smtpPassEncrypted;
-        if (encryptPassword(smtpPass, smtpPassEncrypted, encryptionKey)) {
-            config["smtp_password"] = smtpPassEncrypted;
-            config["smtp_pass_encrypted"] = true; // Mark the password as encrypted
-            std::cout << "SMTP password encrypted. Set true to false & reenter the password next session." << std::endl;
-        } else {
-            std::cerr << "Failed to encrypt SMTP password for saving in config.json." << std::endl;
-            return false;
-        }
     }
 
-    if (isEmailPassEncrypted) {
-        if (!decryptPassword(emailPassEncrypted, emailPassDecrypted, encryptionKey)) {
-            std::cerr << "Failed to decrypt email password. Please re-enter passwords next session in config.json." << std::endl;
-            return false;
-        }
-        emailPassword = emailPassDecrypted;
+    smtpPass = smtpPassEncrypted;
+    if (encryptPassword(smtpPass, smtpPassEncrypted, encryptionKey)) {
+        config["smtp_password"] = smtpPassEncrypted;
+        config["smtp_pass_encrypted"] = true; // Mark the password as encrypted
+        std::cout << "Passwords encrypted successfully." << std::endl;
     } else {
-        emailPassword = emailPassEncrypted;
-        if (encryptPassword(emailPassword, emailPassEncrypted, encryptionKey)) {
-            config["email_password"] = emailPassEncrypted;
-            config["email_pass_encrypted"] = true; // Mark the password as encrypted
-            std::cout << "Email password encrypted. Set true to false & reenter the password next session in config.json." << std::endl;
-        } else {
-            std::cerr << "Failed to encrypt email password for saving in config.json." << std::endl;
-            return false;
-        }
+        std::cerr << "Password encryption failed. Set 'smtp_pass_encrypted' and 'email_pass_encrypted' to false in config.json and re-enter both passwords" << std::endl;
+        return false;
+    }
+
+    emailPassword = emailPassEncrypted;
+    if (encryptPassword(emailPassword, emailPassEncrypted, encryptionKey)) {
+        config["email_password"] = emailPassEncrypted;
+        config["email_pass_encrypted"] = true; // Mark the password as encrypted
+    } else {
+        std::cerr << "Password decryption failed. Set 'smtp_pass_encrypted' and 'email_pass_encrypted' to false in config.json and re-enter both passwords" << std::endl;
+        return false;
     }
 
     smtpPass = smtpPassDecrypted;
     emailPassword = emailPassDecrypted;
+
+// End of SMTP/Mail Password Encryption Check
 
     // Define and initialize variables to track loaded settings
     bool smtpServerLoaded = !smtpServer.empty();
