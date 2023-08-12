@@ -83,8 +83,6 @@ void clearInputBuffer();
 // Function to read CSV file and populate data
 void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
 
-std::string getVenuesCsvPathFromConfig();
-
 // Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
                         std::string& smtpPass, std::string& venuesCsvPath, 
@@ -93,17 +91,28 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smt
 // Function to display the menu
 int displayMenuOptions();
 
-void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
-
 // Forward declare the processVenueSelection function
 void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                            std::vector<SelectedVenue>& selectedVenuesForEmail);
 
-// Function to construct an email by providing subject and message
-void constructEmail(std::string& subject, std::string& message);
+void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
 
 // Check if an email address is in a valid format
 bool isValidEmail(const std::string& email);
+
+// Function to construct an email by providing subject and message
+void constructEmail(std::string& subject, std::string& message);
+
+
+// Function to view the progress of email sending done by sendIndividualEmail()
+void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                              const std::string& senderEmail,
+                              const std::string& subject,
+                              const std::string& message,
+                              const std::string& smtpServer,
+                              int smtpPort,
+                              const std::string& smtpUsername,
+                              const std::string& smtpPass);
 
 // Function to send an individual email to a recipient with custom subject and message
 bool sendIndividualEmail(CURL* curl,
@@ -116,15 +125,5 @@ bool sendIndividualEmail(CURL* curl,
                         const std::string& smtpUsername,
                         const std::string& smtpPass,
                         double& progress);
-
-// Function to view the progress of email sending done by sendIndividualEmail()
-void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
-                              const std::string& senderEmail,
-                              const std::string& subject,
-                              const std::string& message,
-                              const std::string& smtpServer,
-                              int smtpPort,
-                              const std::string& smtpUsername,
-                              const std::string& smtpPass);
 
 #endif // VENUESENDER_H
