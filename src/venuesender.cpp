@@ -53,6 +53,13 @@ void CurlHandleWrapper::cleanup() {
 }
 /*-------------------*/
 
+// Clear the input buffer
+void clearInputBuffer() {
+    // Clear the input buffer
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
 // Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
                         std::string& smtpUsername, std::string& smtpPass,
@@ -407,11 +414,3 @@ void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& sele
     }
     std::cout << "Email sending progress completed." << std::endl;
 }
-
-// Clear the input buffer
-void clearInputBuffer() {
-    // Clear the input buffer
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
-
