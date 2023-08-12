@@ -9,6 +9,8 @@
 
 #include <curl/curl.h>
 
+extern std::string emailBeingSent;
+
 class CurlHandleWrapper {
 public:
     CurlHandleWrapper();
