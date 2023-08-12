@@ -147,11 +147,11 @@ std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues
     std::istringstream iss(input);
     std::string indexStr;
     while (std::getline(iss, indexStr, CSV_DELIMITER)) {
-        size_t selectedIndex = std::stoi(indexStr) - 1;
-        if (selectedIndex < filterOptions.size()) {
+        try {
+            size_t selectedIndex = std::stoi(indexStr) - 1;
             selectedIndices.push_back(selectedIndex);
-        } else {
-            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << "Invalid index. Skipping." << std::endl;
         }
     }
 
@@ -168,7 +168,7 @@ std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues
                 }
             }
         } else {
-            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+            std::cout << "Invalid index. Skipping." << std::endl;
         }
     }
 
@@ -208,11 +208,11 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
     std::istringstream iss(input);
     std::string indexStr;
     while (std::getline(iss, indexStr, CSV_DELIMITER)) {
-        size_t selectedIndex = std::stoi(indexStr) - 1;
-        if (selectedIndex < filterOptions.size()) {
+        try {
+            size_t selectedIndex = std::stoi(indexStr) - 1;
             selectedIndices.push_back(selectedIndex);
-        } else {
-            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+        } catch (const std::exception& e) {
+            std::cout << "Invalid index format. Skipping." << std::endl;
         }
     }
 
@@ -227,7 +227,7 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                 }
             }
         } else {
-            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+            std::cout << "Invalid index: " << selectedIndex << std::endl;
         }
     }
 

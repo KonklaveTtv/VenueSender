@@ -1,19 +1,16 @@
 {
-    // SMTP Server settings
-    "smtp_server": "smtp.example.com",     // Replace with your SMTP server address
-    "smtp_port": 587,                      // Replace with your SMTP port number
-
-    // SMTP Authentication credentials
-    "smtp_username": "your_smtp_username", // Replace with your SMTP username
-    "smtp_password": "your_smtp_password", // Replace with your SMTP password
-
-    // Path to the CSV file containing venue data
-    "venues_csv_path": "venues.csv",       // Provide the path to your venues CSV file
-
-    // Email account password
-    "email_password": "your_email_password", // Replace with your email account password
-
-    // Sender's email address and SMTP port
-    "sender_email": "your_sender_email@example.com", // Replace with your sender email address
-    "sender_smtp_port": 587               // Replace with the SMTP port for your sender email
+	"email_pass_encrypted" : true,
+	"email_password" : "\u0001\ufffd\"\ud9bf\udc92\u045d\u0778Hj\u0012\u07a6\ufffdO\u0230\u057e",
+	// Sender's email address and SMTP port
+	"sender_email" : "your_sender_email@example.com", // Replace with your sender email address
+	"sender_smtp_port" : 587, // Replace with the SMTP port for your sender email
+	"smtp_pass_encrypted" : true,
+	"smtp_password" : "\u9836i\u02ce\u06077\u05ab\u0636\ud9dc\udea1+\ud8ec\ude7dt\ufffd",
+	"smtp_port" : 587, // Replace with your SMTP port number
+	// SMTP Server settings
+	"smtp_server" : "smtp.example.com", // Replace with your SMTP server address
+	// SMTP Authentication credentials
+	"smtp_username" : "your_smtp_username", // Replace with your SMTP username
+	// Path to the CSV file containing venue data
+	"venues_csv_path" : "venues.csv" // Provide the path to your venues CSV file
 }

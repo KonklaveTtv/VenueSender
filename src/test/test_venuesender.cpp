@@ -76,7 +76,8 @@ TEST_CASE("Test Read CSV", "[csv]") {
 TEST_CASE("Test Send Individual Email", "[email]") {
     // Set up mock data for sendIndividualEmail function
     CURL* curl = curl_easy_init();  // Initialize a mock CURL handle
-    SelectedVenue selectedVenue("Venue", "venue@example.com", "City", "Genre", "State", 100);
+    Venue testVenue("Venue", "venue@example.com", "City", "Genre", "State", 100);
+    SelectedVenue selectedVenue = testVenue;
     std::string senderEmail = "sender@example.com";
     std::string subject = "Mock Subject";
     std::string message = "Mock Message";
@@ -126,10 +127,12 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     std::vector<SelectedVenue> selectedVenuesForEmail;
 
     // Simulate adding some selected venues
-    SelectedVenue venue1("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
-    SelectedVenue venue2("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
-    selectedVenuesForEmail.push_back(venue1);
-    selectedVenuesForEmail.push_back(venue2);
+    SelectedVenue testVenue1("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
+    SelectedVenue testVenue2("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
+    SelectedVenue selectedVenue = testVenue1;
+    SelectedVenue selectedVenue = testVenue2;
+    selectedVenuesForEmail.push_back(testVenue1);
+    selectedVenuesForEmail.push_back(testVenue2);
 
     // Redirect cout to capture console output
     std::stringstream outputCapture;
@@ -176,13 +179,16 @@ TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
 
 TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
     // Create a mock vector of temporary filtered venues
+    SelectedVenue selectedVenue = testVenue1;
+    SelectedVenue selectedVenue = testVenue2;
+    SelectedVenue selectedVenue = testVenue2;
     std::vector<SelectedVenue> temporaryFilteredVenues;
-    SelectedVenue venue1("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
-    SelectedVenue venue2("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
-    SelectedVenue venue3("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
-    temporaryFilteredVenues.push_back(venue1);
-    temporaryFilteredVenues.push_back(venue2);
-    temporaryFilteredVenues.push_back(venue3);
+    SelectedVenue testVenue1("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
+    SelectedVenue testVenue2("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
+    SelectedVenue testVenue3("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
+    temporaryFilteredVenues.push_back(testVenue1);
+    temporaryFilteredVenues.push_back(testVenue2);
+    temporaryFilteredVenues.push_back(testVenue3);
 
     // Create a mock vector for selected venues
     std::vector<SelectedVenue> selectedVenuesForEmail;
