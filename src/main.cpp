@@ -14,10 +14,10 @@
 std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
 std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
 
-// Function to validate the user's choice
 bool isValidMenuChoice(int choice) {
     // Validate if the choice is within valid menu options
-    return choice >= static_cast<int>(MenuOption::FilterByGenre) && choice <= static_cast<int>(MenuOption::Exit);
+    return choice >= static_cast<int>(MenuOption::FilterByGenre) &&
+           choice <= static_cast<int>(MenuOption::Exit);
 }
 
 // Convert Venue to SelectedVenue
@@ -36,6 +36,10 @@ SelectedVenue convertToSelectedVenue(const Venue& venue) {
 // Function to process user input and select venues
 void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                            std::vector<SelectedVenue>& selectedVenuesForEmail) {
+        if(temporaryFilteredVenues.empty()){
+        return;
+    }
+
     std::cout << "Select venues to add (comma-separated indices): ";
     std::string input;
     const int maxInputLength = 256;
@@ -52,13 +56,14 @@ void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVe
         std::istringstream iss(indexStr);
         if (!(iss >> selectedIndex)) {
             std::cout << "Invalid index format. Skipping." << std::endl;
-            continue; // Or handle the error appropriately
+            continue; // Skip displaying genres if the index is invalid
         }
         selectedIndex--; // Decrement index to match 0-based indexing
         if (selectedIndex < temporaryFilteredVenues.size()) {
             selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
         } else {
             std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+            continue; // Skip displaying genres if the index is invalid
         }
     }
     // Add a newline to separate the filtered venues from the main menu
@@ -93,7 +98,6 @@ void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::s
     std::cout << "===========================" << std::endl;
 }
 
-// Function to display the menu options
 int displayMenuOptions() {
     int choice;
     do {
@@ -109,9 +113,12 @@ int displayMenuOptions() {
         std::cout << "9. Exit VenueSender" << std::endl;
         std::cout << "Enter your choice: ";
 
-        if (!(std::cin >> choice) || !isValidMenuChoice(choice)) {
-            std::cout << "Invalid choice. Please enter a number between 1 and 9." << std::endl;
+        if (!(std::cin >> choice)) {
+            std::cout << "Invalid input. Please enter a number." << std::endl;
             std::cin.clear();
+            clearInputBuffer();
+        } else if (!isValidMenuChoice(choice)) {
+            std::cout << "Invalid choice. Please enter a number between 1 and 9." << std::endl;
             clearInputBuffer();
         } else {
             break;

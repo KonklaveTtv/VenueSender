@@ -307,7 +307,7 @@ void constructEmail(std::string& subject, std::string& message) {
             std::cout << "Message too long. Continuing with current input." << std::endl;
             break; // Or handle the error appropriately
         }
-        message += line + "\n";
+        message += trim(line) + "\n";
     }
     std::cout << "============================" << std::endl;
 }
