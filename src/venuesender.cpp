@@ -286,14 +286,13 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
 void constructEmail(std::string& subject, std::string& message) {
     std::cout << "===== Construct Email =====" << std::endl;
     
-    // Limit the input length for the subject and message
-    const int maxSubjectLength = MAX_SUBJECT_LENGTH; // Adjust as needed
-    const int maxMessageLength = MAX_MESSAGE_LENGTH; // Adjust as needed
-
     // Prompt user to enter email subject and message
     std::cin.ignore(); // Clear input buffer
     std::cout << "Enter subject for the email: ";
     std::getline(std::cin, subject);
+
+    const int maxSubjectLength = MAX_SUBJECT_LENGTH;
+    const int maxMessageLength = MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
         std::cout << "Subject too long. Please try again." << std::endl;
