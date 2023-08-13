@@ -231,11 +231,11 @@ bool loadConfigSettings(const std::string& configFilePath,
 }
 
 // Function to reset flags and passwords in config.json
-void resetConfigFile() {
+void resetConfigFile(const std::string& configFilePath) {
     Json::Value config;
 
     // Read the existing config.json
-    std::ifstream configFile("config.json");
+    std::ifstream configFile(configFilePath);
     configFile >> config;
     configFile.close();
 
@@ -246,7 +246,7 @@ void resetConfigFile() {
     config["email_password"] = "enter_email_password";
 
     // Write the modified JSON object back to config.json
-    std::ofstream configFileOut("config.json");
+    std::ofstream configFileOut(configFilePath);
     configFileOut << config;
     configFileOut.close();
 }

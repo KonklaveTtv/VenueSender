@@ -1,14 +1,14 @@
 {
 	"email_pass_encrypted" : true,
-	"email_password" : "2\u056bpc\u0572\u051f\u001b\ufffd)\u001f\u01ae\u03e5(X{\u0007\u001c\u01fe",
+	"email_password" : "N\ufffd\u0353\u07ec\ufffdNp\n\u009a\u06a7?\u0644Z\u03e2P",
 	// Sender's email address and SMTP port
 	"sender_email" : "your_sender_email@example.com", // Replace with your sender email address
 	"sender_smtp_port" : 587, // Replace with the SMTP port for your sender email
 	"smtp_pass_encrypted" : true,
-	"smtp_password" : "\u0490z?Na\u0520\u010c\b6\u0355_w\u0578(^\u030f\ufffd\ufffd",
+	"smtp_password" : "qM}-\u0779\u001fJ\udb34\udc1fq\u04ee\u07b8\u079e\u06f6\u037f\ufffd",
 	"smtp_port" : 587, // Replace with your SMTP port number
 	// SMTP Server settings
-	"smtp_server" : "smtp.example.com", // Replace with your SMTP server address
+	"smtp_server" : "mock_smtp_server", // Replace with your SMTP server address
 	// SMTP Authentication credentials
 	"smtp_username" : "your_smtp_username", // Replace with your SMTP username
 	// Path to the CSV file containing venue data

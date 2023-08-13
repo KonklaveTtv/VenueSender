@@ -1,5 +1,7 @@
 #define CATCH_CONFIG_MAIN
 
+#include "test_paths.h"
+
 #include "fileutils.h"
 #include "filtercriteria.h"
 #include "venuesender.h"
@@ -12,16 +14,27 @@
 TEST_CASE("Test Read CSV", "[csv]") {
     // Set up mock data for readCSV function
     std::vector<Venue> venues;
-    std::string venuesCsvPath = "src/test/mock_venues.csv";
+    std::string venuesCsvPath = TestPaths::mockVenuesCsvPath;
 
     // Call the readCSV function
     readCSV(venues, venuesCsvPath);
 
     // Compare the result with expected values
     REQUIRE(venues.size() == 4);
-    REQUIRE(venues[0].name == "Venue A");
-    REQUIRE(venues[0].email == "venueA@example.com");
-    // ... Add more assertions for other fields
+
+    REQUIRE(venues[0].name == "Top of the Bay");
+    REQUIRE(venues[0].email == "topofthebayllc@gmail.com");
+    REQUIRE(venues[0].genre == "all");
+    REQUIRE(venues[0].state == "AL");
+    REQUIRE(venues[0].city == "Daphne");
+    REQUIRE(venues[0].capacity == 100);
+
+    REQUIRE(venues[1].name == "Quarters");
+    REQUIRE(venues[1].email == "atonuv10@gmail.com");
+    REQUIRE(venues[1].genre == "rock");
+    REQUIRE(venues[1].state == "UT");
+    REQUIRE(venues[1].city == "Provo");
+    REQUIRE(venues[1].capacity == 300);
 }
 
 TEST_CASE("Test Load Config Settings", "[config]") {
@@ -35,7 +48,7 @@ TEST_CASE("Test Load Config Settings", "[config]") {
     int senderSmtpPort;
 
     // Call the loadConfigSettings function with the mock config file path
-    bool result = loadConfigSettings("src/test/mock_config.json", smtpServer, smtpPort, smtpUsername, smtpPass,
+    bool result = loadConfigSettings(TestPaths::mockConfigJsonPath, smtpServer, smtpPort, smtpUsername, smtpPass,
                                      venuesCsvPath, emailPassword, senderEmail, senderSmtpPort);
 
     // Compare the result with expected values
@@ -280,4 +293,30 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
 
     REQUIRE(emailPassword == decryptedEmailPass);
 }
+
+// Test case to reset the config file at the end of tests
+TEST_CASE("Reset Config File", "[config]") {
+    // Save the initial contents of the mock_config.json for later comparison
+    std::ifstream configFileBeforeReset("src/test/mock_config.json");
+    std::string initialContents((std::istreambuf_iterator<char>(configFileBeforeReset)),
+                                 std::istreambuf_iterator<char>());
+    configFileBeforeReset.close();
+
+    // Call the resetConfigFile function
+    resetConfigFile("src/test/mock_config.json");
+
+    // Verify that the config file has been reset
+    std::ifstream configFileAfterReset("src/test/mock_config.json");
+    std::string resetContents((std::istreambuf_iterator<char>(configFileAfterReset)),
+                               std::istreambuf_iterator<char>());
+    configFileAfterReset.close();
+
+    // Assert that the contents of the config file have been reset as intended
+    REQUIRE(initialContents != resetContents);
+    REQUIRE(resetContents.find("\"smtp_pass_encrypted\": false") != std::string::npos);
+    REQUIRE(resetContents.find("\"email_pass_encrypted\": false") != std::string::npos);
+    REQUIRE(resetContents.find("\"smtp_password\": \"enter_smtp_password\"") != std::string::npos);
+    REQUIRE(resetContents.find("\"email_password\": \"enter_email_password\"") != std::string::npos);
+}
 CATCH_CONFIG_MAIN // This line will define Catch2's main function
+

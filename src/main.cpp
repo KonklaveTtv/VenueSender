@@ -270,7 +270,7 @@ int main() {
         }
         // Before the program exits, call the resetConfigFile function
         // to reset the flags and passwords in the config.json file
-        atexit(resetConfigFile);   
+        resetConfigFile("config.json");   
 
     return 0;
 }

@@ -8,7 +8,7 @@
 	"smtp_password" : "enter_smtp_password",
 	"smtp_port" : 587, // Replace with your SMTP port number
 	// SMTP Server settings
-	"smtp_server" : "smtp.example.com", // Replace with your SMTP server address
+	"smtp_server" : "mock_smtp_server", // Replace with your SMTP server address
 	// SMTP Authentication credentials
 	"smtp_username" : "your_smtp_username", // Replace with your SMTP username
 	// Path to the CSV file containing venue data

@@ -29,6 +29,6 @@ bool loadConfigSettings(const std::string& configFilePath,
                         std::string& senderEmail, int& senderSmtpPort);
 
 // Function to reset the config.json file password fields on exit
-void resetConfigFile();
+void resetConfigFile(const std::string& configFilePath);
 
 #endif // FILEUTILS_H
