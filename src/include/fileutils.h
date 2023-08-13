@@ -22,9 +22,11 @@ void clearInputBuffer();
 void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
 
 // Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
-bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
-                        std::string& smtpPass, std::string& venuesCsvPath, 
-                        std::string& emailPassword, std::string& senderEmail, int& senderSmtpPort);
+bool loadConfigSettings(const std::string& configFilePath,
+                        std::string& smtpServer, int& smtpPort,
+                        std::string& smtpUsername, std::string& smtpPass,
+                        std::string& venuesCsvPath, std::string& emailPassword,
+                        std::string& senderEmail, int& senderSmtpPort);
 
 // Function to reset the config.json file password fields on exit
 void resetConfigFile();

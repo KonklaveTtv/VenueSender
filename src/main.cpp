@@ -85,7 +85,7 @@ int main() {
     double progress;
 
     // Load configuration settings from config.json
-    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
+    if (!loadConfigSettings("config.json",smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
                             emailPassword, senderEmail, senderSmtpPort)) {
         std::cerr << "Failed to load configuration settings from config.json." << std::endl;
         exit(1); // Handle the error appropriately
@@ -268,9 +268,9 @@ int main() {
                 std::cout << "Invalid choice. Please try again." << std::endl;
             }
         }
-    // Before the program exits, call the resetConfigFile function
-    // to reset the flags and passwords in the config.json file
-    atexit(resetConfigFile);   
+        // Before the program exits, call the resetConfigFile function
+        // to reset the flags and passwords in the config.json file
+        atexit(resetConfigFile);   
 
     return 0;
 }

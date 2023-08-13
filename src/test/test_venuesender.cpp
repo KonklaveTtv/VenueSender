@@ -12,7 +12,7 @@
 TEST_CASE("Test Read CSV", "[csv]") {
     // Set up mock data for readCSV function
     std::vector<Venue> venues;
-    std::string venuesCsvPath = "mock_venues.csv";
+    std::string venuesCsvPath = "src/test/mock_venues.csv";
 
     // Call the readCSV function
     readCSV(venues, venuesCsvPath);
@@ -25,27 +25,26 @@ TEST_CASE("Test Read CSV", "[csv]") {
 }
 
 TEST_CASE("Test Load Config Settings", "[config]") {
-    // Set up mock data for config settings
-    std::string smtpServer = "mock_smtp_server";
-    int smtpPort = 12345;
-    std::string smtpUsername = "mock_smtp_username";
-    std::string smtpPass = "mock_smtp_password";
-    std::string venuesCsvPath = "mock_venues.csv";
-    std::string emailPassword = "mock_email_password";
-    std::string senderEmail = "mock_sender_email";
-    int senderSmtpPort = 54321;
+    std::string smtpServer;
+    int smtpPort;
+    std::string smtpUsername;
+    std::string smtpPass;
+    std::string venuesCsvPath;
+    std::string emailPassword;
+    std::string senderEmail;
+    int senderSmtpPort;
 
-    // Call the loadConfigSettings function
-    bool result = loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass,
+    // Call the loadConfigSettings function with the mock config file path
+    bool result = loadConfigSettings("src/test/mock_config.json", smtpServer, smtpPort, smtpUsername, smtpPass,
                                      venuesCsvPath, emailPassword, senderEmail, senderSmtpPort);
 
     // Compare the result with expected values
     REQUIRE(result == true);
-    REQUIRE(smtpServer == "mock_smtp_server");
-    REQUIRE(smtpPort == 12345);
-    REQUIRE(emailPassword == "mock_email_password");
-    REQUIRE(senderEmail == "mock_sender_email");
-    REQUIRE(senderSmtpPort == 54321);
+    REQUIRE(smtpServer == "mock_smtp_server"); // Assuming this is the value in mock_config.json
+    REQUIRE(smtpPort == 587); // Assuming this is the value in mock_config.json
+    REQUIRE(emailPassword == "enter_email_password"); // Assuming this is the value in mock_config.json
+    REQUIRE(senderEmail == "sender@example.com"); // Assuming this is the value in mock_config.json
+    REQUIRE(senderSmtpPort == 25); // Assuming this is the value in mock_config.json
 }
 
 TEST_CASE("Test Email Validation", "[validation]") {
