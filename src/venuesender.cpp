@@ -1,11 +1,7 @@
-#include "encryption.h"
-#include "filtercriteria.h"
-#include "venue.h"
-#include "venuesender.h"
-#include "fileutils.h"
-
 #include <fstream>
 #include <regex>
+
+#include "venuesender.h"
 
 std::string emailBeingSent;
 

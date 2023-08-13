@@ -1,5 +1,4 @@
 #include "filtercriteria.h"
-#include "venue.h"
 
 // Utility function to get unique genres from a vector of venues
 std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues) {

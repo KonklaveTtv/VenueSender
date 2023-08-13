@@ -1,8 +1,5 @@
 #include "encryption.h"
-#include "fileutils.h"
 #include "filtercriteria.h"
-#include "venuesender.h"
-#include "venue.h"
 
 #include <cstring>
 #include <limits>

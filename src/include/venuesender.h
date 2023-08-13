@@ -1,7 +1,7 @@
 #ifndef VENUESENDER_H
 #define VENUESENDER_H
 
-#include "filtercriteria.h"
+#include "fileutils.h"
 
 #include <chrono>
 #include <string>
