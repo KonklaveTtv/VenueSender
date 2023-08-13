@@ -20,7 +20,7 @@ TEST_CASE("Test Read CSV", "[csv]") {
     readCSV(venues, venuesCsvPath);
 
     // Compare the result with expected values
-    REQUIRE(venues.size() == 4);
+    REQUIRE(venues.size() == 2);
 
     REQUIRE(venues[0].name == "Top of the Bay");
     REQUIRE(venues[0].email == "topofthebayllc@gmail.com");
@@ -88,7 +88,7 @@ TEST_CASE("Test Send Individual Email", "[email]") {
     CurlHandleWrapper curlWrapper; // Using the CurlHandleWrapper class
     CURL* curl = curlWrapper.get(); // Get the CURL handle from the wrapper
 
-    Venue testVenue("Venue", "venue@example.com", "City", "Genre", "State", 100);
+    Venue testVenue("Top of the Bay", "topofthebayllc@gmail.com", "Daphne", "all", "AL", 100);
     SelectedVenue selectedVenue = testVenue;
     std::string senderEmail = "sender@example.com";
     std::string subject = "Mock Subject";
@@ -144,8 +144,8 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     std::string smtpPass = "mock_smtp_password";
 
     // Simulate adding some selected venues
-    Venue testVenue1("Venue 1", "venue1@example.com", "Genre A", "State X", "City A", 100);
-    Venue testVenue2("Venue 2", "venue2@example.com", "Genre B", "State Y", "City B", 150);
+    Venue testVenue1("Top of the Bay", "topofthebayllc@gmail.com", "all", "AL", "Daphne", 100);
+    Venue testVenue2("Quarters", "atonuv10@gmail.com", "rock", "UT", "Provo", 300);
 
     // Convert Venue objects to SelectedVenue objects
     SelectedVenue selectedVenue1(testVenue1);
@@ -168,31 +168,31 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
 
     // Compare the result with expected values
     std::string output = outputCapture.str();
-    REQUIRE(output.find("Sending email 1 of 2 to: venue1@example.com") != std::string::npos);
-    REQUIRE(output.find("Sending email 2 of 2 to: venue2@example.com") != std::string::npos);
+    REQUIRE(output.find("Sending email 1 of 2 to: topofthebayllc@gmail.com") != std::string::npos);
+    REQUIRE(output.find("Sending email 2 of 2 to: atonuv10@gmail.com") != std::string::npos);
     REQUIRE(output.find("Email sending progress completed.") != std::string::npos);
 }
 
 TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     // Create a mock Venue
     Venue mockVenue;
-    mockVenue.name = "Mock Venue";
-    mockVenue.email = "mock@example.com";
-    mockVenue.city = "Mock City";
-    mockVenue.genre = "Mock Genre";
-    mockVenue.state = "Mock State";
-    mockVenue.capacity = 200;
+    mockVenue.name = "Top of the Bay";
+    mockVenue.email = "topofthebayllc@gmail.com";
+    mockVenue.city = "Daphne";
+    mockVenue.genre = "all";
+    mockVenue.state = "AL";
+    mockVenue.capacity = 100;
 
     // Convert Venue to SelectedVenue using the function
     SelectedVenue selectedVenue = convertToSelectedVenue(mockVenue);
 
     // Compare the converted SelectedVenue with expected values
-    REQUIRE(selectedVenue.name == "Mock Venue");
-    REQUIRE(selectedVenue.email == "mock@example.com");
-    REQUIRE(selectedVenue.city == "Mock City");
-    REQUIRE(selectedVenue.genre == "Mock Genre");
-    REQUIRE(selectedVenue.state == "Mock State");
-    REQUIRE(selectedVenue.capacity == 200);
+    REQUIRE(selectedVenue.name == "Top of the Bay");
+    REQUIRE(selectedVenue.email == "topofthebayllc@gmail.com");
+    REQUIRE(selectedVenue.city == "Daphne");
+    REQUIRE(selectedVenue.genre == "all");
+    REQUIRE(selectedVenue.state == "AL");
+    REQUIRE(selectedVenue.capacity == 100);
 }
 
 bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
@@ -202,10 +202,9 @@ bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
 
 TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
     // Create a mock vector of temporary filtered venues
-    Venue testVenue1("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
-    Venue testVenue2("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
-    Venue testVenue3("Venue 3", "venue3@example.com", "City C", "Genre C", "State Z", 200);
-    std::vector<Venue> temporaryFilteredVenues = {testVenue1, testVenue2, testVenue3};
+    Venue testVenue1("Top of the Bay", "topofthebayllc@gmail.com", "Daphne", "all", "AL", 100);
+    Venue testVenue2("Quarters", "atonuv10@gmail.com", "Provo", "rock", "UT", 300);
+    std::vector<Venue> temporaryFilteredVenues = {testVenue1, testVenue2};
 
     // Convert Venue objects to SelectedVenue objects
     std::vector<SelectedVenue> selectedVenuesForEmail;
@@ -213,9 +212,9 @@ TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
         selectedVenuesForEmail.push_back(convertToSelectedVenue(venue));
     }
 
-    // Simulate user input of selecting venues 1 and 3
+    // Simulate user input of selecting venues 1 and 2
     std::stringstream input;
-    input << "1,3\n";
+    input << "1,2\n";
     std::cin.rdbuf(input.rdbuf());
 
     // Call the processVenueSelection function
@@ -224,38 +223,11 @@ TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
     // Convert the selected venues using convertToSelectedVenue
     SelectedVenue selectedVenue1 = convertToSelectedVenue(testVenue1);
     SelectedVenue selectedVenue2 = convertToSelectedVenue(testVenue2);
-    SelectedVenue selectedVenue3 = convertToSelectedVenue(testVenue3);
 
     // Compare the selectedVenuesForEmail vector with expected values
     REQUIRE(selectedVenuesForEmail.size() == 2);
     REQUIRE(selectedVenuesForEmail[0] == selectedVenue1);
-    REQUIRE(selectedVenuesForEmail[1] == selectedVenue3);
-}
-
-TEST_CASE("Read venues data from CSV file", "[readCSV]") {
-    // Create a temporary CSV file with mock data
-    std::ofstream csvFile("test_venues.csv");
-    csvFile << "Name,Email,Genre,State,City,Capacity\n"
-            << "Venue A,venueA@example.com,Rock,California,Los Angeles,500\n"
-            << "Venue B,venueB@example.com,Jazz,New York,New York,300\n"
-            << "Venue C,venueC@example.com,Pop,Texas,Austin,200\n"
-            << "Venue D,venueD@example.com,Electronic,Florida,Miami,1000\n";
-    csvFile.close();
-
-    // Vector to store the read venues
-    std::vector<Venue> venues;
-
-    // Call the readCSV function to populate the venues vector
-    readCSV(venues, "test_venues.csv");
-
-    // Remove the temporary CSV file
-    std::remove("test_venues.csv");
-
-    // Write your assertions here to test the readCSV function
-    REQUIRE(venues.size() == 4);
-    REQUIRE(venues[0].name == "Venue A");
-    REQUIRE(venues[0].email == "venueA@example.com");
-    // ... Add more assertions for other fields
+    REQUIRE(selectedVenuesForEmail[1] == selectedVenue2);
 }
 
 TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
@@ -263,7 +235,7 @@ TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
     std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
     initializeEncryptionParams(encryptionKey, encryptionNonce);
 
-    std::string smtpPassword = "smtpPassword123";
+    std::string smtpPassword = "enter_smtp_password";
 
     std::string encryptedSmtpPass;
     REQUIRE(encryptPassword(smtpPassword, encryptedSmtpPass, encryptionKey) == true);
@@ -283,7 +255,7 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
     std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
     initializeEncryptionParams(encryptionKey, encryptionNonce);
 
-    std::string emailPassword = "emailPassword456";
+    std::string emailPassword = "enter_email_password";
 
     std::string encryptedEmailPass;
     REQUIRE(encryptPassword(emailPassword, encryptedEmailPass, encryptionKey) == true);
