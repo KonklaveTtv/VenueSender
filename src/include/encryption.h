@@ -1,3 +1,6 @@
+#ifndef ENCRYPTION_H
+#define ENCRYPTION_H
+
 #include <array>
 #include <iostream>
 #include <sodium.h>
@@ -17,3 +20,5 @@ bool encryptPassword(const std::string& decryptedPassword, std::string& encrypte
 //Utility function to generate a unique identifer
 void generateIdentifier(const unsigned char* encryptionKey, const char* nonce,
                         std::array<unsigned char, crypto_secretbox_MACBYTES>& identifier);
+
+#endif // ENCRYPTION_H

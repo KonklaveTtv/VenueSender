@@ -1,3 +1,6 @@
+#ifndef FILEUTILS_H
+#define FILEUTILS_H
+
 #include "encryption.h"
 #include "venue.h"
 
@@ -22,3 +25,5 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
                         std::string& smtpPass, std::string& venuesCsvPath, 
                         std::string& emailPassword, std::string& senderEmail, int& senderSmtpPort);
+
+#endif // FILEUTILS_H

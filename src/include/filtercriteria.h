@@ -26,6 +26,9 @@ struct FilterCriteria {
     int capacity = 0; // Change to int type
 };
 
+// Convert Venue to SelectedVenue
+SelectedVenue convertToSelectedVenue(const Venue& venue);
+
 // Get a set of unique genres/states/cities/capacities from a vector of venues
 std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
 std::set<std::string> getUniqueStates(const std::vector<Venue>& venues);

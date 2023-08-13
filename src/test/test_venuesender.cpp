@@ -1,15 +1,8 @@
 #include "catch.hpp"
 
+#include "fileutils.h"
 #include "filtercriteria.h"
 #include "venuesender.h"
-#include "venueutils.h"
-#include "venue.h"
-
-#include <fstream>
-#include <iostream>
-#include <sstream>
-
-#include <json/json.h>
 
 TEST_CASE("Test Load Config Settings", "[config]") {
     // Set up mock data for config settings
@@ -75,7 +68,9 @@ TEST_CASE("Test Read CSV", "[csv]") {
 
 TEST_CASE("Test Send Individual Email", "[email]") {
     // Set up mock data for sendIndividualEmail function
-    CURL* curl = curl_easy_init();  // Initialize a mock CURL handle
+    CurlHandleWrapper curlWrapper; // Using the CurlHandleWrapper class
+    CURL* curl = curlWrapper.get(); // Get the CURL handle from the wrapper
+
     Venue testVenue("Venue", "venue@example.com", "City", "Genre", "State", 100);
     SelectedVenue selectedVenue = testVenue;
     std::string senderEmail = "sender@example.com";
@@ -87,8 +82,9 @@ TEST_CASE("Test Send Individual Email", "[email]") {
     std::string smtpPass = "mock_smtp_password";
 
     // Set up a mock response for the email sending
-    curl_easy_setopt(curl, CURLOPT_URL, "smtp://mock_smtp_server:12345");
-    curl_easy_setopt(curl, CURLOPT_USERNAME, "mock_smtp_username:mock_smtp_password");
+    curl_easy_setopt(curl, CURLOPT_URL, ("smtp://" + smtpServer + ":" + std::to_string(smtpPort)).c_str());
+    std::string smtpUserPass = smtpUsername + ":" + smtpPass;
+    curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUserPass.c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
     struct curl_slist* recipients = nullptr;
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
@@ -100,17 +96,14 @@ TEST_CASE("Test Send Individual Email", "[email]") {
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, nullptr);
     curl_easy_setopt(curl, CURLOPT_READDATA, nullptr);
     curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(message.length()));
-    CURLcode res = CURLE_OK;
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, nullptr);
     curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, nullptr);
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-    if (res != CURLE_OK) {
-        std::cerr << "Failed to send email: " << curl_easy_strerror(res) << std::endl;
-    }
 
     // Call the sendIndividualEmail function
+    double progress = 0.0; // Progress value for testing
     bool result = sendIndividualEmail(curl, selectedVenue, senderEmail, subject, message,
-                                      smtpServer, smtpPort, smtpUsername, smtpPass);
+                                      smtpServer, smtpPort, smtpUsername, smtpPass, progress);
 
     // Compare the result with expected values
     REQUIRE(result == true);
@@ -118,21 +111,32 @@ TEST_CASE("Test Send Individual Email", "[email]") {
     // Clean up
     curl_slist_free_all(recipients);
     curl_slist_free_all(headers);
-    curl_easy_cleanup(curl);
 }
 
 TEST_CASE("Test View Email Sending Progress", "[email]") {
     // Set up mock data for viewEmailSendingProgress function
-    CURL* curl = curl_easy_init();  // Initialize a mock CURL handle
+    CurlHandleWrapper curlWrapper;
+    CURL* curl = curlWrapper.get();
     std::vector<SelectedVenue> selectedVenuesForEmail;
+    std::string senderEmail = "sender@example.com";
+    std::string subject = "Mock Subject";
+    std::string message = "Mock Message";
+    std::string smtpServer = "mock_smtp_server";
+    int smtpPort = 12345;
+    std::string smtpUsername = "mock_smtp_username";
+    std::string smtpPass = "mock_smtp_password";
 
     // Simulate adding some selected venues
-    SelectedVenue testVenue1("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
-    SelectedVenue testVenue2("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
-    SelectedVenue selectedVenue = testVenue1;
-    SelectedVenue selectedVenue = testVenue2;
-    selectedVenuesForEmail.push_back(testVenue1);
-    selectedVenuesForEmail.push_back(testVenue2);
+    Venue testVenue1("Venue 1", "venue1@example.com", "Genre A", "State X", "City A", 100);
+    Venue testVenue2("Venue 2", "venue2@example.com", "Genre B", "State Y", "City B", 150);
+
+    // Convert Venue objects to SelectedVenue objects
+    SelectedVenue selectedVenue1(testVenue1);
+    SelectedVenue selectedVenue2(testVenue2);
+
+    // Populate the selectedVenuesForEmail vector
+    selectedVenuesForEmail.push_back(selectedVenue1);
+    selectedVenuesForEmail.push_back(selectedVenue2);
 
     // Redirect cout to capture console output
     std::stringstream outputCapture;
@@ -140,19 +144,16 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     std::cout.rdbuf(outputCapture.rdbuf());
 
     // Call the viewEmailSendingProgress function
-    viewEmailSendingProgress(curl, selectedVenuesForEmail);
+    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass);
 
     // Restore cout
     std::cout.rdbuf(coutBuffer);
 
     // Compare the result with expected values
     std::string output = outputCapture.str();
-    REQUIRE(output.find("Sending email to: venue1@example.com") != std::string::npos);
-    REQUIRE(output.find("Sending email to: venue2@example.com") != std::string::npos);
+    REQUIRE(output.find("Sending email 1 of 2 to: venue1@example.com") != std::string::npos);
+    REQUIRE(output.find("Sending email 2 of 2 to: venue2@example.com") != std::string::npos);
     REQUIRE(output.find("Email sending progress completed.") != std::string::npos);
-
-    // Clean up
-    curl_easy_cleanup(curl);
 }
 
 TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
@@ -177,21 +178,23 @@ TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     REQUIRE(selectedVenue.capacity == 200);
 }
 
+bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
+    return lhs.name == rhs.name && lhs.email == rhs.email && lhs.city == rhs.city &&
+           lhs.genre == rhs.genre && lhs.state == rhs.state && lhs.capacity == rhs.capacity;
+}
+
 TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
     // Create a mock vector of temporary filtered venues
-    SelectedVenue selectedVenue = testVenue1;
-    SelectedVenue selectedVenue = testVenue2;
-    SelectedVenue selectedVenue = testVenue2;
-    std::vector<SelectedVenue> temporaryFilteredVenues;
-    SelectedVenue testVenue1("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
-    SelectedVenue testVenue2("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
-    SelectedVenue testVenue3("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
-    temporaryFilteredVenues.push_back(testVenue1);
-    temporaryFilteredVenues.push_back(testVenue2);
-    temporaryFilteredVenues.push_back(testVenue3);
+    Venue testVenue1("Venue 1", "venue1@example.com", "City A", "Genre A", "State X", 100);
+    Venue testVenue2("Venue 2", "venue2@example.com", "City B", "Genre B", "State Y", 150);
+    Venue testVenue3("Venue 3", "venue3@example.com", "City C", "Genre C", "State Z", 200);
+    std::vector<Venue> temporaryFilteredVenues = {testVenue1, testVenue2, testVenue3};
 
-    // Create a mock vector for selected venues
+    // Convert Venue objects to SelectedVenue objects
     std::vector<SelectedVenue> selectedVenuesForEmail;
+    for (const Venue& venue : temporaryFilteredVenues) {
+        selectedVenuesForEmail.push_back(convertToSelectedVenue(venue));
+    }
 
     // Simulate user input of selecting venues 1 and 3
     std::stringstream input;
@@ -199,12 +202,17 @@ TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
     std::cin.rdbuf(input.rdbuf());
 
     // Call the processVenueSelection function
-    processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
+    processVenueSelection(selectedVenuesForEmail, selectedVenuesForEmail);
+
+    // Convert the selected venues using convertToSelectedVenue
+    SelectedVenue selectedVenue1 = convertToSelectedVenue(testVenue1);
+    SelectedVenue selectedVenue2 = convertToSelectedVenue(testVenue2);
+    SelectedVenue selectedVenue3 = convertToSelectedVenue(testVenue3);
 
     // Compare the selectedVenuesForEmail vector with expected values
     REQUIRE(selectedVenuesForEmail.size() == 2);
-    REQUIRE(selectedVenuesForEmail[0].name == "Venue 1");
-    REQUIRE(selectedVenuesForEmail[1].name == "Venue 3");
+    REQUIRE(selectedVenuesForEmail[0] == selectedVenue1);
+    REQUIRE(selectedVenuesForEmail[1] == selectedVenue3);
 }
 
 TEST_CASE("Read venues data from CSV file", "[readCSV]") {

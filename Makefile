@@ -31,7 +31,7 @@ TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 LIBS = -lcurl -ljsoncpp -lsodium
 
 # Catch2 library
-CATCH2_LIB = catch_with_main
+CATCH2_LIB = catch2
 
 # Compile rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
