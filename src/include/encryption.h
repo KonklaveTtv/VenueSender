@@ -16,6 +16,6 @@ void initializeEncryptionParams();
 bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword);
 
 // Utility function to decrypt the email and smtp passwords
-std::string decryptPassword(const std::string& encryptedPassword, std::string& decryptedPassword);
+std::string decryptPassword(const std::string& encryptedPassword);
 
 #endif // ENCRYPTION_H

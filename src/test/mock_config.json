@@ -1,11 +1,11 @@
 {
 	"email_pass_encrypted" : false,
-	"email_password" : "enter_email_password",
+	"email_password" : "mock_email_password",
 	// Sender's email address and SMTP port
 	"sender_email" : "your_sender_email@example.com", // Replace with your sender email address
 	"sender_smtp_port" : 587, // Replace with the SMTP port for your sender email
 	"smtp_pass_encrypted" : false,
-	"smtp_password" : "enter_smtp_password",
+	"smtp_password" : "mock_smtp_password",
 	"smtp_port" : 587, // Replace with your SMTP port number
 	// SMTP Server settings
 	"smtp_server" : "mock_smtp_server", // Replace with your SMTP server address

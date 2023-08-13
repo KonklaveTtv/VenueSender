@@ -243,7 +243,7 @@ TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
     REQUIRE(encryptPassword(smtpPassword, encryptedSmtpPass) == true);
 
     std::string smtpPassDecrypted;
-    std::string decryptedSmtpPass = decryptPassword(encryptedSmtpPass, smtpPassDecrypted);
+    std::string decryptedSmtpPass = decryptPassword(encryptedSmtpPass);
     REQUIRE(decryptedSmtpPass == smtpPassword);
 
     REQUIRE(smtpPassword == decryptedSmtpPass);
@@ -259,35 +259,48 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
     REQUIRE(encryptPassword(emailPassword, encryptedEmailPass) == true);
 
     std::string smtpPassDecrypted;
-    std::string decryptedEmailPass = decryptPassword(encryptedEmailPass, smtpPassDecrypted);
+    std::string decryptedEmailPass = decryptPassword(encryptedEmailPass);
     REQUIRE(decryptedEmailPass == emailPassword);
 
     REQUIRE(emailPassword == decryptedEmailPass);
 }
 
-// Test case to reset the config file at the end of tests
-TEST_CASE("Reset Config File", "[config]") {
-    // Save the initial contents of the mock_config.json for later comparison
-    std::ifstream configFileBeforeReset("src/test/mock_config.json");
-    std::string initialContents((std::istreambuf_iterator<char>(configFileBeforeReset)),
-                                 std::istreambuf_iterator<char>());
-    configFileBeforeReset.close();
+TEST_CASE("Test Reset Config File", "[resetConfigFile]") {
+    // Define a temporary config file path for testing
+    std::string tempConfigFilePath = "test_config.json";
 
-    // Call the resetConfigFile function
-    resetConfigFile("src/test/mock_config.json");
+    // Create an initial config.json content for testing
+    std::string initialConfigContent = R"(
+        {
+            "smtp_pass_encrypted": true,
+            "email_pass_encrypted": true,
+            "smtp_password": "encrypted_smtp_password",
+            "email_password": "encrypted_email_password"
+        }
+    )";
 
-    // Verify that the config file has been reset
-    std::ifstream configFileAfterReset("src/test/mock_config.json");
-    std::string resetContents((std::istreambuf_iterator<char>(configFileAfterReset)),
-                               std::istreambuf_iterator<char>());
-    configFileAfterReset.close();
+    // Write the initial config content to the temporary config file
+    std::ofstream tempConfigFile(tempConfigFilePath);
+    tempConfigFile << initialConfigContent;
+    tempConfigFile.close();
 
-    // Assert that the contents of the config file have been reset as intended
-    REQUIRE(initialContents == resetContents);
-    REQUIRE(resetContents.find("\"smtp_pass_encrypted\": false") == std::string::npos);
-    REQUIRE(resetContents.find("\"email_pass_encrypted\": false") == std::string::npos);
-    REQUIRE(resetContents.find("\"smtp_password\": \"enter_smtp_password\"") == std::string::npos);
-    REQUIRE(resetContents.find("\"email_password\": \"enter_email_password\"") == std::string::npos);
+    // Call the resetConfigFile function to reset the config.json
+    resetConfigFile(tempConfigFilePath);
+
+    // Read the modified config.json content
+    Json::Value modifiedConfig;
+    std::ifstream configFile(tempConfigFilePath);
+    configFile >> modifiedConfig;
+    configFile.close();
+
+    // Check if the values in the modified config.json match the expected values
+    REQUIRE(modifiedConfig["smtp_pass_encrypted"].asBool() == false);
+    REQUIRE(modifiedConfig["email_pass_encrypted"].asBool() == false);
+    REQUIRE(modifiedConfig["smtp_password"].asString() == "enter_smtp_password");
+    REQUIRE(modifiedConfig["email_password"].asString() == "enter_email_password");
+
+    // Clean up by removing the temporary config file
+    std::remove(tempConfigFilePath.c_str());
 }
 CATCH_CONFIG_MAIN // This line will define Catch2's main function
 

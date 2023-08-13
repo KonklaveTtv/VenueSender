@@ -83,6 +83,8 @@ int main() {
     std::string message;
     double progress;
 
+    initializeEncryptionParams();
+    
     // Load configuration settings from config.json
     if (!loadConfigSettings("config.json",smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
                             emailPass, senderEmail, senderSmtpPort)) {

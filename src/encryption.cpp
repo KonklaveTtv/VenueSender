@@ -22,7 +22,7 @@ void initializeEncryptionParams() {
 
 bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword) {
     // Initialize a buffer for the ciphertext
-    unsigned char encryptedBuffer[decryptedPassword.size()];
+    unsigned char encryptedBuffer[crypto_secretbox_MACBYTES + decryptedPassword.size()];
 
     // Encrypt the password using the global encryption key and nonce
     if (crypto_secretbox_easy(encryptedBuffer, reinterpret_cast<const unsigned char*>(decryptedPassword.c_str()), decryptedPassword.size(),
@@ -31,18 +31,21 @@ bool encryptPassword(const std::string& decryptedPassword, std::string& encrypte
         return false;
     }
 
+    // Convert the nonce to a string
+    std::string nonceStr(reinterpret_cast<const char*>(globalEncryptionNonce.data()), globalEncryptionNonce.size());
+
     // Combine the nonce and ciphertext into the encrypted password
-    encryptedPassword = std::string(reinterpret_cast<const char*>(globalEncryptionNonce.data()), globalEncryptionNonce.size()) +
-                        std::string(reinterpret_cast<const char*>(encryptedBuffer), decryptedPassword.size());
+    encryptedPassword = nonceStr + std::string(reinterpret_cast<const char*>(encryptedBuffer), sizeof(encryptedBuffer));
+    
     return true;
 }
 
-std::string decryptPassword(const std::string& encryptedPassword, std::string& decryptedPassword) {
+std::string decryptPassword(const std::string& encryptedPassword) {
     // Define the encryption nonce length
     const size_t NONCE_LENGTH = crypto_secretbox_NONCEBYTES;
 
-    // Check if the encrypted password is long enough to contain the nonce
-    if (encryptedPassword.size() < NONCE_LENGTH) {
+    // Check if the encrypted password is long enough to contain the nonce and MAC
+    if (encryptedPassword.size() < crypto_secretbox_MACBYTES + NONCE_LENGTH) {
         std::cerr << "Invalid encrypted password format." << std::endl;
         return "";
     }
@@ -54,7 +57,7 @@ std::string decryptPassword(const std::string& encryptedPassword, std::string& d
     std::string ciphertext = encryptedPassword.substr(NONCE_LENGTH);
 
     // Initialize a buffer for the decrypted password
-    unsigned char decryptedBuffer[ciphertext.size()];
+    unsigned char decryptedBuffer[ciphertext.size() - crypto_secretbox_MACBYTES];
 
     // Decrypt the ciphertext using the global encryption key and extracted nonce
     if (crypto_secretbox_open_easy(decryptedBuffer, reinterpret_cast<const unsigned char*>(ciphertext.c_str()), ciphertext.size(),
@@ -64,8 +67,5 @@ std::string decryptPassword(const std::string& encryptedPassword, std::string& d
     }
 
     // Return the decrypted password
-    decryptedPassword.assign(reinterpret_cast<char*>(decryptedBuffer), ciphertext.size());
-
-    // Return the decrypted password
-    return decryptedPassword;
+    return std::string(reinterpret_cast<char*>(decryptedBuffer), ciphertext.size() - crypto_secretbox_MACBYTES);
 }
