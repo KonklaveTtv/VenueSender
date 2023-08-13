@@ -4,9 +4,8 @@
 #include "fileutils.h"
 
 #include <chrono>
-#include <string>
+#include <regex>
 #include <thread>
-#include <vector>
 
 #include <curl/curl.h>
 

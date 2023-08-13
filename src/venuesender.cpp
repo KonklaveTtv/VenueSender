@@ -1,6 +1,3 @@
-#include <fstream>
-#include <regex>
-
 #include "venuesender.h"
 
 std::string emailBeingSent;

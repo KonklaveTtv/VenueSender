@@ -1,13 +1,6 @@
 #include "encryption.h"
 #include "filtercriteria.h"
 
-#include <cstring>
-#include <limits>
-#include <map>
-#include <iomanip>
-
-#include <curl/curl.h>
-
 // Global Variables for encryption
 std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
 std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
