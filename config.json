@@ -1,11 +1,11 @@
 {
 	"email_pass_encrypted" : false,
-	"email_password" : "123",
+	"email_password" : "123456",
 	// Sender's email address and SMTP port
 	"sender_email" : "your_sender_email@example.com", // Replace with your sender email address
 	"sender_smtp_port" : 587, // Replace with the SMTP port for your sender email
 	"smtp_pass_encrypted" : false,
-	"smtp_password" : "123",
+	"smtp_password" : "123456",
 	"smtp_port" : 587, // Replace with your SMTP port number
 	// SMTP Server settings
 	"smtp_server" : "smtp.example.com", // Replace with your SMTP server address
