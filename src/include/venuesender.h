@@ -6,6 +6,7 @@
 #include <chrono>
 #include <string>
 #include <thread>
+#include <vector>
 
 #include <curl/curl.h>
 
@@ -76,17 +77,6 @@ const int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelec
 const int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
 const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmails);
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
-
-// Function to clear input buffer
-void clearInputBuffer();
-
-// Function to read CSV file and populate data
-void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
-
-// Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
-bool loadConfigSettings(std::string& smtpServer, int& smtpPort, std::string& smtpUsername,
-                        std::string& smtpPass, std::string& venuesCsvPath, 
-                        std::string& emailPassword, std::string& senderEmail, int& senderSmtpPort);
 
 // Function to display the menu
 int displayMenuOptions();
