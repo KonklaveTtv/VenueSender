@@ -268,6 +268,9 @@ int main() {
                 std::cout << "Invalid choice. Please try again." << std::endl;
             }
         }
+    // Before the program exits, call the resetConfigFile function
+    // to reset the flags and passwords in the config.json file
+    atexit(resetConfigFile);   
 
     return 0;
 }

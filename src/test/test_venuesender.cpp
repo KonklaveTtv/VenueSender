@@ -9,6 +9,21 @@
 #include <cstdlib>
 #include <ctime>
 
+TEST_CASE("Test Read CSV", "[csv]") {
+    // Set up mock data for readCSV function
+    std::vector<Venue> venues;
+    std::string venuesCsvPath = "mock_venues.csv";
+
+    // Call the readCSV function
+    readCSV(venues, venuesCsvPath);
+
+    // Compare the result with expected values
+    REQUIRE(venues.size() == 4);
+    REQUIRE(venues[0].name == "Venue A");
+    REQUIRE(venues[0].email == "venueA@example.com");
+    // ... Add more assertions for other fields
+}
+
 TEST_CASE("Test Load Config Settings", "[config]") {
     // Set up mock data for config settings
     std::string smtpServer = "mock_smtp_server";
@@ -54,21 +69,6 @@ TEST_CASE("Test Trim Function", "[trim]") {
     std::string trimmedString = Catch::trim(stringWithSpaces);
 
     REQUIRE(trimmedString == stringWithoutSpaces);
-}
-
-TEST_CASE("Test Read CSV", "[csv]") {
-    // Set up mock data for readCSV function
-    std::vector<Venue> venues;
-    std::string venuesCsvPath = "mock_venues.csv";
-
-    // Call the readCSV function
-    readCSV(venues, venuesCsvPath);
-
-    // Compare the result with expected values
-    REQUIRE(venues.size() == 4);
-    REQUIRE(venues[0].name == "Venue A");
-    REQUIRE(venues[0].email == "venueA@example.com");
-    // ... Add more assertions for other fields
 }
 
 TEST_CASE("Test Send Individual Email", "[email]") {

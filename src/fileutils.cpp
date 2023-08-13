@@ -228,3 +228,24 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
 
     return configLoadedSuccessfully;
 }
+
+// Function to reset flags and passwords in config.json
+void resetConfigFile() {
+    Json::Value config; // Create a JSON object to hold config data
+
+    // Read the existing config.json
+    std::ifstream configFile("config.json");
+    configFile >> config;
+    configFile.close();
+
+    // Modify the values in the JSON object
+    config["smtp_pass_encrypted"] = false;
+    config["email_pass_encrypted"] = false;
+    config["smtp_password"] = "enter_smtp_password";
+    config["email_password"] = "enter_email_password";
+
+    // Write the modified JSON object back to config.json
+    std::ofstream configFileOut("config.json");
+    configFileOut << config;
+    configFileOut.close();
+}

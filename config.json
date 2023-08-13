@@ -1,11 +1,11 @@
 {
-	"email_pass_encrypted" : true,
-	"email_password" : "\u0423\u05d4\u04cf\u00c5\u04ea\u047c\u0012\u01ba\u021d\u000b1\u05b3\ufffdwI",
+	"email_pass_encrypted" : false,
+	"email_password" : "enter_email_password",
 	// Sender's email address and SMTP port
 	"sender_email" : "your_sender_email@example.com", // Replace with your sender email address
 	"sender_smtp_port" : 587, // Replace with the SMTP port for your sender email
-	"smtp_pass_encrypted" : true,
-	"smtp_password" : "#x\u455b\u2d33\u03e6\uda06\udc06\u038aE\ue77d\ufffd\ufffd",
+	"smtp_pass_encrypted" : false,
+	"smtp_password" : "enter_smtp_password",
 	"smtp_port" : 587, // Replace with your SMTP port number
 	// SMTP Server settings
 	"smtp_server" : "smtp.example.com", // Replace with your SMTP server address
