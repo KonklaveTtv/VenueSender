@@ -63,6 +63,10 @@ bool loadConfigSettings(const std::string& configFilePath,
                         std::string& smtpUsername, std::string& smtpPass,
                         std::string& venuesCsvPath, std::string& emailPassword,
                         std::string& senderEmail, int& senderSmtpPort) {
+    std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
+    std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
+    initializeEncryptionParams(encryptionKey, encryptionNonce);
+
     // Load configuration settings from config.json into respective variables
     // Return true if successful, false otherwise
     Json::Value config;
@@ -87,90 +91,30 @@ bool loadConfigSettings(const std::string& configFilePath,
     senderEmail = config["sender_email"].asString();
     senderSmtpPort = config["sender_smtp_port"].asInt();
 
-
-// SMTP/Mail Password Encryption Check
-
-    // Initialize encryption key and nonce
-    std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
-    std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
-
-//    initializeEncryptionParams(encryptionKey, encryptionNonce);
-
+    // SMTP/Mail Password Decryption Check
     std::string smtpPassDecrypted;
     std::string emailPassDecrypted;
 
-    // Check if the SMTP password and email password are encrypted in the config file
     bool isSmtpPassEncrypted = config.isMember("smtp_pass_encrypted") ? config["smtp_pass_encrypted"].asBool() : false;
     bool isEmailPassEncrypted = config.isMember("email_pass_encrypted") ? config["email_pass_encrypted"].asBool() : false;
 
-    // Generate the expected identifier based on encryption key and nonce
-    std::array<unsigned char, crypto_secretbox_MACBYTES> expectedIdentifier;
-    generateIdentifier(encryptionKey.data(), reinterpret_cast<const char*>(encryptionNonce.data()), expectedIdentifier);
-
-    // Check if the SMTP password is encrypted
     if (isSmtpPassEncrypted) {
-        // Declare an array to store the identifier of the decrypted SMTP password
-        std::array<unsigned char, crypto_secretbox_MACBYTES> smtpPassIdentifier;
-        
-        // Decrypt the SMTP password using the encryption key
-        decryptPassword(smtpPassEncrypted, smtpPass, encryptionKey);
-        
-        // Generate the identifier for the decrypted SMTP password
-        generateIdentifier(encryptionKey.data(), smtpPass.c_str(), smtpPassIdentifier);
-        
-        // Compare the identifiers to check for mismatch
-        if (!isSmtpPassEncrypted || smtpPassIdentifier != expectedIdentifier) {
-            std::cerr << "Password decryption failed. Set 'smtp_pass_encrypted' & 'email_pass_encrypted' to false and re-enter both passwords (config.json)." << std::endl;
+        if (!decryptPassword(smtpPassEncrypted, smtpPassDecrypted, encryptionKey, encryptionNonce)) {
+            std::cerr << "SMTP password decryption failed." << std::endl;
             return false;
         }
+        // Additional checks/validation on smtpPassDecrypted
     }
 
-    // Check if the email password is encrypted
     if (isEmailPassEncrypted) {
-        // Declare an array to store the identifier of the decrypted email password
-        std::array<unsigned char, crypto_secretbox_MACBYTES> emailPassIdentifier;
-        
-        // Decrypt the email password using the encryption key
-        decryptPassword(emailPassEncrypted, emailPassword, encryptionKey);
-        
-        // Generate the identifier for the decrypted email password
-        generateIdentifier(encryptionKey.data(), emailPassword.c_str(), emailPassIdentifier);
-        
-        // Compare the identifiers to check for mismatch
-        if (!isEmailPassEncrypted || emailPassIdentifier != expectedIdentifier) {
-            std::cerr << "Password decryption failed. Set 'smtp_pass_encrypted' & 'email_pass_encrypted' to false and re-enter both passwords (config.json)." << std::endl;
+        if (!decryptPassword(emailPassEncrypted, emailPassDecrypted, encryptionKey, encryptionNonce)) {
+            std::cerr << "Email password decryption failed." << std::endl;
             return false;
         }
+        // Additional checks/validation on emailPassDecrypted
     }
-
-    if (isSmtpPassEncrypted || isEmailPassEncrypted) {
-            std::cerr << "Password decryption failed. Set 'smtp_pass_encrypted' & 'email_pass_encrypted' to false and re-enter both passwords (config.json)." << std::endl;
-            return false;
-    }
-
-    smtpPass = smtpPassEncrypted;
-    if (encryptPassword(smtpPass, smtpPassEncrypted, encryptionKey)) {
-        config["smtp_password"] = smtpPassEncrypted;
-        config["smtp_pass_encrypted"] = true; // Mark the password as encrypted
-        std::cout << "Passwords encrypted successfully." << std::endl;
-    } else {
-        std::cerr << "Password encryption failed. Set 'smtp_pass_encrypted' & 'email_pass_encrypted' to false and re-enter both passwords (config.json)." << std::endl;
-        return false;
-    }
-
-    emailPassword = emailPassEncrypted;
-    if (encryptPassword(emailPassword, emailPassEncrypted, encryptionKey)) {
-        config["email_password"] = emailPassEncrypted;
-        config["email_pass_encrypted"] = true; // Mark the password as encrypted
-    } else {
-        std::cerr << "Password decryption failed. Set 'smtp_pass_encrypted' & 'email_pass_encrypted' to false and re-enter both passwords (config.json)." << std::endl;
-        return false;
-    }
-
-    smtpPass = smtpPassDecrypted;
-    emailPassword = emailPassDecrypted;
-
-// End of SMTP/Mail Password Encryption Check
+    
+    // End of SMTP/Mail Password Decryption Check
 
     // Define and initialize variables to track loaded settings
     bool smtpServerLoaded = !smtpServer.empty();
@@ -201,7 +145,7 @@ bool loadConfigSettings(const std::string& configFilePath,
     // Encrypt the passwords if they are not already encrypted
     if (!isSmtpPassEncrypted) {
         std::string smtpPassEncryptedNew;
-        if (!encryptPassword(smtpPass, smtpPassEncryptedNew, encryptionKey)) {
+        if (!encryptPassword(smtpPass, smtpPassEncryptedNew, encryptionKey, encryptionNonce)) {
             std::cerr << "Failed to encrypt SMTP password for saving in config.json." << std::endl;
             return false;
         }
@@ -211,7 +155,7 @@ bool loadConfigSettings(const std::string& configFilePath,
 
     if (!isEmailPassEncrypted) {
         std::string emailPassEncryptedNew;
-        if (!encryptPassword(emailPassword, emailPassEncryptedNew, encryptionKey)) {
+        if (!encryptPassword(emailPassword, emailPassEncryptedNew, encryptionKey, encryptionNonce)) {
             std::cerr << "Failed to encrypt email password for saving in config.json." << std::endl;
             return false;
         }

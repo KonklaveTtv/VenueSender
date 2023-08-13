@@ -1,4 +1,3 @@
-Passwords encrypted successfully.
 Configuration settings loaded from config.json.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,24 +30,13 @@ with expansion:
 
 Select venues to add (comma-separated indices): 
 -------------------------------------------------------------------------------
-Test Process Venue Selection
--------------------------------------------------------------------------------
-src/test/test_venuesender.cpp:203
-...............................................................................
-
-src/test/test_venuesender.cpp:228: FAILED:
-  REQUIRE( selectedVenuesForEmail.size() == 2 )
-with expansion:
-  4 == 2
-
--------------------------------------------------------------------------------
 Encrypt and decrypt SMTP password
 -------------------------------------------------------------------------------
 src/test/test_venuesender.cpp:233
 ...............................................................................
 
 src/test/test_venuesender.cpp:244: FAILED:
-  REQUIRE( decryptPassword(encryptedSmtpPass, decryptedSmtpPass, encryptionKey) == true )
+  REQUIRE( decryptPassword(encryptedSmtpPass, decryptedSmtpPass, encryptionKey, encryptionNonce) == true )
 with expansion:
   false == true
 
@@ -58,12 +46,12 @@ Encrypt and decrypt email password
 src/test/test_venuesender.cpp:249
 ...............................................................................
 
-src/test/test_venuesender.cpp:264: FAILED:
-  REQUIRE( decryptPassword(encryptedEmailPass, decryptedEmailPass, encryptionKey) == true )
+src/test/test_venuesender.cpp:260: FAILED:
+  REQUIRE( decryptPassword(encryptedEmailPass, decryptedEmailPass, encryptionKey, encryptionNonce) == true )
 with expansion:
   false == true
 
 ===============================================================================
-test cases: 11 |  6 passed | 5 failed
-assertions: 40 | 35 passed | 5 failed
+test cases: 11 |  7 passed | 4 failed
+assertions: 39 | 35 passed | 4 failed
 

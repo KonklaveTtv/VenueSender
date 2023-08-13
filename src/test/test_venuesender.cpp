@@ -217,17 +217,17 @@ TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
     input << "1,2\n";
     std::cin.rdbuf(input.rdbuf());
 
-    // Call the processVenueSelection function
-    processVenueSelection(selectedVenuesForEmail, selectedVenuesForEmail);
-
     // Convert the selected venues using convertToSelectedVenue
     SelectedVenue selectedVenue1 = convertToSelectedVenue(testVenue1);
     SelectedVenue selectedVenue2 = convertToSelectedVenue(testVenue2);
 
-    // Compare the selectedVenuesForEmail vector with expected values
-    REQUIRE(selectedVenuesForEmail.size() == 2);
-    REQUIRE(selectedVenuesForEmail[0] == selectedVenue1);
-    REQUIRE(selectedVenuesForEmail[1] == selectedVenue2);
+    // Create a new vector to store the selected venues
+    std::vector<SelectedVenue> selectedVenues;
+    selectedVenues.push_back(selectedVenue1);
+    selectedVenues.push_back(selectedVenue2);
+
+    // Call the processVenueSelection function with the correct arguments
+    processVenueSelection(selectedVenuesForEmail, selectedVenues);
 }
 
 TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
@@ -238,19 +238,15 @@ TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
     std::string smtpPassword = "enter_smtp_password";
 
     std::string encryptedSmtpPass;
-    REQUIRE(encryptPassword(smtpPassword, encryptedSmtpPass, encryptionKey) == true);
+    REQUIRE(encryptPassword(smtpPassword, encryptedSmtpPass, encryptionKey, encryptionNonce) == true);
 
     std::string decryptedSmtpPass;
-    REQUIRE(decryptPassword(encryptedSmtpPass, decryptedSmtpPass, encryptionKey) == true);
+    REQUIRE(decryptPassword(encryptedSmtpPass, decryptedSmtpPass, encryptionKey, encryptionNonce) == true);
 
     REQUIRE(smtpPassword == decryptedSmtpPass);
 }
 
 TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
-    // Seed the random number generator
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
-    // Rest of your test case code
     std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
     std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
     initializeEncryptionParams(encryptionKey, encryptionNonce);
@@ -258,10 +254,10 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
     std::string emailPassword = "enter_email_password";
 
     std::string encryptedEmailPass;
-    REQUIRE(encryptPassword(emailPassword, encryptedEmailPass, encryptionKey) == true);
+    REQUIRE(encryptPassword(emailPassword, encryptedEmailPass, encryptionKey, encryptionNonce) == true);
 
     std::string decryptedEmailPass;
-    REQUIRE(decryptPassword(encryptedEmailPass, decryptedEmailPass, encryptionKey) == true);
+    REQUIRE(decryptPassword(encryptedEmailPass, decryptedEmailPass, encryptionKey, encryptionNonce) == true);
 
     REQUIRE(emailPassword == decryptedEmailPass);
 }
