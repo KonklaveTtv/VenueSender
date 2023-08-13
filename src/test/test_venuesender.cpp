@@ -43,21 +43,24 @@ TEST_CASE("Test Load Config Settings", "[config]") {
     std::string smtpUsername;
     std::string smtpPass;
     std::string venuesCsvPath;
-    std::string emailPassword;
+    std::string emailPass;
     std::string senderEmail;
     int senderSmtpPort;
 
     // Call the loadConfigSettings function with the mock config file path
     bool result = loadConfigSettings(TestPaths::mockConfigJsonPath, smtpServer, smtpPort, smtpUsername, smtpPass,
-                                     venuesCsvPath, emailPassword, senderEmail, senderSmtpPort);
+                                     venuesCsvPath, emailPass, senderEmail, senderSmtpPort);
 
     // Compare the result with expected values
     REQUIRE(result == true);
-    REQUIRE(smtpServer == "mock_smtp_server"); // Assuming this is the value in mock_config.json
-    REQUIRE(smtpPort == 587); // Assuming this is the value in mock_config.json
-    REQUIRE(emailPassword == "enter_email_password"); // Assuming this is the value in mock_config.json
-    REQUIRE(senderEmail == "sender@example.com"); // Assuming this is the value in mock_config.json
-    REQUIRE(senderSmtpPort == 25); // Assuming this is the value in mock_config.json
+    REQUIRE(smtpServer == "mock_smtp_server");
+    REQUIRE(smtpPort == 587);
+    REQUIRE(smtpUsername == "mock_smtp_username");
+    REQUIRE(smtpPass == "mock_smtp_password");
+    REQUIRE(venuesCsvPath == "mock_venues_csv_path");
+    REQUIRE(emailPass == "enter_email_password");
+    REQUIRE(senderEmail == "sender@example.com");
+    REQUIRE(senderSmtpPort == 25);
 }
 
 TEST_CASE("Test Email Validation", "[validation]") {

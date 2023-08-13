@@ -61,7 +61,7 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
 bool loadConfigSettings(const std::string& configFilePath,
                         std::string& smtpServer, int& smtpPort,
                         std::string& smtpUsername, std::string& smtpPass,
-                        std::string& venuesCsvPath, std::string& emailPassword,
+                        std::string& venuesCsvPath, std::string& emailPass,
                         std::string& senderEmail, int& senderSmtpPort) {
     std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
     std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
@@ -113,7 +113,7 @@ bool loadConfigSettings(const std::string& configFilePath,
         }
         // Additional checks/validation on emailPassDecrypted
     }
-    
+
     // End of SMTP/Mail Password Decryption Check
 
     // Define and initialize variables to track loaded settings
@@ -122,18 +122,18 @@ bool loadConfigSettings(const std::string& configFilePath,
     bool smtpUsernameLoaded = !smtpUsername.empty();
     bool smtpPassLoaded = !smtpPass.empty();
     bool venuesCsvPathLoaded = !venuesCsvPath.empty();
-    bool emailPasswordLoaded = !emailPassword.empty();
+    bool emailPassLoaded = !emailPass.empty();
     bool senderEmailLoaded = !senderEmail.empty();
     bool senderSmtpPortLoaded = senderSmtpPort > 0;
 
     // Check if the configuration settings are loaded successfully
     bool configLoadedSuccessfully = smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded &&
-                                    smtpPassLoaded && venuesCsvPathLoaded && emailPasswordLoaded &&
+                                    smtpPassLoaded && venuesCsvPathLoaded && emailPassLoaded &&
                                     senderEmailLoaded && senderSmtpPortLoaded;
 
     // Display messages based on loaded settings
     if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || smtpPassLoaded || 
-        venuesCsvPathLoaded || emailPasswordLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
+        venuesCsvPathLoaded || emailPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
         std::cout << "Configuration settings loaded from config.json." << std::endl;
         configLoadedSuccessfully = true;
     } else if (smtpServerLoaded || smtpPortLoaded || smtpPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
@@ -155,7 +155,7 @@ bool loadConfigSettings(const std::string& configFilePath,
 
     if (!isEmailPassEncrypted) {
         std::string emailPassEncryptedNew;
-        if (!encryptPassword(emailPassword, emailPassEncryptedNew, encryptionKey, encryptionNonce)) {
+        if (!encryptPassword(emailPass, emailPassEncryptedNew, encryptionKey, encryptionNonce)) {
             std::cerr << "Failed to encrypt email password for saving in config.json." << std::endl;
             return false;
         }
