@@ -63,22 +63,18 @@ bool decryptPassword(const std::string& encryptedPassword, std::string& decrypte
     std::array<unsigned char, IDENTIFIER_LENGTH> expectedIdentifier;
     generateIdentifier(encryptionKey.data(), nonce.c_str(), expectedIdentifier);
 
-    // Check if the idenitify lengths match
-    if (extractedIdentifier.size() != expectedIdentifier.size()) {
-        std::cerr << "Incorrect password identifier, set 'smtp_pass_encrypted' & 'email_pass_encrypted' to false and re-enter both passwords (config.json)." << std::endl;
-        return false;        
-    }
-
-    // Compare identifier with expected identifier
+    // Check if the identifiers match
     if (crypto_verify_16(extractedIdentifier.data(), expectedIdentifier.data()) != 0) {
         std::cerr << "Incorrect password identifier, set 'smtp_pass_encrypted' & 'email_pass_encrypted' to false and re-enter both passwords (config.json)." << std::endl;
         return false;
     }
 
+    // Decrypt the actual password data
     decryptedPassword.assign(reinterpret_cast<char*>(decryptedBuffer) + IDENTIFIER_LENGTH, ciphertext.size() - IDENTIFIER_LENGTH);
 
     return true;
 }
+
 
 bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword,
                      const std::array<unsigned char, crypto_secretbox_KEYBYTES>& encryptionKey) {

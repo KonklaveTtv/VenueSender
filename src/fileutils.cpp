@@ -93,7 +93,8 @@ bool loadConfigSettings(const std::string& configFilePath,
     // Initialize encryption key and nonce
     std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
     std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
-    initializeEncryptionParams(encryptionKey, encryptionNonce);
+
+//    initializeEncryptionParams(encryptionKey, encryptionNonce);
 
     std::string smtpPassDecrypted;
     std::string emailPassDecrypted;

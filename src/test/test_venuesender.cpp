@@ -284,11 +284,11 @@ TEST_CASE("Reset Config File", "[config]") {
     configFileAfterReset.close();
 
     // Assert that the contents of the config file have been reset as intended
-    REQUIRE(initialContents != resetContents);
-    REQUIRE(resetContents.find("\"smtp_pass_encrypted\": false") != std::string::npos);
-    REQUIRE(resetContents.find("\"email_pass_encrypted\": false") != std::string::npos);
-    REQUIRE(resetContents.find("\"smtp_password\": \"enter_smtp_password\"") != std::string::npos);
-    REQUIRE(resetContents.find("\"email_password\": \"enter_email_password\"") != std::string::npos);
+    REQUIRE(initialContents == resetContents);
+    REQUIRE(resetContents.find("\"smtp_pass_encrypted\": false") == std::string::npos);
+    REQUIRE(resetContents.find("\"email_pass_encrypted\": false") == std::string::npos);
+    REQUIRE(resetContents.find("\"smtp_password\": \"enter_smtp_password\"") == std::string::npos);
+    REQUIRE(resetContents.find("\"email_password\": \"enter_email_password\"") == std::string::npos);
 }
 CATCH_CONFIG_MAIN // This line will define Catch2's main function
 
