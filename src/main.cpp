@@ -1,9 +1,5 @@
 #include "main.h"
 
-// Global Variables for encryption
-std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
-std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
-
 bool isValidMenuChoice(int choice) {
     // Validate if the choice is within valid menu options
     return choice >= static_cast<int>(MenuOption::FilterByGenre) &&

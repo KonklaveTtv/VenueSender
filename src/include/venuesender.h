@@ -101,7 +101,7 @@ void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& sele
                               const std::string& smtpServer,
                               int smtpPort,
                               const std::string& smtpUsername,
-                              const std::string& smtpPass);
+                              const std::string& smtpPassDecrypted);
 
 // Function to send an individual email to a recipient with custom subject and message
 bool sendIndividualEmail(CURL* curl,
@@ -112,7 +112,7 @@ bool sendIndividualEmail(CURL* curl,
                         const std::string& smtpServer,
                         int smtpPort,
                         const std::string& smtpUsername,
-                        const std::string& smtpPass,
+                        const std::string& smtpPassDecrypted,
                         double& progress);
 
 #endif // VENUESENDER_H

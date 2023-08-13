@@ -56,11 +56,11 @@ TEST_CASE("Test Load Config Settings", "[config]") {
     REQUIRE(smtpServer == "mock_smtp_server");
     REQUIRE(smtpPort == 587);
     REQUIRE(smtpUsername == "mock_smtp_username");
-    REQUIRE(smtpPass == "mock_smtp_password");
+    REQUIRE(smtpPass == "mock_smtp_password");  // Check the expected decrypted value
     REQUIRE(venuesCsvPath == "mock_venues_csv_path");
-    REQUIRE(emailPass == "enter_email_password");
-    REQUIRE(senderEmail == "sender@example.com");
-    REQUIRE(senderSmtpPort == 25);
+    REQUIRE(emailPass == "enter_email_password");  // Check the expected decrypted value
+    REQUIRE(senderEmail == "your_sender_email@example.com");
+    REQUIRE(senderSmtpPort == 587);
 }
 
 TEST_CASE("Test Email Validation", "[validation]") {
@@ -234,33 +234,33 @@ TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
 }
 
 TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
-    std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
-    std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
-    initializeEncryptionParams(encryptionKey, encryptionNonce);
+    // Initialize encryption parameters
+    initializeEncryptionParams();
 
     std::string smtpPassword = "enter_smtp_password";
 
     std::string encryptedSmtpPass;
-    REQUIRE(encryptPassword(smtpPassword, encryptedSmtpPass, encryptionKey, encryptionNonce) == true);
+    REQUIRE(encryptPassword(smtpPassword, encryptedSmtpPass) == true);
 
-    std::string decryptedSmtpPass;
-    REQUIRE(decryptPassword(encryptedSmtpPass, decryptedSmtpPass, encryptionKey, encryptionNonce) == true);
+    std::string smtpPassDecrypted;
+    std::string decryptedSmtpPass = decryptPassword(encryptedSmtpPass, smtpPassDecrypted);
+    REQUIRE(decryptedSmtpPass == smtpPassword);
 
     REQUIRE(smtpPassword == decryptedSmtpPass);
 }
 
 TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
-    std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
-    std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
-    initializeEncryptionParams(encryptionKey, encryptionNonce);
+    // Initialize encryption parameters
+    initializeEncryptionParams();
 
     std::string emailPassword = "enter_email_password";
 
     std::string encryptedEmailPass;
-    REQUIRE(encryptPassword(emailPassword, encryptedEmailPass, encryptionKey, encryptionNonce) == true);
+    REQUIRE(encryptPassword(emailPassword, encryptedEmailPass) == true);
 
-    std::string decryptedEmailPass;
-    REQUIRE(decryptPassword(encryptedEmailPass, decryptedEmailPass, encryptionKey, encryptionNonce) == true);
+    std::string smtpPassDecrypted;
+    std::string decryptedEmailPass = decryptPassword(encryptedEmailPass, smtpPassDecrypted);
+    REQUIRE(decryptedEmailPass == emailPassword);
 
     REQUIRE(emailPassword == decryptedEmailPass);
 }

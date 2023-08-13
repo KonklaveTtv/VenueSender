@@ -89,7 +89,7 @@ bool sendIndividualEmail(CURL* curl,
                         const std::string& smtpServer,
                         int smtpPort,
                         const std::string& smtpUsername,
-                        const std::string& smtpPass,
+                        const std::string& smtpPassDecrypted,
                         double& progress) {
     // Set the value of emailBeingSent
     emailBeingSent = selectedVenue.email;
@@ -126,7 +126,7 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 
     // Set SMTP username and password
-    std::string smtpUserPass = smtpUsername + ":" + smtpPass;
+    std::string smtpUserPass = smtpUsername + ":" + smtpPassDecrypted;
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUserPass.c_str());
 
     std::cout << "Authenticating with SMTP server..." << std::endl;
@@ -158,7 +158,7 @@ void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& sele
                               const std::string& smtpServer,
                               int smtpPort,
                               const std::string& smtpUsername,
-                              const std::string& smtpPass) {
+                              const std::string& smtpPassDecrypted) {
     // Set the custom progress callback function from CurlHandleWrapper
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
 
@@ -170,7 +170,7 @@ void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& sele
         std::cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << std::endl;
 
         // Send the individual email with progress tracking
-        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass, progress);
+        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
 
         emailBeingSent.clear(); // Reset the value of emailBeingSent
     }
