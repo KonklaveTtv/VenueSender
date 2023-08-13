@@ -11,12 +11,11 @@ void initializeEncryptionParams(std::array<unsigned char, crypto_secretbox_KEYBY
     }
 
     // Generate a random encryption key
-    randombytes(encryptionKey.data(), crypto_secretbox_KEYBYTES);
+    randombytes_buf(encryptionKey.data(), crypto_secretbox_KEYBYTES);
 
     // Generate a random nonce
-    randombytes(encryptionNonce.data(), crypto_secretbox_NONCEBYTES);
+    randombytes_buf(encryptionNonce.data(), crypto_secretbox_NONCEBYTES);
 }
-
 bool decryptPassword(const std::string& encryptedPassword, std::string& decryptedPassword,
                       const std::array<unsigned char, crypto_secretbox_KEYBYTES>& encryptionKey,
                       const std::array<unsigned char, crypto_secretbox_NONCEBYTES>& encryptionNonce) {
