@@ -20,14 +20,6 @@ To run this project, you need the following installed on your system:
       sudo apt-get update
       sudo apt-get install g++ libjsoncpp-dev libcurl4-openssl-dev libsodium-dev catch2
 
-
-      git clone https://github.com/catchorg/Catch2.git
-      cd Catch2
-      mkdir build
-      cd build
-      cmake ..
-      sudo make install
-
 ### Installation
 
 1. Clone the repository:
@@ -37,12 +29,15 @@ To run this project, you need the following installed on your system:
 
 Navigate to the project directory:
 
-      cd venue-sender
+      cd venuesender
 
 Compile the project:
 
       make
 
+Running VenueSender:
+
+      ./venuesender
 
 ### Usage
 

@@ -1,8 +1,13 @@
-#include "catch.hpp"
+#define CATCH_CONFIG_MAIN
 
 #include "fileutils.h"
 #include "filtercriteria.h"
 #include "venuesender.h"
+
+#include "catch.hpp"
+
+#include <cstdlib>
+#include <ctime>
 
 TEST_CASE("Test Load Config Settings", "[config]") {
     // Set up mock data for config settings
@@ -258,6 +263,10 @@ TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
 }
 
 TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
+    // Seed the random number generator
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+    // Rest of your test case code
     std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
     std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
     initializeEncryptionParams(encryptionKey, encryptionNonce);
@@ -272,3 +281,4 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
 
     REQUIRE(emailPassword == decryptedEmailPass);
 }
+CATCH_CONFIG_MAIN // This line will define Catch2's main function

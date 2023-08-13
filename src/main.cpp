@@ -67,6 +67,8 @@ void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues) {
     std::cout << "===========================" << std::endl;
 }
 
+// remove if UnitTesting configuration is active
+#ifndef UNIT_TESTING
 int main() {
     // Initialize data and configuration settings
     std::vector<Venue> venues;
@@ -269,3 +271,4 @@ int main() {
 
     return 0;
 }
+#endif // UNIT_TESTING

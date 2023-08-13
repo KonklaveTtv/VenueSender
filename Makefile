@@ -2,7 +2,7 @@
 
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -L/usr/lib -g
+CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -L/usr/lib
 INCLUDES = -Isrc/include -Isrc
 
 # Directories
@@ -30,9 +30,6 @@ TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 # Libraries
 LIBS = -lcurl -ljsoncpp -lsodium
 
-# Catch2 library
-CATCH2_LIB = catch2
-
 # Compile rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
@@ -47,6 +44,7 @@ $(OBJDIR)/%.o: $(TESTDIR)/%.cpp
 all: directories $(TARGET)
 
 # Debug target
+debug: CXXFLAGS += -g
 debug: directories $(DEBUG_TARGET)
 
 # Test target
@@ -69,7 +67,7 @@ $(DEBUG_TARGET): $(DEBUG_OBJS)
 
 # Link the venuesender_test
 $(TEST_TARGET): $(TEST_OBJS) $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) -l$(CATCH2_LIB) $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(filter-out $(OBJDIR)/main.o, $(OBJS)) $(LIBS) -lCatch2
 
 # Run tests
 run_tests: test $(TEST_TARGET)
