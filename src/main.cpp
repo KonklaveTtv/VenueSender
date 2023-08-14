@@ -99,7 +99,7 @@ int main() {
         std::cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << std::endl;
         exit(1); // Handle the error appropriately
     }
-    
+
     // Initialize libcurl
     CurlHandleWrapper::init();
 

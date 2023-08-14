@@ -236,5 +236,3 @@ void resetConfigFile(const std::string& configFilePath) {
     configFileOut.close();
 #endif // UNIT_TESTING
 }
-
-

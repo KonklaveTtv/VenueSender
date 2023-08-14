@@ -1,0 +1,6 @@
+Configuration settings loaded from config.json.
+Select venues to add (comma-separated indices): 
+Configuration settings loaded from config.json.
+===============================================================================
+All tests passed (47 assertions in 10 test cases)
+

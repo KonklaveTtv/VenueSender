@@ -1,16 +1,16 @@
 {
-	"email_pass_encrypted" : false,
-	"email_password" : "mock_email_password",
+	"email_pass_encrypted" : false, // do not change, this is for tests
+	"email_password" : "enter_email_password", // do not change, this is for tests
 	// Sender's email address and SMTP port
-	"sender_email" : "your_sender_email@example.com", // Replace with your sender email address
-	"sender_smtp_port" : 587, // Replace with the SMTP port for your sender email
+	"sender_email" : "your_sender_email@example.com", // do not change, this is for tests
+	"sender_smtp_port" : 587, // do not change, this is for tests
 	"smtp_pass_encrypted" : false,
-	"smtp_password" : "mock_smtp_password",
-	"smtp_port" : 587, // Replace with your SMTP port number
+	"smtp_password" : "enter_smtp_password", // do not change, this is for tests
+	"smtp_port" : 587, // do not change, this is for tests
 	// SMTP Server settings
-	"smtp_server" : "mock_smtp_server", // Replace with your SMTP server address
+	"smtp_server" : "mock_smtp_server", // do not change, this is for tests
 	// SMTP Authentication credentials
-	"smtp_username" : "mock_smtp_username", // Replace with your SMTP username
-	// Path to the CSV file containing venue data
-	"venues_csv_path" : "mock_venues.csv" // Provide the path to your venues CSV file
+	"smtp_username" : "mock_smtp_username", // do not change, this is for tests
+	// Path to the Test Mock CSV file containing venue data
+	"venues_csv_path" : "mock_venues.csv" // do not change, this is for tests
 }

@@ -1,4 +1,4 @@
-#define CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_RUNNER
 
 #include "test_paths.h"
 
@@ -30,15 +30,15 @@ TEST_CASE("Test Read CSV", "[csv]") {
     // Compare the result with expected values
     REQUIRE(venues.size() == 2);
 
-    REQUIRE(venues[0].name == "Top of the Bay");
-    REQUIRE(venues[0].email == "topofthebayllc@gmail.com");
+    REQUIRE(venues[0].name == "Venue1");
+    REQUIRE(venues[0].email == "venue1@mock.com");
     REQUIRE(venues[0].genre == "all");
     REQUIRE(venues[0].state == "AL");
     REQUIRE(venues[0].city == "Daphne");
     REQUIRE(venues[0].capacity == 100);
 
-    REQUIRE(venues[1].name == "Quarters");
-    REQUIRE(venues[1].email == "atonuv10@gmail.com");
+    REQUIRE(venues[1].name == "Venue2");
+    REQUIRE(venues[1].email == "venue2@mock.com");
     REQUIRE(venues[1].genre == "rock");
     REQUIRE(venues[1].state == "UT");
     REQUIRE(venues[1].city == "Provo");
@@ -81,7 +81,7 @@ TEST_CASE("Test Load Config Settings", "[config]") {
 
 TEST_CASE("Test Email Validation", "[validation]") {
     // Set up mock data for email validation
-    std::string validEmail = "test@example.com";
+    std::string validEmail = "venue1@mock.com";
     std::string invalidEmail = "invalid.email";
 
     // Call the isValidEmail function
@@ -107,8 +107,8 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     std::string smtpPass = "mock_smtp_password";
 
     // Simulate adding some selected venues
-    Venue testVenue1("Top of the Bay", "topofthebayllc@gmail.com", "all", "AL", "Daphne", 100);
-    Venue testVenue2("Quarters", "atonuv10@gmail.com", "rock", "UT", "Provo", 300);
+    Venue testVenue1("Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100);
+    Venue testVenue2("Venue2", "venue2@mock.com", "rock", "UT", "Provo", 300);
 
     // Convert Venue objects to SelectedVenue objects
     SelectedVenue selectedVenue1(testVenue1);
@@ -131,16 +131,16 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
 
     // Compare the result with expected values
     std::string output = outputCapture.str();
-    REQUIRE(output.find("Sending email 1 of 2 to: topofthebayllc@gmail.com") != std::string::npos);
-    REQUIRE(output.find("Sending email 2 of 2 to: atonuv10@gmail.com") != std::string::npos);
+    REQUIRE(output.find("Sending email 1 of 2 to: venue1@mock.com") != std::string::npos);
+    REQUIRE(output.find("Sending email 2 of 2 to: venue2@mock.com") != std::string::npos);
     REQUIRE(output.find("Email sending progress completed.") != std::string::npos);
 }
 
 TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     // Create a mock Venue
     Venue mockVenue;
-    mockVenue.name = "Top of the Bay";
-    mockVenue.email = "topofthebayllc@gmail.com";
+    mockVenue.name = "Venue1";
+    mockVenue.email = "venue1@mock.com";
     mockVenue.city = "Daphne";
     mockVenue.genre = "all";
     mockVenue.state = "AL";
@@ -150,8 +150,8 @@ TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     SelectedVenue selectedVenue = convertToSelectedVenue(mockVenue);
 
     // Compare the converted SelectedVenue with expected values
-    REQUIRE(selectedVenue.name == "Top of the Bay");
-    REQUIRE(selectedVenue.email == "topofthebayllc@gmail.com");
+    REQUIRE(selectedVenue.name == "Venue1");
+    REQUIRE(selectedVenue.email == "venue1@mock.com");
     REQUIRE(selectedVenue.city == "Daphne");
     REQUIRE(selectedVenue.genre == "all");
     REQUIRE(selectedVenue.state == "AL");
@@ -165,8 +165,8 @@ bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
 
 TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
     // Create a mock vector of temporary filtered venues
-    Venue testVenue1("Top of the Bay", "topofthebayllc@gmail.com", "Daphne", "all", "AL", 100);
-    Venue testVenue2("Quarters", "atonuv10@gmail.com", "Provo", "rock", "UT", 300);
+    Venue testVenue1("Venue1", "venue1@mock.com", "Daphne", "all", "AL", 100);
+    Venue testVenue2("Venue2", "venue2@mock.com", "Provo", "rock", "UT", 300);
     std::vector<Venue> temporaryFilteredVenues = {testVenue1, testVenue2};
 
     // Convert Venue objects to SelectedVenue objects
@@ -245,5 +245,16 @@ TEST_CASE("Test Reset Config File", "[resetConfigFile]") {
     REQUIRE(smtpPass != "mock_smtp_password");  // The password should have been encrypted, so it should not match the mock one.
     REQUIRE(mailPass != "mock_email_password"); // Same reasoning for the email password.
 }
-CATCH_CONFIG_MAIN // This line will define Catch2's main function
+CATCH_CONFIG_RUNNER // This line will define Catch2's main function
 
+int main( int argc, char* argv[] )
+{
+    // Run all the tests
+    int result = Catch::Session().run(argc, argv);
+
+    // Clean up the mock config file after all tests have been run
+    resetConfigFile(TestPaths::mockConfigJsonPath);
+
+    // Return the test results
+    return result;
+}
