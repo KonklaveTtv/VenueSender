@@ -12,5 +12,5 @@
 	// SMTP Authentication credentials
 	"smtp_username" : "mock_smtp_username", // Replace with your SMTP username
 	// Path to the CSV file containing venue data
-	"venues_csv_path" : "/src/mock_venues.csv" // Provide the path to your venues CSV file
+	"venues_csv_path" : "mock_venues.csv" // Provide the path to your venues CSV file
 }

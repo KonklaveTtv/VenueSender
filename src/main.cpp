@@ -74,9 +74,9 @@ int main() {
     int smtpPort;
     std::string smtpPass;
     std::string smtpUsername;
-    std::string emailPass;
+    std::string mailPass;
     std::string smtpPassDecrypted;
-    std::string emailPassDecrypted;
+    std::string mailPassDecrypted;
     std::string senderEmail;
     int senderSmtpPort;
     std::string subject;
@@ -84,14 +84,22 @@ int main() {
     double progress;
 
     initializeEncryptionParams();
-    
-    // Load configuration settings from config.json
-    if (!loadConfigSettings("config.json",smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath,
-                            emailPass, senderEmail, senderSmtpPort)) {
+
+    if (!loadConfigSettings("config.json",smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath, mailPass, senderEmail, senderSmtpPort)) {
         std::cerr << "Failed to load configuration settings from config.json." << std::endl;
         exit(1); // Handle the error appropriately
     }
 
+    smtpPassDecrypted = decryptPassword(smtpPass);
+    mailPassDecrypted = decryptPassword(mailPass);
+
+
+    // Check if decryption was successful
+    if (smtpPassDecrypted.empty() || mailPassDecrypted.empty()) {
+        std::cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << std::endl;
+        exit(1); // Handle the error appropriately
+    }
+    
     // Initialize libcurl
     CurlHandleWrapper::init();
 
@@ -122,7 +130,7 @@ int main() {
     }
 
     // Set the email password for authentication
-    res = curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassDecrypted.c_str());
+    res = curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
     if (res != CURLE_OK) {
         std::cerr << "Failed to set libcurl email password option." << std::endl;
         curl_easy_cleanup(curl);
@@ -189,7 +197,7 @@ int main() {
                 std::cout << "Selected venues cleared." << std::endl;
             } else if (choice == static_cast<int>(MenuOption::ShowEmailSettings)) {
                 // View Email Settings
-                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, smtpPassDecrypted, emailPassDecrypted);
+                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, smtpPassDecrypted, mailPassDecrypted);
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
 

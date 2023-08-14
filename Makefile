@@ -38,7 +38,7 @@ $(DEBUGOBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJDIR)/%.o: $(TESTDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -DUNIT_TESTING $(INCLUDES) -c $< -o $@
 
 # Default target
 all: directories $(TARGET)
