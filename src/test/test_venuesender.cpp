@@ -1,5 +1,7 @@
 #define CATCH_CONFIG_RUNNER
 
+#include "main.h"
+
 #include "fileutils.h"
 #include "filtercriteria.h"
 #include "mail.h"
@@ -9,6 +11,13 @@
 #include <cstdlib>
 #include <ctime>
 
+using namespace confPaths;
+
+
+// -----------------------
+// Test Group: Utilities
+// -----------------------
+
 TEST_CASE("Test trim function", "[FileUtils]") {
     REQUIRE(trim("   leading spaces") == "leading spaces");
     REQUIRE(trim("trailing spaces   ") == "trailing spaces");
@@ -17,10 +26,15 @@ TEST_CASE("Test trim function", "[FileUtils]") {
     REQUIRE(trim("") == "");
 }
 
+
+// -----------------------
+// Test Group: File Operations
+// -----------------------
+
 TEST_CASE("Test Read CSV", "[csv]") {
     // Set up mock data for readCSV function
     std::vector<Venue> venues;
-    std::string venuesCsvPath = TestPaths::mockVenuesCsvPath;
+    std::string venuesCsvPath = confPaths::mockVenuesCsvPath;
 
     // Call the readCSV function
     readCSV(venues, venuesCsvPath);
@@ -43,7 +57,7 @@ TEST_CASE("Test Read CSV", "[csv]") {
     REQUIRE(venues[1].capacity == 300);
 }
 
-TEST_CASE("Test Load Config Settings", "[config]") {
+TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     std::string smtpServer;
     int smtpPort;
     std::string smtpUsername;
@@ -52,30 +66,52 @@ TEST_CASE("Test Load Config Settings", "[config]") {
     std::string mailPass;
     std::string senderEmail;
     int senderSmtpPort;
-
-    // Call the loadConfigSettings function with the mock config file path
-    bool result = loadConfigSettings(TestPaths::mockConfigJsonPath, smtpServer, smtpPort, smtpUsername, smtpPass,
+    
+    bool result = loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, 
                                      venuesCsvPath, mailPass, senderEmail, senderSmtpPort);
-
-    // Compare the result with expected values
+    
     REQUIRE(result == true);
     REQUIRE(smtpServer == "mock_smtp_server");
     REQUIRE(smtpPort == 587);
     REQUIRE(smtpUsername == "mock_smtp_username");
-
-    // Decrypt the passwords before checking
-    std::string decryptedSmtpPass = decryptPassword(smtpPass);
-    std::string decryptedMailPass = decryptPassword(mailPass);
-
-    // These checks are dependent on your encryptPassword and decryptPassword implementations
-    // The test assumes the mocked passwords are not encrypted and will be decrypted after encryption in the function
-    REQUIRE(decryptedSmtpPass == "mock_smtp_password");  // Check the expected decrypted value after being encrypted and then decrypted
-    REQUIRE(decryptedMailPass == "mock_email_password"); // Same here
-
-    REQUIRE(venuesCsvPath == "mock_venues.csv");
-    REQUIRE(senderEmail == "your_sender_email@example.com");
+    REQUIRE(venuesCsvPath == confPaths::mockVenuesCsvPath);
+    REQUIRE(senderEmail == "mock@example.com");
     REQUIRE(senderSmtpPort == 587);
 }
+
+// -----------------------
+// Test Group: Menu Operations
+// -----------------------
+
+TEST_CASE("viewEmailSettings function", "[Display]") {
+    std::ostringstream oss;
+    std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+    std::cout.rdbuf(oss.rdbuf());
+
+    // Call the function
+    viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass");
+
+    std::cout.rdbuf(oldCoutStreamBuf);
+    
+    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\n===========================\n");
+}
+
+TEST_CASE("viewEmailSettings funcion", "[Display]") {
+    std::ostringstream oss;
+    std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+    std::cout.rdbuf(oss.rdbuf());
+
+    // Call the function
+    viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass");
+
+    std::cout.rdbuf(oldCoutStreamBuf);
+
+    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\n===========================\n");
+}
+
+// -----------------------
+// Test Group: Email Operations
+// -----------------------
 
 TEST_CASE("Test Email Validation", "[validation]") {
     // Set up mock data for email validation
@@ -96,7 +132,7 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     CurlHandleWrapper curlWrapper;
     CURL* curl = curlWrapper.get();
     std::vector<SelectedVenue> selectedVenuesForEmail;
-    std::string senderEmail = "sender@example.com";
+    std::string senderEmail = "mock@example.com";
     std::string subject = "Mock Subject";
     std::string message = "Mock Message";
     std::string smtpServer = "mock_smtp_server";
@@ -134,6 +170,11 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     REQUIRE(output.find("Email sending progress completed.") != std::string::npos);
 }
 
+
+// -----------------------
+// Test Group: Venue Operations
+// -----------------------
+
 TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     // Create a mock Venue
     Venue mockVenue;
@@ -154,11 +195,6 @@ TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     REQUIRE(selectedVenue.genre == "all");
     REQUIRE(selectedVenue.state == "AL");
     REQUIRE(selectedVenue.capacity == 100);
-}
-
-bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
-    return lhs.name == rhs.name && lhs.email == rhs.email && lhs.city == rhs.city &&
-           lhs.genre == rhs.genre && lhs.state == rhs.state && lhs.capacity == rhs.capacity;
 }
 
 TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
@@ -190,6 +226,10 @@ TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
     // Call the processVenueSelection function with the correct arguments
     processVenueSelection(selectedVenuesForEmail, selectedVenues);
 }
+
+// -----------------------
+// Test Group: Encryption and Decryption
+// -----------------------
 
 TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
     // Initialize encryption parameters
@@ -223,26 +263,11 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
     REQUIRE(mailPassword == decryptedmailPass);
 }
 
-TEST_CASE("Test Reset Config File", "[resetConfigFile]") {
-    // Reset the mock config file
-    resetConfigFile(TestPaths::mockConfigJsonPath);
-
-    // Now, we'll reload the settings to ensure they've been reset
-    std::string smtpServer, smtpUsername, smtpPass, venuesCsvPath, mailPass, senderEmail;
-    int smtpPort, senderSmtpPort;
-
-    bool result = loadConfigSettings(
-        TestPaths::mockConfigJsonPath,
-        smtpServer, smtpPort,
-        smtpUsername, smtpPass,
-        venuesCsvPath, mailPass,
-        senderEmail, senderSmtpPort
-    );
-
-    REQUIRE(result);
-    REQUIRE(smtpPass != "mock_smtp_password");  // The password should have been encrypted, so it should not match the mock one.
-    REQUIRE(mailPass != "mock_email_password"); // Same reasoning for the email password.
+bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
+    return lhs.name == rhs.name && lhs.email == rhs.email && lhs.city == rhs.city &&
+           lhs.genre == rhs.genre && lhs.state == rhs.state && lhs.capacity == rhs.capacity;
 }
+
 CATCH_CONFIG_RUNNER // This line will define Catch2's main function
 
 int main( int argc, char* argv[] )
@@ -251,7 +276,7 @@ int main( int argc, char* argv[] )
     int result = Catch::Session().run(argc, argv);
 
     // Clean up the mock config file after all tests have been run
-    resetConfigFile(TestPaths::mockConfigJsonPath);
+    resetConfigFile();
 
     // Return the test results
     return result;

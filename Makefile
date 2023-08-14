@@ -26,6 +26,7 @@ TEST_SRCS = $(wildcard $(TESTDIR)/*.cpp)
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 DEBUG_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(DEBUGOBJDIR)/%.o, $(SRCS))
 TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
+TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
 
 # Libraries
 LIBS = -lcurl -ljsoncpp -lsodium
@@ -36,6 +37,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 $(DEBUGOBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJDIR)/test_%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -DUNIT_TESTING $(INCLUDES) -c $< -o $@
 
 $(OBJDIR)/%.o: $(TESTDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -DUNIT_TESTING $(INCLUDES) -c $< -o $@
@@ -66,8 +70,8 @@ $(DEBUG_TARGET): $(DEBUG_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(DEBUG_OBJS) $(LIBS)
 
 # Link the venuesender_test
-$(TEST_TARGET): $(TEST_OBJS) $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(filter-out $(OBJDIR)/main.o, $(OBJS)) $(LIBS) -lCatch2
+$(TEST_TARGET): $(TEST_OBJS) $(TEST_MAIN_OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(filter-out $(OBJDIR)/test_main.o, $(TEST_MAIN_OBJS)) $(LIBS) -lCatch2
 
 # Run tests
 run_tests: test $(TEST_TARGET)

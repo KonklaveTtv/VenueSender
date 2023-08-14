@@ -12,7 +12,9 @@
 
 #include "json/json.h"
 
-namespace TestPaths {
+namespace confPaths {
+    const std::string venuesCsvPath = "venues.csv";
+    const std::string configJsonPath = "config.json";
     const std::string mockVenuesCsvPath = "src/test/mock_venues.csv";
     const std::string mockConfigJsonPath = "src/test/mock_config.json";
 }
@@ -27,13 +29,12 @@ void clearInputBuffer();
 void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
 
 // Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
-bool loadConfigSettings(const std::string& configFilePath,
-                        std::string& smtpServer, int& smtpPort,
+bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
                         std::string& smtpUsername, std::string& smtpPass,
                         std::string& venuesCsvPath, std::string& mailPass,
                         std::string& senderEmail, int& senderSmtpPort);
 
 // Function to reset the config.json file password fields on exit
-void resetConfigFile(const std::string& configFilePath);
+void resetConfigFile();
 
 #endif // FILEUTILS_H

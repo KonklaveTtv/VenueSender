@@ -44,6 +44,18 @@ void CurlHandleWrapper::cleanup() {
 }
 /*-------------------*/
 
+void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
+                       int senderSmtpPort, const std::string& smtpPassDecrypted, const std::string& mailPassDecrypted) {
+    std::cout << "===== Email Settings =====" << std::endl;
+    std::cout << "SMTP Server: " << smtpServer << std::endl;
+    std::cout << "SMTP Port: " << smtpPort << std::endl;
+    std::cout << "Sender Email: " << senderEmail << std::endl;
+    std::cout << "Sender SMTP Port: " << senderSmtpPort << std::endl;
+    std::cout << "SMTP Password: " << smtpPassDecrypted << std::endl;
+    std::cout << "Mail Password: " << mailPassDecrypted << std::endl;  
+    std::cout << "===========================" << std::endl;
+}
+
 // Function to check if an email address is in a valid format
 bool isValidEmail(const std::string& email) {
     // A simple regex pattern to check the format of the email

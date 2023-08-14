@@ -86,6 +86,9 @@ void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVe
 
 void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
 
+void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
+                       int senderSmtpPort, const std::string& smtpPassDecrypted, const std::string& mailPassDecrypted);
+
 // Check if an email address is in a valid format
 bool isValidEmail(const std::string& email);
 
