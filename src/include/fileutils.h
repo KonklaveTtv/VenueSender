@@ -2,7 +2,7 @@
 #define FILEUTILS_H
 
 #include "encryption.h"
-#include "venue.h"
+#include "structs.h"
 
 #include <algorithm>
 #include <fstream> 

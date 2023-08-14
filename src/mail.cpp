@@ -1,4 +1,4 @@
-#include "venuesender.h"
+#include "mail.h"
 
 std::string emailBeingSent;
 

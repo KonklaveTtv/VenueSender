@@ -4,7 +4,7 @@
 
 #include "fileutils.h"
 #include "filtercriteria.h"
-#include "venuesender.h"
+#include "mail.h"
 
 #include "catch.hpp"
 

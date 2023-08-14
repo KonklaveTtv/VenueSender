@@ -2,8 +2,8 @@
 #define FILTERCRITERIA_H
 
 #include "filtercriteria.h"
-#include "venue.h"
-#include "venuesender.h"
+#include "mail.h"
+#include "structs.h"
 
 #include <algorithm>
 #include <iomanip>
