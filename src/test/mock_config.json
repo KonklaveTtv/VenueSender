@@ -1,11 +1,11 @@
 {
-	"email_pass_encrypted" : false, // do not change, this is for tests
-	"email_password" : "enter_email_password", // do not change, this is for tests
+	"email_pass_encrypted" : false,
+	"email_password" : "enter_email_password",
 	// Sender's email address and SMTP port
 	"sender_email" : "your_sender_email@example.com", // do not change, this is for tests
 	"sender_smtp_port" : 587, // do not change, this is for tests
 	"smtp_pass_encrypted" : false,
-	"smtp_password" : "enter_smtp_password", // do not change, this is for tests
+	"smtp_password" : "enter_smtp_password",
 	"smtp_port" : 587, // do not change, this is for tests
 	// SMTP Server settings
 	"smtp_server" : "mock_smtp_server", // do not change, this is for tests

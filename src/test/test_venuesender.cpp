@@ -1,7 +1,5 @@
 #define CATCH_CONFIG_RUNNER
 
-#include "test_paths.h"
-
 #include "fileutils.h"
 #include "filtercriteria.h"
 #include "mail.h"
