@@ -150,6 +150,11 @@ bool sendIndividualEmail(CURL* curl,
 
     if (res != CURLE_OK) {
         std::cerr << "Failed to send email: " << curl_easy_strerror(res) << std::endl;
+        if (res == CURLE_COULDNT_CONNECT) {
+            std::cerr << "Connection to SMTP server failed." << std::endl;
+        } else if (res == CURLE_LOGIN_DENIED) {
+            std::cerr << "Authentication with SMTP server failed." << std::endl;
+        }
         return false;
     }
 
