@@ -9,8 +9,7 @@ void initializeEncryptionParams() {
 
     // Initialize libsodium
     if (sodium_init() < 0) {
-        cerr << "Error initializing libsodium." << endl;
-        // Handle the error appropriately
+        throw runtime_error("Failed to initialize libsodium.");
     }
 
     // Generate a random encryption key
@@ -27,7 +26,7 @@ bool encryptPassword(const string& decryptedPassword, string& encryptedPassword)
     // Encrypt the password using the global encryption key and nonce
     if (crypto_secretbox_easy(encryptedBuffer, reinterpret_cast<const unsigned char*>(decryptedPassword.c_str()), decryptedPassword.size(),
                               globalEncryptionNonce.data(), globalEncryptionKey.data()) != 0) {
-        cerr << "Error encrypting password." << endl;
+        cerr << "Failed to encrypt password." << endl;
         return false;
     }
 
@@ -46,8 +45,7 @@ string decryptPassword(const string& encryptedPassword) {
 
     // Check if the encrypted password is long enough to contain the nonce and MAC
     if (encryptedPassword.size() < crypto_secretbox_MACBYTES + NONCE_LENGTH) {
-        cerr << "Invalid encrypted password format." << endl;
-        return "";
+        throw invalid_argument("Invalid encrypted password format.");
     }
 
     // Extract the encryption nonce from the encrypted password
@@ -62,8 +60,7 @@ string decryptPassword(const string& encryptedPassword) {
     // Decrypt the ciphertext using the global encryption key and extracted nonce
     if (crypto_secretbox_open_easy(decryptedBuffer, reinterpret_cast<const unsigned char*>(ciphertext.c_str()), ciphertext.size(),
                                    reinterpret_cast<const unsigned char*>(nonce.c_str()), globalEncryptionKey.data()) != 0) {
-        cerr << "Error decrypting password." << endl;
-        return "";
+        throw runtime_error("Failed to decrypt password or corrupted password.");
     }
 
     // Return the decrypted password
