@@ -19,7 +19,7 @@ SelectedVenue convertToSelectedVenue(const Venue& venue) {
 set<string> getUniqueGenres(const vector<Venue>& venues) {
     set<string> uniqueGenres;
     for (const auto& venue : venues) {
-        if (venue.genre != "all") {  // Exclude the "all" genre
+        if (uniqueGenres.find(venue.genre) == uniqueGenres.end()) {
             uniqueGenres.insert(venue.genre);
         }
     }
