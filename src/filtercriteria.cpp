@@ -1,5 +1,18 @@
 #include "filtercriteria.h"
 
+// Convert Venue to SelectedVenue
+SelectedVenue convertToSelectedVenue(const Venue& venue) {
+    // Create a SelectedVenue instance based on Venue data
+    SelectedVenue selectedVenue;
+    selectedVenue.name = venue.name;
+    selectedVenue.email = venue.email;
+    selectedVenue.genre = venue.genre;
+    selectedVenue.state = venue.state;
+    selectedVenue.city = venue.city;
+    selectedVenue.capacity = venue.capacity;
+    return selectedVenue;
+}
+
 // Utility function to get unique genres from a vector of venues
 set<string> getUniqueGenres(const vector<Venue>& venues) {
     set<string> uniqueGenres;
@@ -64,19 +77,6 @@ vector<int> getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr)
         }
     }
     return uniqueValues;
-}
-
-// Convert Venue to SelectedVenue
-SelectedVenue convertToSelectedVenue(const Venue& venue) {
-    // Create a SelectedVenue instance based on Venue data
-    SelectedVenue selectedVenue;
-    selectedVenue.name = venue.name;
-    selectedVenue.email = venue.email;
-    selectedVenue.genre = venue.genre;
-    selectedVenue.state = venue.state;
-    selectedVenue.city = venue.city;
-    selectedVenue.capacity = venue.capacity;
-    return selectedVenue;
 }
 
 // Function to process user input and select venues

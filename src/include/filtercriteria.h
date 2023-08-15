@@ -28,21 +28,6 @@ struct FilterCriteria {
 // Venue selection indices max char length
 const int MAX_INPUT_LENGTH = 256;
 
-// Convert Venue to SelectedVenue
-SelectedVenue convertToSelectedVenue(const Venue& venue);
-
-// Get a set of unique genres/states/cities/capacities from a vector of venues
-set<string> getUniqueGenres(const vector<Venue>& venues);
-set<string> getUniqueStates(const vector<Venue>& venues);
-set<string> getUniqueCities(const vector<Venue>& venues);
-set<int> getUniqueCapacities(const vector<Venue>& venues);
-
-// Declaration for getUniqueValues with a member pointer to a string
-vector<string> getUniqueValues(const vector<Venue>& venues, string Venue::* memberPtr);
-
-// Declaration for getUniqueValues with a member pointer to an integer
-vector<int> getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr);
-
 // Definition of getSelectedIndices for vector of any type
 template<class T>
 vector<int> getSelectedIndices(const vector<T>& options, istream& input) {
@@ -61,6 +46,21 @@ vector<int> getSelectedIndices(const vector<T>& options, istream& input) {
     }
     return selectedIndices;
 }
+
+// Convert Venue to SelectedVenue
+SelectedVenue convertToSelectedVenue(const Venue& venue);
+
+// Get a set of unique genres/states/cities/capacities from a vector of venues
+set<string> getUniqueGenres(const vector<Venue>& venues);
+set<string> getUniqueStates(const vector<Venue>& venues);
+set<string> getUniqueCities(const vector<Venue>& venues);
+set<int> getUniqueCapacities(const vector<Venue>& venues);
+
+// Declaration for getUniqueValues with a member pointer to a string
+vector<string> getUniqueValues(const vector<Venue>& venues, string Venue::* memberPtr);
+
+// Declaration for getUniqueValues with a member pointer to an integer
+vector<int> getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr);
 
 // Function to process user input and select venues
 void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
@@ -102,9 +102,5 @@ vector<SelectedVenue> filterByOption(const vector<Venue>& venues,
 vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
                                             const set<int>& uniqueCapacities,
                                             vector<SelectedVenue>& temporaryFilteredVenues);
-
-// Definition of getSelectedIndices
-template<class T>
-vector<int> getSelectedIndices(const vector<T>& options, istream& input);
 
 #endif // FILTERCRITERIA_H
