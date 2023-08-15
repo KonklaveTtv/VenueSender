@@ -1,7 +1,7 @@
 # Files
 /config.json
 /src/test/mock_config.json
-/src/venues.csv
+/venues.csv
 
 # Folders
 /bin/
