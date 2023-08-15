@@ -1,7 +1,6 @@
 #ifndef FILTERCRITERIA_H
 #define FILTERCRITERIA_H
 
-#include "filtercriteria.h"
 #include "mail.h"
 #include "structs.h"
 
