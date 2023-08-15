@@ -26,6 +26,7 @@ int main() {
 
     initializeEncryptionParams();
 
+    // Load the config settings from the JSON file
     if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath, mailPass, senderEmail, senderSmtpPort, useSSL, verifyPeer, verifyHost)) {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
@@ -51,6 +52,7 @@ int main() {
     CurlHandleWrapper curlWrapper;
     CURL* curl = curlWrapper.get();
     
+    // Handle libcurl errors and display enhanced error messages
     if (!curl) {
         cerr << "Failed to initialize libcurl easy handle." << endl;
         return 1;

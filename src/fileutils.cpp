@@ -85,8 +85,8 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
     
     // Load SSL settings
     useSSL = config["useSSL"].asBool();
-    verifyPeer = config["verify_peer"].asBool();
-    verifyHost = config["verify_host"].asBool();
+    verifyPeer = config["verifyPeer"].asBool();
+    verifyHost = config["verifyHost"].asBool();
     cout << "useSSL from config: " << useSSL << endl; // Add this line to check the value
     cout << "verifyPeer from config: " << verifyPeer << endl; // Add this line to check the value
     cout << "verifyHost from config: " << verifyHost << endl; // Add this line to check the value
@@ -112,8 +112,8 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
 
     // Load SSL settings
     useSSL = config["useSSL"].asBool();
-    verifyPeer = config["verify_peer"].asBool();
-    verifyHost = config["verify_host"].asBool();
+    verifyPeer = config["verifyPeer"].asBool();
+    verifyHost = config["verifyHost"].asBool();
     cout << "useSSL from config: " << useSSL << endl; // Add this line to check the value
     cout << "verifyPeer from config: " << verifyPeer << endl; // Add this line to check the value
     cout << "verifyHost from config: " << verifyHost << endl; // Add this line to check the value
