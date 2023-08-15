@@ -12,22 +12,25 @@ int displayMenuOptions() {
     int choice;
     do {
         cout << "===== Main Menu =====" << endl;
-        cout << "1. Filter by Genre" << endl;
-        cout << "2. Filter by State" << endl;
-        cout << "3. Filter by City" << endl;
-        cout << "4. Filter by Capacity" << endl;
-        cout << "5. Clear Selected Venues" << endl;
-        cout << "6. View Selected Venues" << endl;
-        cout << "7. Show Email Settings" << endl;
-        cout << "8. Finish & Send Emails" << endl;
-        cout << "9. Exit VenueSender" << endl;
+        cout << static_cast<int>(MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
+        cout << static_cast<int>(MenuOption::FilterByState) << ". Filter by State" << endl;
+        cout << static_cast<int>(MenuOption::FilterByCity) << ". Filter by City" << endl;
+        cout << static_cast<int>(MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
+        cout << static_cast<int>(MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
+        cout << static_cast<int>(MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
+        cout << static_cast<int>(MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
+        cout << static_cast<int>(MenuOption::FinishAndSendEmails) << ". Finish & Send Emails" << endl;
+        cout << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
         cout << "Enter your choice: ";
 
         if (!(cin >> choice)) {
             cout << "Invalid input. Please enter a number." << endl;
             clearInputBuffer();
         } else if (!isValidMenuChoice(choice)) {
-            cout << "Invalid choice. Please enter a number between 1 and 9." << endl;
+            cout << "Invalid choice. Please enter a number between " 
+                 << static_cast<int>(MenuOption::FilterByGenre) 
+                 << " and " 
+                 << static_cast<int>(MenuOption::Exit) << "." << endl;
             clearInputBuffer();
         } else {
             break;
@@ -36,6 +39,7 @@ int displayMenuOptions() {
 
     return choice;
 }
+
 
 void viewEmailSettings(const string& smtpServer, int smtpPort, const string& senderEmail,
                        int senderSmtpPort, const string& smtpPassDecrypted, const string& mailPassDecrypted,
