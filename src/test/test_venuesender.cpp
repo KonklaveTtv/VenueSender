@@ -1,3 +1,5 @@
+// This file is used for testing DO NOT DELETE
+
 #define CATCH_CONFIG_RUNNER
 
 #include "main.h"
