@@ -10,7 +10,7 @@ int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, doubl
     // Example: Print the progress every 10% completion
     if (dltotal > 0) {
         double progress = (dlnow / dltotal) * 100;
-        if (progress >= 1) {
+        if (progress >= 5) {
             cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
         }
     }
