@@ -43,7 +43,7 @@ int displayMenuOptions() {
 
 void viewEmailSettings(const string& smtpServer, int smtpPort, const string& senderEmail,
                        int senderSmtpPort, const string& smtpPassDecrypted, const string& mailPassDecrypted,
-                       bool useSSL) {
+                       bool useSSL, bool verifyHost, bool verifyPeer) {
     cout << "===== Email Settings =====" << endl;
     cout << "SMTP Server: " << smtpServer << endl;
     cout << "SMTP Port: " << smtpPort << endl;
@@ -51,7 +51,9 @@ void viewEmailSettings(const string& smtpServer, int smtpPort, const string& sen
     cout << "Sender SMTP Port: " << senderSmtpPort << endl;
     cout << "SMTP Password: " << smtpPassDecrypted << endl; // only used for testing, will be removed in production
     cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
-    cout << "SSL Enabled: " << (useSSL ? "true" : "false") << endl; 
+    cout << "SSL: " << (useSSL ? "true" : "false") << endl;
+    cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl; 
+    cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "===========================" << endl;
 }
 

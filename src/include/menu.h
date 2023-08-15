@@ -13,7 +13,7 @@ int displayMenuOptions();
 // Function to display the email settings set in config.json to the user
 void viewEmailSettings(const string& smtpServer, int smtpPort, const string& senderEmail,
                        int senderSmtpPort, const string& smtpPassDecrypted, const string& mailPassDecrypted,
-                       bool useSSL);
+                       bool useSSL, bool verifyHost, bool verifyPeer);
 
 // Function to display selected venues to the user
 void displaySelectedVenues(const vector<SelectedVenue>& selectedVenues);

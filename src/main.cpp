@@ -167,7 +167,7 @@ int main() {
                 cout << "Selected venues cleared." << endl;
             } else if (choice == static_cast<int>(MenuOption::ShowEmailSettings)) {
                 // View Email Settings
-                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, smtpPassDecrypted, mailPassDecrypted, useSSL);
+                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, smtpPassDecrypted, mailPassDecrypted, useSSL, verifyHost, verifyPeer);
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
 
