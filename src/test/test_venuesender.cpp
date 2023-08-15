@@ -213,6 +213,7 @@ TEST_CASE("Test Email Validation", "[validation]") {
 TEST_CASE("Test View Email Sending Progress", "[email]") {
     // Set up mock data for viewEmailSendingProgress function
     CurlHandleWrapper curlWrapper;
+    CURL* curl = curlWrapper.get();
     vector<SelectedVenue> selectedVenuesForEmail;
     string senderEmail = "mock@example.com";
     string subject = "Mock Subject";
@@ -246,7 +247,7 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     cout.rdbuf(outputCapture.rdbuf());
 
     // Call the viewEmailSendingProgress function
-    viewEmailSendingProgress(curlWrapper, selectedVenuesForEmail, senderEmail, subject, message,
+    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message,
                              smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
 
     // Restore cout
