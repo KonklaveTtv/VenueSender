@@ -32,7 +32,8 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
 bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
                         std::string& smtpUsername, std::string& smtpPass,
                         std::string& venuesCsvPath, std::string& mailPass,
-                        std::string& senderEmail, int& senderSmtpPort);
+                        std::string& senderEmail, int& senderSmtpPort,
+                        bool useSSL, bool verifyPeer, bool verifyHost);
 
 // Function to reset the config.json file password fields on exit
 void resetConfigFile();

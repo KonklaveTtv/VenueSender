@@ -38,14 +38,16 @@ int displayMenuOptions() {
 }
 
 void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
-                       int senderSmtpPort, const std::string& smtpPassDecrypted, const std::string& mailPassDecrypted) {
+                       int senderSmtpPort, const std::string& smtpPassDecrypted, const std::string& mailPassDecrypted,
+                       bool useSSL) {
     std::cout << "===== Email Settings =====" << std::endl;
     std::cout << "SMTP Server: " << smtpServer << std::endl;
     std::cout << "SMTP Port: " << smtpPort << std::endl;
     std::cout << "Sender Email: " << senderEmail << std::endl;
     std::cout << "Sender SMTP Port: " << senderSmtpPort << std::endl;
     std::cout << "SMTP Password: " << smtpPassDecrypted << std::endl;
-    std::cout << "Mail Password: " << mailPassDecrypted << std::endl;  
+    std::cout << "Mail Password: " << mailPassDecrypted << std::endl;
+    std::cout << "SSL Enabled: " << (useSSL ? "useSSL" : "false") << std::endl; 
     std::cout << "===========================" << std::endl;
 }
 

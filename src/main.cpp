@@ -20,10 +20,13 @@ int main() {
     std::string subject;
     std::string message;
     double progress;
+    bool useSSL = false;
+    bool verifyPeer = false;
+    bool verifyHost = false;
 
     initializeEncryptionParams();
 
-    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath, mailPass, senderEmail, senderSmtpPort)) {
+    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath, mailPass, senderEmail, senderSmtpPort, useSSL, verifyPeer, verifyHost)) {
         std::cerr << "Failed to load configuration settings from config.json." << std::endl;
         exit(1); // Handle the error appropriately
     }
@@ -50,8 +53,29 @@ int main() {
         return 1;
     }
 
-    // Connect to the SMTP server
+    // Set SSL to True or False
     CURLcode res;
+    res = curl_easy_setopt(curl, CURLOPT_USE_SSL, useSSL);
+    if (res != CURLE_OK) {
+        std::cerr << "Failed to set useSSL option." << std::endl;
+        return 1;
+    }
+
+    // Set verifyPeer to True or False
+    res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer);
+    if (res != CURLE_OK) {
+        std::cerr << "Failed to set verifyPeer option." << std::endl;
+        return 1;
+    }
+
+    // Set verifyHost to True or False
+    res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost);
+    if (res != CURLE_OK) {
+        std::cerr << "Failed to set verifyHost option." << std::endl;
+        return 1;
+    }
+
+    // Connect to the SMTP server
     std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
     res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
     if (res != CURLE_OK) {
@@ -135,7 +159,7 @@ int main() {
                 std::cout << "Selected venues cleared." << std::endl;
             } else if (choice == static_cast<int>(MenuOption::ShowEmailSettings)) {
                 // View Email Settings
-                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, smtpPassDecrypted, mailPassDecrypted);
+                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, smtpPassDecrypted, mailPassDecrypted, useSSL);
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
 

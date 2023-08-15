@@ -22,6 +22,11 @@ CurlHandleWrapper::CurlHandleWrapper() {
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L); // Enable progress callback
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+
+       // Set SSL/TLS options
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL); // Use SSL/TLS
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L); // Verify the peer's certificate
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L); // Verify the host's certificate
     }
 }
 
@@ -135,6 +140,11 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUserPass.c_str());
 
     std::cout << "Authenticating with SMTP server..." << std::endl;
+
+    // Set SSL options for secure connection
+    curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L); // Enable peer certificate verification
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L); // Check that the certificate's common name matches the host name
 
     // Set the progress callback function
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
