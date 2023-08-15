@@ -39,10 +39,10 @@ $(DEBUGOBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJDIR)/test_%.o: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -DUNIT_TESTING $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -DUNIT_TESTING -g $(INCLUDES) -c $< -o $@
 
 $(OBJDIR)/%.o: $(TESTDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -DUNIT_TESTING $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -DUNIT_TESTING -g $(INCLUDES) -c $< -o $@
 
 # Default target
 all: directories $(TARGET)
@@ -79,6 +79,6 @@ run_tests: test $(TEST_TARGET)
 
 # Clean up
 clean:
-	rm -rf $(OBJDIR) $(DEBUGOBJDIR) $(BINDIR) $(DEBUGBINDIR)
+	rm -rf $(OBJDIR) $(DEBUGOBJDIR) $(BINDIR) $(DEBUGBINDIR) test_output.txt
 
 .PHONY: all debug directories clean test run_tests

@@ -13,6 +13,21 @@
 
 using namespace confPaths;
 
+class CinGuard {
+    std::streambuf* orig_cin;
+
+public:
+    CinGuard(std::streambuf* newbuf) : orig_cin(std::cin.rdbuf(newbuf)) {}
+    ~CinGuard() { std::cin.rdbuf(orig_cin);}
+};
+
+class CoutGuard {
+    std::streambuf* orig_cout;
+
+public:
+    CoutGuard(std::streambuf* newbuf) : orig_cout(std::cout.rdbuf(newbuf)) {}
+    ~CoutGuard() { std::cout.rdbuf(orig_cout); }
+};
 
 // -----------------------
 // Test Group: Utilities
@@ -83,6 +98,36 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
 // Test Group: Menu Operations
 // -----------------------
 
+TEST_CASE("isValidMenuChoice function", "[isValid]") {
+    REQUIRE(isValidMenuChoice(1) == true);
+    REQUIRE(isValidMenuChoice(5) == true);
+    REQUIRE(isValidMenuChoice(9) == true);
+
+    REQUIRE(isValidMenuChoice(0) == false);
+    REQUIRE(isValidMenuChoice(10) == false);
+}
+
+TEST_CASE("Test displayMenuOptions function", "[menu]") {
+    // Set up mock input and output streams
+    std::istringstream input("5\n");
+    std::ostringstream output;
+    
+    // Redirect the standard streams
+    std::streambuf* original_cin = std::cin.rdbuf(input.rdbuf());
+    std::streambuf* original_cout = std::cout.rdbuf(output.rdbuf());
+
+    // Call the function
+    int choice = displayMenuOptions();
+
+    // Restore the original streams
+    std::cin.rdbuf(original_cin);
+    std::cout.rdbuf(original_cout);
+
+    // Check the captured output and the returned choice
+    REQUIRE(output.str() == "===== Main Menu =====\n1. Filter by Genre\n2. Filter by State\n3. Filter by City\n4. Filter by Capacity\n5. Clear Selected Venues\n6. View Selected Venues\n7. Show Email Settings\n8. Finish & Send Emails\n9. Exit VenueSender\nEnter your choice: ");
+    REQUIRE(choice == 5);
+}
+
 TEST_CASE("viewEmailSettings function", "[Display]") {
     std::ostringstream oss;
     std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
@@ -96,18 +141,46 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
     REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\n===========================\n");
 }
 
-TEST_CASE("viewEmailSettings funcion", "[Display]") {
+TEST_CASE("displaySelectedVenues function", "[Display]") {
+    // Set up the output stream capture
     std::ostringstream oss;
     std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
     std::cout.rdbuf(oss.rdbuf());
 
-    // Call the function
-    viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass");
+    // Read from mock_venues.csv
+    std::vector<Venue> venues;
+    std::string venuesCsvPath = confPaths::mockVenuesCsvPath;
+    readCSV(venues, venuesCsvPath);
 
+    // Convert the Venue objects to SelectedVenue format
+    std::vector<SelectedVenue> selectedVenues;
+    for(const Venue& venue : venues) {
+        selectedVenues.push_back(convertToSelectedVenue(venue));
+    }
+
+    // Call the function to test
+    displaySelectedVenues(selectedVenues);
+
+    // Reset the cout buffer to its original state
     std::cout.rdbuf(oldCoutStreamBuf);
+    
+    // Construct the expected string
+    std::string expectedOutput = 
+        "===== Selected Venues =====\n"
+        "Name: Venue1\n"
+        "Email: venue1@mock.com\n"
+        "City: Daphne\n"
+        "--------------------------\n"
+        "Name: Venue2\n"
+        "Email: venue2@mock.com\n"
+        "City: Provo\n"
+        "--------------------------\n"
+        "===========================\n";
 
-    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\n===========================\n");
+    // Assert that the captured output is as expected
+    REQUIRE(oss.str() == expectedOutput);
 }
+
 
 // -----------------------
 // Test Group: Email Operations
@@ -145,8 +218,10 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     Venue testVenue2("Venue2", "venue2@mock.com", "rock", "UT", "Provo", 300);
 
     // Convert Venue objects to SelectedVenue objects
-    SelectedVenue selectedVenue1(testVenue1);
-    SelectedVenue selectedVenue2(testVenue2);
+    SelectedVenue selectedVenue1(testVenue1.name, testVenue1.email, testVenue1.genre,
+                                  testVenue1.state, testVenue1.city, testVenue1.capacity);
+    SelectedVenue selectedVenue2(testVenue2.name, testVenue2.email, testVenue2.genre,
+                                  testVenue2.state, testVenue2.city, testVenue2.capacity);
 
     // Populate the selectedVenuesForEmail vector
     selectedVenuesForEmail.push_back(selectedVenue1);
@@ -175,14 +250,40 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
 // Test Group: Venue Operations
 // -----------------------
 
+TEST_CASE("processVenueSelection Test") {
+    // Set up mock data and expected results
+    std::vector<SelectedVenue> temporaryFilteredVenues = {
+        SelectedVenue{"Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100},
+        SelectedVenue{"Venue2", "venue2@mock.com", "rock", "UT", "Provo", 300}
+    };
+    std::vector<SelectedVenue> selectedVenuesForEmail;
+    
+    // Set up mock user input and output streams
+    std::istringstream mockInput("1,2"); // user selects both venues
+    std::ostringstream mockOutput;
+
+    // Call the function
+    processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, mockInput, mockOutput);
+
+    // Check results
+    REQUIRE(selectedVenuesForEmail.size() == 2); 
+    REQUIRE(selectedVenuesForEmail[0].name == "Venue1");
+    REQUIRE(selectedVenuesForEmail[1].name == "Venue2");
+
+    // Check output to the user
+    std::string expectedOutput = 
+        "Select venues to add (comma-separated indices): \n"; // newline after processing input
+    REQUIRE(mockOutput.str() == expectedOutput);
+}
+
 TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     // Create a mock Venue
     Venue mockVenue;
     mockVenue.name = "Venue1";
     mockVenue.email = "venue1@mock.com";
-    mockVenue.city = "Daphne";
     mockVenue.genre = "all";
     mockVenue.state = "AL";
+    mockVenue.city = "Daphne";
     mockVenue.capacity = 100;
 
     // Convert Venue to SelectedVenue using the function
@@ -191,41 +292,12 @@ TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     // Compare the converted SelectedVenue with expected values
     REQUIRE(selectedVenue.name == "Venue1");
     REQUIRE(selectedVenue.email == "venue1@mock.com");
-    REQUIRE(selectedVenue.city == "Daphne");
     REQUIRE(selectedVenue.genre == "all");
     REQUIRE(selectedVenue.state == "AL");
+    REQUIRE(selectedVenue.city == "Daphne");
     REQUIRE(selectedVenue.capacity == 100);
 }
 
-TEST_CASE("Test Process Venue Selection", "[processVenueSelection]") {
-    // Create a mock vector of temporary filtered venues
-    Venue testVenue1("Venue1", "venue1@mock.com", "Daphne", "all", "AL", 100);
-    Venue testVenue2("Venue2", "venue2@mock.com", "Provo", "rock", "UT", 300);
-    std::vector<Venue> temporaryFilteredVenues = {testVenue1, testVenue2};
-
-    // Convert Venue objects to SelectedVenue objects
-    std::vector<SelectedVenue> selectedVenuesForEmail;
-    for (const Venue& venue : temporaryFilteredVenues) {
-        selectedVenuesForEmail.push_back(convertToSelectedVenue(venue));
-    }
-
-    // Simulate user input of selecting venues 1 and 2
-    std::stringstream input;
-    input << "1,2\n";
-    std::cin.rdbuf(input.rdbuf());
-
-    // Convert the selected venues using convertToSelectedVenue
-    SelectedVenue selectedVenue1 = convertToSelectedVenue(testVenue1);
-    SelectedVenue selectedVenue2 = convertToSelectedVenue(testVenue2);
-
-    // Create a new vector to store the selected venues
-    std::vector<SelectedVenue> selectedVenues;
-    selectedVenues.push_back(selectedVenue1);
-    selectedVenues.push_back(selectedVenue2);
-
-    // Call the processVenueSelection function with the correct arguments
-    processVenueSelection(selectedVenuesForEmail, selectedVenues);
-}
 
 // -----------------------
 // Test Group: Encryption and Decryption
@@ -264,8 +336,8 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
 }
 
 bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
-    return lhs.name == rhs.name && lhs.email == rhs.email && lhs.city == rhs.city &&
-           lhs.genre == rhs.genre && lhs.state == rhs.state && lhs.capacity == rhs.capacity;
+    return lhs.name == rhs.name && lhs.email == rhs.email && lhs.genre == rhs.genre &&
+           lhs.state == rhs.state && lhs.city == rhs.city && lhs.capacity == rhs.capacity;
 }
 
 CATCH_CONFIG_RUNNER // This line will define Catch2's main function

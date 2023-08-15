@@ -11,12 +11,6 @@
 
 extern std::string emailBeingSent;
 
-// Forward declaration of the Venue struct
-struct Venue;
-
-// Forward declaration of the SelectedVenue struct
-struct SelectedVenue;
-
 // Define enums for return codes
 enum class ReturnCode {
     Success,
@@ -62,8 +56,8 @@ static constexpr auto capacityMemberPtr = &Venue::capacity;
 // Constants
 const char CSV_DELIMITER = ','; // Delimiter used in CSV files
 const int MAX_EMAIL_LENGTH = 320; // Maximum length for an email address, adjust as needed
-const int MAX_MESSAGE_LENGTH = 100; // Maximum length for the email subject, adjust as needed
-const int MAX_SUBJECT_LENGTH = 2000; // Maximum length for an email address, adjust as needed
+const int MAX_MESSAGE_LENGTH = 500; // Maximum length for the email subject, adjust as needed
+const int MAX_SUBJECT_LENGTH = 50; // Maximum length for an email address, adjust as needed
 
 // Options for filtering venues by different criteria
 const int FILTER_BY_GENRE_OPTION = static_cast<int>(MenuOption::FilterByGenre);
@@ -77,24 +71,11 @@ const int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelecte
 const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmails);
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
-// Function to display the menu
-int displayMenuOptions();
-
-// Forward declare the processVenueSelection function
-void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
-                           std::vector<SelectedVenue>& selectedVenuesForEmail);
-
-void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
-
-void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
-                       int senderSmtpPort, const std::string& smtpPassDecrypted, const std::string& mailPassDecrypted);
-
 // Check if an email address is in a valid format
 bool isValidEmail(const std::string& email);
 
 // Function to construct an email by providing subject and message
-void constructEmail(std::string& subject, std::string& message);
-
+void constructEmail(std::string &subject, std::string &message, std::istream &in);
 
 // Function to view the progress of email sending done by sendIndividualEmail()
 void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,

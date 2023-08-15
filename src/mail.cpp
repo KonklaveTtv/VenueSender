@@ -44,18 +44,6 @@ void CurlHandleWrapper::cleanup() {
 }
 /*-------------------*/
 
-void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
-                       int senderSmtpPort, const std::string& smtpPassDecrypted, const std::string& mailPassDecrypted) {
-    std::cout << "===== Email Settings =====" << std::endl;
-    std::cout << "SMTP Server: " << smtpServer << std::endl;
-    std::cout << "SMTP Port: " << smtpPort << std::endl;
-    std::cout << "Sender Email: " << senderEmail << std::endl;
-    std::cout << "Sender SMTP Port: " << senderSmtpPort << std::endl;
-    std::cout << "SMTP Password: " << smtpPassDecrypted << std::endl;
-    std::cout << "Mail Password: " << mailPassDecrypted << std::endl;  
-    std::cout << "===========================" << std::endl;
-}
-
 // Function to check if an email address is in a valid format
 bool isValidEmail(const std::string& email) {
     // A simple regex pattern to check the format of the email
@@ -64,28 +52,33 @@ bool isValidEmail(const std::string& email) {
 }
 
 // Function to construct an email by providing subject and message
-void constructEmail(std::string& subject, std::string& message) {
+void constructEmail(std::string &subject, std::string &message, std::istream &in = std::cin) {
     std::cout << "===== Construct Email =====" << std::endl;
-    
+
+    // Clear any remaining characters in the input buffer (including newline)
+    clearInputBuffer();
+
     // Prompt user to enter email subject and message
-    std::cin.ignore(); // Clear input buffer
     std::cout << "Enter subject for the email: ";
-    std::getline(std::cin, subject);
+    std::getline(in, subject);
 
     const int maxSubjectLength = MAX_SUBJECT_LENGTH;
     const int maxMessageLength = MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
         std::cout << "Subject too long. Please try again." << std::endl;
-        return; // Or handle the error appropriately
+        subject.clear(); // Clear the subject if it's too long.
+        return;
     }
 
     std::cout << "Enter the message for the email (press Enter on a new line to finish):\n";
     std::string line;
-    while (std::getline(std::cin, line) && !line.empty()) {
+    while (std::getline(in, line) && !line.empty()) {
         if (message.length() + line.length() > maxMessageLength) {
-            std::cout << "Message too long. Continuing with current input." << std::endl;
-            break; // Or handle the error appropriately
+            std::cout << "Message too long. Truncating to maximum length." << std::endl;
+            int charsToAdd = maxMessageLength - message.length();
+            message += trim(line).substr(0, charsToAdd); // Add as many characters as possible
+            break;
         }
         message += trim(line) + "\n";
     }

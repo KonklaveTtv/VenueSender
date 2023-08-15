@@ -72,48 +72,56 @@ SelectedVenue convertToSelectedVenue(const Venue& venue) {
     SelectedVenue selectedVenue;
     selectedVenue.name = venue.name;
     selectedVenue.email = venue.email;
-    selectedVenue.city = venue.city;
     selectedVenue.genre = venue.genre;
     selectedVenue.state = venue.state;
+    selectedVenue.city = venue.city;
     selectedVenue.capacity = venue.capacity;
     return selectedVenue;
 }
 
 // Function to process user input and select venues
 void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
-                           std::vector<SelectedVenue>& selectedVenuesForEmail) {
-        if(temporaryFilteredVenues.empty()){
+                           std::vector<SelectedVenue>& selectedVenuesForEmail,
+                           std::istream& input,
+                           std::ostream& output) {
+    if (temporaryFilteredVenues.empty()) {
         return;
     }
 
-    std::cout << "Select venues to add (comma-separated indices): ";
-    std::string input;
-    const int maxInputLength = 256;
-    std::getline(std::cin, input);
-    if (input.length() > maxInputLength) {
-        std::cout << "Input too long. Please try again." << std::endl;
+    output << "Select venues to add (comma-separated indices): ";
+    std::string userInput;
+    std::getline(input, userInput);
+
+    // Validate input length
+    if (userInput.length() > MAX_INPUT_LENGTH) {
+        output << "Input too long. Please try again." << std::endl;
         return; // Or handle the error appropriately
     }
 
-    std::istringstream iss(input);
+    std::istringstream iss(userInput);
     std::string indexStr;
     while (std::getline(iss, indexStr, ',')) {
-        size_t selectedIndex;
-        std::istringstream iss(indexStr);
-        if (!(iss >> selectedIndex)) {
-            std::cout << "Invalid index format. Skipping." << std::endl;
-            continue; // Skip displaying genres if the index is invalid
-        }
-        selectedIndex--; // Decrement index to match 0-based indexing
-        if (selectedIndex < temporaryFilteredVenues.size()) {
-            selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
-        } else {
-            std::cout << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
-            continue; // Skip displaying genres if the index is invalid
+        try {
+            size_t selectedIndex = std::stoul(indexStr);
+            if (selectedIndex == 0) {
+                output << "Invalid index format. Skipping." << std::endl;
+                continue;
+            }
+            selectedIndex--; // Decrement index to match 0-based indexing
+            if (selectedIndex < temporaryFilteredVenues.size()) {
+                selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
+            } else {
+                output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+                continue;
+            }
+        } catch (const std::invalid_argument& e) {
+            output << "Invalid input. Skipping." << std::endl;
+            continue;
         }
     }
+
     // Add a newline to separate the filtered venues from the main menu
-    std::cout << std::endl;
+    output << std::endl;
 }
 
 // Function to display filtered venues to the user
@@ -149,7 +157,7 @@ std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues
 
     std::cout << "Enter comma-separated indices of options to select: ";
     std::string input;
-    std::cin.ignore();
+    clearInputBuffer();
     std::getline(std::cin, input);
 
     std::cout << std::endl; // Add a line of space
@@ -210,7 +218,7 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
 
     std::cout << "Enter comma-separated indices of options to select: ";
     std::string input;
-    std::cin.ignore();
+    clearInputBuffer();
     std::getline(std::cin, input);
 
     std::cout << std::endl; // Add a line of space

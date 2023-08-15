@@ -26,6 +26,9 @@ struct FilterCriteria {
     int capacity = 0; // Change to int type
 };
 
+// Venue selection indices max char length
+const int MAX_INPUT_LENGTH = 256;
+
 // Convert Venue to SelectedVenue
 SelectedVenue convertToSelectedVenue(const Venue& venue);
 
@@ -62,7 +65,10 @@ std::vector<int> getSelectedIndices(const std::vector<T>& options, std::istream&
 
 // Function to process user input and select venues
 void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
-                           std::vector<SelectedVenue>& selectedVenuesForEmail);
+                           std::vector<SelectedVenue>& selectedVenuesForEmail,
+                           std::istream& input = std::cin,
+                           std::ostream& output = std::cout);
+
 // Function to display filtered venues to the user
 void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
 

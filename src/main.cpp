@@ -148,10 +148,20 @@ int main() {
                 // Check if subject and message are empty
                 if (subject.empty() || message.empty()) {
                     std::cout << "Subject and Message are required. Please set them before sending emails." << std::endl;
-                    constructEmail(subject, message); // Prompt the user to enter the subject and message
-                    continue; // Return to the main menu
+
+                    try {
+                        constructEmail(subject, message, std::cin);
+                    } catch (const std::exception& e) {
+                        std::cerr << "An error occurred while entering subject and message: " << e.what() << std::endl;
+                        continue; // Return to the main menu
+                    }
+
+                    if (subject.empty() || message.empty()) {
+                        std::cout << "Subject and Message are still empty. Returning to the main menu." << std::endl;
+                        continue; // Return to the main menu
+                    }
                 }
-                
+                        
                 // Check if SMTP password is empty
                 if (smtpPassDecrypted.empty()) {
                     std::cout << "SMTP Password is required. Please set it before sending emails." << std::endl;
@@ -162,7 +172,7 @@ int main() {
             std::cout << "Confirm sending the email (Y/N): ";
             char confirmSend;
             std::cin >> confirmSend;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            clearInputBuffer();
 
             if (confirmSend == 'Y' || confirmSend == 'y') {
                 // Proceed to send emails if confirmed
@@ -197,7 +207,7 @@ int main() {
                 std::cout << "Are you sure you want to exit? (Y/N): ";
                 char confirmExit;
                 std::cin >> confirmExit;
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                clearInputBuffer();
 
                 if (confirmExit == 'Y' || confirmExit == 'y') {
 

@@ -13,7 +13,7 @@ std::string trim(const std::string& str){
 void clearInputBuffer() {
     // Clear the input buffer
     std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
 }
 
 // Function to read venue data from CSV file

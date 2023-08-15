@@ -1,13 +1,13 @@
 #include "menu.h"
 
-
-
+// Function to validate user input
 bool isValidMenuChoice(int choice) {
     // Validate if the choice is within valid menu options
     return choice >= static_cast<int>(MenuOption::FilterByGenre) &&
            choice <= static_cast<int>(MenuOption::Exit);
 }
 
+// Function to display the menu to the user
 int displayMenuOptions() {
     int choice;
     do {
@@ -25,7 +25,6 @@ int displayMenuOptions() {
 
         if (!(std::cin >> choice)) {
             std::cout << "Invalid input. Please enter a number." << std::endl;
-            std::cin.clear();
             clearInputBuffer();
         } else if (!isValidMenuChoice(choice)) {
             std::cout << "Invalid choice. Please enter a number between 1 and 9." << std::endl;
@@ -36,6 +35,18 @@ int displayMenuOptions() {
     } while (true);
 
     return choice;
+}
+
+void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
+                       int senderSmtpPort, const std::string& smtpPassDecrypted, const std::string& mailPassDecrypted) {
+    std::cout << "===== Email Settings =====" << std::endl;
+    std::cout << "SMTP Server: " << smtpServer << std::endl;
+    std::cout << "SMTP Port: " << smtpPort << std::endl;
+    std::cout << "Sender Email: " << senderEmail << std::endl;
+    std::cout << "Sender SMTP Port: " << senderSmtpPort << std::endl;
+    std::cout << "SMTP Password: " << smtpPassDecrypted << std::endl;
+    std::cout << "Mail Password: " << mailPassDecrypted << std::endl;  
+    std::cout << "===========================" << std::endl;
 }
 
 // Function to display selected venues to the user
