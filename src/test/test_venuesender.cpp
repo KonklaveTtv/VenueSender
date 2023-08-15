@@ -81,9 +81,13 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     std::string mailPass;
     std::string senderEmail;
     int senderSmtpPort;
-    
+    bool useSSL = false;
+    bool verifyPeer = false;
+    bool verifyHost = false;
+
     bool result = loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, 
-                                     venuesCsvPath, mailPass, senderEmail, senderSmtpPort);
+                                     venuesCsvPath, mailPass, senderEmail, senderSmtpPort, 
+                                     useSSL, verifyPeer, verifyHost);
     
     REQUIRE(result == true);
     REQUIRE(smtpServer == "mock_smtp_server");
@@ -134,11 +138,11 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
     std::cout.rdbuf(oss.rdbuf());
 
     // Call the function
-    viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass");
+    viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass", "useSSL");
 
     std::cout.rdbuf(oldCoutStreamBuf);
     
-    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\n===========================\n");
+    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\nSSL Enabled: useSSL\n===========================\n");
 }
 
 TEST_CASE("displaySelectedVenues function", "[Display]") {
