@@ -52,7 +52,7 @@ void CurlHandleWrapper::cleanup() {
 // Function to check if an email address is in a valid format
 bool isValidEmail(const string& email) {
     // A simple regex pattern to check the format of the email
-    static const regex emailPattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+    static const regex emailPattern(R"((?=.{1,256})(?=.{1,64}@.{1,255})[^\s@]+@[^\s@]+\.[^\s@]+)");
     return regex_match(email, emailPattern);
 }
 
