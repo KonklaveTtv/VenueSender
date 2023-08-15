@@ -1,5 +1,5 @@
-#ifndef VENUE_H
-#define VENUE_H
+#ifndef STRUCTS_H
+#define STRUCTS_H
 
 #include <string>
 
@@ -39,4 +39,4 @@ struct SelectedVenue {
           const string& state, const string& city, int capacity)
         : name(name), email(email), genre(genre), state(state), city(city), capacity(capacity) {}
 };
-#endif // VENUE_H
+#endif // STRUCTS_H

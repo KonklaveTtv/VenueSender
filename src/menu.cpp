@@ -45,8 +45,8 @@ void viewEmailSettings(const string& smtpServer, int smtpPort, const string& sen
     cout << "SMTP Port: " << smtpPort << endl;
     cout << "Sender Email: " << senderEmail << endl;
     cout << "Sender SMTP Port: " << senderSmtpPort << endl;
-    cout << "SMTP Password: " << smtpPassDecrypted << endl;
-    cout << "Mail Password: " << mailPassDecrypted << endl;
+    cout << "SMTP Password: " << smtpPassDecrypted << endl; // only used for testing, will be removed in production
+    cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
     cout << "SSL Enabled: " << (useSSL ? "true" : "false") << endl; 
     cout << "===========================" << endl;
 }
