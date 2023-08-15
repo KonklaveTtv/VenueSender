@@ -143,11 +143,11 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
     cout.rdbuf(oss.rdbuf());
 
     // Call the function
-    viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass", "useSSL");
+    viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass", "useSSL", "verifyHost", "verifyPeer");
 
     cout.rdbuf(oldCoutStreamBuf);
     
-    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\nSSL Enabled: true\n===========================\n");
+    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\nSSL: true\nverifyHost: true\nverifyPeer: true\n===========================\n");
 }
 
 TEST_CASE("displaySelectedVenues function", "[Display]") {
