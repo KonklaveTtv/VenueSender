@@ -20,9 +20,9 @@ struct FilterCriteria {
     bool filterByState = false;
     bool filterByCity = false;
     bool filterByCapacity = false;
-    std::string genre;
-    std::string state;
-    std::string city;
+    string genre;
+    string state;
+    string city;
     int capacity = 0; // Change to int type
 };
 
@@ -33,29 +33,29 @@ const int MAX_INPUT_LENGTH = 256;
 SelectedVenue convertToSelectedVenue(const Venue& venue);
 
 // Get a set of unique genres/states/cities/capacities from a vector of venues
-std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
-std::set<std::string> getUniqueStates(const std::vector<Venue>& venues);
-std::set<std::string> getUniqueCities(const std::vector<Venue>& venues);
-std::set<int> getUniqueCapacities(const std::vector<Venue>& venues);
+set<string> getUniqueGenres(const vector<Venue>& venues);
+set<string> getUniqueStates(const vector<Venue>& venues);
+set<string> getUniqueCities(const vector<Venue>& venues);
+set<int> getUniqueCapacities(const vector<Venue>& venues);
 
 // Declaration for getUniqueValues with a member pointer to a string
-std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::string Venue::* memberPtr);
+vector<string> getUniqueValues(const vector<Venue>& venues, string Venue::* memberPtr);
 
 // Declaration for getUniqueValues with a member pointer to an integer
-std::vector<int> getUniqueValues(const std::vector<Venue>& venues, int Venue::* memberPtr);
+vector<int> getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr);
 
 // Definition of getSelectedIndices for vector of any type
 template<class T>
-std::vector<int> getSelectedIndices(const std::vector<T>& options, std::istream& input) {
+vector<int> getSelectedIndices(const vector<T>& options, istream& input) {
     // Get selected indices from user input and return as vector
-    std::cout << "Enter the indices of options (comma-separated): ";
-    std::string inputStr;
-    std::getline(input, inputStr);
-    std::istringstream iss(inputStr);
-    std::string indexStr;
-    std::vector<int> selectedIndices;
-    while (std::getline(iss, indexStr, ',')) {
-        int index = std::stoi(indexStr);
+    cout << "Enter the indices of options (comma-separated): ";
+    string inputStr;
+    getline(input, inputStr);
+    istringstream iss(inputStr);
+    string indexStr;
+    vector<int> selectedIndices;
+    while (getline(iss, indexStr, ',')) {
+        int index = stoi(indexStr);
         if (index >= 1 && index <= static_cast<int>(options.size())) {
             selectedIndices.push_back(index - 1);
         }
@@ -64,19 +64,19 @@ std::vector<int> getSelectedIndices(const std::vector<T>& options, std::istream&
 }
 
 // Function to process user input and select venues
-void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
-                           std::vector<SelectedVenue>& selectedVenuesForEmail,
-                           std::istream& input = std::cin,
-                           std::ostream& output = std::cout);
+void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
+                           vector<SelectedVenue>& selectedVenuesForEmail,
+                           istream& input = cin,
+                           ostream& output = cout);
 
 // Function to display filtered venues to the user
-void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
+void displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay);
 
 // Common function for filtering by an option (Genre, State, City)
-std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
-                                                const std::set<std::string>& uniqueOptions,
-                                                const std::string& filterType,
-                                                std::vector<SelectedVenue>& temporaryFilteredVenues);
+vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
+                                                const set<string>& uniqueOptions,
+                                                const string& filterType,
+                                                vector<SelectedVenue>& temporaryFilteredVenues);
 
 /**
  * Filters a vector of venues based on the selected option.
@@ -87,10 +87,10 @@ std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues
  * @param filterValue The value of the selected option to filter by.
  * @return A vector of SelectedVenue objects that match the filter criteria.
  */
-std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
-                                          const std::string& filterType,
-                                          const std::set<std::string>& uniqueOptions,
-                                          std::vector<SelectedVenue>& temporaryFilteredVenues);
+vector<SelectedVenue> filterByOption(const vector<Venue>& venues,
+                                          const string& filterType,
+                                          const set<string>& uniqueOptions,
+                                          vector<SelectedVenue>& temporaryFilteredVenues);
 
 /**
  * Filters a vector of venues based on the capacity.
@@ -100,12 +100,12 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
  * @param filterValue The value of the selected capacity to filter by.
  * @return A vector of SelectedVenue objects that match the filter criteria.
  */
-std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
-                                            const std::set<int>& uniqueCapacities,
-                                            std::vector<SelectedVenue>& temporaryFilteredVenues);
+vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
+                                            const set<int>& uniqueCapacities,
+                                            vector<SelectedVenue>& temporaryFilteredVenues);
 
 // Definition of getSelectedIndices
 template<class T>
-std::vector<int> getSelectedIndices(const std::vector<T>& options, std::istream& input);
+vector<int> getSelectedIndices(const vector<T>& options, istream& input);
 
 #endif // FILTERCRITERIA_H

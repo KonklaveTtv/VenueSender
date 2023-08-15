@@ -1,6 +1,6 @@
 #include "mail.h"
 
-std::string emailBeingSent;
+string emailBeingSent;
 
 /* CurlHandleWrapper*/
 /*-------------------*/
@@ -11,7 +11,7 @@ int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, doubl
     if (dltotal > 0) {
         double progress = (dlnow / dltotal) * 100;
         if (progress >= 1) {
-            std::cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << std::endl;
+            cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
         }
     }
     return 0;
@@ -50,67 +50,67 @@ void CurlHandleWrapper::cleanup() {
 /*-------------------*/
 
 // Function to check if an email address is in a valid format
-bool isValidEmail(const std::string& email) {
+bool isValidEmail(const string& email) {
     // A simple regex pattern to check the format of the email
-    static const std::regex emailPattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
-    return std::regex_match(email, emailPattern);
+    static const regex emailPattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+    return regex_match(email, emailPattern);
 }
 
 // Function to construct an email by providing subject and message
-void constructEmail(std::string &subject, std::string &message, std::istream &in = std::cin) {
-    std::cout << "===== Construct Email =====" << std::endl;
+void constructEmail(string &subject, string &message, istream &in = cin) {
+    cout << "===== Construct Email =====" << endl;
 
     // Clear any remaining characters in the input buffer (including newline)
     clearInputBuffer();
 
     // Prompt user to enter email subject and message
-    std::cout << "Enter subject for the email: ";
-    std::getline(in, subject);
+    cout << "Enter subject for the email: ";
+    getline(in, subject);
 
     const int maxSubjectLength = MAX_SUBJECT_LENGTH;
     const int maxMessageLength = MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
-        std::cout << "Subject too long. Please try again." << std::endl;
+        cout << "Subject too long. Please try again." << endl;
         subject.clear(); // Clear the subject if it's too long.
         return;
     }
 
-    std::cout << "Enter the message for the email (press Enter on a new line to finish):\n";
-    std::string line;
-    while (std::getline(in, line) && !line.empty()) {
+    cout << "Enter the message for the email (press Enter on a new line to finish):\n";
+    string line;
+    while (getline(in, line) && !line.empty()) {
         if (message.length() + line.length() > maxMessageLength) {
-            std::cout << "Message too long. Truncating to maximum length." << std::endl;
+            cout << "Message too long. Truncating to maximum length." << endl;
             int charsToAdd = maxMessageLength - message.length();
             message += trim(line).substr(0, charsToAdd); // Add as many characters as possible
             break;
         }
         message += trim(line) + "\n";
     }
-    std::cout << "============================" << std::endl;
+    cout << "============================" << endl;
 }
 
 // Function to send an individual email to a recipient with custom subject and message using libcurl
 bool sendIndividualEmail(CURL* curl,
                         const SelectedVenue& selectedVenue,
-                        const std::string& senderEmail,
-                        const std::string& subject,
-                        const std::string& message,
-                        const std::string& smtpServer,
+                        const string& senderEmail,
+                        const string& subject,
+                        const string& message,
+                        const string& smtpServer,
                         int smtpPort,
-                        const std::string& smtpUsername,
-                        const std::string& smtpPassDecrypted,
+                        const string& smtpUsername,
+                        const string& smtpPassDecrypted,
                         double& progress) {
     // Set the value of emailBeingSent
     emailBeingSent = selectedVenue.email;
 
     // Set up and send an email using libcurl
     if (!curl) {
-        std::cerr << "Failed to initialize libcurl." << std::endl;
+        cerr << "Failed to initialize libcurl." << endl;
         return false;
     }
 
-    std::cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << std::endl;
+    cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
 
     // Set the recipient email address
     struct curl_slist* recipients = nullptr;
@@ -121,7 +121,7 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
 
     // Set the email subject
-    std::string subjectHeader = "Subject: " + subject;
+    string subjectHeader = "Subject: " + subject;
     struct curl_slist* headers = nullptr;
     headers = curl_slist_append(headers, subjectHeader.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -132,14 +132,14 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(message.length()));
 
     // Set the URL for the SMTP server
-    std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
+    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 
     // Set SMTP username and password
-    std::string smtpUserPass = smtpUsername + ":" + smtpPassDecrypted;
+    string smtpUserPass = smtpUsername + ":" + smtpPassDecrypted;
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUserPass.c_str());
 
-    std::cout << "Authenticating with SMTP server..." << std::endl;
+    cout << "Authenticating with SMTP server..." << endl;
 
     // Set SSL options for secure connection
     curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
@@ -159,11 +159,11 @@ bool sendIndividualEmail(CURL* curl,
     curl_slist_free_all(headers);
 
     if (res != CURLE_OK) {
-        std::cerr << "Failed to send email: " << curl_easy_strerror(res) << std::endl;
+        cerr << "Failed to send email: " << curl_easy_strerror(res) << endl;
         if (res == CURLE_COULDNT_CONNECT) {
-            std::cerr << "Connection to SMTP server failed." << std::endl;
+            cerr << "Connection to SMTP server failed." << endl;
         } else if (res == CURLE_LOGIN_DENIED) {
-            std::cerr << "Authentication with SMTP server failed." << std::endl;
+            cerr << "Authentication with SMTP server failed." << endl;
         }
         return false;
     }
@@ -171,14 +171,14 @@ bool sendIndividualEmail(CURL* curl,
     return true;
 }
 
-void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
-                              const std::string& senderEmail,
-                              const std::string& subject,
-                              const std::string& message,
-                              const std::string& smtpServer,
+void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
+                              const string& senderEmail,
+                              const string& subject,
+                              const string& message,
+                              const string& smtpServer,
                               int smtpPort,
-                              const std::string& smtpUsername,
-                              const std::string& smtpPassDecrypted) {
+                              const string& smtpUsername,
+                              const string& smtpPassDecrypted) {
     // Set the custom progress callback function from CurlHandleWrapper
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
 
@@ -187,12 +187,12 @@ void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& sele
     for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
         const SelectedVenue& venue = selectedVenuesForEmail[i];
         emailBeingSent = venue.email; // Set the value of emailBeingSent
-        std::cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << std::endl;
+        cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << endl;
 
         // Send the individual email with progress tracking
         sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
 
         emailBeingSent.clear(); // Reset the value of emailBeingSent
     }
-    std::cout << "Email sending progress completed." << std::endl;
+    cout << "Email sending progress completed." << endl;
 }

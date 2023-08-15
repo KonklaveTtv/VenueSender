@@ -6,19 +6,19 @@ using namespace confPaths;
 #ifndef UNIT_TESTING
 int main() {
     // Initialize data and configuration settings
-    std::vector<Venue> venues;
-    std::string venuesCsvPath;
-    std::string smtpServer;
+    vector<Venue> venues;
+    string venuesCsvPath;
+    string smtpServer;
     int smtpPort;
-    std::string smtpPass;
-    std::string smtpUsername;
-    std::string mailPass;
-    std::string smtpPassDecrypted;
-    std::string mailPassDecrypted;
-    std::string senderEmail;
+    string smtpPass;
+    string smtpUsername;
+    string mailPass;
+    string smtpPassDecrypted;
+    string mailPassDecrypted;
+    string senderEmail;
     int senderSmtpPort;
-    std::string subject;
-    std::string message;
+    string subject;
+    string message;
     double progress;
     bool useSSL = false;
     bool verifyPeer = false;
@@ -27,7 +27,7 @@ int main() {
     initializeEncryptionParams();
 
     if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath, mailPass, senderEmail, senderSmtpPort, useSSL, verifyPeer, verifyHost)) {
-        std::cerr << "Failed to load configuration settings from config.json." << std::endl;
+        cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
 
@@ -37,7 +37,7 @@ int main() {
 
     // Check if decryption was successful
     if (smtpPassDecrypted.empty() || mailPassDecrypted.empty()) {
-        std::cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << std::endl;
+        cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << endl;
         exit(1); // Handle the error appropriately
     }
 
@@ -49,7 +49,7 @@ int main() {
     CURL* curl = curlWrapper.get();
     
     if (!curl) {
-        std::cerr << "Failed to initialize libcurl easy handle." << std::endl;
+        cerr << "Failed to initialize libcurl easy handle." << endl;
         return 1;
     }
 
@@ -57,36 +57,36 @@ int main() {
     CURLcode res;
     res = curl_easy_setopt(curl, CURLOPT_USE_SSL, useSSL);
     if (res != CURLE_OK) {
-        std::cerr << "Failed to set useSSL option." << std::endl;
+        cerr << "Failed to set useSSL option." << endl;
         return 1;
     }
 
     // Set verifyPeer to True or False
     res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer);
     if (res != CURLE_OK) {
-        std::cerr << "Failed to set verifyPeer option." << std::endl;
+        cerr << "Failed to set verifyPeer option." << endl;
         return 1;
     }
 
     // Set verifyHost to True or False
     res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost);
     if (res != CURLE_OK) {
-        std::cerr << "Failed to set verifyHost option." << std::endl;
+        cerr << "Failed to set verifyHost option." << endl;
         return 1;
     }
 
     // Connect to the SMTP server
-    std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
+    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
     res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
     if (res != CURLE_OK) {
-        std::cerr << "Failed to set libcurl URL option." << std::endl;
+        cerr << "Failed to set libcurl URL option." << endl;
         return 1;
     }
 
     // Set the sender email address
     res = curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
     if (res != CURLE_OK) {
-        std::cerr << "Failed to set libcurl sender email option." << std::endl;
+        cerr << "Failed to set libcurl sender email option." << endl;
         curl_easy_cleanup(curl);
         return 1;
     }
@@ -94,7 +94,7 @@ int main() {
     // Set the email password for authentication
     res = curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
     if (res != CURLE_OK) {
-        std::cerr << "Failed to set libcurl email password option." << std::endl;
+        cerr << "Failed to set libcurl email password option." << endl;
         curl_easy_cleanup(curl);
         return 1;
     }
@@ -103,14 +103,14 @@ int main() {
     readCSV(venues, venuesCsvPath);
 
     // Extract unique genres, states, cities, and capacities from the venues data
-    std::set<std::string> uniqueGenres = getUniqueGenres(venues);
-    std::set<std::string> uniqueStates = getUniqueStates(venues);
-    std::set<std::string> uniqueCities = getUniqueCities(venues);
-    std::set<int> uniqueCapacities = getUniqueCapacities(venues);
+    set<string> uniqueGenres = getUniqueGenres(venues);
+    set<string> uniqueStates = getUniqueStates(venues);
+    set<string> uniqueCities = getUniqueCities(venues);
+    set<int> uniqueCapacities = getUniqueCapacities(venues);
 
     FilterCriteria criteria;
-    std::vector<SelectedVenue> selectedVenuesForEmail;
-    std::vector<SelectedVenue> filteredVenues;
+    vector<SelectedVenue> selectedVenuesForEmail;
+    vector<SelectedVenue> filteredVenues;
 
     // Set up progress callback using the progressCallback function
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
@@ -128,7 +128,7 @@ int main() {
             if (choice >= static_cast<int>(MenuOption::FilterByGenre) &&
                 choice <= FILTER_BY_CAPACITY_OPTION) {
                 // Declare a temporary vector to store filtered venues
-                std::vector<SelectedVenue> temporaryFilteredVenues;
+                vector<SelectedVenue> temporaryFilteredVenues;
 
                 // Handle filtering options
                 if (choice == FILTER_BY_GENRE_OPTION) {
@@ -156,7 +156,7 @@ int main() {
             } else if (choice == CLEAR_SELECTED_VENUES_OPTION) {
                 // Clear Selected Venues
                 selectedVenuesForEmail.clear();
-                std::cout << "Selected venues cleared." << std::endl;
+                cout << "Selected venues cleared." << endl;
             } else if (choice == static_cast<int>(MenuOption::ShowEmailSettings)) {
                 // View Email Settings
                 viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, smtpPassDecrypted, mailPassDecrypted, useSSL);
@@ -165,37 +165,37 @@ int main() {
 
                 // Check if selectedVenuesForEmail is empty
                 if (selectedVenuesForEmail.empty()) {
-                    std::cout << "No venues selected. Please add venues before sending emails." << std::endl;
+                    cout << "No venues selected. Please add venues before sending emails." << endl;
                     continue; // Return to the main menu
                 }
 
                 // Check if subject and message are empty
                 if (subject.empty() || message.empty()) {
-                    std::cout << "Subject and Message are required. Please set them before sending emails." << std::endl;
+                    cout << "Subject and Message are required. Please set them before sending emails." << endl;
 
                     try {
-                        constructEmail(subject, message, std::cin);
-                    } catch (const std::exception& e) {
-                        std::cerr << "An error occurred while entering subject and message: " << e.what() << std::endl;
+                        constructEmail(subject, message, cin);
+                    } catch (const exception& e) {
+                        cerr << "An error occurred while entering subject and message: " << e.what() << endl;
                         continue; // Return to the main menu
                     }
 
                     if (subject.empty() || message.empty()) {
-                        std::cout << "Subject and Message are still empty. Returning to the main menu." << std::endl;
+                        cout << "Subject and Message are still empty. Returning to the main menu." << endl;
                         continue; // Return to the main menu
                     }
                 }
                         
                 // Check if SMTP password is empty
                 if (smtpPassDecrypted.empty()) {
-                    std::cout << "SMTP Password is required. Please set it before sending emails." << std::endl;
+                    cout << "SMTP Password is required. Please set it before sending emails." << endl;
                     continue; // Return to the main menu
                 }
             
             // Prompt for confirmation
-            std::cout << "Confirm sending the email (Y/N): ";
+            cout << "Confirm sending the email (Y/N): ";
             char confirmSend;
-            std::cin >> confirmSend;
+            cin >> confirmSend;
             clearInputBuffer();
 
             if (confirmSend == 'Y' || confirmSend == 'y') {
@@ -220,33 +220,33 @@ int main() {
                 message.clear();
 
             } else if (confirmSend == 'N' || confirmSend == 'n') {
-                std::cout << "Email not sent. Returning to the main menu." << std::endl;
+                cout << "Email not sent. Returning to the main menu." << endl;
                 // The user chose not to send the email, return to the main menu without clearing the selectedVenuesForEmail vector
             } else {
-                std::cout << "Invalid choice. Please try again." << std::endl;
+                cout << "Invalid choice. Please try again." << endl;
                 // The user entered an invalid choice, return to the main menu without clearing the selectedVenuesForEmail vector
                 }
             } else if (choice == EXIT_OPTION) {
                 // Prompt for confirmation before exiting
-                std::cout << "Are you sure you want to exit? (Y/N): ";
+                cout << "Are you sure you want to exit? (Y/N): ";
                 char confirmExit;
-                std::cin >> confirmExit;
+                cin >> confirmExit;
                 clearInputBuffer();
 
                 if (confirmExit == 'Y' || confirmExit == 'y') {
 
                     // Exit VenueSender
-                    std::cout << "Exiting the program." << std::endl;
+                    cout << "Exiting the program." << endl;
                     break;
                 } else if (confirmExit == 'N' || confirmExit == 'n') {
-                    std::cout << "Returning to the main menu." << std::endl;
+                    cout << "Returning to the main menu." << endl;
                     // The user chose not to exit, return to the main menu
                 } else {
-                    std::cout << "Invalid choice. Please try again." << std::endl;
+                    cout << "Invalid choice. Please try again." << endl;
                     // The user entered an invalid choice, return to the main menu
                 }
             } else {
-                std::cout << "Invalid choice. Please try again." << std::endl;
+                cout << "Invalid choice. Please try again." << endl;
             }
         }
         // Before the program exits, call the resetConfigFile function

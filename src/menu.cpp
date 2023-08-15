@@ -11,23 +11,23 @@ bool isValidMenuChoice(int choice) {
 int displayMenuOptions() {
     int choice;
     do {
-        std::cout << "===== Main Menu =====" << std::endl;
-        std::cout << "1. Filter by Genre" << std::endl;
-        std::cout << "2. Filter by State" << std::endl;
-        std::cout << "3. Filter by City" << std::endl;
-        std::cout << "4. Filter by Capacity" << std::endl;
-        std::cout << "5. Clear Selected Venues" << std::endl;
-        std::cout << "6. View Selected Venues" << std::endl;
-        std::cout << "7. Show Email Settings" << std::endl;
-        std::cout << "8. Finish & Send Emails" << std::endl;
-        std::cout << "9. Exit VenueSender" << std::endl;
-        std::cout << "Enter your choice: ";
+        cout << "===== Main Menu =====" << endl;
+        cout << "1. Filter by Genre" << endl;
+        cout << "2. Filter by State" << endl;
+        cout << "3. Filter by City" << endl;
+        cout << "4. Filter by Capacity" << endl;
+        cout << "5. Clear Selected Venues" << endl;
+        cout << "6. View Selected Venues" << endl;
+        cout << "7. Show Email Settings" << endl;
+        cout << "8. Finish & Send Emails" << endl;
+        cout << "9. Exit VenueSender" << endl;
+        cout << "Enter your choice: ";
 
-        if (!(std::cin >> choice)) {
-            std::cout << "Invalid input. Please enter a number." << std::endl;
+        if (!(cin >> choice)) {
+            cout << "Invalid input. Please enter a number." << endl;
             clearInputBuffer();
         } else if (!isValidMenuChoice(choice)) {
-            std::cout << "Invalid choice. Please enter a number between 1 and 9." << std::endl;
+            cout << "Invalid choice. Please enter a number between 1 and 9." << endl;
             clearInputBuffer();
         } else {
             break;
@@ -37,32 +37,32 @@ int displayMenuOptions() {
     return choice;
 }
 
-void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
-                       int senderSmtpPort, const std::string& smtpPassDecrypted, const std::string& mailPassDecrypted,
+void viewEmailSettings(const string& smtpServer, int smtpPort, const string& senderEmail,
+                       int senderSmtpPort, const string& smtpPassDecrypted, const string& mailPassDecrypted,
                        bool useSSL) {
-    std::cout << "===== Email Settings =====" << std::endl;
-    std::cout << "SMTP Server: " << smtpServer << std::endl;
-    std::cout << "SMTP Port: " << smtpPort << std::endl;
-    std::cout << "Sender Email: " << senderEmail << std::endl;
-    std::cout << "Sender SMTP Port: " << senderSmtpPort << std::endl;
-    std::cout << "SMTP Password: " << smtpPassDecrypted << std::endl;
-    std::cout << "Mail Password: " << mailPassDecrypted << std::endl;
-    std::cout << "SSL Enabled: " << (useSSL ? "useSSL" : "false") << std::endl; 
-    std::cout << "===========================" << std::endl;
+    cout << "===== Email Settings =====" << endl;
+    cout << "SMTP Server: " << smtpServer << endl;
+    cout << "SMTP Port: " << smtpPort << endl;
+    cout << "Sender Email: " << senderEmail << endl;
+    cout << "Sender SMTP Port: " << senderSmtpPort << endl;
+    cout << "SMTP Password: " << smtpPassDecrypted << endl;
+    cout << "Mail Password: " << mailPassDecrypted << endl;
+    cout << "SSL Enabled: " << (useSSL ? "useSSL" : "false") << endl; 
+    cout << "===========================" << endl;
 }
 
 // Function to display selected venues to the user
-void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues) {
-    std::cout << "===== Selected Venues =====" << std::endl;
+void displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
+    cout << "===== Selected Venues =====" << endl;
     if (selectedVenues.empty()) {
-        std::cout << "No venues selected yet." << std::endl;
+        cout << "No venues selected yet." << endl;
     } else {
         for (const auto& venue : selectedVenues) {
-            std::cout << "Name: " << venue.name << std::endl;
-            std::cout << "Email: " << venue.email << std::endl;
-            std::cout << "City: " << venue.city << std::endl;
-            std::cout << "--------------------------" << std::endl;
+            cout << "Name: " << venue.name << endl;
+            cout << "Email: " << venue.email << endl;
+            cout << "City: " << venue.city << endl;
+            cout << "--------------------------" << endl;
         }
     }
-    std::cout << "===========================" << std::endl;
+    cout << "===========================" << endl;
 }

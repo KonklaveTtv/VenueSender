@@ -1,38 +1,38 @@
 #include "fileutils.h"
 
 // Function to trim leading and trailing spaces from a string
-std::string trim(const std::string& str){
+string trim(const string& str){
     // Trimming function
-    const auto notSpace = [](int ch) {return !std::isspace(ch); };
-    auto first = std::find_if(str.begin(), str.end(), notSpace);
-    auto last = std::find_if(str.rbegin(), str.rend(), notSpace).base();
-    return (first < last ? std::string(first, last) : std::string());
+    const auto notSpace = [](int ch) {return !isspace(ch); };
+    auto first = find_if(str.begin(), str.end(), notSpace);
+    auto last = find_if(str.rbegin(), str.rend(), notSpace).base();
+    return (first < last ? string(first, last) : string());
 }
 
 // Clear the input buffer
 void clearInputBuffer() {
     // Clear the input buffer
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
 }
 
 // Function to read venue data from CSV file
-void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
-    std::ifstream file(venuesCsvPath);
+void readCSV(vector<Venue>& venues, const string& venuesCsvPath) {
+    ifstream file(venuesCsvPath);
     if (!file.is_open()) {
-        std::cerr << "Failed to open CSV file: " << venuesCsvPath << std::endl;
+        cerr << "Failed to open CSV file: " << venuesCsvPath << endl;
         return;
     }
 
-    std::string line;
-    std::getline(file, line); // Skip the header line
+    string line;
+    getline(file, line); // Skip the header line
 
-    while (std::getline(file, line)) {
-        std::istringstream ss(line);
-        std::string data;
-        std::vector<std::string> rowData;
+    while (getline(file, line)) {
+        istringstream ss(line);
+        string data;
+        vector<string> rowData;
 
-        while (std::getline(ss, data, ',')) {
+        while (getline(ss, data, ',')) {
             rowData.push_back(trim(data));
         }
 
@@ -44,13 +44,13 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
             venue.state = rowData[3];
             venue.city = rowData[4];
             try {
-            venue.capacity = std::stoi(rowData[5]);
-            } catch (const std::exception& ex) {
-                std::cerr << "Invalid capacity in CSV file:" << venuesCsvPath << std::endl;
+            venue.capacity = stoi(rowData[5]);
+            } catch (const exception& ex) {
+                cerr << "Invalid capacity in CSV file:" << venuesCsvPath << endl;
             }
             venues.push_back(venue);
         } else {
-            std::cerr << "Invalid data in CSV file: " << venuesCsvPath << std::endl;
+            cerr << "Invalid data in CSV file: " << venuesCsvPath << endl;
         }
     }
 
@@ -58,19 +58,19 @@ void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
 }
 
 // Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
-bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
-                        std::string& smtpUsername, std::string& smtpPass,
-                        std::string& venuesCsvPath, std::string& mailPass,
-                        std::string& senderEmail, int& senderSmtpPort,
+bool loadConfigSettings(string& smtpServer, int& smtpPort,
+                        string& smtpUsername, string& smtpPass,
+                        string& venuesCsvPath, string& mailPass,
+                        string& senderEmail, int& senderSmtpPort,
                         bool useSSL, bool verifyPeer, bool verifyHost) {
 
     // Load configuration settings from config.json into respective variables
     // Return true if successful, false otherwise
 #ifdef UNIT_TESTING
     Json::Value config;
-    std::ifstream configFile(confPaths::mockConfigJsonPath);
+    ifstream configFile(confPaths::mockConfigJsonPath);
     if (!configFile.is_open()) {
-        std::cerr << "Failed to open config.json." << std::endl;
+        cerr << "Failed to open config.json." << endl;
         return false;
     }
 
@@ -85,16 +85,16 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     
     // Load SSL settings
     useSSL = config["use_ssl"].asBool();
-    verifyPeer = config["verifyPeer"].asBool();
-    verifyHost = config["verifyhost"].asBool();
+    verifyPeer = config["verify_peer"].asBool();
+    verifyHost = config["verify_host"].asBool();
 
     // Load venues.csv path from config
     venuesCsvPath = confPaths::mockVenuesCsvPath;
 #else
     Json::Value config;
-    std::ifstream configFile(confPaths::configJsonPath);
+    ifstream configFile(confPaths::configJsonPath);
     if (!configFile.is_open()) {
-        std::cerr << "Failed to open config.json." << std::endl;
+        cerr << "Failed to open config.json." << endl;
         return false;
     }
 
@@ -109,8 +109,8 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
 
     // Load SSL settings
     useSSL = config["use_ssl"].asBool();
-    verifyPeer = config["verifyPeer"].asBool();
-    verifyHost = config["verifyhost"].asBool();
+    verifyPeer = config["verify_peer"].asBool();
+    verifyHost = config["verify_host"].asBool();
 
     // Load venues.csv path from config
     venuesCsvPath = confPaths::venuesCsvPath;
@@ -127,13 +127,13 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     bool isSmtpPassEncrypted = config.isMember("mock_smtp_pass_encrypted") ? config["mock_smtp_pass_encrypted"].asBool() : false;
     bool ismailPassEncrypted = config.isMember("mock_email_pass_encrypted") ? config["mock_email_pass_encrypted"].asBool() : false;
 
-    std::string smtpPassEncrypted;
-    std::string mailPassEncrypted;
+    string smtpPassEncrypted;
+    string mailPassEncrypted;
 
     // Encrypt the smtp password if it is not already encrypted and update the config file
     if (!isSmtpPassEncrypted) {
         if (!encryptPassword(smtpPass, smtpPassEncrypted)) {
-            std::cerr << "Failed to encrypt SMTP password for saving in config.json." << std::endl;
+            cerr << "Failed to encrypt SMTP password for saving in config.json." << endl;
             return false;
         }
         config["mock_smtp_password"] = smtpPassEncrypted;
@@ -145,7 +145,7 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
         if (!encryptPassword(mailPass, mailPassEncrypted)) {
-            std::cerr << "Failed to encrypt email password for saving in config.json." << std::endl;
+            cerr << "Failed to encrypt email password for saving in config.json." << endl;
             return false;
         }
         config["mock_email_password"] = mailPassEncrypted;
@@ -162,13 +162,13 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     bool isSmtpPassEncrypted = config.isMember("smtp_pass_encrypted") ? config["smtp_pass_encrypted"].asBool() : false;
     bool ismailPassEncrypted = config.isMember("email_pass_encrypted") ? config["email_pass_encrypted"].asBool() : false;
 
-    std::string smtpPassEncrypted;
-    std::string mailPassEncrypted;
+    string smtpPassEncrypted;
+    string mailPassEncrypted;
 
     // Encrypt the smtp password if it is not already encrypted and update the config file
     if (!isSmtpPassEncrypted) {
         if (!encryptPassword(smtpPass, smtpPassEncrypted)) {
-            std::cerr << "Failed to encrypt SMTP password for saving in config.json." << std::endl;
+            cerr << "Failed to encrypt SMTP password for saving in config.json." << endl;
             return false;
         }
         config["smtp_password"] = smtpPassEncrypted;
@@ -180,7 +180,7 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
         if (!encryptPassword(mailPass, mailPassEncrypted)) {
-            std::cerr << "Failed to encrypt email password for saving in config.json." << std::endl;
+            cerr << "Failed to encrypt email password for saving in config.json." << endl;
             return false;
         }
         config["email_password"] = mailPassEncrypted;
@@ -192,9 +192,9 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
 
     // Open the config file for writing and save the updated JSON object
 #ifdef UNIT_TESTING
-    std::ofstream configFileOut(confPaths::mockConfigJsonPath);
+    ofstream configFileOut(confPaths::mockConfigJsonPath);
     if (!configFileOut.is_open()) {
-        std::cerr << "Failed to open config.json for writing." << std::endl;
+        cerr << "Failed to open config.json for writing." << endl;
         return false;
     }
     configFileOut << config;
@@ -205,25 +205,25 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     mailPass = config["mock_email_password"].asString();
 
     // SMTP/Mail Password Decryption Check
-    std::string smtpPassDecrypted;
-    std::string mailPassDecrypted;
+    string smtpPassDecrypted;
+    string mailPassDecrypted;
 
     // Decrypt the encrypted passwords
     smtpPassDecrypted = decryptPassword(smtpPass);
     if (smtpPassDecrypted.empty()) {
-        std::cerr << "SMTP password decryption failed." << std::endl;
+        cerr << "SMTP password decryption failed." << endl;
         return false;
     }
 
     mailPassDecrypted = decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
-        std::cerr << "Email password decryption failed." << std::endl;
+        cerr << "Email password decryption failed." << endl;
         return false;
     }
 #else
-    std::ofstream configFileOut(confPaths::configJsonPath);
+    ofstream configFileOut(confPaths::configJsonPath);
     if (!configFileOut.is_open()) {
-        std::cerr << "Failed to open config.json for writing." << std::endl;
+        cerr << "Failed to open config.json for writing." << endl;
         return false;
     }
     configFileOut << config;
@@ -234,19 +234,19 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     mailPass = config["email_password"].asString();
 
     // SMTP/Mail Password Decryption Check
-    std::string smtpPassDecrypted;
-    std::string mailPassDecrypted;
+    string smtpPassDecrypted;
+    string mailPassDecrypted;
 
     // Decrypt the encrypted passwords
     smtpPassDecrypted = decryptPassword(smtpPass);
     if (smtpPassDecrypted.empty()) {
-        std::cerr << "SMTP password decryption failed." << std::endl;
+        cerr << "SMTP password decryption failed." << endl;
         return false;
     }
 
     mailPassDecrypted = decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
-        std::cerr << "Email password decryption failed." << std::endl;
+        cerr << "Email password decryption failed." << endl;
         return false;
     }
 #endif
@@ -276,12 +276,12 @@ bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
     if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || smtpPassLoaded || 
         venuesCsvPathLoaded || mailPassLoaded || senderEmailLoaded || senderSmtpPortLoaded || 
         useSSLLoaded || verifyPeerLoaded || verifyHostLoaded) {
-        std::cout << "Configuration settings loaded from config.json." << std::endl;
+        cout << "Configuration settings loaded from config.json." << endl;
         configLoadedSuccessfully = true;
     } else if (smtpServerLoaded || smtpPortLoaded || smtpPassLoaded || senderEmailLoaded || senderSmtpPortLoaded || useSSLLoaded || verifyPeerLoaded || verifyHostLoaded) {
-        std::cout << "Email settings loaded from config.json." << std::endl;
+        cout << "Email settings loaded from config.json." << endl;
     } else if (!configLoadedSuccessfully) {
-        std::cerr << "Failed to load configuration settings from config.json." << std::endl;
+        cerr << "Failed to load configuration settings from config.json." << endl;
     }
 
     return configLoadedSuccessfully;
@@ -293,9 +293,9 @@ void resetConfigFile() {
 
 #ifdef UNIT_TESTING
     // Read the existing mock_config.json
-    std::ifstream configFile(confPaths::mockConfigJsonPath);
+    ifstream configFile(confPaths::mockConfigJsonPath);
     if (!configFile.is_open()) {
-        std::cerr << "Failed to open mock_config.json." << std::endl;
+        cerr << "Failed to open mock_config.json." << endl;
         return;
     }
     configFile >> config;
@@ -311,18 +311,18 @@ void resetConfigFile() {
     configFile.close();
 
    // Write the modified JSON object back to mock_config.json
-    std::ofstream configFileOut(confPaths::mockConfigJsonPath);
+    ofstream configFileOut(confPaths::mockConfigJsonPath);
     if (!configFileOut.is_open()) {
-        std::cerr << "Failed to open mock_config.json for writing." << std::endl;
+        cerr << "Failed to open mock_config.json for writing." << endl;
         return;
     }
     configFileOut << config;
     configFileOut.close();
 #else
     // Read the existing config.json
-    std::ifstream configFile(confPaths::configJsonPath);
+    ifstream configFile(confPaths::configJsonPath);
     if (!configFile.is_open()) {
-        std::cerr << "Failed to open config.json." << std::endl;
+        cerr << "Failed to open config.json." << endl;
         return;
     }
     configFile >> config;
@@ -338,7 +338,7 @@ void resetConfigFile() {
     configFile.close();
 
     // Write the modified JSON object back to config.json
-    std::ofstream configFileOut(confPaths::configJsonPath);
+    ofstream configFileOut(confPaths::configJsonPath);
     configFileOut << config;
     configFileOut.close();
 #endif // UNIT_TESTING

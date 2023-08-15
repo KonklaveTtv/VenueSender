@@ -10,6 +10,6 @@
 	"mock_smtp_username" : "mock_smtp_username", // do not change, this is for tests
 	"mock_venues_csv_path" : "mock_venues.csv", // do not change, this is for tests
 	"use_ssl" : true, // do not change, this is for tests
-	"verifyPeer" : true, // do not change, this is for tests
-	"verifyhost" : true // do not change, this is for tests
+	"verify_host" : true, // do not change, this is for tests
+	"verify_peer" : true // do not change, this is for tests
 }

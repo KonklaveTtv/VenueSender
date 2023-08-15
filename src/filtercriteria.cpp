@@ -1,8 +1,8 @@
 #include "filtercriteria.h"
 
 // Utility function to get unique genres from a vector of venues
-std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues) {
-    std::set<std::string> uniqueGenres;
+set<string> getUniqueGenres(const vector<Venue>& venues) {
+    set<string> uniqueGenres;
     for (const auto& venue : venues) {
         if (venue.genre != "all") {  // Exclude the "all" genre
             uniqueGenres.insert(venue.genre);
@@ -12,8 +12,8 @@ std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues) {
 }
 
 // Utility function to get unique states from a vector of venues
-std::set<std::string> getUniqueStates(const std::vector<Venue>& venues) {
-    std::set<std::string> uniqueStates;
+set<string> getUniqueStates(const vector<Venue>& venues) {
+    set<string> uniqueStates;
     for (const auto& venue : venues) {
         if (uniqueStates.find(venue.state) == uniqueStates.end()) {
             uniqueStates.insert(venue.state);
@@ -23,8 +23,8 @@ std::set<std::string> getUniqueStates(const std::vector<Venue>& venues) {
 }
 
 // Utility function to get unique cities from a vector of venues
-std::set<std::string> getUniqueCities(const std::vector<Venue>& venues) {
-    std::set<std::string> uniqueCities;
+set<string> getUniqueCities(const vector<Venue>& venues) {
+    set<string> uniqueCities;
     for (const auto& venue : venues) {
         if (uniqueCities.find(venue.city) == uniqueCities.end()) {
             uniqueCities.insert(venue.city);
@@ -34,8 +34,8 @@ std::set<std::string> getUniqueCities(const std::vector<Venue>& venues) {
 }
 
 // Utility function to get unique capacities from a vector of venues
-std::set<int> getUniqueCapacities(const std::vector<Venue>& venues) {
-    std::set<int> uniqueCapacities;
+set<int> getUniqueCapacities(const vector<Venue>& venues) {
+    set<int> uniqueCapacities;
     for (const Venue& venue : venues) {
         uniqueCapacities.insert(venue.capacity);
     }
@@ -43,11 +43,11 @@ std::set<int> getUniqueCapacities(const std::vector<Venue>& venues) {
 }
 
 // Utility function to get unique values of a member using a member pointer
-std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::string Venue::* memberPtr) {
-    std::vector<std::string> uniqueValues;
+vector<string> getUniqueValues(const vector<Venue>& venues, string Venue::* memberPtr) {
+    vector<string> uniqueValues;
     for (const Venue& venue : venues) {
-        std::string value = venue.*memberPtr;
-        if (std::find(uniqueValues.begin(), uniqueValues.end(), value) == uniqueValues.end()) {
+        string value = venue.*memberPtr;
+        if (find(uniqueValues.begin(), uniqueValues.end(), value) == uniqueValues.end()) {
             uniqueValues.push_back(value);
         }
     }
@@ -55,11 +55,11 @@ std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::
 }
 
 // Utility function to get unique values of a member using a member pointer
-std::vector<int> getUniqueValues(const std::vector<Venue>& venues, int Venue::* memberPtr) {
-    std::vector<int> uniqueValues;
+vector<int> getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr) {
+    vector<int> uniqueValues;
     for (const Venue& venue : venues) {
         int value = venue.*memberPtr;
-        if (std::find(uniqueValues.begin(), uniqueValues.end(), value) == uniqueValues.end()) {
+        if (find(uniqueValues.begin(), uniqueValues.end(), value) == uniqueValues.end()) {
             uniqueValues.push_back(value);
         }
     }
@@ -80,105 +80,105 @@ SelectedVenue convertToSelectedVenue(const Venue& venue) {
 }
 
 // Function to process user input and select venues
-void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
-                           std::vector<SelectedVenue>& selectedVenuesForEmail,
-                           std::istream& input,
-                           std::ostream& output) {
+void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
+                           vector<SelectedVenue>& selectedVenuesForEmail,
+                           istream& input,
+                           ostream& output) {
     if (temporaryFilteredVenues.empty()) {
         return;
     }
 
     output << "Select venues to add (comma-separated indices): ";
-    std::string userInput;
-    std::getline(input, userInput);
+    string userInput;
+    getline(input, userInput);
 
     // Validate input length
     if (userInput.length() > MAX_INPUT_LENGTH) {
-        output << "Input too long. Please try again." << std::endl;
+        output << "Input too long. Please try again." << endl;
         return; // Or handle the error appropriately
     }
 
-    std::istringstream iss(userInput);
-    std::string indexStr;
-    while (std::getline(iss, indexStr, ',')) {
+    istringstream iss(userInput);
+    string indexStr;
+    while (getline(iss, indexStr, ',')) {
         try {
-            size_t selectedIndex = std::stoul(indexStr);
+            size_t selectedIndex = stoul(indexStr);
             if (selectedIndex == 0) {
-                output << "Invalid index format. Skipping." << std::endl;
+                output << "Invalid index format. Skipping." << endl;
                 continue;
             }
             selectedIndex--; // Decrement index to match 0-based indexing
             if (selectedIndex < temporaryFilteredVenues.size()) {
                 selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
             } else {
-                output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << std::endl;
+                output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << endl;
                 continue;
             }
-        } catch (const std::invalid_argument& e) {
-            output << "Invalid input. Skipping." << std::endl;
+        } catch (const invalid_argument& e) {
+            output << "Invalid input. Skipping." << endl;
             continue;
         }
     }
 
     // Add a newline to separate the filtered venues from the main menu
-    output << std::endl;
+    output << endl;
 }
 
 // Function to display filtered venues to the user
-void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay) {
+void displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay) {
     if (selectedVenuesForDisplay.empty()) {
-        std::cout << "No venues found." << std::endl;
+        cout << "No venues found." << endl;
         return;
     }
 
-    std::cout << "Filtered Venues: " << std::endl;
+    cout << "Filtered Venues: " << endl;
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
-        std::cout << std::setw(2) << i + 1 << ". Name: " << venue.name << std::endl;
-        std::cout << "   Email: " << venue.email << std::endl;
-        std::cout << "   City: " << venue.city << std::endl;
-        std::cout << "   Capacity: " << venue.capacity << std::endl;
-        std::cout << std::endl;
+        cout << setw(2) << i + 1 << ". Name: " << venue.name << endl;
+        cout << "   Email: " << venue.email << endl;
+        cout << "   City: " << venue.city << endl;
+        cout << "   Capacity: " << venue.capacity << endl;
+        cout << endl;
     }
 }
 
 // Common function for filtering by an option (Genre, State, City)
-std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
-                                                const std::set<std::string>& uniqueOptions,
-                                                const std::string& filterType,
-                                                std::vector<SelectedVenue>& temporaryFilteredVenues) {
-    std::vector<std::string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
-    std::cout << "===== Filter By " << filterType << " =====" << std::endl;
+vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
+                                                const set<string>& uniqueOptions,
+                                                const string& filterType,
+                                                vector<SelectedVenue>& temporaryFilteredVenues) {
+    vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
+    cout << "===== Filter By " << filterType << " =====" << endl;
 
-    std::cout << "Available Options: " << std::endl;
+    cout << "Available Options: " << endl;
     for (size_t i = 0; i < filterOptions.size(); ++i) {
-        std::cout << i + 1 << ". " << filterOptions[i] << std::endl;
+        cout << i + 1 << ". " << filterOptions[i] << endl;
     }
 
-    std::cout << "Enter comma-separated indices of options to select: ";
-    std::string input;
+    cout << "Enter comma-separated indices of options to select: ";
+    string input;
     clearInputBuffer();
-    std::getline(std::cin, input);
+    getline(cin, input);
 
-    std::cout << std::endl; // Add a line of space
+    cout << endl; // Add a line of space
 
     // Validate and process the user's input
-    std::vector<size_t> selectedIndices;
-    std::istringstream iss(input);
-    std::string indexStr;
-    while (std::getline(iss, indexStr, CSV_DELIMITER)) {
+    vector<size_t> selectedIndices;
+    istringstream iss(input);
+    string indexStr;
+    while (getline(iss, indexStr, CSV_DELIMITER)) {
         try {
-            size_t selectedIndex = std::stoi(indexStr) - 1;
+            size_t selectedIndex = stoi(indexStr) - 1;
             selectedIndices.push_back(selectedIndex);
-        } catch (const std::exception& e) {
-            std::cout << "Invalid index. Skipping." << std::endl;
+        } catch (const exception& e) {
+            cout << "Invalid index. Skipping." << endl;
         }
     }
 
     // Now you have the validated selectedIndices vector to work with
     for (size_t selectedIndex : selectedIndices) {
         if (selectedIndex < filterOptions.size()) {
-            std::string filterValue = filterOptions[selectedIndex];
+            string filterValue = filterOptions[selectedIndex];
             for (const Venue& venue : venues) {
                 if ((filterType == "Genre" && venue.genre == filterValue) ||
                     (filterType == "State" && venue.state == filterValue) ||
@@ -188,7 +188,7 @@ std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues
                 }
             }
         } else {
-            std::cout << "Invalid index. Skipping." << std::endl;
+            cout << "Invalid index. Skipping." << endl;
         }
     }
 
@@ -196,43 +196,43 @@ std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues
 }
 
 // Function to filter by Genre, State, or City
-std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
-                                          const std::string& filterType,
-                                          const std::set<std::string>& uniqueOptions,
-                                          std::vector<SelectedVenue>& temporaryFilteredVenues) {
+vector<SelectedVenue> filterByOption(const vector<Venue>& venues,
+                                          const string& filterType,
+                                          const set<string>& uniqueOptions,
+                                          vector<SelectedVenue>& temporaryFilteredVenues) {
     return filterByOptionCommon(venues, uniqueOptions, filterType, temporaryFilteredVenues);
 }
 
 // Function to filter by Capacity
-std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
-                                            const std::set<int>& uniqueCapacities,
-                                            std::vector<SelectedVenue>& temporaryFilteredVenues) {
-    std::vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
-    std::cout << "===== Filter By Capacity =====" << std::endl;
+vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
+                                            const set<int>& uniqueCapacities,
+                                            vector<SelectedVenue>& temporaryFilteredVenues) {
+    vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
+    cout << "===== Filter By Capacity =====" << endl;
 
 
-    std::cout << "Available Options: " << std::endl;
+    cout << "Available Options: " << endl;
     for (size_t i = 0; i < filterOptions.size(); ++i) {
-        std::cout << i + 1 << ". " << filterOptions[i] << std::endl;
+        cout << i + 1 << ". " << filterOptions[i] << endl;
     }
 
-    std::cout << "Enter comma-separated indices of options to select: ";
-    std::string input;
+    cout << "Enter comma-separated indices of options to select: ";
+    string input;
     clearInputBuffer();
-    std::getline(std::cin, input);
+    getline(cin, input);
 
-    std::cout << std::endl; // Add a line of space
+    cout << endl; // Add a line of space
 
     // Validate and process the user's input
-    std::vector<size_t> selectedIndices;
-    std::istringstream iss(input);
-    std::string indexStr;
-    while (std::getline(iss, indexStr, CSV_DELIMITER)) {
+    vector<size_t> selectedIndices;
+    istringstream iss(input);
+    string indexStr;
+    while (getline(iss, indexStr, CSV_DELIMITER)) {
         try {
-            size_t selectedIndex = std::stoi(indexStr) - 1;
+            size_t selectedIndex = stoi(indexStr) - 1;
             selectedIndices.push_back(selectedIndex);
-        } catch (const std::exception& e) {
-            std::cout << "Invalid index format. Skipping." << std::endl;
+        } catch (const exception& e) {
+            cout << "Invalid index format. Skipping." << endl;
         }
     }
 
@@ -247,7 +247,7 @@ std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                 }
             }
         } else {
-            std::cout << "Invalid index: " << selectedIndex << std::endl;
+            cout << "Invalid index: " << selectedIndex << endl;
         }
     }
 

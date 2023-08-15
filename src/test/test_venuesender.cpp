@@ -14,19 +14,19 @@
 using namespace confPaths;
 
 class CinGuard {
-    std::streambuf* orig_cin;
+    streambuf* orig_cin;
 
 public:
-    CinGuard(std::streambuf* newbuf) : orig_cin(std::cin.rdbuf(newbuf)) {}
-    ~CinGuard() { std::cin.rdbuf(orig_cin);}
+    CinGuard(streambuf* newbuf) : orig_cin(cin.rdbuf(newbuf)) {}
+    ~CinGuard() { cin.rdbuf(orig_cin);}
 };
 
 class CoutGuard {
-    std::streambuf* orig_cout;
+    streambuf* orig_cout;
 
 public:
-    CoutGuard(std::streambuf* newbuf) : orig_cout(std::cout.rdbuf(newbuf)) {}
-    ~CoutGuard() { std::cout.rdbuf(orig_cout); }
+    CoutGuard(streambuf* newbuf) : orig_cout(cout.rdbuf(newbuf)) {}
+    ~CoutGuard() { cout.rdbuf(orig_cout); }
 };
 
 // -----------------------
@@ -48,8 +48,8 @@ TEST_CASE("Test trim function", "[FileUtils]") {
 
 TEST_CASE("Test Read CSV", "[csv]") {
     // Set up mock data for readCSV function
-    std::vector<Venue> venues;
-    std::string venuesCsvPath = confPaths::mockVenuesCsvPath;
+    vector<Venue> venues;
+    string venuesCsvPath = confPaths::mockVenuesCsvPath;
 
     // Call the readCSV function
     readCSV(venues, venuesCsvPath);
@@ -73,13 +73,13 @@ TEST_CASE("Test Read CSV", "[csv]") {
 }
 
 TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
-    std::string smtpServer;
+    string smtpServer;
     int smtpPort;
-    std::string smtpUsername;
-    std::string smtpPass;
-    std::string venuesCsvPath;
-    std::string mailPass;
-    std::string senderEmail;
+    string smtpUsername;
+    string smtpPass;
+    string venuesCsvPath;
+    string mailPass;
+    string senderEmail;
     int senderSmtpPort;
     bool useSSL = false;
     bool verifyPeer = false;
@@ -113,19 +113,19 @@ TEST_CASE("isValidMenuChoice function", "[isValid]") {
 
 TEST_CASE("Test displayMenuOptions function", "[menu]") {
     // Set up mock input and output streams
-    std::istringstream input("5\n");
-    std::ostringstream output;
+    istringstream input("5\n");
+    ostringstream output;
     
     // Redirect the standard streams
-    std::streambuf* original_cin = std::cin.rdbuf(input.rdbuf());
-    std::streambuf* original_cout = std::cout.rdbuf(output.rdbuf());
+    streambuf* original_cin = cin.rdbuf(input.rdbuf());
+    streambuf* original_cout = cout.rdbuf(output.rdbuf());
 
     // Call the function
     int choice = displayMenuOptions();
 
     // Restore the original streams
-    std::cin.rdbuf(original_cin);
-    std::cout.rdbuf(original_cout);
+    cin.rdbuf(original_cin);
+    cout.rdbuf(original_cout);
 
     // Check the captured output and the returned choice
     REQUIRE(output.str() == "===== Main Menu =====\n1. Filter by Genre\n2. Filter by State\n3. Filter by City\n4. Filter by Capacity\n5. Clear Selected Venues\n6. View Selected Venues\n7. Show Email Settings\n8. Finish & Send Emails\n9. Exit VenueSender\nEnter your choice: ");
@@ -133,31 +133,31 @@ TEST_CASE("Test displayMenuOptions function", "[menu]") {
 }
 
 TEST_CASE("viewEmailSettings function", "[Display]") {
-    std::ostringstream oss;
-    std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
-    std::cout.rdbuf(oss.rdbuf());
+    ostringstream oss;
+    streambuf* oldCoutStreamBuf = cout.rdbuf();
+    cout.rdbuf(oss.rdbuf());
 
     // Call the function
     viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass", "useSSL");
 
-    std::cout.rdbuf(oldCoutStreamBuf);
+    cout.rdbuf(oldCoutStreamBuf);
     
     REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\nSSL Enabled: useSSL\n===========================\n");
 }
 
 TEST_CASE("displaySelectedVenues function", "[Display]") {
     // Set up the output stream capture
-    std::ostringstream oss;
-    std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
-    std::cout.rdbuf(oss.rdbuf());
+    ostringstream oss;
+    streambuf* oldCoutStreamBuf = cout.rdbuf();
+    cout.rdbuf(oss.rdbuf());
 
     // Read from mock_venues.csv
-    std::vector<Venue> venues;
-    std::string venuesCsvPath = confPaths::mockVenuesCsvPath;
+    vector<Venue> venues;
+    string venuesCsvPath = confPaths::mockVenuesCsvPath;
     readCSV(venues, venuesCsvPath);
 
     // Convert the Venue objects to SelectedVenue format
-    std::vector<SelectedVenue> selectedVenues;
+    vector<SelectedVenue> selectedVenues;
     for(const Venue& venue : venues) {
         selectedVenues.push_back(convertToSelectedVenue(venue));
     }
@@ -166,10 +166,10 @@ TEST_CASE("displaySelectedVenues function", "[Display]") {
     displaySelectedVenues(selectedVenues);
 
     // Reset the cout buffer to its original state
-    std::cout.rdbuf(oldCoutStreamBuf);
+    cout.rdbuf(oldCoutStreamBuf);
     
     // Construct the expected string
-    std::string expectedOutput = 
+    string expectedOutput = 
         "===== Selected Venues =====\n"
         "Name: Venue1\n"
         "Email: venue1@mock.com\n"
@@ -192,8 +192,8 @@ TEST_CASE("displaySelectedVenues function", "[Display]") {
 
 TEST_CASE("Test Email Validation", "[validation]") {
     // Set up mock data for email validation
-    std::string validEmail = "venue1@mock.com";
-    std::string invalidEmail = "invalid.email";
+    string validEmail = "venue1@mock.com";
+    string invalidEmail = "invalid.email";
 
     // Call the isValidEmail function
     bool isValid1 = isValidEmail(validEmail);
@@ -208,14 +208,14 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     // Set up mock data for viewEmailSendingProgress function
     CurlHandleWrapper curlWrapper;
     CURL* curl = curlWrapper.get();
-    std::vector<SelectedVenue> selectedVenuesForEmail;
-    std::string senderEmail = "mock@example.com";
-    std::string subject = "Mock Subject";
-    std::string message = "Mock Message";
-    std::string smtpServer = "mock_smtp_server";
+    vector<SelectedVenue> selectedVenuesForEmail;
+    string senderEmail = "mock@example.com";
+    string subject = "Mock Subject";
+    string message = "Mock Message";
+    string smtpServer = "mock_smtp_server";
     int smtpPort = 587;
-    std::string smtpUsername = "mock_smtp_username";
-    std::string smtpPass = "mock_smtp_password";
+    string smtpUsername = "mock_smtp_username";
+    string smtpPass = "mock_smtp_password";
 
     // Simulate adding some selected venues
     Venue testVenue1("Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100);
@@ -232,21 +232,21 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     selectedVenuesForEmail.push_back(selectedVenue2);
 
     // Redirect cout to capture console output
-    std::stringstream outputCapture;
-    std::streambuf* coutBuffer = std::cout.rdbuf();
-    std::cout.rdbuf(outputCapture.rdbuf());
+    stringstream outputCapture;
+    streambuf* coutBuffer = cout.rdbuf();
+    cout.rdbuf(outputCapture.rdbuf());
 
     // Call the viewEmailSendingProgress function
     viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass);
 
     // Restore cout
-    std::cout.rdbuf(coutBuffer);
+    cout.rdbuf(coutBuffer);
 
     // Compare the result with expected values
-    std::string output = outputCapture.str();
-    REQUIRE(output.find("Sending email 1 of 2 to: venue1@mock.com") != std::string::npos);
-    REQUIRE(output.find("Sending email 2 of 2 to: venue2@mock.com") != std::string::npos);
-    REQUIRE(output.find("Email sending progress completed.") != std::string::npos);
+    string output = outputCapture.str();
+    REQUIRE(output.find("Sending email 1 of 2 to: venue1@mock.com") != string::npos);
+    REQUIRE(output.find("Sending email 2 of 2 to: venue2@mock.com") != string::npos);
+    REQUIRE(output.find("Email sending progress completed.") != string::npos);
 }
 
 
@@ -256,15 +256,15 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
 
 TEST_CASE("processVenueSelection Test") {
     // Set up mock data and expected results
-    std::vector<SelectedVenue> temporaryFilteredVenues = {
+    vector<SelectedVenue> temporaryFilteredVenues = {
         SelectedVenue{"Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100},
         SelectedVenue{"Venue2", "venue2@mock.com", "rock", "UT", "Provo", 300}
     };
-    std::vector<SelectedVenue> selectedVenuesForEmail;
+    vector<SelectedVenue> selectedVenuesForEmail;
     
     // Set up mock user input and output streams
-    std::istringstream mockInput("1,2"); // user selects both venues
-    std::ostringstream mockOutput;
+    istringstream mockInput("1,2"); // user selects both venues
+    ostringstream mockOutput;
 
     // Call the function
     processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, mockInput, mockOutput);
@@ -275,7 +275,7 @@ TEST_CASE("processVenueSelection Test") {
     REQUIRE(selectedVenuesForEmail[1].name == "Venue2");
 
     // Check output to the user
-    std::string expectedOutput = 
+    string expectedOutput = 
         "Select venues to add (comma-separated indices): \n"; // newline after processing input
     REQUIRE(mockOutput.str() == expectedOutput);
 }
@@ -311,13 +311,13 @@ TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
     // Initialize encryption parameters
     initializeEncryptionParams();
 
-    std::string smtpPassword = "enter_smtp_password";
+    string smtpPassword = "enter_smtp_password";
 
-    std::string encryptedSmtpPass;
+    string encryptedSmtpPass;
     REQUIRE(encryptPassword(smtpPassword, encryptedSmtpPass) == true);
 
-    std::string smtpPassDecrypted;
-    std::string decryptedSmtpPass = decryptPassword(encryptedSmtpPass);
+    string smtpPassDecrypted;
+    string decryptedSmtpPass = decryptPassword(encryptedSmtpPass);
     REQUIRE(decryptedSmtpPass == smtpPassword);
 
     REQUIRE(smtpPassword == decryptedSmtpPass);
@@ -327,13 +327,13 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
     // Initialize encryption parameters
     initializeEncryptionParams();
 
-    std::string mailPassword = "enter_email_password";
+    string mailPassword = "enter_email_password";
 
-    std::string encryptedmailPass;
+    string encryptedmailPass;
     REQUIRE(encryptPassword(mailPassword, encryptedmailPass) == true);
 
-    std::string smtpPassDecrypted;
-    std::string decryptedmailPass = decryptPassword(encryptedmailPass);
+    string smtpPassDecrypted;
+    string decryptedmailPass = decryptPassword(encryptedmailPass);
     REQUIRE(decryptedmailPass == mailPassword);
 
     REQUIRE(mailPassword == decryptedmailPass);
