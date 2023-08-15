@@ -33,7 +33,7 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
                         string& smtpUsername, string& smtpPass,
                         string& venuesCsvPath, string& mailPass,
                         string& senderEmail, int& senderSmtpPort,
-                        bool useSSL, bool verifyPeer, bool verifyHost);
+                        bool& useSSL, bool& verifyPeer, bool& verifyHost);
 
 // Function to reset the config.json file password fields on exit
 void resetConfigFile();

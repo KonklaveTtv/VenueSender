@@ -178,11 +178,10 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
                               const string& smtpServer,
                               int smtpPort,
                               const string& smtpUsername,
-                              const string& smtpPassDecrypted) {
+                              const string& smtpPassDecrypted,
+                              double& progress) {
     // Set the custom progress callback function from CurlHandleWrapper
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-
-    double progress = 0.0; // Initialize progress
 
     for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
         const SelectedVenue& venue = selectedVenuesForEmail[i];

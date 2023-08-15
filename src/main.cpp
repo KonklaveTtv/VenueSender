@@ -20,9 +20,9 @@ int main() {
     string subject;
     string message;
     double progress;
-    bool useSSL = false;
-    bool verifyPeer = false;
-    bool verifyHost = false;
+    bool useSSL;
+    bool verifyPeer;
+    bool verifyHost;
 
     initializeEncryptionParams();
 
@@ -30,6 +30,9 @@ int main() {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
+    cout << "useSSL in main: " << useSSL << endl;
+    cout << "verifyPeer from config: " << verifyPeer << endl;
+    cout << "verifyHost from config: " << verifyHost << endl;
 
     smtpPassDecrypted = decryptPassword(smtpPass);
     mailPassDecrypted = decryptPassword(mailPass);
@@ -58,6 +61,7 @@ int main() {
     res = curl_easy_setopt(curl, CURLOPT_USE_SSL, useSSL);
     if (res != CURLE_OK) {
         cerr << "Failed to set useSSL option." << endl;
+        curl_easy_cleanup(curl);
         return 1;
     }
 
@@ -65,6 +69,7 @@ int main() {
     res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer);
     if (res != CURLE_OK) {
         cerr << "Failed to set verifyPeer option." << endl;
+        curl_easy_cleanup(curl);
         return 1;
     }
 
@@ -72,6 +77,7 @@ int main() {
     res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost);
     if (res != CURLE_OK) {
         cerr << "Failed to set verifyHost option." << endl;
+        curl_easy_cleanup(curl);
         return 1;
     }
 
@@ -210,7 +216,7 @@ int main() {
                     curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
 
                     // Display email sending progress
-                    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted);
+                    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
                 }
 
                 filteredVenues.clear(); // Clear the filtered venues for the next round of emails

@@ -81,15 +81,18 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     string mailPass;
     string senderEmail;
     int senderSmtpPort;
-    bool useSSL = false;
-    bool verifyPeer = false;
-    bool verifyHost = false;
+    bool useSSL;
+    bool verifyPeer;
+    bool verifyHost;
 
     bool result = loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, 
                                      venuesCsvPath, mailPass, senderEmail, senderSmtpPort, 
                                      useSSL, verifyPeer, verifyHost);
     
     REQUIRE(result == true);
+    REQUIRE(useSSL == true);
+    REQUIRE(verifyPeer == true);
+    REQUIRE(verifyHost == true);
     REQUIRE(smtpServer == "mock_smtp_server");
     REQUIRE(smtpPort == 587);
     REQUIRE(smtpUsername == "mock_smtp_username");
@@ -142,7 +145,7 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
 
     cout.rdbuf(oldCoutStreamBuf);
     
-    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\nSSL Enabled: useSSL\n===========================\n");
+    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\nSSL Enabled: true\n===========================\n");
 }
 
 TEST_CASE("displaySelectedVenues function", "[Display]") {
@@ -217,6 +220,10 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     string smtpUsername = "mock_smtp_username";
     string smtpPass = "mock_smtp_password";
 
+    // Declare and initialize smtpPassDecrypted and progress
+    string smtpPassDecrypted = "your_decrypted_smtp_password"; // Initialize with the actual decrypted SMTP password
+    double progress = 0.0; // Initialize progress to 0.0
+
     // Simulate adding some selected venues
     Venue testVenue1("Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100);
     Venue testVenue2("Venue2", "venue2@mock.com", "rock", "UT", "Provo", 300);
@@ -237,7 +244,8 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     cout.rdbuf(outputCapture.rdbuf());
 
     // Call the viewEmailSendingProgress function
-    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPass);
+    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message,
+                             smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
 
     // Restore cout
     cout.rdbuf(coutBuffer);
@@ -248,6 +256,7 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     REQUIRE(output.find("Sending email 2 of 2 to: venue2@mock.com") != string::npos);
     REQUIRE(output.find("Email sending progress completed.") != string::npos);
 }
+
 
 
 // -----------------------

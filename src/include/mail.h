@@ -77,16 +77,6 @@ bool isValidEmail(const string& email);
 // Function to construct an email by providing subject and message
 void constructEmail(string &subject, string &message, istream &in);
 
-// Function to view the progress of email sending done by sendIndividualEmail()
-void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
-                              const string& senderEmail,
-                              const string& subject,
-                              const string& message,
-                              const string& smtpServer,
-                              int smtpPort,
-                              const string& smtpUsername,
-                              const string& smtpPassDecrypted);
-
 // Function to send an individual email to a recipient with custom subject and message
 bool sendIndividualEmail(CURL* curl,
                         const SelectedVenue& selectedVenue,
@@ -98,5 +88,16 @@ bool sendIndividualEmail(CURL* curl,
                         const string& smtpUsername,
                         const string& smtpPassDecrypted,
                         double& progress);
+
+// Function to view the progress of email sending done by sendIndividualEmail()
+void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
+                              const string& senderEmail,
+                              const string& subject,
+                              const string& message,
+                              const string& smtpServer,
+                              int smtpPort,
+                              const string& smtpUsername,
+                              const string& smtpPassDecrypted,
+                              double& progress);
 
 #endif // VENUESENDER_H

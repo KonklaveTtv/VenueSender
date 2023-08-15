@@ -62,7 +62,7 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
                         string& smtpUsername, string& smtpPass,
                         string& venuesCsvPath, string& mailPass,
                         string& senderEmail, int& senderSmtpPort,
-                        bool useSSL, bool verifyPeer, bool verifyHost) {
+                        bool& useSSL, bool& verifyPeer, bool& verifyHost) {
 
     // Load configuration settings from config.json into respective variables
     // Return true if successful, false otherwise
@@ -84,9 +84,12 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
     smtpUsername = config["mock_smtp_username"].asString();
     
     // Load SSL settings
-    useSSL = config["use_ssl"].asBool();
+    useSSL = config["useSSL"].asBool();
     verifyPeer = config["verify_peer"].asBool();
     verifyHost = config["verify_host"].asBool();
+    cout << "useSSL from config: " << useSSL << endl; // Add this line to check the value
+    cout << "verifyPeer from config: " << verifyPeer << endl; // Add this line to check the value
+    cout << "verifyHost from config: " << verifyHost << endl; // Add this line to check the value
 
     // Load venues.csv path from config
     venuesCsvPath = confPaths::mockVenuesCsvPath;
@@ -108,9 +111,12 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
     smtpUsername = config["smtp_username"].asString();
 
     // Load SSL settings
-    useSSL = config["use_ssl"].asBool();
+    useSSL = config["useSSL"].asBool();
     verifyPeer = config["verify_peer"].asBool();
     verifyHost = config["verify_host"].asBool();
+    cout << "useSSL from config: " << useSSL << endl; // Add this line to check the value
+    cout << "verifyPeer from config: " << verifyPeer << endl; // Add this line to check the value
+    cout << "verifyHost from config: " << verifyHost << endl; // Add this line to check the value
 
     // Load venues.csv path from config
     venuesCsvPath = confPaths::venuesCsvPath;
@@ -262,23 +268,18 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
     bool mailPassLoaded = !mailPass.empty();
     bool senderEmailLoaded = !senderEmail.empty();
     bool senderSmtpPortLoaded = senderSmtpPort > 0;
-    bool useSSLLoaded = !(useSSL = false);
-    bool verifyPeerLoaded = !(verifyPeer = false);
-    bool verifyHostLoaded = !(verifyHost = false);
 
     // Check if the configuration settings are loaded successfully
     bool configLoadedSuccessfully = smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded &&
                                     smtpPassLoaded && venuesCsvPathLoaded && mailPassLoaded &&
-                                    senderEmailLoaded && senderSmtpPortLoaded && useSSLLoaded &&
-                                    verifyPeerLoaded && verifyHostLoaded;
+                                    senderEmailLoaded && senderSmtpPortLoaded;
 
     // Display messages based on loaded settings
     if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || smtpPassLoaded || 
-        venuesCsvPathLoaded || mailPassLoaded || senderEmailLoaded || senderSmtpPortLoaded || 
-        useSSLLoaded || verifyPeerLoaded || verifyHostLoaded) {
+        venuesCsvPathLoaded || mailPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
         cout << "Configuration settings loaded from config.json." << endl;
         configLoadedSuccessfully = true;
-    } else if (smtpServerLoaded || smtpPortLoaded || smtpPassLoaded || senderEmailLoaded || senderSmtpPortLoaded || useSSLLoaded || verifyPeerLoaded || verifyHostLoaded) {
+    } else if (smtpServerLoaded || smtpPortLoaded || smtpPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
         cout << "Email settings loaded from config.json." << endl;
     } else if (!configLoadedSuccessfully) {
         cerr << "Failed to load configuration settings from config.json." << endl;
