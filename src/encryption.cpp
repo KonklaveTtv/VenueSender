@@ -1,5 +1,7 @@
 #include "encryption.h"
 
+using namespace std;
+
 // Define global variables to store the encryption key and nonce
 array<unsigned char, crypto_secretbox_KEYBYTES> globalEncryptionKey;
 array<unsigned char, crypto_secretbox_NONCEBYTES> globalEncryptionNonce;

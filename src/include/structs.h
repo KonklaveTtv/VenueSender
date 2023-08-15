@@ -5,38 +5,38 @@
 
 // Venue structure
 struct Venue {
-    string name;
-    string email;
-    string genre;
-    string state;
-    string city;
+    std::string name;
+    std::string email;
+    std::string genre;
+    std::string state;
+    std::string city;
     int capacity;
 
     // Default constructor
     Venue() = default;
 
     // Parameterized constructor to initialize all members
-    Venue(const string& name, const string& email, const string& genre,
-          const string& state, const string& city, int capacity)
+    Venue(const std::string& name, const std::string& email, const std::string& genre,
+          const std::string& state, const std::string& city, int capacity)
         : name(name), email(email), genre(genre), state(state), city(city), capacity(capacity) {}
 };
 
 
 // Selected Venue structure (used for email sending)
 struct SelectedVenue {
-    string name;
-    string email;
-    string genre;
-    string state;
-    string city;
+    std::string name;
+    std::string email;
+    std::string genre;
+    std::string state;
+    std::string city;
     int capacity;
 
     // Default constructor
     SelectedVenue() = default;
 
     // Copy constructor to initialize from a Venue object
-    SelectedVenue(const string& name, const string& email, const string& genre,
-          const string& state, const string& city, int capacity)
+    SelectedVenue(const std::string& name, const std::string& email, const std::string& genre,
+          const std::string& state, const std::string& city, int capacity)
         : name(name), email(email), genre(genre), state(state), city(city), capacity(capacity) {}
 };
 #endif // STRUCTS_H

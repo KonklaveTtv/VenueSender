@@ -1,5 +1,7 @@
 #include "menu.h"
 
+using namespace std;
+
 // Function to validate user input
 bool isValidMenuChoice(int choice) {
     // Validate if the choice is within valid menu options

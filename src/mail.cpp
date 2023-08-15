@@ -1,5 +1,7 @@
 #include "mail.h"
 
+using namespace std;
+
 string emailBeingSent;
 
 /* CurlHandleWrapper*/

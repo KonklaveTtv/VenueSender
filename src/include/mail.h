@@ -9,7 +9,7 @@
 
 #include <curl/curl.h>
 
-extern string emailBeingSent;
+extern std::string emailBeingSent;
 
 // Define enums for return codes
 enum class ReturnCode {
@@ -72,32 +72,32 @@ const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAnd
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
 // Check if an email address is in a valid format
-bool isValidEmail(const string& email);
+bool isValidEmail(const std::string& email);
 
 // Function to construct an email by providing subject and message
-void constructEmail(string &subject, string &message, istream &in);
+void constructEmail(std::string &subject, std::string &message, std::istream &in);
 
 // Function to send an individual email to a recipient with custom subject and message
 bool sendIndividualEmail(CURL* curl,
                         const SelectedVenue& selectedVenue,
-                        const string& senderEmail,
-                        const string& subject,
-                        const string& message,
-                        const string& smtpServer,
+                        const std::string& senderEmail,
+                        const std::string& subject,
+                        const std::string& message,
+                        const std::string& smtpServer,
                         int smtpPort,
-                        const string& smtpUsername,
-                        const string& smtpPassDecrypted,
+                        const std::string& smtpUsername,
+                        const std::string& smtpPassDecrypted,
                         double& progress);
 
 // Function to view the progress of email sending done by sendIndividualEmail()
-void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
-                              const string& senderEmail,
-                              const string& subject,
-                              const string& message,
-                              const string& smtpServer,
+void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                              const std::string& senderEmail,
+                              const std::string& subject,
+                              const std::string& message,
+                              const std::string& smtpServer,
                               int smtpPort,
-                              const string& smtpUsername,
-                              const string& smtpPassDecrypted,
+                              const std::string& smtpUsername,
+                              const std::string& smtpPassDecrypted,
                               double& progress);
 
 #endif // VENUESENDER_H

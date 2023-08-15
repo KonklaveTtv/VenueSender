@@ -1,6 +1,7 @@
 #include "main.h"
 
 using namespace confPaths;
+using namespace std;
 
 // remove if UnitTesting configuration is active
 #ifndef UNIT_TESTING

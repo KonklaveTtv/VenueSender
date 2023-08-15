@@ -1,5 +1,7 @@
 #include "fileutils.h"
 
+using namespace std;
+
 // Function to trim leading and trailing spaces from a string
 string trim(const string& str){
     // Trimming function

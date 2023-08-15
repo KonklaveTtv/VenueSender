@@ -1,5 +1,7 @@
 #include "filtercriteria.h"
 
+using namespace std;
+
 // Convert Venue to SelectedVenue
 SelectedVenue convertToSelectedVenue(const Venue& venue) {
     // Create a SelectedVenue instance based on Venue data

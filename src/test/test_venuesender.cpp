@@ -14,6 +14,7 @@
 #include <ctime>
 
 using namespace confPaths;
+using namespace std;
 
 class CinGuard {
     streambuf* orig_cin;
