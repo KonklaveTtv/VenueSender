@@ -3,6 +3,7 @@
 
 #include "mail.h"
 #include "structs.h"
+#include "templates.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -27,25 +28,6 @@ struct FilterCriteria {
 
 // Venue selection indices max char length
 const int MAX_INPUT_LENGTH = 256;
-
-// Definition of getSelectedIndices for vector of any type
-template<class T>
-vector<int> getSelectedIndices(const vector<T>& options, istream& input) {
-    // Get selected indices from user input and return as vector
-    cout << "Enter the indices of options (comma-separated): ";
-    string inputStr;
-    getline(input, inputStr);
-    istringstream iss(inputStr);
-    string indexStr;
-    vector<int> selectedIndices;
-    while (getline(iss, indexStr, ',')) {
-        int index = stoi(indexStr);
-        if (index >= 1 && index <= static_cast<int>(options.size())) {
-            selectedIndices.push_back(index - 1);
-        }
-    }
-    return selectedIndices;
-}
 
 // Convert Venue to SelectedVenue
 SelectedVenue convertToSelectedVenue(const Venue& venue);
