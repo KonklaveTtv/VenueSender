@@ -7,10 +7,6 @@
 #include <regex>
 #include <thread>
 
-#include <curl/curl.h>
-
-extern std::string emailBeingSent;
-
 // Define enums for return codes
 enum class ReturnCode {
     Success,
@@ -30,21 +26,6 @@ enum class MenuOption {
     ShowEmailSettings,
     FinishAndSendEmails,
     Exit
-};
-
-class CurlHandleWrapper {
-public:
-    CurlHandleWrapper();
-    ~CurlHandleWrapper();
-    CURL* get() const;
-    static void init();
-    static void cleanup();
-
-    // Change visibility of progressCallback to public
-    int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
-
-private:
-    CURL* curl;
 };
 
 // Member pointers as static constexpr members
@@ -78,7 +59,7 @@ bool isValidEmail(const std::string& email);
 void constructEmail(std::string &subject, std::string &message, std::istream &in);
 
 // Function to send an individual email to a recipient with custom subject and message
-bool sendIndividualEmail(CURL* curl,
+bool sendIndividualEmail(CurlHandleWrapper& curlWrapper,
                         const SelectedVenue& selectedVenue,
                         const std::string& senderEmail,
                         const std::string& subject,
@@ -90,7 +71,8 @@ bool sendIndividualEmail(CURL* curl,
                         double& progress);
 
 // Function to view the progress of email sending done by sendIndividualEmail()
-void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
+void viewEmailSendingProgress(CurlHandleWrapper& curlWrapper,
+                              const std::vector<SelectedVenue>& selectedVenuesForEmail,
                               const std::string& senderEmail,
                               const std::string& subject,
                               const std::string& message,

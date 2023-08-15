@@ -1,55 +1,7 @@
 #include "mail.h"
+#include "curl.h"
 
 using namespace std;
-
-string emailBeingSent;
-
-/* CurlHandleWrapper*/
-/*-------------------*/
-int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
-    // You can calculate the progress percentage based on the parameters provided
-    // and provide updates to the user here
-    // Example: Print the progress every 10% completion
-    if (dltotal > 0) {
-        double progress = (dlnow / dltotal) * 100;
-        if (progress >= 5) {
-            cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
-        }
-    }
-    return 0;
-}
-
-CurlHandleWrapper::CurlHandleWrapper() {
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L); // Enable progress callback
-        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-
-       // Set SSL/TLS options
-        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL); // Use SSL/TLS
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L); // Verify the peer's certificate
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L); // Verify the host's certificate
-    }
-}
-
-CurlHandleWrapper::~CurlHandleWrapper() {
-    if (curl) {
-        curl_easy_cleanup(curl);
-    }
-}
-
-CURL* CurlHandleWrapper::get() const {
-    return curl;
-}
-
-void CurlHandleWrapper::init() {
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-}
-
-void CurlHandleWrapper::cleanup() {
-    curl_global_cleanup();
-}
-/*-------------------*/
 
 // Function to check if an email address is in a valid format
 bool isValidEmail(const string& email) {
@@ -101,7 +53,7 @@ void constructEmail(string &subject, string &message, istream &in = cin) {
 }
 
 // Function to send an individual email to a recipient with custom subject and message using libcurl
-bool sendIndividualEmail(CURL* curl,
+bool sendIndividualEmail(CurlHandleWrapper& curlWrapper,
                         const SelectedVenue& selectedVenue,
                         const string& senderEmail,
                         const string& subject,
@@ -115,6 +67,7 @@ bool sendIndividualEmail(CURL* curl,
     emailBeingSent = selectedVenue.email;
 
     // Set up and send an email using libcurl
+    CURL* curl = curlWrapper.get();
     if (!curl) {
         cerr << "Failed to initialize libcurl." << endl;
         return false;
@@ -181,7 +134,8 @@ bool sendIndividualEmail(CURL* curl,
     return true;
 }
 
-void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
+void viewEmailSendingProgress(CurlHandleWrapper& curlWrapper, 
+                              const vector<SelectedVenue>& selectedVenuesForEmail,
                               const string& senderEmail,
                               const string& subject,
                               const string& message,
@@ -191,6 +145,7 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
                               const string& smtpPassDecrypted,
                               double& progress) {
     // Set the custom progress callback function from CurlHandleWrapper
+    CURL* curl = curlWrapper.get();
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
 
     for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
@@ -199,7 +154,7 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
         cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << endl;
 
         // Send the individual email with progress tracking
-        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
+        sendIndividualEmail(curlWrapper, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
 
         emailBeingSent.clear(); // Reset the value of emailBeingSent
     }

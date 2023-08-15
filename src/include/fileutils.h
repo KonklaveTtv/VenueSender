@@ -1,6 +1,7 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
+#include "curl.h"
 #include "encryption.h"
 #include "structs.h"
 

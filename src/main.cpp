@@ -211,7 +211,7 @@ int main() {
                 // Proceed to send emails if confirmed
                 emailSendProgress = 0; // Reset progress
                     for (const SelectedVenue& venue : selectedVenuesForEmail) {
-                        sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
+                        sendIndividualEmail(curlWrapper, venue, senderEmail, subject, message,
                                             smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
                         ++emailSendProgress;
 
@@ -219,7 +219,7 @@ int main() {
                     curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
 
                     // Display email sending progress
-                    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
+                    viewEmailSendingProgress(curlWrapper, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
                 }
 
                 filteredVenues.clear(); // Clear the filtered venues for the next round of emails
