@@ -56,7 +56,15 @@ bool isValidEmail(const string& email) {
     return regex_match(email, emailPattern);
 }
 
-// Function to construct an email by providing subject and message
+/**
+ * Constructs an email by prompting the user for the subject and message.
+ * If the provided subject length exceeds the maximum allowed length, 
+ * the function will inform the user, clear the subject, and return.
+ * 
+ * @param subject - Reference to the email subject string
+ * @param message - Reference to the email message string
+ * @param in - Input stream, defaulted to standard input (cin)
+ */
 void constructEmail(string &subject, string &message, istream &in = cin) {
     cout << "===== Construct Email =====" << endl;
 
