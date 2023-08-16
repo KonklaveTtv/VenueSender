@@ -10,7 +10,7 @@ To run this project, you need the following installed on your system:
 
 - GCC (GNU Compiler Collection)
 - C++17 compatible compiler
-- JSONCpp library (https://github.com/open-source-parsers/jsoncpp)
+- JSONCpp library
 - libcurl
 - libsodium
 - Catch2
@@ -46,8 +46,8 @@ Running VenueSender:
 2. Prepare a venues.csv file with the list of venues in the following format:
 
       ```
-      Venue Name 1,email1@example.com,Rock,100,City 1,State 1
-      Venue Name 2,email2@example.com,Pop,150,City 2,State 2
+      Venue1,venue1@mock.com,all,AL,Daphne,100
+      Venue2,venue2@mock.com,rock,UT,Provo,300
       ```
 
 
