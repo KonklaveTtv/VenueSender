@@ -3,25 +3,16 @@
 using namespace confPaths;
 using namespace std;
 
-// remove if UnitTesting configuration is active
+// Exclude the following code block if UNIT_TESTING is defined
 #ifndef UNIT_TESTING
+
 int main() {
     // Initialize data and configuration settings
     vector<Venue> venues;
-    string venuesCsvPath;
-    string smtpServer;
-    int smtpPort;
-    string smtpUsername;
-    string mailPass;
-    string mailPassDecrypted;
-    string senderEmail;
-    int senderSmtpPort;
-    string subject;
-    string message;
+    string venuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message;
+    int smtpPort, senderSmtpPort;
     double progress;
-    bool useSSL;
-    bool verifyPeer;
-    bool verifyHost;
+    bool useSSL, verifyPeer, verifyHost;
 
     initializeEncryptionParams();
 
@@ -30,30 +21,25 @@ int main() {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
+
+    // Debug information: display the loaded settings
     cout << "useSSL in main: " << useSSL << endl;
     cout << "verifyPeer from config: " << verifyPeer << endl;
     cout << "verifyHost from config: " << verifyHost << endl;
-
+    
+    // Attempt to decrypt the stored password
     mailPassDecrypted = decryptPassword(mailPass);
-
-    // Check if decryption was successful
     if (mailPassDecrypted.empty()) {
         cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << endl;
-        exit(1); // Handle the error appropriately
+        exit(1);  // Exit with an error status
     }
 
-    // Initialize libcurl
+    // Set up and initialize CURL
     CurlHandleWrapper curlWrapper;
     CurlHandleWrapper::init();
-
-    // Set up CURL handle with required options
-    CURL* curl = setupCurlHandle(curlWrapper, 
-                                 useSSL, verifyPeer, verifyHost, 
-                                 smtpServer, smtpPort, 
-                                 senderEmail, 
-                                 mailPassDecrypted);
+    CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, smtpServer, smtpPort, senderEmail, mailPassDecrypted);
     if (!curl) {
-        return 1;
+        return 1;  // Return error if CURL setup failed
     }
 
     // Read venues data from CSV file
