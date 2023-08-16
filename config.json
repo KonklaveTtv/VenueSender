@@ -1,6 +1,6 @@
 {
 	"email_pass_encrypted" : false,
-	"email_password" : "enter_your_email_password",
+	"email_password" : "enter_email_password",
 	"sender_email" : "enter_your_sender_email", // Replace with your sender email address
 	"smtp_port" : 587, // Replace with your SMTP port number (i.e. 587, 443)
 	"smtp_server" : "enter_your_smtp_server", // Replace with your SMTP server address

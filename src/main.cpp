@@ -96,7 +96,6 @@ int main() {
                 viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
-
                 // Check if selectedVenuesForEmail is empty
                 if (selectedVenuesForEmail.empty()) {
                     cout << "No venues selected. Please add venues before sending emails." << endl;
@@ -126,11 +125,16 @@ int main() {
                     continue; // Return to the main menu
                 }
             
-            // Prompt for confirmation
-            cout << "Confirm sending the email (Y/N): ";
-            char confirmSend;
-            cin >> confirmSend;
-            clearInputBuffer();
+                // Show email details to user for confirmation
+                cout << "----- EMAIL DETAILS -----\n";
+                cout << "Subject: " << subject << endl;
+                cout << "-------------------------\n";
+                cout << "Message: \n" << message << endl;
+                cout << "-------------------------\n";
+                cout << "Do you wish to send this email? (Y/N): ";
+                char confirmSend;
+                cin >> confirmSend;
+                clearInputBuffer();
 
             if (confirmSend == 'Y' || confirmSend == 'y') {
                 // Proceed to send emails if confirmed

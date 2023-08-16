@@ -4,6 +4,7 @@
 #include "encryption.h"
 #include "filtercriteria.h"
 
+// Enumeration representing the available options in the main menu
 enum class MenuOption {
     FilterByGenre = 1,
     FilterByState,
