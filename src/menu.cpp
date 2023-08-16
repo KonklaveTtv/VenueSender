@@ -21,7 +21,8 @@ int displayMenuOptions() {
         cout << static_cast<int>(MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
         cout << static_cast<int>(MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
         cout << static_cast<int>(MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
-        cout << static_cast<int>(MenuOption::FinishAndSendEmails) << ". Finish & Send Emails" << endl;
+        cout << static_cast<int>(MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
+        cout << static_cast<int>(MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
         cout << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
         cout << "Enter your choice: ";
 

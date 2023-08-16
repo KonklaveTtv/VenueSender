@@ -13,7 +13,8 @@ enum class MenuOption {
     ClearSelectedVenues,
     ViewSelectedVenues,
     ShowEmailSettings,
-    FinishAndSendEmails,
+    ViewEditEmail,
+    FinishAndSendEmail,
     Exit
 };
 
@@ -26,7 +27,8 @@ const int FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuOption::FilterByCapac
 // Other menu options
 const int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
 const int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
-const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmails);
+const int VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuOption::ViewEditEmail);
+const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmail);
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
 // Function to validate user input

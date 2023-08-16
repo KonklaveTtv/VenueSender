@@ -94,6 +94,63 @@ int main() {
             } else if (choice == static_cast<int>(MenuOption::ShowEmailSettings)) {
                 // View Email Settings
                 viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
+            } else if (choice == static_cast<int>(MenuOption::ViewEditEmail)) {
+                int attempts = 0;
+                bool modified = false;
+                message.clear();
+                while (attempts < 3) {
+                    if (subject.empty() || message.empty()) {
+                        if (!subject.empty() || !message.empty()) {
+                            cout << "Subject and Message are required. Please set them." << endl;
+                        }
+                        clearInputBuffer();
+                        try {
+                            constructEmail(subject, message, cin);
+                        } catch (const exception& e) {
+                            cerr << "An error occurred while entering subject and message: " << e.what() << endl;
+                            subject.clear(); // Clear existing subject
+                            message.clear(); // Clear existing message
+                            attempts++; // Increment the attempts
+                            if (attempts >= 3) {
+                                cout << "Too many unsuccessful attempts. Returning to main menu." << endl;
+                                break; // Break out of the loop after too many attempts
+                            }
+                            continue; // Loop back to prompt for email details again
+                        }
+                    }
+
+                    cout << "----- EMAIL DETAILS -----\n";
+                    cout << "Subject: " << subject << endl;
+                    cout << "-------------------------\n";
+                    cout << "Message: \n" << message << endl;
+                    cout << "-------------------------\n";
+                    cout << "Do you wish to modify this email? (Y/N): ";
+                    char modifyEmailChoice;
+                    cin >> modifyEmailChoice;
+                    clearInputBuffer();
+
+                    if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
+                        subject.clear(); // Clear existing subject
+                        message.clear(); // Clear existing message
+                        try {
+                            constructEmail(subject, message, cin);
+                            modified = true;
+                        } catch (const exception& e) {
+                            cerr << "An error occurred while entering subject and message: " << e.what() << endl;
+                            subject.clear(); // Clear existing subject
+                            message.clear(); // Clear existing message
+                            continue; // Loop back to prompt for email details again
+                        }
+                    } else {
+                        cout << "Returning to the main menu." << endl;
+                        break; // Break out of the loop after showing email details
+                    }
+                }
+
+                if (!modified) {
+                    // Return to the main menu if the email wasn't modified
+                    continue;
+                }
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
                 if (selectedVenuesForEmail.empty()) {
                     cout << "No venues selected. Please add venues before sending emails." << endl;
@@ -131,6 +188,8 @@ int main() {
                     clearInputBuffer();
 
                     if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
+                        subject.clear(); // Clear existing subject
+                        message.clear(); // Clear existing message
                         try {
                             constructEmail(subject, message, cin);
                         } catch (const exception& e) {
