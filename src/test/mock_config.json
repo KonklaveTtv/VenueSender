@@ -11,5 +11,5 @@
 	"mock_venues_csv_path" : "mock_venues.csv", // do not change, this is for tests
 	"useSSL" : true, // do not change, this is for tests
 	"verifyHost" : true, // do not change, this is for tests
-	"verifyPeer" : true, // do not change, this is for tests
+	"verifyPeer" : true // do not change, this is for tests
 }

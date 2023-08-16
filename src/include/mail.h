@@ -7,10 +7,6 @@
 #include <regex>
 #include <thread>
 
-#include <curl/curl.h>
-
-extern std::string emailBeingSent;
-
 // Define enums for return codes
 enum class ReturnCode {
     Success,
@@ -30,21 +26,6 @@ enum class MenuOption {
     ShowEmailSettings,
     FinishAndSendEmails,
     Exit
-};
-
-class CurlHandleWrapper {
-public:
-    CurlHandleWrapper();
-    ~CurlHandleWrapper();
-    CURL* get() const;
-    static void init();
-    static void cleanup();
-
-    // Change visibility of progressCallback to public
-    int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
-
-private:
-    CURL* curl;
 };
 
 // Member pointers as static constexpr members

@@ -2,54 +2,7 @@
 
 using namespace std;
 
-string emailBeingSent;
-
-/* CurlHandleWrapper*/
-/*-------------------*/
-int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
-    // You can calculate the progress percentage based on the parameters provided
-    // and provide updates to the user here
-    // Example: Print the progress every 10% completion
-    if (dltotal > 0) {
-        double progress = (dlnow / dltotal) * 100;
-        if (progress >= 5) {
-            cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
-        }
-    }
-    return 0;
-}
-
-CurlHandleWrapper::CurlHandleWrapper() {
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L); // Enable progress callback
-        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-
-       // Set SSL/TLS options
-        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL); // Use SSL/TLS
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L); // Verify the peer's certificate
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L); // Verify the host's certificate
-    }
-}
-
-CurlHandleWrapper::~CurlHandleWrapper() {
-    if (curl) {
-        curl_easy_cleanup(curl);
-    }
-}
-
-CURL* CurlHandleWrapper::get() const {
-    return curl;
-}
-
-void CurlHandleWrapper::init() {
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-}
-
-void CurlHandleWrapper::cleanup() {
-    curl_global_cleanup();
-}
-/*-------------------*/
+CurlHandleWrapper curlWrapper;
 
 // Function to check if an email address is in a valid format
 bool isValidEmail(const string& email) {
@@ -112,7 +65,7 @@ bool sendIndividualEmail(CURL* curl,
                         const string& smtpPassDecrypted,
                         double& progress) {
     // Set the value of emailBeingSent
-    emailBeingSent = selectedVenue.email;
+    curlWrapper.setEmailBeingSent(selectedVenue.email);
 
     // Set up and send an email using libcurl
     if (!curl) {
@@ -157,7 +110,7 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L); // Check that the certificate's common name matches the host name
 
     // Set the progress callback function
-    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback); 
     curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 
@@ -195,13 +148,13 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
 
     for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
         const SelectedVenue& venue = selectedVenuesForEmail[i];
-        emailBeingSent = venue.email; // Set the value of emailBeingSent
+        curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent
         cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << endl;
 
         // Send the individual email with progress tracking
         sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
 
-        emailBeingSent.clear(); // Reset the value of emailBeingSent
+        curlWrapper.setEmailBeingSent(""); // Reset the value of emailBeingSent
     }
     cout << "Email sending progress completed." << endl;
 }
