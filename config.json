@@ -2,17 +2,14 @@
 	"email_pass_encrypted" : false,
 	"email_password" : "enter_email_password",
 	"sender_email" : "your_sender_email@example.com", // Replace with your sender email address
-	"sender_smtp_port" : 587, // Replace with the SMTP port for your sender email
+	"sender_smtp_port" : 587, // Replace with the SMTP port for your sender email (i.e. 587, 443)
 	"smtp_pass_encrypted" : false,
 	"smtp_password" : "enter_smtp_password",
-	"smtp_port" : 587, // Replace with your SMTP port number
+	"smtp_port" : 587, // Replace with your SMTP port number (i.e. 587, 443)
 	"smtp_server" : "smtp_server", // Replace with your SMTP server address
 	"smtp_username" : "smtp_username", // Replace with your SMTP username
 	"useSSL" : true, // Set to true or false
 	"venues_csv_path" : "venues.csv", // Provide the path to your venues CSV file
-	"verify_host" : true, // Set to true or false
-	"verify_peer" : true, // Set to true or false
+	"verifyHost" : true,
+	"verifyPeer" : true,
 }
-
-
-ssds
