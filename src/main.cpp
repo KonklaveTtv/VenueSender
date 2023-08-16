@@ -132,7 +132,6 @@ int main() {
 
                     if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
                         try {
-                            clearInputBuffer();  // Clear any lingering input
                             constructEmail(subject, message, cin);
                         } catch (const exception& e) {
                             cerr << "An error occurred while entering subject and message: " << e.what() << endl;
