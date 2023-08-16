@@ -22,11 +22,6 @@ int main() {
         exit(1); // Handle the error appropriately
     }
 
-    // Debug information: display the loaded settings
-    cout << "useSSL in main: " << useSSL << endl;
-    cout << "verifyPeer from config: " << verifyPeer << endl;
-    cout << "verifyHost from config: " << verifyHost << endl;
-    
     // Attempt to decrypt the stored password
     mailPassDecrypted = decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
@@ -37,7 +32,7 @@ int main() {
     // Set up and initialize CURL
     CurlHandleWrapper curlWrapper;
     CurlHandleWrapper::init();
-    CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, smtpServer, smtpPort, senderEmail, mailPassDecrypted);
+    CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, smtpServer, smtpPort, smtpUsername, senderEmail, mailPassDecrypted);
     if (!curl) {
         return 1;  // Return error if CURL setup failed
     }

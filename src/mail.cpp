@@ -118,6 +118,9 @@ bool sendIndividualEmail(CURL* curl,
     string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 
+    // Set the sender's SMTP port
+    curl_easy_setopt(curl, CURLOPT_PORT, smtpPort);
+
     // Set SMTP username and password
     string smtpUserPass = mailPassDecrypted;
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());

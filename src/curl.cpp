@@ -58,8 +58,8 @@ std::string CurlHandleWrapper::getEmailBeingSent() const {
 }
 
 CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost,
-                      const string& smtpServer, int smtpPort, const string& senderEmail, 
-                      const string& mailPassDecrypted) {
+                      const string& smtpServer, int smtpPort, const string& smtpUsername,
+                      const string& senderEmail, const string& mailPassDecrypted) {
 
     CURL* curl = curlWrapper.get();
    
@@ -93,16 +93,16 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
         return nullptr;
     }
 
-    // Connect to the SMTP server
-    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
-    res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
-    if (!checkCurlError(res, "Failed to set libcurl URL option")) {
-        return nullptr;
-    }
-
     // Set the sender email address
     res = curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
     if (!checkCurlError(res, "Failed to set libcurl sender email option")) {
+        curl_easy_cleanup(curl);
+        return nullptr;
+    }
+
+    // Set the SMTP username
+    res = curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
+    if (!checkCurlError(res, "Failed to set libcurl SMTP username option")) {
         curl_easy_cleanup(curl);
         return nullptr;
     }
@@ -111,6 +111,20 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     res = curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
     if (!checkCurlError(res, "Failed to set libcurl email password option")) {
         curl_easy_cleanup(curl);
+        return nullptr;
+    }
+
+    // Set the sender's SMTP port
+    res = curl_easy_setopt(curl, CURLOPT_PORT, smtpPort);
+    if (!checkCurlError(res, "Failed to set libcurl SMTP port option")) {
+        curl_easy_cleanup(curl);
+        return nullptr;
+    }
+
+    // Connect to the SMTP server
+    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
+    res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
+    if (!checkCurlError(res, "Failed to set libcurl URL option")) {
         return nullptr;
     }
 
