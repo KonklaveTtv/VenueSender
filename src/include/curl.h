@@ -21,6 +21,7 @@ public:
 
 private:
     CURL* curl;
+    double progress;
     std::string emailBeingSent;
 };
 
@@ -28,5 +29,6 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
                       const std::string& smtpServer, int smtpPort, const std::string& senderEmail, 
                       const std::string& mailPassDecrypted);
 
+bool checkCurlError(CURLcode res, const char* errorMessage);
 
 #endif // CURL_H

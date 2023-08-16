@@ -4,6 +4,25 @@ using namespace std;
 
 CurlHandleWrapper curlWrapper;
 
+
+// Custom read callback function to read from a string
+size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
+    string* payload = static_cast<string*>(userp);
+    size_t totalsize = size * nmemb;
+
+    if (payload->size()) {
+        // Calculate the size of data to copy to ptr
+        size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
+
+        memcpy(ptr, payload->c_str(), toCopy); // Copy data to ptr
+        payload->erase(0, toCopy); // Remove the portion that has been read from the payload
+
+        return toCopy;
+    }
+
+    return 0; // Return 0 to signify no data left to read
+}
+
 // Function to check if an email address is in a valid format
 bool isValidEmail(const string& email) {
     // A simple regex pattern to check the format of the email
@@ -90,8 +109,9 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     // Set the email body (message)
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, nullptr);
-    curl_easy_setopt(curl, CURLOPT_READDATA, nullptr);
+    string payload = message; // Make a copy of the message since the read callback modifies the string
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, readCallback); // Set custom read function
+    curl_easy_setopt(curl, CURLOPT_READDATA, &payload); // Pass the message string to the read function
     curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(message.length()));
 
     // Set the URL for the SMTP server
@@ -99,8 +119,9 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 
     // Set SMTP username and password
-    string smtpUserPass = smtpUsername + ":" + mailPassDecrypted;
-    curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUserPass.c_str());
+    string smtpUserPass = mailPassDecrypted;
+    curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
 
     cout << "Authenticating with SMTP server..." << endl;
 
@@ -143,9 +164,6 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
                               const string& smtpUsername,
                               const string& mailPassDecrypted,
                               double& progress) {
-    // Set the custom progress callback function from CurlHandleWrapper
-    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-
     for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
         const SelectedVenue& venue = selectedVenuesForEmail[i];
         curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent

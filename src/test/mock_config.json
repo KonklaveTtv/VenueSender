@@ -1,4 +1,5 @@
 {
+	"mock_venues_csv_path" : "mock_venues.csv", // do not change, this is for tests
 	"mock_email_pass_encrypted" : false,
 	"mock_email_password" : "mock_email_password",
 	"mock_sender_email" : "mock@example.com", // do not change, this is for tests
@@ -6,7 +7,6 @@
 	"mock_smtp_port" : 587, // do not change, this is for tests
 	"mock_smtp_server" : "mock_smtp_server", // do not change, this is for tests
 	"mock_smtp_username" : "mock_smtp_username", // do not change, this is for tests
-	"mock_venues_csv_path" : "mock_venues.csv", // do not change, this is for tests
 	"useSSL" : true, // do not change, this is for tests
 	"verifyHost" : true, // do not change, this is for tests
 	"verifyPeer" : true // do not change, this is for tests

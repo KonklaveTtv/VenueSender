@@ -52,6 +52,9 @@ const int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelecte
 const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmails);
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
+// Custom read callback function to read from a string
+size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
+
 // Check if an email address is in a valid format
 bool isValidEmail(const std::string& email);
 
