@@ -42,7 +42,6 @@ int displayMenuOptions() {
     return choice;
 }
 
-
 void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost,
                        const string& senderEmail, const string& mailPassDecrypted,
                        int smtpPort, const string& smtpServer) {

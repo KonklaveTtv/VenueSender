@@ -50,7 +50,7 @@ void constructEmail(string &subject, string &message, istream &in = cin) {
     getline(in, subject);
 
     const int maxSubjectLength = MAX_SUBJECT_LENGTH;
-    const int maxMessageLength = MAX_MESSAGE_LENGTH;
+    const int maxMessageLength = MAX_EMAIL_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
         cout << "Subject too long. Please try again." << endl;

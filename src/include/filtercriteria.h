@@ -28,6 +28,7 @@ struct FilterCriteria {
 
 // Venue selection indices max char length
 const int MAX_INPUT_LENGTH = 256;
+const char CSV_DELIMITER = ','; // Delimiter used in CSV files
 
 // Convert Venue to SelectedVenue
 SelectedVenue convertToSelectedVenue(const Venue& venue);
