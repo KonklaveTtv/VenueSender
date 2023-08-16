@@ -41,10 +41,15 @@ bool isValidEmail(const string& email) {
  */
 void constructEmail(string &subject, string &message, istream &in = cin) {
     cout << "===== Construct Email =====" << endl;
+        // Prompt user to enter email subject and message
+    do {
+        cout << "Enter subject for the email: ";
+        getline(in, subject);
 
-    // Prompt user to enter email subject and message
-    cout << "Enter subject for the email: ";
-    getline(in, subject);
+        if (subject.empty()) {
+            cout << "Subject cannot be blank. Please enter a subject." << endl;
+        }
+    } while (subject.empty());
 
     const int maxSubjectLength = MAX_SUBJECT_LENGTH;
     const int maxMessageLength = MAX_EMAIL_LENGTH;
@@ -54,19 +59,23 @@ void constructEmail(string &subject, string &message, istream &in = cin) {
         subject.clear(); // Clear the subject if it's too long.
         return;
     }
-
-    cout << "Enter the message for the email (press Enter on a new line to finish):\n";
-    string line;
-    while (getline(in, line) && !line.empty()) {
-        if (message.length() + line.length() > maxMessageLength) {
-            cout << "Message too long. Truncating to maximum length." << endl;
-            int charsToAdd = maxMessageLength - message.length();
-            message += trim(line).substr(0, charsToAdd); // Add as many characters as possible
-            break;
+    do {
+        cout << "Enter the message for the email (press Enter on a new line to finish):\n";
+        string line;
+        while (getline(in, line) && !line.empty()) {
+            if (message.length() + line.length() > maxMessageLength) {
+                cout << "Message too long. Truncating to maximum length." << endl;
+                int charsToAdd = maxMessageLength - message.length();
+                message += trim(line).substr(0, charsToAdd); // Add as many characters as possible
+                break;
+            }
+            message += trim(line) + "\n";
         }
-        message += trim(line) + "\n";
-    }
-    cout << "============================" << endl;
+        cout << "============================" << endl;
+        if (message.empty()) {
+            cout << "Message cannot be blank. Please enter a subject." << endl;
+        }
+    } while (message.empty());
 }
 
 // Function to send an individual email to a recipient with custom subject and message using libcurl

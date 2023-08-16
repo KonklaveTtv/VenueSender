@@ -27,6 +27,7 @@ const int FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuOption::FilterByCapac
 // Other menu options
 const int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
 const int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
+const int SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuOption::ShowEmailSettings);
 const int VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuOption::ViewEditEmail);
 const int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmail);
 const int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
