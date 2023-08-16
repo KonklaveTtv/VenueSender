@@ -45,10 +45,6 @@ void constructEmail(string &subject, string &message, istream &in = cin) {
     do {
         cout << "Enter subject for the email: ";
         getline(in, subject);
-
-        if (subject.empty()) {
-            cout << "Subject cannot be blank. Please enter a subject." << endl;
-        }
     } while (subject.empty());
 
     const int maxSubjectLength = MAX_SUBJECT_LENGTH;
@@ -73,7 +69,7 @@ void constructEmail(string &subject, string &message, istream &in = cin) {
         }
         cout << "============================" << endl;
         if (message.empty()) {
-            cout << "Message cannot be blank. Please enter a subject." << endl;
+            cout << "Message cannot be blank. Please enter a message." << endl;
         }
     } while (message.empty());
 }

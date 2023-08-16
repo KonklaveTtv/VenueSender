@@ -26,6 +26,9 @@ std::string trim(const std::string& str);
 // Function to clear input buffer
 void clearInputBuffer();
 
+// Function to clear the console screen
+void clearConsole();
+
 // Function to read CSV file and populate data
 void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
 

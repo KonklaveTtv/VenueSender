@@ -97,6 +97,10 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
     // Validate input length
     if (userInput.length() > MAX_INPUT_LENGTH) {
         output << "Input too long. Please try again." << endl;
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();  // If there's a chance you might have used cin before this point
+        clearInputBuffer();
+        cin.get();     // This will wait for a key press
         return; // Or handle the error appropriately
     }
 
@@ -107,6 +111,10 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
             size_t selectedIndex = stoul(indexStr);
             if (selectedIndex == 0) {
                 output << "Invalid index format. Skipping." << endl;
+                cout << "Press any key to continue..." << endl;
+                cin.ignore();  // If there's a chance you might have used cin before this point
+                clearInputBuffer();
+                cin.get();     // This will wait for a key press
                 continue;
             }
             selectedIndex--; // Decrement index to match 0-based indexing
@@ -114,10 +122,18 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                 selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
             } else {
                 output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << endl;
+                cout << "Press any key to continue..." << endl;
+                cin.ignore();  // If there's a chance you might have used cin before this point
+                clearInputBuffer();
+                cin.get();     // This will wait for a key press  
                 continue;
             }
         } catch (const invalid_argument& e) {
             output << "Invalid input. Skipping." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();  // If there's a chance you might have used cin before this point
+            clearInputBuffer();
+            cin.get();     // This will wait for a key press 
             continue;
         }
     }
@@ -132,7 +148,7 @@ void displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay
         cout << "No venues found." << endl;
         return;
     }
-
+    clearConsole();
     cout << "Filtered Venues: " << endl;
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
@@ -150,6 +166,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
                                                 const string& filterType,
                                                 vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
+    clearConsole();
     cout << "===== Filter By " << filterType << " =====" << endl;
 
     cout << "Available Options: " << endl;
@@ -174,6 +191,10 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
             cout << "Invalid index. Skipping." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();  // If there's a chance you might have used cin before this point
+            clearInputBuffer();
+            cin.get();     // This will wait for a key press            
         }
     }
 
@@ -191,6 +212,10 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
             }
         } else {
             cout << "Invalid index. Skipping." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();  // If there's a chance you might have used cin before this point
+            clearInputBuffer();
+            cin.get();     // This will wait for a key press   
         }
     }
 
@@ -210,6 +235,7 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
                                             const set<int>& uniqueCapacities,
                                             vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
+    clearConsole();
     cout << "===== Filter By Capacity =====" << endl;
 
 
@@ -235,6 +261,10 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
             cout << "Invalid index format. Skipping." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();  // If there's a chance you might have used cin before this point
+            clearInputBuffer();
+            cin.get();     // This will wait for a key press 
         }
     }
 
@@ -250,6 +280,10 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
             }
         } else {
             cout << "Invalid index: " << selectedIndex << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();  // If there's a chance you might have used cin before this point
+            clearInputBuffer();
+            cin.get();     // This will wait for a key press 
         }
     }
 
