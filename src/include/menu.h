@@ -11,9 +11,9 @@ bool isValidMenuChoice(int choice);
 int displayMenuOptions();
 
 // Function to display the email settings set in config.json to the user
-void viewEmailSettings(const std::string& smtpServer, int smtpPort, const std::string& senderEmail,
-                       int senderSmtpPort, const std::string& mailPassDecrypted,
-                       bool useSSL, bool verifyHost, bool verifyPeer);
+void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, 
+                       const std::string& senderEmail, const std::string& mailPassDecrypted,
+                       int smtpPort, const std::string& smtpServer);
 
 // Function to display selected venues to the user
 void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);

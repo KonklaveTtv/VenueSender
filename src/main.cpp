@@ -10,14 +10,14 @@ int main() {
     // Initialize data and configuration settings
     vector<Venue> venues;
     string venuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message;
-    int smtpPort, senderSmtpPort;
+    int smtpPort;
     double progress;
     bool useSSL, verifyPeer, verifyHost;
 
     initializeEncryptionParams();
 
     // Load the config settings from the JSON file
-    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, venuesCsvPath, mailPass, senderEmail, senderSmtpPort, useSSL, verifyPeer, verifyHost)) {
+    if (!loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath)) {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
@@ -32,7 +32,7 @@ int main() {
     // Set up and initialize CURL
     CurlHandleWrapper curlWrapper;
     CurlHandleWrapper::init();
-    CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, smtpServer, smtpPort, smtpUsername, senderEmail, mailPassDecrypted);
+    CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
     if (!curl) {
         return 1;  // Return error if CURL setup failed
     }
@@ -93,7 +93,7 @@ int main() {
                 cout << "Selected venues cleared." << endl;
             } else if (choice == static_cast<int>(MenuOption::ShowEmailSettings)) {
                 // View Email Settings
-                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, mailPassDecrypted, useSSL, verifyHost, verifyPeer);
+                viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
 

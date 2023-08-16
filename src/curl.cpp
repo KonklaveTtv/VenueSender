@@ -58,8 +58,8 @@ std::string CurlHandleWrapper::getEmailBeingSent() const {
 }
 
 CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost,
-                      const string& smtpServer, int smtpPort, const string& smtpUsername,
-                      const string& senderEmail, const string& mailPassDecrypted) {
+                      const string& senderEmail, const string& smtpUsername,
+                      const string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
 
     CURL* curl = curlWrapper.get();
    
@@ -122,7 +122,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     }
 
     // Connect to the SMTP server
-    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
+    string smtpUrl = "smtp://" + smtpServer;
     res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
     if (!checkCurlError(res, "Failed to set libcurl URL option")) {
         return nullptr;

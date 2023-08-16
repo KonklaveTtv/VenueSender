@@ -76,31 +76,29 @@ TEST_CASE("Test Read CSV", "[csv]") {
 }
 
 TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
-    string smtpServer;
-    int smtpPort;
-    string smtpUsername;
-    string venuesCsvPath;
-    string mailPass;
-    string senderEmail;
-    int senderSmtpPort;
     bool useSSL;
     bool verifyPeer;
     bool verifyHost;
+    string senderEmail;
+    string smtpUsername;
+    string mailPass;
+    int smtpPort;
+    string smtpServer;
+    string venuesCsvPath;
 
-    bool result = loadConfigSettings(smtpServer, smtpPort, smtpUsername,venuesCsvPath, 
-                                     mailPass, senderEmail, senderSmtpPort, 
-                                     useSSL, verifyPeer, verifyHost);
+
+    bool result = loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, 
+                                     smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath);
     
     REQUIRE(result == true);
     REQUIRE(useSSL == true);
-    REQUIRE(verifyPeer == true);
     REQUIRE(verifyHost == true);
-    REQUIRE(smtpServer == "mock_smtp_server");
-    REQUIRE(smtpPort == 587);
-    REQUIRE(smtpUsername == "mock_smtp_username");
-    REQUIRE(venuesCsvPath == confPaths::mockVenuesCsvPath);
+    REQUIRE(verifyPeer == true);
     REQUIRE(senderEmail == "mock@example.com");
-    REQUIRE(senderSmtpPort == 587);
+    REQUIRE(smtpUsername == "mock_smtp_username");
+    REQUIRE(smtpPort == 587);
+    REQUIRE(smtpServer == "mock_smtp_server");
+    REQUIRE(venuesCsvPath == confPaths::mockVenuesCsvPath);
 }
 
 // -----------------------
@@ -143,11 +141,27 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
     cout.rdbuf(oss.rdbuf());
 
     // Call the function
-    viewEmailSettings("testServer", 123, "mock@example.com", 456, "mailPass", "useSSL", "verifyHost", "verifyPeer");
+    viewEmailSettings("useSSL", "verifyPeer", "verifyHost", "mock@example.com", "mock_email_password", 587, "mock_smtp_server");
 
     cout.rdbuf(oldCoutStreamBuf);
-    
-    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nMail Password: mailPass\nSSL: true\nverifyHost: true\nverifyPeer: true\n===========================\n");
+
+    // Split the output string into lines for easier validation
+    vector<string> outputLines;
+    string line;
+    istringstream iss(oss.str());
+    while (getline(iss, line)) {
+        outputLines.push_back(line);
+    }
+
+    REQUIRE(outputLines[0] == "===== Email Settings =====");
+    REQUIRE(outputLines[1] == "SMTP Server: mock_smtp_server");
+    REQUIRE(outputLines[2] == "SMTP Port: 587");
+    REQUIRE(outputLines[3] == "Sender Email: mock@example.com");
+    // We skip the password line as we are not validating its content
+    REQUIRE(outputLines[5] == "SSL: true");
+    REQUIRE(outputLines[6] == "verifyPeer: true");
+    REQUIRE(outputLines[7] == "verifyHost: true");
+    REQUIRE(outputLines[8] == "===========================");
 }
 
 TEST_CASE("displaySelectedVenues function", "[Display]") {
