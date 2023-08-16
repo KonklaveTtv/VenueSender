@@ -1,5 +1,5 @@
-#ifndef VENUESENDER_H
-#define VENUESENDER_H
+#ifndef MAIL_H
+#define MAIL_H
 
 #include "fileutils.h"
 
@@ -67,7 +67,7 @@ bool sendIndividualEmail(CURL* curl,
                         const std::string& smtpServer,
                         int smtpPort,
                         const std::string& smtpUsername,
-                        const std::string& smtpPassDecrypted,
+                        const std::string& mailPassDecrypted,
                         double& progress);
 
 // Function to view the progress of email sending done by sendIndividualEmail()
@@ -78,7 +78,7 @@ void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& sele
                               const std::string& smtpServer,
                               int smtpPort,
                               const std::string& smtpUsername,
-                              const std::string& smtpPassDecrypted,
+                              const std::string& mailPassDecrypted,
                               double& progress);
 
-#endif // VENUESENDER_H
+#endif // MAIL_H

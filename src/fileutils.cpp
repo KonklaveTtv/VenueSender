@@ -59,12 +59,11 @@ void readCSV(vector<Venue>& venues, const string& venuesCsvPath) {
     file.close();
 }
 
-// Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
-bool loadConfigSettings(string& smtpServer, int& smtpPort,
-                        string& smtpUsername, string& smtpPass,
-                        string& venuesCsvPath, string& mailPass,
-                        string& senderEmail, int& senderSmtpPort,
-                        bool& useSSL, bool& verifyPeer, bool& verifyHost) {
+// Function to load the settings config.json data and encrypt and decrypt email password
+bool loadConfigSettings(std::string& smtpServer, int& smtpPort,
+                        std::string& smtpUsername, std::string& venuesCsvPath, 
+                        std::string& mailPass, std::string& senderEmail, 
+                        int& senderSmtpPort, bool& useSSL, bool& verifyPeer, bool& verifyHost) {
 
     // Load configuration settings from config.json into respective variables
     // Return true if successful, false otherwise
@@ -122,27 +121,12 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
 
 #ifdef UNIT_TESTING
     // Load plain text passwords from mock_config.json
-    smtpPass = config["mock_smtp_password"].asString();
     mailPass = config["mock_email_password"].asString();
 
     // SMTP/Mail Encryption Check
-    bool isSmtpPassEncrypted = config.isMember("mock_smtp_pass_encrypted") ? config["mock_smtp_pass_encrypted"].asBool() : false;
     bool ismailPassEncrypted = config.isMember("mock_email_pass_encrypted") ? config["mock_email_pass_encrypted"].asBool() : false;
 
-    string smtpPassEncrypted;
     string mailPassEncrypted;
-
-    // Encrypt the smtp password if it is not already encrypted and update the config file
-    if (!isSmtpPassEncrypted) {
-        if (!encryptPassword(smtpPass, smtpPassEncrypted)) {
-            cerr << "Failed to encrypt SMTP password for saving in config.json." << endl;
-            return false;
-        }
-        config["mock_smtp_password"] = smtpPassEncrypted;
-        config["mock_smtp_pass_encrypted"] = true;
-    } else {
-        smtpPassEncrypted = config["mock_smtp_password"].asString();
-    }
 
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
@@ -157,27 +141,12 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
     }
 #else
     // Load plain text passwords from config.json
-    smtpPass = config["smtp_password"].asString();
     mailPass = config["email_password"].asString();
 
     // SMTP/Mail Encryption Check
-    bool isSmtpPassEncrypted = config.isMember("smtp_pass_encrypted") ? config["smtp_pass_encrypted"].asBool() : false;
     bool ismailPassEncrypted = config.isMember("email_pass_encrypted") ? config["email_pass_encrypted"].asBool() : false;
 
-    string smtpPassEncrypted;
     string mailPassEncrypted;
-
-    // Encrypt the smtp password if it is not already encrypted and update the config file
-    if (!isSmtpPassEncrypted) {
-        if (!encryptPassword(smtpPass, smtpPassEncrypted)) {
-            cerr << "Failed to encrypt SMTP password for saving in config.json." << endl;
-            return false;
-        }
-        config["smtp_password"] = smtpPassEncrypted;
-        config["smtp_pass_encrypted"] = true;
-    } else {
-        smtpPassEncrypted = config["smtp_password"].asString();
-    }
 
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
@@ -203,20 +172,12 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
     configFileOut.close();
 
     // Reassign encrypted passwords for decryption and reassignment
-    smtpPass = config["mock_smtp_password"].asString();
     mailPass = config["mock_email_password"].asString();
 
     // SMTP/Mail Password Decryption Check
-    string smtpPassDecrypted;
     string mailPassDecrypted;
 
-    // Decrypt the encrypted passwords
-    smtpPassDecrypted = decryptPassword(smtpPass);
-    if (smtpPassDecrypted.empty()) {
-        cerr << "SMTP password decryption failed." << endl;
-        return false;
-    }
-
+    // Decrypt the encrypted mail password
     mailPassDecrypted = decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         cerr << "Email password decryption failed." << endl;
@@ -232,20 +193,12 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
     configFileOut.close();
 
     // Reassign encrypted passwords for decryption and reassignment
-    smtpPass = config["smtp_password"].asString();
     mailPass = config["email_password"].asString();
 
     // SMTP/Mail Password Decryption Check
-    string smtpPassDecrypted;
     string mailPassDecrypted;
 
-    // Decrypt the encrypted passwords
-    smtpPassDecrypted = decryptPassword(smtpPass);
-    if (smtpPassDecrypted.empty()) {
-        cerr << "SMTP password decryption failed." << endl;
-        return false;
-    }
-
+    // Decrypt the encrypted mail password
     mailPassDecrypted = decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         cerr << "Email password decryption failed." << endl;
@@ -259,7 +212,6 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
     bool smtpServerLoaded = !smtpServer.empty();
     bool smtpPortLoaded = smtpPort > 0;
     bool smtpUsernameLoaded = !smtpUsername.empty();
-    bool smtpPassLoaded = !smtpPass.empty();
     bool venuesCsvPathLoaded = !venuesCsvPath.empty();
     bool mailPassLoaded = !mailPass.empty();
     bool senderEmailLoaded = !senderEmail.empty();
@@ -267,15 +219,14 @@ bool loadConfigSettings(string& smtpServer, int& smtpPort,
 
     // Check if the configuration settings are loaded successfully
     bool configLoadedSuccessfully = smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded &&
-                                    smtpPassLoaded && venuesCsvPathLoaded && mailPassLoaded &&
-                                    senderEmailLoaded && senderSmtpPortLoaded;
+                                    venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded && 
+                                    senderSmtpPortLoaded;
 
     // Display messages based on loaded settings
-    if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || smtpPassLoaded || 
-        venuesCsvPathLoaded || mailPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
+    if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || venuesCsvPathLoaded || mailPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
         cout << "Configuration settings loaded from config.json." << endl;
         configLoadedSuccessfully = true;
-    } else if (smtpServerLoaded || smtpPortLoaded || smtpPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
+    } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded || senderSmtpPortLoaded) {
         cout << "Email settings loaded from config.json." << endl;
     } else if (!configLoadedSuccessfully) {
         cerr << "Failed to load configuration settings from config.json." << endl;
@@ -299,9 +250,7 @@ void resetConfigFile() {
     configFile.close();
 
     // Modify the values in the JSON object for testing
-    config["mock_smtp_pass_encrypted"] = false;
     config["mock_email_pass_encrypted"] = false;
-    config["mock_smtp_password"] = "mock_smtp_password";
     config["mock_email_password"] = "mock_email_password";
 
     // Close the input file stream before opening for output
@@ -326,9 +275,7 @@ void resetConfigFile() {
     configFile.close();
 
     // Modify the values in the JSON object
-    config["smtp_pass_encrypted"] = false;
     config["email_pass_encrypted"] = false;
-    config["smtp_password"] = "enter_smtp_password";
     config["email_password"] = "enter_email_password";
 
     // Close the input file stream before opening for output

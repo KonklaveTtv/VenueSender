@@ -11,10 +11,8 @@ int main() {
     string venuesCsvPath;
     string smtpServer;
     int smtpPort;
-    string smtpPass;
     string smtpUsername;
     string mailPass;
-    string smtpPassDecrypted;
     string mailPassDecrypted;
     string senderEmail;
     int senderSmtpPort;
@@ -28,7 +26,7 @@ int main() {
     initializeEncryptionParams();
 
     // Load the config settings from the JSON file
-    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, venuesCsvPath, mailPass, senderEmail, senderSmtpPort, useSSL, verifyPeer, verifyHost)) {
+    if (!loadConfigSettings(smtpServer, smtpPort, smtpUsername, venuesCsvPath, mailPass, senderEmail, senderSmtpPort, useSSL, verifyPeer, verifyHost)) {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
@@ -36,75 +34,25 @@ int main() {
     cout << "verifyPeer from config: " << verifyPeer << endl;
     cout << "verifyHost from config: " << verifyHost << endl;
 
-    smtpPassDecrypted = decryptPassword(smtpPass);
     mailPassDecrypted = decryptPassword(mailPass);
 
-
     // Check if decryption was successful
-    if (smtpPassDecrypted.empty() || mailPassDecrypted.empty()) {
+    if (mailPassDecrypted.empty()) {
         cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << endl;
         exit(1); // Handle the error appropriately
     }
 
     // Initialize libcurl
+    CurlHandleWrapper curlWrapper;
     CurlHandleWrapper::init();
 
-    // Create and manage CURL handle using CurlHandleWrapper
-    CurlHandleWrapper curlWrapper;
-    CURL* curl = curlWrapper.get();
-    
-    // Handle libcurl errors and display enhanced error messages
+    // Set up CURL handle with required options
+    CURL* curl = setupCurlHandle(curlWrapper, 
+                                 useSSL, verifyPeer, verifyHost, 
+                                 smtpServer, smtpPort, 
+                                 senderEmail, 
+                                 mailPassDecrypted);
     if (!curl) {
-        cerr << "Failed to initialize libcurl easy handle." << endl;
-        return 1;
-    }
-
-    // Set SSL to True or False
-    CURLcode res;
-    res = curl_easy_setopt(curl, CURLOPT_USE_SSL, useSSL);
-    if (res != CURLE_OK) {
-        cerr << "Failed to set useSSL option." << endl;
-        curl_easy_cleanup(curl);
-        return 1;
-    }
-
-    // Set verifyPeer to True or False
-    res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer);
-    if (res != CURLE_OK) {
-        cerr << "Failed to set verifyPeer option." << endl;
-        curl_easy_cleanup(curl);
-        return 1;
-    }
-
-    // Set verifyHost to True or False
-    res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost);
-    if (res != CURLE_OK) {
-        cerr << "Failed to set verifyHost option." << endl;
-        curl_easy_cleanup(curl);
-        return 1;
-    }
-
-    // Connect to the SMTP server
-    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
-    res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
-    if (res != CURLE_OK) {
-        cerr << "Failed to set libcurl URL option." << endl;
-        return 1;
-    }
-
-    // Set the sender email address
-    res = curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
-    if (res != CURLE_OK) {
-        cerr << "Failed to set libcurl sender email option." << endl;
-        curl_easy_cleanup(curl);
-        return 1;
-    }
-
-    // Set the email password for authentication
-    res = curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
-    if (res != CURLE_OK) {
-        cerr << "Failed to set libcurl email password option." << endl;
-        curl_easy_cleanup(curl);
         return 1;
     }
 
@@ -120,10 +68,6 @@ int main() {
     FilterCriteria criteria;
     vector<SelectedVenue> selectedVenuesForEmail;
     vector<SelectedVenue> filteredVenues;
-
-    // Set up progress callback using the progressCallback function
-    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &curlWrapper);
 
     int totalSelectedVenues = selectedVenuesForEmail.size();
     int emailSendProgress = 0;
@@ -168,7 +112,7 @@ int main() {
                 cout << "Selected venues cleared." << endl;
             } else if (choice == static_cast<int>(MenuOption::ShowEmailSettings)) {
                 // View Email Settings
-                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, smtpPassDecrypted, mailPassDecrypted, useSSL, verifyHost, verifyPeer);
+                viewEmailSettings(smtpServer, smtpPort, senderEmail, senderSmtpPort, mailPassDecrypted, useSSL, verifyHost, verifyPeer);
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
             // Finish and Send Emails
 
@@ -196,8 +140,8 @@ int main() {
                 }
                         
                 // Check if SMTP password is empty
-                if (smtpPassDecrypted.empty()) {
-                    cout << "SMTP Password is required. Please set it before sending emails." << endl;
+                if (mailPassDecrypted.empty()) {
+                    cout << "Email Password is required. Please set it before sending emails." << endl;
                     continue; // Return to the main menu
                 }
             
@@ -212,14 +156,14 @@ int main() {
                 emailSendProgress = 0; // Reset progress
                     for (const SelectedVenue& venue : selectedVenuesForEmail) {
                         sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
-                                            smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
+                                            smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
                         ++emailSendProgress;
 
                     // Update the progress
                     curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
 
                     // Display email sending progress
-                    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
+                    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
                 }
 
                 filteredVenues.clear(); // Clear the filtered venues for the next round of emails

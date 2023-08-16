@@ -79,7 +79,6 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     string smtpServer;
     int smtpPort;
     string smtpUsername;
-    string smtpPass;
     string venuesCsvPath;
     string mailPass;
     string senderEmail;
@@ -88,8 +87,8 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     bool verifyPeer;
     bool verifyHost;
 
-    bool result = loadConfigSettings(smtpServer, smtpPort, smtpUsername, smtpPass, 
-                                     venuesCsvPath, mailPass, senderEmail, senderSmtpPort, 
+    bool result = loadConfigSettings(smtpServer, smtpPort, smtpUsername,venuesCsvPath, 
+                                     mailPass, senderEmail, senderSmtpPort, 
                                      useSSL, verifyPeer, verifyHost);
     
     REQUIRE(result == true);
@@ -144,11 +143,11 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
     cout.rdbuf(oss.rdbuf());
 
     // Call the function
-    viewEmailSettings("testServer", 123, "mock@example.com", 456, "smtpPass", "mailPass", "useSSL", "verifyHost", "verifyPeer");
+    viewEmailSettings("testServer", 123, "mock@example.com", 456, "mailPass", "useSSL", "verifyHost", "verifyPeer");
 
     cout.rdbuf(oldCoutStreamBuf);
     
-    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nSMTP Password: smtpPass\nMail Password: mailPass\nSSL: true\nverifyHost: true\nverifyPeer: true\n===========================\n");
+    REQUIRE(oss.str() == "===== Email Settings =====\nSMTP Server: testServer\nSMTP Port: 123\nSender Email: mock@example.com\nSender SMTP Port: 456\nMail Password: mailPass\nSSL: true\nverifyHost: true\nverifyPeer: true\n===========================\n");
 }
 
 TEST_CASE("displaySelectedVenues function", "[Display]") {
@@ -221,10 +220,10 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     string smtpServer = "mock_smtp_server";
     int smtpPort = 587;
     string smtpUsername = "mock_smtp_username";
-    string smtpPass = "mock_smtp_password";
+    string emailPass = "mock_email_password";
 
-    // Declare and initialize smtpPassDecrypted and progress
-    string smtpPassDecrypted = "your_decrypted_smtp_password"; // Initialize with the actual decrypted SMTP password
+    // Declare and initialize mailPassDecrypted and progress
+    string mailPassDecrypted = "your_decrypted_email_password"; // Initialize with the actual decrypted SMTP password
     double progress = 0.0; // Initialize progress to 0.0
 
     // Simulate adding some selected venues
@@ -248,7 +247,7 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
 
     // Call the viewEmailSendingProgress function
     viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message,
-                             smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
+                             smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
 
     // Restore cout
     cout.rdbuf(coutBuffer);
@@ -319,22 +318,6 @@ TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
 // Test Group: Encryption and Decryption
 // -----------------------
 
-TEST_CASE("Encrypt and decrypt SMTP password", "[encryption][decryption]") {
-    // Initialize encryption parameters
-    initializeEncryptionParams();
-
-    string smtpPassword = "enter_smtp_password";
-
-    string encryptedSmtpPass;
-    REQUIRE(encryptPassword(smtpPassword, encryptedSmtpPass) == true);
-
-    string smtpPassDecrypted;
-    string decryptedSmtpPass = decryptPassword(encryptedSmtpPass);
-    REQUIRE(decryptedSmtpPass == smtpPassword);
-
-    REQUIRE(smtpPassword == decryptedSmtpPass);
-}
-
 TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
     // Initialize encryption parameters
     initializeEncryptionParams();
@@ -344,7 +327,7 @@ TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
     string encryptedmailPass;
     REQUIRE(encryptPassword(mailPassword, encryptedmailPass) == true);
 
-    string smtpPassDecrypted;
+    string mailPassDecrypted;
     string decryptedmailPass = decryptPassword(encryptedmailPass);
     REQUIRE(decryptedmailPass == mailPassword);
 

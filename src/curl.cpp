@@ -57,3 +57,67 @@ void CurlHandleWrapper::setEmailBeingSent(const std::string& email) {
 std::string CurlHandleWrapper::getEmailBeingSent() const {
     return emailBeingSent;
 }
+
+CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost,
+                      const string& smtpServer, int smtpPort, const string& senderEmail, 
+                      const string& mailPassDecrypted) {
+
+    CURL* curl = curlWrapper.get();
+    
+    // Handle libcurl errors and display enhanced error messages
+    if (!curl) {
+        cerr << "Failed to initialize libcurl easy handle." << endl;
+        return nullptr;
+    }
+
+    // Set SSL to True or False
+    CURLcode res;
+    res = curl_easy_setopt(curl, CURLOPT_USE_SSL, useSSL);
+    if (res != CURLE_OK) {
+        cerr << "Failed to set useSSL option." << endl;
+        curl_easy_cleanup(curl);
+        return nullptr;
+    }
+
+    // Set verifyPeer to True or False
+    res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer);
+    if (res != CURLE_OK) {
+        cerr << "Failed to set verifyPeer option." << endl;
+        curl_easy_cleanup(curl);
+        return nullptr;
+    }
+
+    // Set verifyHost to True or False
+    res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost);
+    if (res != CURLE_OK) {
+        cerr << "Failed to set verifyHost option." << endl;
+        curl_easy_cleanup(curl);
+        return nullptr;
+    }
+
+    // Connect to the SMTP server
+    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
+    res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
+    if (res != CURLE_OK) {
+        cerr << "Failed to set libcurl URL option." << endl;
+        return nullptr;
+    }
+
+    // Set the sender email address
+    res = curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
+    if (res != CURLE_OK) {
+        cerr << "Failed to set libcurl sender email option." << endl;
+        curl_easy_cleanup(curl);
+        return nullptr;
+    }
+
+    // Set the email password for authentication
+    res = curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
+    if (res != CURLE_OK) {
+        cerr << "Failed to set libcurl email password option." << endl;
+        curl_easy_cleanup(curl);
+        return nullptr;
+    }
+
+    return curl;
+}

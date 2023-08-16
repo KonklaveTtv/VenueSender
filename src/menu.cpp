@@ -44,14 +44,13 @@ int displayMenuOptions() {
 
 
 void viewEmailSettings(const string& smtpServer, int smtpPort, const string& senderEmail,
-                       int senderSmtpPort, const string& smtpPassDecrypted, const string& mailPassDecrypted,
+                       int senderSmtpPort, const string& mailPassDecrypted,
                        bool useSSL, bool verifyHost, bool verifyPeer) {
     cout << "===== Email Settings =====" << endl;
     cout << "SMTP Server: " << smtpServer << endl;
     cout << "SMTP Port: " << smtpPort << endl;
     cout << "Sender Email: " << senderEmail << endl;
     cout << "Sender SMTP Port: " << senderSmtpPort << endl;
-    cout << "SMTP Password: " << smtpPassDecrypted << endl; // only used for testing, will be removed in production
     cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
     cout << "SSL: " << (useSSL ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl; 

@@ -18,10 +18,15 @@ public:
 
     void setEmailBeingSent(const std::string& email);
     std::string getEmailBeingSent() const;
-    
+
 private:
     CURL* curl;
     std::string emailBeingSent;
 };
+
+CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost,
+                      const std::string& smtpServer, int smtpPort, const std::string& senderEmail, 
+                      const std::string& mailPassDecrypted);
+
 
 #endif // CURL_H

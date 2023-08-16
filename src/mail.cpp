@@ -62,7 +62,7 @@ bool sendIndividualEmail(CURL* curl,
                         const string& smtpServer,
                         int smtpPort,
                         const string& smtpUsername,
-                        const string& smtpPassDecrypted,
+                        const string& mailPassDecrypted,
                         double& progress) {
     // Set the value of emailBeingSent
     curlWrapper.setEmailBeingSent(selectedVenue.email);
@@ -99,7 +99,7 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 
     // Set SMTP username and password
-    string smtpUserPass = smtpUsername + ":" + smtpPassDecrypted;
+    string smtpUserPass = smtpUsername + ":" + mailPassDecrypted;
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUserPass.c_str());
 
     cout << "Authenticating with SMTP server..." << endl;
@@ -141,7 +141,7 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
                               const string& smtpServer,
                               int smtpPort,
                               const string& smtpUsername,
-                              const string& smtpPassDecrypted,
+                              const string& mailPassDecrypted,
                               double& progress) {
     // Set the custom progress callback function from CurlHandleWrapper
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
@@ -152,7 +152,7 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
         cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << endl;
 
         // Send the individual email with progress tracking
-        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, smtpPassDecrypted, progress);
+        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
 
         curlWrapper.setEmailBeingSent(""); // Reset the value of emailBeingSent
     }
