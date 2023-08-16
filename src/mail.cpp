@@ -42,9 +42,6 @@ bool isValidEmail(const string& email) {
 void constructEmail(string &subject, string &message, istream &in = cin) {
     cout << "===== Construct Email =====" << endl;
 
-    // Clear any remaining characters in the input buffer (including newline)
-    clearInputBuffer();
-
     // Prompt user to enter email subject and message
     cout << "Enter subject for the email: ";
     getline(in, subject);

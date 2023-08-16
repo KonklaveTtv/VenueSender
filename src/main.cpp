@@ -95,74 +95,84 @@ int main() {
                 // View Email Settings
                 viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
-            // Finish and Send Emails
-                // Check if selectedVenuesForEmail is empty
                 if (selectedVenuesForEmail.empty()) {
                     cout << "No venues selected. Please add venues before sending emails." << endl;
                     continue; // Return to the main menu
                 }
 
-                // Check if subject and message are empty
-                if (subject.empty() || message.empty()) {
-                    cout << "Subject and Message are required. Please set them before sending emails." << endl;
-
-                    try {
-                        constructEmail(subject, message, cin);
-                    } catch (const exception& e) {
-                        cerr << "An error occurred while entering subject and message: " << e.what() << endl;
-                        continue; // Return to the main menu
-                    }
-
+                while (true) {
+                    int attempts = 0;
                     if (subject.empty() || message.empty()) {
-                        cout << "Subject and Message are still empty. Returning to the main menu." << endl;
-                        continue; // Return to the main menu
+                        cout << "Subject and Message are required. Please set them." << endl;
+                        clearInputBuffer();
+                        try {
+                            constructEmail(subject, message, cin);
+                        } catch (const exception& e) {
+                            cerr << "An error occurred while entering subject and message: " << e.what() << endl;
+                            subject.clear(); // Clear existing subject
+                            message.clear(); // Clear existing message
+                            attempts++; // Increment the attempts
+                            if (attempts >= 3) { 
+                                cout << "Too many unsuccessful attempts. Returning to main menu." << endl;
+                                break; // Break out of the inner loop to go back to the main menu
+                            }
+                            continue; // Loop back to prompt for email details again
+                        }
                     }
-                }
-                        
-                // Check if SMTP password is empty
-                if (mailPassDecrypted.empty()) {
-                    cout << "Email Password is required. Please set it before sending emails." << endl;
-                    continue; // Return to the main menu
-                }
-            
-                // Show email details to user for confirmation
-                cout << "----- EMAIL DETAILS -----\n";
-                cout << "Subject: " << subject << endl;
-                cout << "-------------------------\n";
-                cout << "Message: \n" << message << endl;
-                cout << "-------------------------\n";
-                cout << "Do you wish to send this email? (Y/N): ";
-                char confirmSend;
-                cin >> confirmSend;
-                clearInputBuffer();
 
-            if (confirmSend == 'Y' || confirmSend == 'y') {
-                // Proceed to send emails if confirmed
-                emailSendProgress = 0; // Reset progress
-                    for (const SelectedVenue& venue : selectedVenuesForEmail) {
-                        sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
-                                            smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
-                        ++emailSendProgress;
+                    cout << "----- EMAIL DETAILS -----\n";
+                    cout << "Subject: " << subject << endl;
+                    cout << "-------------------------\n";
+                    cout << "Message: \n" << message << endl;
+                    cout << "-------------------------\n";
+                    cout << "Do you wish to modify this email? (Y/N): ";
+                    char modifyEmailChoice;
+                    cin >> modifyEmailChoice;
+                    clearInputBuffer();
 
-                    // Update the progress
-                    curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
+                    if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
+                        try {
+                            clearInputBuffer();  // Clear any lingering input
+                            constructEmail(subject, message, cin);
+                        } catch (const exception& e) {
+                            cerr << "An error occurred while entering subject and message: " << e.what() << endl;
+                            subject.clear(); // Clear existing subject
+                            message.clear(); // Clear existing message
+                            continue; // Loop back to prompt for email details again
+                        }
+                        continue; // Loop back to show the modified email details
+                    } else {
+                        cout << "Do you wish to send this email? (Y/N): ";
+                        char confirmSend;
+                        cin >> confirmSend;
+                        clearInputBuffer();
 
-                    // Display email sending progress
-                    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
-                }
+                        if (confirmSend == 'Y' || confirmSend == 'y') {
+                            // Proceed to send emails if confirmed
+                            totalSelectedVenues = selectedVenuesForEmail.size();
+                            emailSendProgress = 0; // Reset progress
+                            for (const SelectedVenue& venue : selectedVenuesForEmail) {
+                                sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
+                                                    smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
+                                ++emailSendProgress;
 
-                filteredVenues.clear(); // Clear the filtered venues for the next round of emails
+                                // Update the progress
+                                curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
 
-                // Reset subject and message after sending emails
-                subject.clear();
-                message.clear();
+                                // Display email sending progress
+                                viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
+                            }
 
-            } else if (confirmSend == 'N' || confirmSend == 'n') {
-                cout << "Email not sent. Returning to the main menu." << endl;
-                // The user chose not to send the email, return to the main menu without clearing the selectedVenuesForEmail vector
-            } else {
-                cout << "Invalid choice. Please try again." << endl;
-                // The user entered an invalid choice, return to the main menu without clearing the selectedVenuesForEmail vector
+                            filteredVenues.clear(); // Clear the filtered venues for the next round of emails
+                            subject.clear(); // Reset subject
+                            message.clear(); // Reset message
+                            break; // Break out of the inner loop after sending
+
+                        } else {
+                            cout << "Email not sent. Returning to the main menu." << endl;
+                            break; // Break out of the inner loop without sending
+                        }
+                    }
                 }
             } else if (choice == EXIT_OPTION) {
                 // Prompt for confirmation before exiting
