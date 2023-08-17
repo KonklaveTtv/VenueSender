@@ -216,10 +216,10 @@ TEST_CASE("Test Email Validation", "[validation]") {
     // Set up mock data for email validation
     string validEmail = "venue1@mock.com";
     string invalidEmail = "invalid.email";
-
+    EmailManager emailManager;
     // Call the isValidEmail function
-    bool isValid1 = isValidEmail(validEmail);
-    bool isValid2 = isValidEmail(invalidEmail);
+    bool isValid1 = emailManager.isValidEmail(validEmail);
+    bool isValid2 = emailManager.isValidEmail(invalidEmail);
 
     // Compare the result with expected values
     REQUIRE(isValid1 == true);

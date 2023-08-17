@@ -7,6 +7,9 @@
 #include <regex>
 #include <thread>
 
+
+class EmailManager {
+public:
 // Define enums for return codes
 enum class ReturnCode {
     Success,
@@ -16,11 +19,8 @@ enum class ReturnCode {
 };
 
 // Constants
-const int MAX_EMAIL_LENGTH = 500; // Maximum length for an email address, adjust as needed
-const int MAX_SUBJECT_LENGTH = 50; // Maximum length for an email address, adjust as needed
-
-// Custom read callback function to read from a string
-size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
+static const int MAX_EMAIL_LENGTH = 500; // Maximum length for an email address, adjust as needed
+static const int MAX_SUBJECT_LENGTH = 50; // Maximum length for an email address, adjust as needed
 
 // Check if an email address is in a valid format
 bool isValidEmail(const std::string& email);
@@ -44,5 +44,8 @@ void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& sele
                               const std::string& message,
                               const std::string& smtpServer,
                               int smtpPort);
-
+private:
+    // Custom read callback function to read from a string
+    size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
+};
 #endif // MAIL_H

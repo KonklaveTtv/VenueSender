@@ -5,7 +5,7 @@ using namespace std;
 CurlHandleWrapper curlWrapper;
 
 // Function to check if an email address is in a valid format
-bool isValidEmail(const string& email) {
+bool EmailManager::isValidEmail(const string& email) {
     // A simple regex pattern to check the format of the email
     static const regex emailPattern(R"((?=.{1,256})(?=.{1,64}@.{1,255})[^\s@]+@[^\s@]+\.[^\s@]+)");
     return regex_match(email, emailPattern);
@@ -20,7 +20,7 @@ bool isValidEmail(const string& email) {
  * @param message - Reference to the email message string
  * @param in - Input stream, defaulted to standard input (cin)
  */
-void constructEmail(string &subject, string &message, istream &in = cin) {
+void EmailManager::constructEmail(string &subject, string &message, istream &in = cin) {
     cout << "===== Construct Email =====" << endl;
         // Prompt user to enter email subject and message
     do {
@@ -28,8 +28,8 @@ void constructEmail(string &subject, string &message, istream &in = cin) {
         getline(in, subject);
     } while (subject.empty());
 
-    const int maxSubjectLength = MAX_SUBJECT_LENGTH;
-    const int maxMessageLength = MAX_EMAIL_LENGTH;
+    const int maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
+    const int maxMessageLength = EmailManager::MAX_EMAIL_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
         cout << "Subject too long. Please try again." << endl;
@@ -56,7 +56,7 @@ void constructEmail(string &subject, string &message, istream &in = cin) {
 }
 
 // Function to send an individual email to a recipient with custom subject and message using libcurl
-bool sendIndividualEmail(CURL* curl,
+bool EmailManager::sendIndividualEmail(CURL* curl,
                         const SelectedVenue& selectedVenue,
                         const string& senderEmail,
                         const string& subject,
@@ -118,7 +118,7 @@ bool sendIndividualEmail(CURL* curl,
     return true;
 }
 
-void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
+void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
                               const string& senderEmail,
                               const string& subject,
                               const string& message,

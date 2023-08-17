@@ -16,6 +16,7 @@ int main() {
     ConfigManager configManager;
     CsvReader csvReader;
     EncryptionManager encryptionManager;
+    EmailManager emailManager;
     VenueFilter venueFilter;
     VenueUtilities venueUtilities;
 
@@ -132,7 +133,7 @@ int main() {
                         message.clear(); // Clear existing message
                         ConsoleUtils::clearConsole();                        
                         try {
-                            constructEmail(subject, message, cin);
+                            emailManager.constructEmail(subject, message, cin);
                             modified = true;
                         } catch (const exception& e) {
                             cerr << "An error occurred while entering subject and message: " << e.what() << endl;
@@ -155,7 +156,7 @@ int main() {
                         cout << "Subject and Message are required. Please set them." << endl;
                         ConsoleUtils::clearInputBuffer();
                         try {
-                            constructEmail(subject, message, cin);
+                            emailManager.constructEmail(subject, message, cin);
                         } catch (const exception& e) {
                             cerr << "An error occurred while entering subject and message: " << e.what() << endl;
                             subject.clear(); // Clear existing subject
@@ -195,7 +196,7 @@ int main() {
                         cout << "Subject and Message are required. Please set them." << endl;
                         ConsoleUtils::clearInputBuffer();
                         try {
-                            constructEmail(subject, message, cin);
+                            emailManager.constructEmail(subject, message, cin);
                         } catch (const exception& e) {
                             cerr << "An error occurred while entering subject and message: " << e.what() << endl;
                             subject.clear(); // Clear existing subject
@@ -225,7 +226,7 @@ int main() {
                         message.clear(); // Clear existing message
                         ConsoleUtils::clearConsole();
                         try {
-                            constructEmail(subject, message, cin);
+                            emailManager.constructEmail(subject, message, cin);
                         } catch (const exception& e) {
                             cerr << "An error occurred while entering subject and message: " << e.what() << endl;
                             subject.clear(); // Clear existing subject
@@ -245,7 +246,7 @@ int main() {
                             totalSelectedVenues = selectedVenuesForEmail.size();
                             emailSendProgress = 0; // Reset progress
                             for (const SelectedVenue& venue : selectedVenuesForEmail) {
-                                sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
+                                emailManager.sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
                                                     smtpServer, smtpPort);
                                 ++emailSendProgress;
 
@@ -253,7 +254,7 @@ int main() {
                                 curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
 
                                 // Display email sending progress
-                                viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort);
+                                emailManager.viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort);
                             }
 
                             filteredVenues.clear(); // Clear the filtered venues for the next round of emails

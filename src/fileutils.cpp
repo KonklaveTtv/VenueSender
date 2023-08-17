@@ -141,7 +141,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
-        if (!encryptPassword(mailPass, mailPassEncrypted)) {
+        if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
             cerr << "Failed to encrypt email password for saving in config.json." << endl;
             return false;
         }
@@ -189,7 +189,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     string mailPassDecrypted;
 
     // Decrypt the encrypted mail password
-    mailPassDecrypted = decryptPassword(mailPass);
+    mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         cerr << "Email password decryption failed." << endl;
         return false;
