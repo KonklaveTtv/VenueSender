@@ -59,7 +59,7 @@ int displayMenuOptions() {
         if (!(cin >> choice)) {
             cout << "Invalid input, please enter a number. Press return to retry..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press
         } else if (!isValidMenuChoice(choice)) {
             cout << "Invalid choice. Please enter a number between " 
@@ -68,7 +68,7 @@ int displayMenuOptions() {
                  << static_cast<int>(MenuOption::Exit) << "." << endl;
             cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press
         } else {
             break;
@@ -105,7 +105,7 @@ void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost,
     cout << "===========================" << endl;
     cout << "Press return to return to Main Menu" << endl;
     cin.ignore();  // If there's a chance you might have used cin before this point
-    clearInputBuffer();
+    ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press
 #endif
 }
@@ -140,7 +140,7 @@ void displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
     cout << "===========================" << endl;
     cout << "Press return to return to Main Menu" << endl;
     cin.ignore();  // If there's a chance you might have used cin before this point
-    clearInputBuffer();
+    ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press
 #endif
 }

@@ -5,7 +5,7 @@ using namespace std;
 EncryptionManager encryptionManager;
 
 // Function to trim leading and trailing spaces from a string
-string trim(const string& str){
+string ConsoleUtils::trim(const string& str){
     // Trimming function
     const auto notSpace = [](int ch) {return !isspace(ch); };
     auto first = find_if(str.begin(), str.end(), notSpace);
@@ -14,14 +14,14 @@ string trim(const string& str){
 }
 
 // Clear the input buffer
-void clearInputBuffer() {
+void ConsoleUtils::clearInputBuffer() {
     // Clear the input buffer
     cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
 }
 
 // Function to clear the console screen
-void clearConsole() {
+void ConsoleUtils::clearConsole() {
 #ifdef _WIN32
     system("cls"); // For Windows
 #else
@@ -30,7 +30,7 @@ void clearConsole() {
 }
 
 // Function to read venue data from CSV file
-void readCSV(vector<Venue>& venues, const string& venuesCsvPath) {
+void CsvReader::readCSV(vector<Venue>& venues, const string& venuesCsvPath) {
     ifstream file(venuesCsvPath);
     if (!file.is_open()) {
         cerr << "Failed to open CSV file: " << venuesCsvPath << endl;
@@ -46,7 +46,7 @@ void readCSV(vector<Venue>& venues, const string& venuesCsvPath) {
         vector<string> rowData;
 
         while (getline(ss, data, ',')) {
-            rowData.push_back(trim(data));
+            rowData.push_back(ConsoleUtils::trim(data));
         }
 
         if (rowData.size() == 6) {
@@ -70,8 +70,10 @@ void readCSV(vector<Venue>& venues, const string& venuesCsvPath) {
     file.close();
 }
 
+ConfigManager::ConfigManager() {}
+
 // Function to load the settings config.json data and encrypt and decrypt email password
-bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, 
+bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, 
                         std::string& senderEmail, std::string& smtpUsername, 
                         std::string& mailPass, int& smtpPort, std::string& smtpServer, 
                         std::string& venuesCsvPath) {
@@ -175,7 +177,7 @@ bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost,
 }
 
 // Function to reset flags and passwords in config.json
-void resetConfigFile() {
+void ConfigManager::resetConfigFile() {
     Json::Value config;
 
     std::string configPath = confPaths::configJsonPath;

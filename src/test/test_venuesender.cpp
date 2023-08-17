@@ -37,11 +37,11 @@ public:
 // -----------------------
 
 TEST_CASE("Test trim function", "[FileUtils]") {
-    REQUIRE(trim("   leading spaces") == "leading spaces");
-    REQUIRE(trim("trailing spaces   ") == "trailing spaces");
-    REQUIRE(trim("   both   ") == "both");
-    REQUIRE(trim("none") == "none");
-    REQUIRE(trim("") == "");
+    REQUIRE(ConsoleUtils::trim("   leading spaces") == "leading spaces");
+    REQUIRE(ConsoleUtils::trim("trailing spaces   ") == "trailing spaces");
+    REQUIRE(ConsoleUtils::trim("   both   ") == "both");
+    REQUIRE(ConsoleUtils::trim("none") == "none");
+    REQUIRE(ConsoleUtils::trim("") == "");
 }
 
 
@@ -55,7 +55,7 @@ TEST_CASE("Test Read CSV", "[csv]") {
     string venuesCsvPath = confPaths::mockVenuesCsvPath;
 
     // Call the readCSV function
-    readCSV(venues, venuesCsvPath);
+    CsvReader::readCSV(venues, venuesCsvPath);
 
     // Compare the result with expected values
     REQUIRE(venues.size() == 2);
@@ -86,8 +86,9 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     string smtpServer;
     string venuesCsvPath;
 
+    ConfigManager configManager;
 
-    bool result = loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, 
+    bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, 
                                      smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath);
     
     REQUIRE(result == true);
@@ -173,7 +174,7 @@ TEST_CASE("displaySelectedVenues function", "[Display]") {
     // Read from mock_venues.csv
     vector<Venue> venues;
     string venuesCsvPath = confPaths::mockVenuesCsvPath;
-    readCSV(venues, venuesCsvPath);
+    CsvReader::readCSV(venues, venuesCsvPath);
 
     // Convert the Venue objects to SelectedVenue format
     vector<SelectedVenue> selectedVenues;
@@ -359,12 +360,14 @@ bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
 CATCH_CONFIG_RUNNER // This line will define Catch2's main function
 
 int main( int argc, char* argv[] )
-{
+{   
+    ConfigManager configManager;
+
     // Run all the tests
     int result = Catch::Session().run(argc, argv);
 
     // Clean up the mock config file after all tests have been run
-    resetConfigFile();
+    configManager.resetConfigFile();
 
     // Return the test results
     return result;

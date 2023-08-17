@@ -20,26 +20,29 @@ namespace confPaths {
     const std::string mockConfigJsonPath = "src/test/mock_config.json";
 }
 
-// Function to trim leading and trailing spaces from a string
-std::string trim(const std::string& str);
+class ConsoleUtils {
+public:
+    static void clearInputBuffer();
+    static void clearConsole();
+    static std::string trim(const std::string& str);
+};
 
-// Function to clear input buffer
-void clearInputBuffer();
+class CsvReader {
+public:
+    static void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
+};
 
-// Function to clear the console screen
-void clearConsole();
+class ConfigManager {
+private:
+    EncryptionManager encryptionManager;
 
-// Function to read CSV file and populate data
-void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
-
-// Function to load the settings config.json data and encrypt and decrypt email/smtp passwords
-bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, 
-                        std::string& senderEmail, std::string& smtpUsername, 
-                        std::string& mailPass, int& smtpPort, std::string& smtpServer, 
-                        std::string& venuesCsvPath);
-     
-
-// Function to reset the config.json file password fields on exit
-void resetConfigFile();
+public:
+    ConfigManager();
+    bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost,
+                            std::string& senderEmail, std::string& smtpUsername,
+                            std::string& mailPass, int& smtpPort, std::string& smtpServer,
+                            std::string& venuesCsvPath);
+    void resetConfigFile();
+};
 
 #endif // FILEUTILS_H

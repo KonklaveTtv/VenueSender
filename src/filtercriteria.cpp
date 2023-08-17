@@ -98,7 +98,7 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
         output << "Input too long. Please try again." << endl;
         cout << "Press return to continue..." << endl;
         cin.ignore();  // If there's a chance you might have used cin before this point
-        clearInputBuffer();
+        ConsoleUtils::clearInputBuffer();
         cin.get();     // This will wait for a key press
         return; // Or handle the error appropriately
     }
@@ -112,7 +112,7 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                 output << "Invalid index format. Skipping." << endl;
                 cout << "Press return to continue..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
-                clearInputBuffer();
+                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press
                 continue;
             }
@@ -135,14 +135,14 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                     output << "Venue already selected. Skipping." << endl;
                     cout << "Press return to continue..." << endl;
                     cin.ignore();  // If there's a chance you might have used cin before this point
-                    clearInputBuffer();
+                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                 }
             } else {
                 output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << endl;
                 cout << "Press return to continue..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
-                clearInputBuffer();
+                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press  
                 continue;
             }
@@ -150,7 +150,7 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
             output << "Invalid input. Skipping." << endl;
             cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 
             continue;
         }
@@ -166,7 +166,7 @@ void displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay
         cout << "No venues found." << endl;
         return;
     }
-    clearConsole();
+    ConsoleUtils::clearConsole();
     cout << "Filtered Venues: " << endl;
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
@@ -184,7 +184,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
                                                 const string& filterType,
                                                 vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
-    clearConsole();
+    ConsoleUtils::clearConsole();
     cout << "===== Filter By " << filterType << " =====" << endl;
 
     cout << "Available Options: " << endl;
@@ -194,7 +194,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
 
     cout << "Enter comma-separated indices of options to select: ";
     string input;
-    clearInputBuffer();
+    ConsoleUtils::clearInputBuffer();
     getline(cin, input);
 
     cout << endl; // Add a line of space
@@ -211,7 +211,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
             cout << "Invalid index. Skipping." << endl;
             cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press            
         }
     }
@@ -232,7 +232,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
             cout << "Invalid index. Skipping." << endl;
             cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press   
         }
     }
@@ -253,7 +253,7 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
                                             const set<int>& uniqueCapacities,
                                             vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
-    clearConsole();
+    ConsoleUtils::clearConsole();
     cout << "===== Filter By Capacity =====" << endl;
 
 
@@ -264,7 +264,7 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
 
     cout << "Enter comma-separated indices of options to select: ";
     string input;
-    clearInputBuffer();
+    ConsoleUtils::clearInputBuffer();
     getline(cin, input);
 
     cout << endl; // Add a line of space
@@ -281,7 +281,7 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
             cout << "Invalid index format. Skipping." << endl;
             cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 
         }
     }
@@ -300,7 +300,7 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
             cout << "Invalid index: " << selectedIndex << endl;
             cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 
         }
     }

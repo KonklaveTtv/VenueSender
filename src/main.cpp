@@ -3,7 +3,6 @@
 using namespace confPaths;
 using namespace std;
 
-
 // Exclude the following code block if UNIT_TESTING is defined
 #ifndef UNIT_TESTING
 
@@ -14,10 +13,12 @@ int main() {
     int smtpPort;
     bool useSSL, verifyPeer, verifyHost;
 
+    ConfigManager configManager;
+    CsvReader csvReader;
     EncryptionManager encryptionManager;
 
     // Load the config settings from the JSON file
-    if (!loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath)) {
+    if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath)) {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
@@ -38,7 +39,7 @@ int main() {
     }
 
     // Read venues data from CSV file
-    readCSV(venues, venuesCsvPath);
+    csvReader.readCSV(venues, venuesCsvPath);
 
     // Extract unique genres, states, cities, and capacities from the venues data
     set<string> uniqueGenres = getUniqueGenres(venues);
@@ -57,7 +58,7 @@ int main() {
     // Main loop for interacting with the user
     while (true) {
         // Display menu options and get user's choice
-        clearConsole();
+        ConsoleUtils::clearConsole();
         int choice = displayMenuOptions();
 
             // Handle menu choices
@@ -69,19 +70,19 @@ int main() {
                 // Handle filtering options
                 if (choice == FILTER_BY_GENRE_OPTION) {
                     // Filter by Genre
-                    clearConsole();
+                    ConsoleUtils::clearConsole();
                     temporaryFilteredVenues = filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
                 } else if (choice == FILTER_BY_STATE_OPTION) {
                     // Filter by State
-                    clearConsole();
+                    ConsoleUtils::clearConsole();
                     temporaryFilteredVenues = filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
                 } else if (choice == FILTER_BY_CITY_OPTION) {
                     // Filter by City
-                    clearConsole();
+                    ConsoleUtils::clearConsole();
                     temporaryFilteredVenues = filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
                 } else if (choice == FILTER_BY_CAPACITY_OPTION) {
                     // Filter by Capacity
-                    clearConsole();
+                    ConsoleUtils::clearConsole();
                     temporaryFilteredVenues = filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
                 }
 
@@ -92,23 +93,23 @@ int main() {
                 processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
             } else if (choice == VIEW_SELECTED_VENUES_OPTION) {
                 // View Selected Venues
-                clearConsole();
+                ConsoleUtils::clearConsole();
                 displaySelectedVenues(selectedVenuesForEmail);
             } else if (choice == CLEAR_SELECTED_VENUES_OPTION) {
                 // Clear Selected Venues
-                clearConsole();
+                ConsoleUtils::clearConsole();
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl;
                 cout << "Press return to return to the Main Menu..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
-                clearInputBuffer();
+                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press                
             } else if (choice == SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
-                clearConsole();
+                ConsoleUtils::clearConsole();
                 viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
             } else if (choice == VIEW_EDIT_EMAILS_OPTION) {
-                clearConsole();
+                ConsoleUtils::clearConsole();
                 int attempts = 0;
                 bool modified = false;
 
@@ -122,12 +123,12 @@ int main() {
                     cout << "Do you wish to modify this email? (Y/N): ";
                     char modifyEmailChoice;
                     cin >> modifyEmailChoice;
-                    clearInputBuffer();
-                    clearConsole();
+                    ConsoleUtils::clearInputBuffer();
+                    ConsoleUtils::clearConsole();
                     if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
                         subject.clear(); // Clear existing subject
                         message.clear(); // Clear existing message
-                        clearConsole();                        
+                        ConsoleUtils::clearConsole();                        
                         try {
                             constructEmail(subject, message, cin);
                             modified = true;
@@ -138,19 +139,19 @@ int main() {
                             continue; // Loop back to prompt for email details again
                         }
                     } else {
-                        clearConsole();
+                        ConsoleUtils::clearConsole();
                         cout << "Email saved for sending/editing." << endl;
                         cout << "Press return to return to the Main Menu..." << endl;
                         cin.ignore();  // If there's a chance you might have used cin before this point
-                        clearInputBuffer();
+                        ConsoleUtils::clearInputBuffer();
                         cin.get();
                         break;
                     }
 
-                    clearConsole();
+                    ConsoleUtils::clearConsole();
                     if (subject.empty() || message.empty()) {
                         cout << "Subject and Message are required. Please set them." << endl;
-                        clearInputBuffer();
+                        ConsoleUtils::clearInputBuffer();
                         try {
                             constructEmail(subject, message, cin);
                         } catch (const exception& e) {
@@ -161,7 +162,7 @@ int main() {
                             if (attempts >= 3) {
                                 cout << "Too many unsuccessful attempts. Press return to return to main menu." << endl;
                                 cin.ignore();  // If there's a chance you might have used cin before this point
-                                clearInputBuffer();
+                                ConsoleUtils::clearInputBuffer();
                                 cin.get();     // This will wait for a key press
                                 break; // Break out of the loop after too many attempts
                             }
@@ -175,13 +176,13 @@ int main() {
                     continue;
                 }
             } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
-                clearConsole();
+                ConsoleUtils::clearConsole();
                 if (selectedVenuesForEmail.empty()) {
-                    clearConsole();
+                    ConsoleUtils::clearConsole();
                     cout << "No venues selected. Please add venues before sending emails." << endl;
                     cout << "Press return to return to Main Menu..." << endl;
                     cin.ignore();  // If there's a chance you might have used cin before this point
-                    clearInputBuffer();
+                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     continue; // Return to the main menu
                 }
@@ -190,7 +191,7 @@ int main() {
                     int attempts = 0;
                     if (subject.empty() || message.empty()) {
                         cout << "Subject and Message are required. Please set them." << endl;
-                        clearInputBuffer();
+                        ConsoleUtils::clearInputBuffer();
                         try {
                             constructEmail(subject, message, cin);
                         } catch (const exception& e) {
@@ -205,7 +206,7 @@ int main() {
                             continue; // Loop back to prompt for email details again
                         }
                     }
-                    clearConsole();
+                    ConsoleUtils::clearConsole();
                     cout << "----- EMAIL DETAILS -----\n";
                     cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
                     cout << "Subject: " << subject << "\n";
@@ -215,12 +216,12 @@ int main() {
                     cout << "Do you wish to modify this email? (Y/N): ";
                     char modifyEmailChoice;
                     cin >> modifyEmailChoice;
-                    clearInputBuffer();
+                    ConsoleUtils::clearInputBuffer();
 
                     if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
                         subject.clear(); // Clear existing subject
                         message.clear(); // Clear existing message
-                        clearConsole();
+                        ConsoleUtils::clearConsole();
                         try {
                             constructEmail(subject, message, cin);
                         } catch (const exception& e) {
@@ -231,11 +232,11 @@ int main() {
                         }
                         continue; // Loop back to show the modified email details
                     } else {
-                        clearConsole();
+                        ConsoleUtils::clearConsole();
                         cout << "Do you wish to send this email? (Y/N): ";
                         char confirmSend;
                         cin >> confirmSend;
-                        clearInputBuffer();
+                        ConsoleUtils::clearInputBuffer();
 
                         if (confirmSend == 'Y' || confirmSend == 'y') {
                             // Proceed to send emails if confirmed
@@ -259,30 +260,30 @@ int main() {
                             break; // Break out of the inner loop after sending
 
                         } else {
-                            clearConsole();
+                            ConsoleUtils::clearConsole();
                             cout << "Email saved for sending/editing." << endl;
                             cout << "Press return to return to the Main Menu..." << endl;
                             cin.ignore();  // If there's a chance you might have used cin before this point
-                            clearInputBuffer();
+                            ConsoleUtils::clearInputBuffer();
                             cin.get();     // This will wait for a key press
                             break; // Break out of the inner loop without sending
                         }
                     }
                 }
             } else if (choice == EXIT_OPTION) {
-                clearConsole();
+                ConsoleUtils::clearConsole();
                 // Prompt for confirmation before exiting
                 cout << "Are you sure you want to exit? (Y/N): ";
                 char confirmExit;
                 cin >> confirmExit;
-                clearInputBuffer();
+                ConsoleUtils::clearInputBuffer();
 
                 if (confirmExit == 'Y' || confirmExit == 'y') {
 
                     // Exit VenueSender
                     cout << "Exiting the program. Press return..." << endl;
                     cin.ignore();  // If there's a chance you might have used cin before this point
-                    clearInputBuffer();
+                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     break;
                 } else if (confirmExit == 'N' || confirmExit == 'n') {
@@ -291,20 +292,20 @@ int main() {
                 } else {
                     cout << "Invalid choice. Press return..." << endl;
                     cin.ignore();  // If there's a chance you might have used cin before this point
-                    clearInputBuffer();
+                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     // The user entered an invalid choice, return to the main menu
                 }
             } else {
                 cout << "Invalid choice. Press return..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
-                clearInputBuffer();
+                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press
             }
         }
         // Before the program exits, call the resetConfigFile function
         // to reset the flags and passwords in the config.json file
-        resetConfigFile();   
+        configManager.resetConfigFile();  
 
     return 0;
 }

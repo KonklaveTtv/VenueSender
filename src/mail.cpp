@@ -43,10 +43,10 @@ void constructEmail(string &subject, string &message, istream &in = cin) {
             if (message.length() + line.length() > maxMessageLength) {
                 cout << "Message too long. Truncating to maximum length." << endl;
                 int charsToAdd = maxMessageLength - message.length();
-                message += trim(line).substr(0, charsToAdd); // Add as many characters as possible
+                message += ConsoleUtils::trim(line).substr(0, charsToAdd); // Add as many characters as possible
                 break;
             }
-            message += trim(line) + "\n";
+            message += ConsoleUtils::trim(line) + "\n";
         }
         cout << "============================" << endl;
         if (message.empty()) {
@@ -137,6 +137,6 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
     cout << "Email sending progress completed." << endl;
     cout << "Press return to go back to Main Menu." << endl;
     cin.ignore();
-    clearInputBuffer();
+    ConsoleUtils::clearInputBuffer();
     cin.get();
 }
