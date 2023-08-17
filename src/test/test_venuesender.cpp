@@ -107,12 +107,15 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
 // -----------------------
 
 TEST_CASE("isValidMenuChoice function", "[isValid]") {
-    REQUIRE(isValidMenuChoice(1) == true);
-    REQUIRE(isValidMenuChoice(5) == true);
-    REQUIRE(isValidMenuChoice(10) == true);
 
-    REQUIRE(isValidMenuChoice(0) == false);
-    REQUIRE(isValidMenuChoice(11) == false);
+    MenuManager menuManager;
+
+    REQUIRE(menuManager.isValidMenuChoice(1) == true);
+    REQUIRE(menuManager.isValidMenuChoice(5) == true);
+    REQUIRE(menuManager.isValidMenuChoice(10) == true);
+
+    REQUIRE(menuManager.isValidMenuChoice(0) == false);
+    REQUIRE(menuManager.isValidMenuChoice(11) == false);
 }
 
 TEST_CASE("Test displayMenuOptions function", "[menu]") {
@@ -124,8 +127,10 @@ TEST_CASE("Test displayMenuOptions function", "[menu]") {
     streambuf* original_cin = cin.rdbuf(input.rdbuf());
     streambuf* original_cout = cout.rdbuf(output.rdbuf());
 
+    MenuManager menuManager;
+
     // Call the function
-    int choice = displayMenuOptions();
+    int choice = menuManager.displayMenuOptions();
 
     // Restore the original streams
     cin.rdbuf(original_cin);
@@ -186,8 +191,10 @@ TEST_CASE("displaySelectedVenues function", "[Display]") {
 
     VenueFilter venueFilter;
 
+    MenuManager menuManager;
+
     // Call the function to test
-   displaySelectedVenues(selectedVenues);
+    menuManager.displaySelectedVenues(selectedVenues);
 
     // Reset the cout buffer to its original state
     cout.rdbuf(oldCoutStreamBuf);

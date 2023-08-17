@@ -2,38 +2,52 @@
 
 using namespace std;
 
+// Options for filtering venues by different criteria
+const int MenuManager::FILTER_BY_GENRE_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByGenre);
+const int MenuManager::FILTER_BY_STATE_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByState);
+const int MenuManager::FILTER_BY_CITY_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByCity);
+const int MenuManager::FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByCapacity);
+
+// Other menu options
+const int MenuManager::CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ClearSelectedVenues);
+const int MenuManager::VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues);
+const int MenuManager::SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuManager::MenuOption::ShowEmailSettings);
+const int MenuManager::VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::ViewEditEmail);
+const int MenuManager::FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail);
+const int MenuManager::EXIT_OPTION = static_cast<int>(MenuManager::MenuOption::Exit);
+
 // Function to validate user input
-bool isValidMenuChoice(int choice) {
+bool MenuManager::isValidMenuChoice(int choice) {
     // Validate if the choice is within valid menu options
     return choice >= static_cast<int>(MenuOption::FilterByGenre) &&
            choice <= static_cast<int>(MenuOption::Exit);
 }
 
 // Function to display the menu to the user
-int displayMenuOptions() {
+int MenuManager::displayMenuOptions() {
 #ifdef UNIT_TESTING
     int choice;
     do {
         cout << "===== Main Menu =====" << endl;
-        cout << static_cast<int>(MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
-        cout << static_cast<int>(MenuOption::FilterByState) << ". Filter by State" << endl;
-        cout << static_cast<int>(MenuOption::FilterByCity) << ". Filter by City" << endl;
-        cout << static_cast<int>(MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
-        cout << static_cast<int>(MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
-        cout << static_cast<int>(MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
-        cout << static_cast<int>(MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
-        cout << static_cast<int>(MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
-        cout << static_cast<int>(MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
-        cout << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FilterByState) << ". Filter by State" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FilterByCity) << ". Filter by City" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::Exit) << ". Exit VenueSender" << endl;
         cout << "Enter your choice: ";
 
         if (!(cin >> choice)) {
             cout << "Invalid input, please enter a number." << endl;
         } else if (!isValidMenuChoice(choice)) {
             cout << "Invalid choice. Please enter a number between " 
-                 << static_cast<int>(MenuOption::FilterByGenre) 
+                 << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
                  << " and " 
-                 << static_cast<int>(MenuOption::Exit) << "." << endl;
+                 << static_cast<int>(MenuManager::MenuOption::Exit) << "." << endl;
         } else {
             break;
         }
@@ -79,39 +93,8 @@ int displayMenuOptions() {
 #endif
 }
 
-void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost,
-                       const string& senderEmail, const string& mailPassDecrypted,
-                       int smtpPort, const string& smtpServer) {
-
-#ifdef UNIT_TESTING
-    cout << "===== Email Settings =====" << endl;
-    cout << "SMTP Server: " << smtpServer << endl;
-    cout << "SMTP Port: " << smtpPort << endl;
-    cout << "Sender Email: " << senderEmail << endl;
-    cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
-    cout << "SSL: " << (useSSL ? "true" : "false") << endl;
-    cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
-    cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
-    cout << "===========================" << endl;
-#else
-    cout << "===== Email Settings =====" << endl;
-    cout << "SMTP Server: " << smtpServer << endl;
-    cout << "SMTP Port: " << smtpPort << endl;
-    cout << "Sender Email: " << senderEmail << endl;
-    cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
-    cout << "SSL: " << (useSSL ? "true" : "false") << endl;
-    cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
-    cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
-    cout << "===========================" << endl;
-    cout << "Press return to return to Main Menu" << endl;
-    cin.ignore();  // If there's a chance you might have used cin before this point
-    ConsoleUtils::clearInputBuffer();
-    cin.get();     // This will wait for a key press
-#endif
-}
-
 // Function to display selected venues to the user
-void displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
+void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
 #ifdef UNIT_TESTING
     cout << "===== Selected Venues =====" << endl;
     if (selectedVenues.empty()) {

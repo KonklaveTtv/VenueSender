@@ -17,6 +17,7 @@ int main() {
     CsvReader csvReader;
     EncryptionManager encryptionManager;
     EmailManager emailManager;
+    MenuManager menuManager;
     VenueFilter venueFilter;
     VenueUtilities venueUtilities;
 
@@ -62,28 +63,27 @@ int main() {
     while (true) {
         // Display menu options and get user's choice
         ConsoleUtils::clearConsole();
-        int choice = displayMenuOptions();
-
+        int choice = menuManager.displayMenuOptions();
             // Handle menu choices
-            if (choice >= static_cast<int>(MenuOption::FilterByGenre) &&
-                choice <= FILTER_BY_CAPACITY_OPTION) {
+            if (choice >= static_cast<int>(MenuManager::MenuOption::FilterByGenre) &&
+                choice <= MenuManager::FILTER_BY_CAPACITY_OPTION) {
                 // Declare a temporary vector to store filtered venues
                 vector<SelectedVenue> temporaryFilteredVenues;
 
                 // Handle filtering options
-                if (choice == FILTER_BY_GENRE_OPTION) {
+                if (choice == MenuManager::FILTER_BY_GENRE_OPTION) {
                     // Filter by Genre
                     ConsoleUtils::clearConsole();
                     temporaryFilteredVenues = venueFilter.filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
-                } else if (choice == FILTER_BY_STATE_OPTION) {
+                } else if (choice == MenuManager::FILTER_BY_STATE_OPTION) {
                     // Filter by State
                     ConsoleUtils::clearConsole();
                     temporaryFilteredVenues = venueFilter.filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
-                } else if (choice == FILTER_BY_CITY_OPTION) {
+                } else if (choice == MenuManager::FILTER_BY_CITY_OPTION) {
                     // Filter by City
                     ConsoleUtils::clearConsole();
                     temporaryFilteredVenues = venueFilter.filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
-                } else if (choice == FILTER_BY_CAPACITY_OPTION) {
+                } else if (choice == MenuManager::FILTER_BY_CAPACITY_OPTION) {
                     // Filter by Capacity
                     ConsoleUtils::clearConsole();
                     temporaryFilteredVenues = venueFilter.filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
@@ -94,11 +94,11 @@ int main() {
 
                 // Call the new function to process venue selection
                 venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
-            } else if (choice == VIEW_SELECTED_VENUES_OPTION) {
+            } else if (choice == MenuManager::VIEW_SELECTED_VENUES_OPTION) {
                 // View Selected Venues
                 ConsoleUtils::clearConsole();
-                displaySelectedVenues(selectedVenuesForEmail);
-            } else if (choice == CLEAR_SELECTED_VENUES_OPTION) {
+                menuManager.displaySelectedVenues(selectedVenuesForEmail);
+            } else if (choice == MenuManager::CLEAR_SELECTED_VENUES_OPTION) {
                 // Clear Selected Venues
                 ConsoleUtils::clearConsole();
                 selectedVenuesForEmail.clear();
@@ -107,11 +107,11 @@ int main() {
                 cin.ignore();  // If there's a chance you might have used cin before this point
                 ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press                
-            } else if (choice == SHOW_EMAIL_SETTINGS_OPTION) {
+            } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
                 ConsoleUtils::clearConsole();
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
-            } else if (choice == VIEW_EDIT_EMAILS_OPTION) {
+            } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
                 ConsoleUtils::clearConsole();
                 int attempts = 0;
                 bool modified = false;
@@ -178,7 +178,7 @@ int main() {
                     // Return to the main menu if the email wasn't modified
                     continue;
                 }
-            } else if (choice == FINISH_AND_SEND_EMAILS_OPTION) {
+            } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION) {
                 ConsoleUtils::clearConsole();
                 if (selectedVenuesForEmail.empty()) {
                     ConsoleUtils::clearConsole();
@@ -273,7 +273,7 @@ int main() {
                         }
                     }
                 }
-            } else if (choice == EXIT_OPTION) {
+            } else if (choice == MenuManager::EXIT_OPTION) {
                 ConsoleUtils::clearConsole();
                 // Prompt for confirmation before exiting
                 cout << "Are you sure you want to exit? (Y/N): ";
