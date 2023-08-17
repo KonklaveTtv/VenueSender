@@ -16,6 +16,8 @@ int main() {
     ConfigManager configManager;
     CsvReader csvReader;
     EncryptionManager encryptionManager;
+    VenueFilter venueFilter;
+    VenueUtilities venueUtilities;
 
     // Load the config settings from the JSON file
     if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath)) {
@@ -42,10 +44,10 @@ int main() {
     csvReader.readCSV(venues, venuesCsvPath);
 
     // Extract unique genres, states, cities, and capacities from the venues data
-    set<string> uniqueGenres = getUniqueGenres(venues);
-    set<string> uniqueStates = getUniqueStates(venues);
-    set<string> uniqueCities = getUniqueCities(venues);
-    set<int> uniqueCapacities = getUniqueCapacities(venues);
+    set<string> uniqueGenres = venueUtilities.getUniqueGenres(venues);
+    set<string> uniqueStates = venueUtilities.getUniqueStates(venues);
+    set<string> uniqueCities = venueUtilities.getUniqueCities(venues);
+    set<int> uniqueCapacities = venueUtilities.getUniqueCapacities(venues);
 
     FilterCriteria criteria;
     vector<SelectedVenue> selectedVenuesForEmail;
@@ -71,26 +73,26 @@ int main() {
                 if (choice == FILTER_BY_GENRE_OPTION) {
                     // Filter by Genre
                     ConsoleUtils::clearConsole();
-                    temporaryFilteredVenues = filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
+                    temporaryFilteredVenues = venueFilter.filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
                 } else if (choice == FILTER_BY_STATE_OPTION) {
                     // Filter by State
                     ConsoleUtils::clearConsole();
-                    temporaryFilteredVenues = filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
+                    temporaryFilteredVenues = venueFilter.filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
                 } else if (choice == FILTER_BY_CITY_OPTION) {
                     // Filter by City
                     ConsoleUtils::clearConsole();
-                    temporaryFilteredVenues = filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
+                    temporaryFilteredVenues = venueFilter.filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
                 } else if (choice == FILTER_BY_CAPACITY_OPTION) {
                     // Filter by Capacity
                     ConsoleUtils::clearConsole();
-                    temporaryFilteredVenues = filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
+                    temporaryFilteredVenues = venueFilter.filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
                 }
 
                 // Display filtered venues
-                displayFilteredVenues(temporaryFilteredVenues);
+                venueFilter.displayFilteredVenues(temporaryFilteredVenues);
 
                 // Call the new function to process venue selection
-                processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
+                venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
             } else if (choice == VIEW_SELECTED_VENUES_OPTION) {
                 // View Selected Venues
                 ConsoleUtils::clearConsole();

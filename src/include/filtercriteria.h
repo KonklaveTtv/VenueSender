@@ -11,7 +11,7 @@
 #include <set>
 #include <vector>
 
-class Venue;
+struct Venue;
 
 // Structure to hold filter criteria
 struct FilterCriteria {
@@ -26,18 +26,17 @@ struct FilterCriteria {
     int capacity = 0; // Change to int type
 };
 
-// Member pointers as static constexpr members
-static constexpr auto genreMemberPtr = &Venue::genre;
-static constexpr auto stateMemberPtr = &Venue::state;
-static constexpr auto cityMemberPtr = &Venue::city;
-static constexpr auto capacityMemberPtr = &Venue::capacity;
+class VenueUtilities {
+private:
+    // Member pointers as static constexpr members
+    static constexpr auto genreMemberPtr = &Venue::genre;
+    static constexpr auto stateMemberPtr = &Venue::state;
+    static constexpr auto cityMemberPtr = &Venue::city;
+    static constexpr auto capacityMemberPtr = &Venue::capacity;
 
-// Venue selection indices max char length
-const int MAX_INPUT_LENGTH = 256;
-const char CSV_DELIMITER = ','; // Delimiter used in CSV files
-
+public:
 // Convert Venue to SelectedVenue
-SelectedVenue convertToSelectedVenue(const Venue& venue);
+static SelectedVenue convertToSelectedVenue(const Venue& venue);
 
 // Get a set of unique genres/states/cities/capacities from a vector of venues
 std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
@@ -50,7 +49,22 @@ std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::
 
 // Declaration for getUniqueValues with a member pointer to an integer
 std::vector<int> getUniqueValues(const std::vector<Venue>& venues, int Venue::* memberPtr);
+};
 
+
+class VenueFilter {
+private:
+    // Venue selection indices max char length
+    const std::string::size_type MAX_INPUT_LENGTH = 256;
+    const char CSV_DELIMITER = ','; // Delimiter used in CSV files
+
+    // Common function for filtering by an option (Genre, State, City)
+    std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
+                                                    const std::set<std::string>& uniqueOptions,
+                                                    const std::string& filterType,
+                                                    std::vector<SelectedVenue>& temporaryFilteredVenues);
+
+public:
 // Function to process user input and select venues
 void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                            std::vector<SelectedVenue>& selectedVenuesForEmail,
@@ -60,11 +74,6 @@ void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVe
 // Function to display filtered venues to the user
 void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
 
-// Common function for filtering by an option (Genre, State, City)
-std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
-                                                const std::set<std::string>& uniqueOptions,
-                                                const std::string& filterType,
-                                                std::vector<SelectedVenue>& temporaryFilteredVenues);
 
 /**
  * Filters a vector of venues based on the selected option.
@@ -91,5 +100,6 @@ std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
 std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                                             const std::set<int>& uniqueCapacities,
                                             std::vector<SelectedVenue>& temporaryFilteredVenues);
+};
 
 #endif // FILTERCRITERIA_H

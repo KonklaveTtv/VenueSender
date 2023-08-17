@@ -3,7 +3,7 @@
 using namespace std;
 
 // Convert Venue to SelectedVenue
-SelectedVenue convertToSelectedVenue(const Venue& venue) {
+SelectedVenue VenueUtilities::convertToSelectedVenue(const Venue& venue) {
     // Create a SelectedVenue instance based on Venue data
     SelectedVenue selectedVenue;
     selectedVenue.name = venue.name;
@@ -16,7 +16,7 @@ SelectedVenue convertToSelectedVenue(const Venue& venue) {
 }
 
 // Utility function to get unique genres from a vector of venues
-set<string> getUniqueGenres(const vector<Venue>& venues) {
+set<string> VenueUtilities::getUniqueGenres(const vector<Venue>& venues) {
     set<string> uniqueGenres;
     for (const auto& venue : venues) {
         if (uniqueGenres.find(venue.genre) == uniqueGenres.end()) {
@@ -27,7 +27,7 @@ set<string> getUniqueGenres(const vector<Venue>& venues) {
 }
 
 // Utility function to get unique states from a vector of venues
-set<string> getUniqueStates(const vector<Venue>& venues) {
+set<string> VenueUtilities::getUniqueStates(const vector<Venue>& venues) {
     set<string> uniqueStates;
     for (const auto& venue : venues) {
         if (uniqueStates.find(venue.state) == uniqueStates.end()) {
@@ -38,7 +38,7 @@ set<string> getUniqueStates(const vector<Venue>& venues) {
 }
 
 // Utility function to get unique cities from a vector of venues
-set<string> getUniqueCities(const vector<Venue>& venues) {
+set<string> VenueUtilities::getUniqueCities(const vector<Venue>& venues) {
     set<string> uniqueCities;
     for (const auto& venue : venues) {
         if (uniqueCities.find(venue.city) == uniqueCities.end()) {
@@ -49,7 +49,7 @@ set<string> getUniqueCities(const vector<Venue>& venues) {
 }
 
 // Utility function to get unique capacities from a vector of venues
-set<int> getUniqueCapacities(const vector<Venue>& venues) {
+set<int> VenueUtilities::getUniqueCapacities(const vector<Venue>& venues) {
     set<int> uniqueCapacities;
     for (const Venue& venue : venues) {
         uniqueCapacities.insert(venue.capacity);
@@ -58,7 +58,7 @@ set<int> getUniqueCapacities(const vector<Venue>& venues) {
 }
 
 // Utility function to get unique values of a member using a member pointer
-vector<string> getUniqueValues(const vector<Venue>& venues, string Venue::* memberPtr) {
+vector<string> VenueUtilities::getUniqueValues(const vector<Venue>& venues, string Venue::* memberPtr) {
     vector<string> uniqueValues;
     for (const Venue& venue : venues) {
         string value = venue.*memberPtr;
@@ -70,7 +70,7 @@ vector<string> getUniqueValues(const vector<Venue>& venues, string Venue::* memb
 }
 
 // Utility function to get unique values of a member using a member pointer
-vector<int> getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr) {
+vector<int> VenueUtilities::getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr) {
     vector<int> uniqueValues;
     for (const Venue& venue : venues) {
         int value = venue.*memberPtr;
@@ -81,7 +81,7 @@ vector<int> getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr)
     return uniqueValues;
 }
 
-void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
+void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                            vector<SelectedVenue>& selectedVenuesForEmail,
                            istream& input,
                            ostream& output) {
@@ -161,7 +161,7 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
 }
 
 // Function to display filtered venues to the user
-void displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay) {
+void VenueFilter::displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay) {
     if (selectedVenuesForDisplay.empty()) {
         cout << "No venues found." << endl;
         return;
@@ -179,7 +179,7 @@ void displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay
 }
 
 // Common function for filtering by an option (Genre, State, City)
-vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
+vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& venues,
                                                 const set<string>& uniqueOptions,
                                                 const string& filterType,
                                                 vector<SelectedVenue>& temporaryFilteredVenues) {
@@ -224,7 +224,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
                 if ((filterType == "Genre" && venue.genre == filterValue) ||
                     (filterType == "State" && venue.state == filterValue) ||
                     (filterType == "City" && venue.city == filterValue)) {
-                    SelectedVenue selectedVenue = convertToSelectedVenue(venue);
+                    SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(venue);
                     temporaryFilteredVenues.push_back(selectedVenue);
                 }
             }
@@ -241,7 +241,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
 }
 
 // Function to filter by Genre, State, or City
-vector<SelectedVenue> filterByOption(const vector<Venue>& venues,
+vector<SelectedVenue> VenueFilter::filterByOption(const vector<Venue>& venues,
                                           const string& filterType,
                                           const set<string>& uniqueOptions,
                                           vector<SelectedVenue>& temporaryFilteredVenues) {
@@ -249,7 +249,7 @@ vector<SelectedVenue> filterByOption(const vector<Venue>& venues,
 }
 
 // Function to filter by Capacity
-vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
+vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
                                             const set<int>& uniqueCapacities,
                                             vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
@@ -292,7 +292,7 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
             int filterValue = filterOptions[selectedIndex];
             for (const Venue& venue : venues) {
                 if (venue.capacity == filterValue) {
-                    SelectedVenue selectedVenue = convertToSelectedVenue(venue);
+                    SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(venue);
                     temporaryFilteredVenues.push_back(selectedVenue);
                 }
             }

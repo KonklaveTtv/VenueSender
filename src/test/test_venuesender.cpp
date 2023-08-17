@@ -179,11 +179,13 @@ TEST_CASE("displaySelectedVenues function", "[Display]") {
     // Convert the Venue objects to SelectedVenue format
     vector<SelectedVenue> selectedVenues;
     for(const Venue& venue : venues) {
-        selectedVenues.push_back(convertToSelectedVenue(venue));
+        selectedVenues.push_back(VenueUtilities::convertToSelectedVenue(venue));
     }
 
+    VenueFilter venueFilter;
+
     // Call the function to test
-    displaySelectedVenues(selectedVenues);
+   displaySelectedVenues(selectedVenues);
 
     // Reset the cout buffer to its original state
     cout.rdbuf(oldCoutStreamBuf);
@@ -295,8 +297,10 @@ TEST_CASE("processVenueSelection Test") {
     istringstream mockInput("1,2"); // user selects both venues
     ostringstream mockOutput;
 
+    VenueFilter venueFilter;
+
     // Call the function
-    processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, mockInput, mockOutput);
+    venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, mockInput, mockOutput);
 
     // Check results
     REQUIRE(selectedVenuesForEmail.size() == 2); 
@@ -320,7 +324,7 @@ TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
     mockVenue.capacity = 100;
 
     // Convert Venue to SelectedVenue using the function
-    SelectedVenue selectedVenue = convertToSelectedVenue(mockVenue);
+    SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(mockVenue);
 
     // Compare the converted SelectedVenue with expected values
     REQUIRE(selectedVenue.name == "Venue1");
