@@ -1,6 +1,7 @@
 #ifndef CURL_H
 #define CURL_H
 
+#include <cstring>
 #include <iostream>
 
 #include <curl/curl.h>
@@ -21,7 +22,7 @@ public:
 
     // Add a method to set SSL options
     void setSSLOptions(bool useSSL = true, bool verifyPeer = true, bool verifyHost = true);
-
+    static size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
 private:
     CURL* curl;
     double progress;

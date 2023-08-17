@@ -5,24 +5,6 @@ using namespace std;
 CurlHandleWrapper curlWrapper;
 
 
-// Custom read callback function to read from a string
-size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
-    string* payload = static_cast<string*>(userp);
-    size_t totalsize = size * nmemb;
-
-    if (payload->size()) {
-        // Calculate the size of data to copy to ptr
-        size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
-
-        memcpy(ptr, payload->c_str(), toCopy); // Copy data to ptr
-        payload->erase(0, toCopy); // Remove the portion that has been read from the payload
-
-        return toCopy;
-    }
-
-    return 0; // Return 0 to signify no data left to read
-}
-
 // Function to check if an email address is in a valid format
 bool isValidEmail(const string& email) {
     // A simple regex pattern to check the format of the email
@@ -98,7 +80,7 @@ bool sendIndividualEmail(CURL* curl,
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
-    // Construct headers and payload for the email content
+    // Construct headers for the email content
     string toHeader = "To: " + selectedVenue.email;
     string fromHeader = "From: " + senderEmail;
     string subjectHeader = "Subject: " + subject;
@@ -111,7 +93,7 @@ bool sendIndividualEmail(CURL* curl,
 
     // Set the email body (message) with the desired formatting
     string payload = "\r\n" + message; // Make sure the message starts on a new line
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, readCallback); // Set custom read function
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback); // Set custom read function
     curl_easy_setopt(curl, CURLOPT_READDATA, &payload); // Pass the message string to the read function
     curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
 

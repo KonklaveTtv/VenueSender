@@ -17,6 +17,20 @@ int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, doubl
     return 0;
 }
 
+size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
+    std::string* payload = static_cast<std::string*>(userp);
+    size_t totalsize = size * nmemb;
+
+    if (payload->size()) {
+        size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
+        memcpy(ptr, payload->c_str(), toCopy);
+        payload->erase(0, toCopy);
+        return toCopy;
+    }
+
+    return 0;
+}
+
 void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyHost) {
     if (useSSL) {
         curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
@@ -79,11 +93,6 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
         return nullptr;
     }
     
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-    // Set the SSL options using the CurlHandleWrapper method
-    curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
-
     // SMTP server configuration
     std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
@@ -94,6 +103,12 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
 
     // Set the sender
     curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
+
+    // Set SSL options using the CurlHandleWrapper method
+    curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
+
+    // Enable verbose mode for debugging (if needed)
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
     return curl;
 }

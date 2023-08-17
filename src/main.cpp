@@ -113,9 +113,9 @@ int main() {
 
                 while (attempts < 3) {
                     cout << "----- EMAIL DETAILS -----\n";
-                    cout << "Subject: " << subject << endl;
-                    cout << "-------------------------\n";
-                    cout << "Message: \n" << message << endl;
+                    cout << "From: \"Sender Name\" <" << senderEmail << ">\n"; // replace with real sender name if available
+                    cout << "Subject: " << subject << "\n";
+                    cout << "\n" << message << "\n";
                     cout << "-------------------------\n";
 
                     cout << "Do you wish to modify this email? (Y/N): ";
@@ -206,10 +206,11 @@ int main() {
                     }
                     clearConsole();
                     cout << "----- EMAIL DETAILS -----\n";
-                    cout << "Subject: " << subject << endl;
+                    cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
+                    cout << "Subject: " << subject << "\n";
+                    cout << "\n" << message << "\n";
                     cout << "-------------------------\n";
-                    cout << "Message: \n" << message << endl;
-                    cout << "-------------------------\n";
+
                     cout << "Do you wish to modify this email? (Y/N): ";
                     char modifyEmailChoice;
                     cin >> modifyEmailChoice;
