@@ -5,17 +5,15 @@ using namespace std;
 /* CurlHandleWrapper*/
 /*-------------------*/
 int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
-    // You can calculate the progress percentage based on the parameters provided
-    // and provide updates to the user here
-    // Example: Print the progress every 10% completion
     if (dltotal > 0) {
         double progress = (dlnow / dltotal) * 100;
-        if (progress >= 5) {
+        if (progress <= 100) {
             cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
         }
     }
     return 0;
 }
+
 
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
     std::string* payload = static_cast<std::string*>(userp);
