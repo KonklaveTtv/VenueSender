@@ -74,148 +74,84 @@ bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost,
                         std::string& mailPass, int& smtpPort, std::string& smtpServer, 
                         std::string& venuesCsvPath) {
 
-    // Load configuration settings from config.json into respective variables
-    // Return true if successful, false otherwise
-#ifdef UNIT_TESTING
-    Json::Value config;
-    ifstream configFile(confPaths::mockConfigJsonPath);
-    if (!configFile.is_open()) {
-        cerr << "Failed to open config.json." << endl;
-        return false;
-    }
-
-    configFile >> config;
-
-    // Load smtp user settings
-    senderEmail = config["mock_sender_email"].asString();
-    smtpPort = config["mock_smtp_port"].asInt();
-    smtpServer = config["mock_smtp_server"].asString();
-    smtpUsername = config["mock_smtp_username"].asString();
+    // Define keys and paths based on whether UNIT_TESTING is enabled or not
+    std::string configPath, emailKey, smtpPortKey, smtpServerKey, smtpUsernameKey, 
+                 venuesPath, mailPassKey, encryptedMailPassKey;
     
-    // Load SSL settings
-    useSSL = config["useSSL"].asBool();
-    verifyPeer = config["verifyPeer"].asBool();
-    verifyHost = config["verifyHost"].asBool();
-
-    // Load venues.csv path from config
-    venuesCsvPath = confPaths::mockVenuesCsvPath;
+#ifdef UNIT_TESTING
+    configPath = confPaths::mockConfigJsonPath;
+    emailKey = "mock_sender_email";
+    smtpPortKey = "mock_smtp_port";
+    smtpServerKey = "mock_smtp_server";
+    smtpUsernameKey = "mock_smtp_username";
+    venuesPath = confPaths::mockVenuesCsvPath;
+    mailPassKey = "mock_email_password";
+    encryptedMailPassKey = "mock_email_pass_encrypted";
 #else
+    configPath = confPaths::configJsonPath;
+    emailKey = "sender_email";
+    smtpPortKey = "smtp_port";
+    smtpServerKey = "smtp_server";
+    smtpUsernameKey = "smtp_username";
+    venuesPath = confPaths::venuesCsvPath;
+    mailPassKey = "email_password";
+    encryptedMailPassKey = "email_pass_encrypted";
+#endif
+
+    // Read the configuration
     Json::Value config;
-    ifstream configFile(confPaths::configJsonPath);
+    ifstream configFile(configPath);
     if (!configFile.is_open()) {
-        cerr << "Failed to open config.json." << endl;
+        cerr << "Failed to open " << configPath << "." << endl;
         return false;
     }
-
     configFile >> config;
 
     // Load smtp user settings
-    senderEmail = config["sender_email"].asString();
-    smtpPort = config["smtp_port"].asInt();
-    smtpServer = config["smtp_server"].asString();
-    smtpUsername = config["smtp_username"].asString();
+    senderEmail = config[emailKey].asString();
+    smtpPort = config[smtpPortKey].asInt();
+    smtpServer = config[smtpServerKey].asString();
+    smtpUsername = config[smtpUsernameKey].asString();
+    venuesCsvPath = venuesPath;
 
-    // Load SSL settings
+    // Load SSL settings (they're the same for both unit testing and not)
     useSSL = config["useSSL"].asBool();
     verifyPeer = config["verifyPeer"].asBool();
     verifyHost = config["verifyHost"].asBool();
 
-    // Load venues.csv path from config
-    venuesCsvPath = confPaths::venuesCsvPath;
-#endif
+    // SMTP/Mail Encryption/Decryption
+    mailPass = config[mailPassKey].asString();
 
-// SMTP/Mail Encryption/Decryption
-
-#ifdef UNIT_TESTING
-    // Load plain text passwords from mock_config.json
-    mailPass = config["mock_email_password"].asString();
-
-    // SMTP/Mail Encryption Check
-    bool ismailPassEncrypted = config.isMember("mock_email_pass_encrypted") ? config["mock_email_pass_encrypted"].asBool() : false;
-
+    bool ismailPassEncrypted = config.isMember(encryptedMailPassKey) ? config[encryptedMailPassKey].asBool() : false;
     string mailPassEncrypted;
 
-    // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
         if (!encryptPassword(mailPass, mailPassEncrypted)) {
-            cerr << "Failed to encrypt email password for saving in config.json." << endl;
+            cerr << "Failed to encrypt email password for saving in " << configPath << "." << endl;
             return false;
         }
-        config["mock_email_password"] = mailPassEncrypted;
-        config["mock_email_pass_encrypted"] = true;
+        config[mailPassKey] = mailPassEncrypted;
+        config[encryptedMailPassKey] = true;
     } else {
-        mailPassEncrypted = config["mock_email_password"].asString();
+        mailPassEncrypted = config[mailPassKey].asString();
     }
-#else
-    // Load plain text passwords from config.json
-    mailPass = config["email_password"].asString();
-
-    // SMTP/Mail Encryption Check
-    bool ismailPassEncrypted = config.isMember("email_pass_encrypted") ? config["email_pass_encrypted"].asBool() : false;
-
-    string mailPassEncrypted;
-
-    // Encrypt the mail password if it is not already encrypted and update the config file
-    if (!ismailPassEncrypted) {
-        if (!encryptPassword(mailPass, mailPassEncrypted)) {
-            cerr << "Failed to encrypt email password for saving in config.json." << endl;
-            return false;
-        }
-        config["email_password"] = mailPassEncrypted;
-        config["email_pass_encrypted"] = true;
-    } else {
-        mailPassEncrypted = config["email_password"].asString();
-    }
-#endif
-
-    // Open the config file for writing and save the updated JSON object
-#ifdef UNIT_TESTING
-    ofstream configFileOut(confPaths::mockConfigJsonPath);
+    ofstream configFileOut(configPath);
     if (!configFileOut.is_open()) {
-        cerr << "Failed to open config.json for writing." << endl;
+        cerr << "Failed to open " << configPath << " for writing." << endl;
         return false;
     }
     configFileOut << config;
     configFileOut.close();
 
-    // Reassign encrypted passwords for decryption and reassignment
-    mailPass = config["mock_email_password"].asString();
-
-    // SMTP/Mail Password Decryption Check
-    string mailPassDecrypted;
-
-    // Decrypt the encrypted mail password
-    mailPassDecrypted = decryptPassword(mailPass);
+    // Decryption
+    string mailPassDecrypted = decryptPassword(mailPassEncrypted);
     if (mailPassDecrypted.empty()) {
         cerr << "Email password decryption failed." << endl;
         return false;
     }
-#else
-    ofstream configFileOut(confPaths::configJsonPath);
-    if (!configFileOut.is_open()) {
-        cerr << "Failed to open config.json for writing." << endl;
-        return false;
-    }
-    configFileOut << config;
-    configFileOut.close();
-
-    // Reassign encrypted passwords for decryption and reassignment
-    mailPass = config["email_password"].asString();
-
-    // SMTP/Mail Password Decryption Check
-    string mailPassDecrypted;
-
-    // Decrypt the encrypted mail password
-    mailPassDecrypted = decryptPassword(mailPass);
-    if (mailPassDecrypted.empty()) {
-        cerr << "Email password decryption failed." << endl;
-        return false;
-    }
-#endif
-// End of SMTP/Mail Password Encryption/Decryption
-
-
-    // Define and initialize variables to track loaded settings
+    mailPass = mailPassDecrypted;
+ 
+    // Check for successfully loaded settings
     bool smtpServerLoaded = !smtpServer.empty();
     bool smtpPortLoaded = smtpPort > 0;
     bool smtpUsernameLoaded = !smtpUsername.empty();
@@ -223,18 +159,14 @@ bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost,
     bool mailPassLoaded = !mailPass.empty();
     bool senderEmailLoaded = !senderEmail.empty();
 
-    // Check if the configuration settings are loaded successfully
     bool configLoadedSuccessfully = smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded &&
                                     venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded;
 
-    // Display messages based on loaded settings
     if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || venuesCsvPathLoaded || mailPassLoaded || senderEmailLoaded) {
-        cout << "Configuration settings loaded from config.json." << endl;
+        cout << "Configuration settings loaded from " << configPath << "." << endl;
         configLoadedSuccessfully = true;
-    } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded) {
-        cout << "Email settings loaded from config.json." << endl;
     } else if (!configLoadedSuccessfully) {
-        cerr << "Failed to load configuration settings from config.json." << endl;
+        cerr << "Failed to load configuration settings from " << configPath << "." << endl;
     }
 
     return configLoadedSuccessfully;
@@ -244,51 +176,35 @@ bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost,
 void resetConfigFile() {
     Json::Value config;
 
+    std::string configPath = confPaths::configJsonPath;
+    std::string emailPasswordKey = "email_password";
+    std::string isEmailPassEncryptedKey = "email_pass_encrypted";
+
 #ifdef UNIT_TESTING
-    // Read the existing mock_config.json
-    ifstream configFile(confPaths::mockConfigJsonPath);
+    configPath = confPaths::mockConfigJsonPath;
+    emailPasswordKey = "mock_email_password";
+    isEmailPassEncryptedKey = "mock_email_pass_encrypted";
+#endif
+
+    // Read the existing configuration
+    ifstream configFile(configPath);
     if (!configFile.is_open()) {
-        cerr << "Failed to open mock_config.json." << endl;
-        return;
-    }
-    configFile >> config;
-    configFile.close();
-
-    // Modify the values in the JSON object for testing
-    config["mock_email_pass_encrypted"] = false;
-    config["mock_email_password"] = "mock_email_password";
-
-    // Close the input file stream before opening for output
-    configFile.close();
-
-   // Write the modified JSON object back to mock_config.json
-    ofstream configFileOut(confPaths::mockConfigJsonPath);
-    if (!configFileOut.is_open()) {
-        cerr << "Failed to open mock_config.json for writing." << endl;
-        return;
-    }
-    configFileOut << config;
-    configFileOut.close();
-#else
-    // Read the existing config.json
-    ifstream configFile(confPaths::configJsonPath);
-    if (!configFile.is_open()) {
-        cerr << "Failed to open config.json." << endl;
+        cerr << "Failed to open " << configPath << "." << endl;
         return;
     }
     configFile >> config;
     configFile.close();
 
     // Modify the values in the JSON object
-    config["email_pass_encrypted"] = false;
-    config["email_password"] = "enter_email_password";
+    config[isEmailPassEncryptedKey] = false;
+    config[emailPasswordKey] = (configPath == confPaths::mockConfigJsonPath) ? "mock_email_password" : "enter_email_password";
 
-    // Close the input file stream before opening for output
-    configFile.close();
-
-    // Write the modified JSON object back to config.json
-    ofstream configFileOut(confPaths::configJsonPath);
+    // Write the modified JSON object back to the appropriate file
+    ofstream configFileOut(configPath);
+    if (!configFileOut.is_open()) {
+        cerr << "Failed to open " << configPath << " for writing." << endl;
+        return;
+    }
     configFileOut << config;
     configFileOut.close();
-#endif // UNIT_TESTING
 }
