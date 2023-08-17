@@ -108,10 +108,10 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
 TEST_CASE("isValidMenuChoice function", "[isValid]") {
     REQUIRE(isValidMenuChoice(1) == true);
     REQUIRE(isValidMenuChoice(5) == true);
-    REQUIRE(isValidMenuChoice(9) == true);
+    REQUIRE(isValidMenuChoice(10) == true);
 
     REQUIRE(isValidMenuChoice(0) == false);
-    REQUIRE(isValidMenuChoice(10) == false);
+    REQUIRE(isValidMenuChoice(11) == false);
 }
 
 TEST_CASE("Test displayMenuOptions function", "[menu]") {
@@ -131,7 +131,7 @@ TEST_CASE("Test displayMenuOptions function", "[menu]") {
     cout.rdbuf(original_cout);
 
     // Check the captured output and the returned choice
-    REQUIRE(output.str() == "===== Main Menu =====\n1. Filter by Genre\n2. Filter by State\n3. Filter by City\n4. Filter by Capacity\n5. Clear Selected Venues\n6. View Selected Venues\n7. Show Email Settings\n8. Finish & Send Emails\n9. Exit VenueSender\nEnter your choice: ");
+    REQUIRE(output.str() == "===== Main Menu =====\n1. Filter by Genre\n2. Filter by State\n3. Filter by City\n4. Filter by Capacity\n5. Clear Selected Venues\n6. View Selected Venues\n7. Show Email Settings\n8. View & Edit Email\n9. Finish & Send Emails\n10. Exit VenueSender\nEnter your choice: ");
     REQUIRE(choice == 5);
 }
 
