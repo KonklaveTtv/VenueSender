@@ -57,7 +57,7 @@ int displayMenuOptions() {
         cout << "Enter your choice: ";
 
         if (!(cin >> choice)) {
-            cout << "Invalid input, please enter a number. Press any key to retry..." << endl;
+            cout << "Invalid input, please enter a number. Press return to retry..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
             clearInputBuffer();
             cin.get();     // This will wait for a key press
@@ -66,7 +66,7 @@ int displayMenuOptions() {
                  << static_cast<int>(MenuOption::FilterByGenre) 
                  << " and " 
                  << static_cast<int>(MenuOption::Exit) << "." << endl;
-            cout << "Press any key to continue..." << endl;
+            cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
             clearInputBuffer();
             cin.get();     // This will wait for a key press
@@ -103,7 +103,7 @@ void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost,
     cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
     cout << "===========================" << endl;
-    cout << "Press any key to return to Main Menu" << endl;
+    cout << "Press return to return to Main Menu" << endl;
     cin.ignore();  // If there's a chance you might have used cin before this point
     clearInputBuffer();
     cin.get();     // This will wait for a key press
@@ -138,7 +138,7 @@ void displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
         }
     }
     cout << "===========================" << endl;
-    cout << "Press any key to return to Main Menu" << endl;
+    cout << "Press return to return to Main Menu" << endl;
     cin.ignore();  // If there's a chance you might have used cin before this point
     clearInputBuffer();
     cin.get();     // This will wait for a key press

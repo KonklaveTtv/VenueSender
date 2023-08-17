@@ -180,4 +180,8 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
         curlWrapper.setEmailBeingSent(""); // Reset the value of emailBeingSent
     }
     cout << "Email sending progress completed." << endl;
+    cout << "Press return to go back to Main Menu." << endl;
+    cin.ignore();
+    clearInputBuffer();
+    cin.get();
 }

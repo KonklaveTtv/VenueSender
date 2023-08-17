@@ -99,7 +99,7 @@ int main() {
                 clearConsole();
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl;
-                cout << "Press any key to return to the Main Menu..." << endl;
+                cout << "Press return to return to the Main Menu..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
                 clearInputBuffer();
                 cin.get();     // This will wait for a key press                
@@ -140,7 +140,7 @@ int main() {
                     } else {
                         clearConsole();
                         cout << "Email saved for sending/editing." << endl;
-                        cout << "Press any key to return to the Main Menu..." << endl;
+                        cout << "Press return to return to the Main Menu..." << endl;
                         cin.ignore();  // If there's a chance you might have used cin before this point
                         clearInputBuffer();
                         cin.get();
@@ -159,7 +159,7 @@ int main() {
                             message.clear(); // Clear existing message
                             attempts++; // Increment the attempts
                             if (attempts >= 3) {
-                                cout << "Too many unsuccessful attempts. Press any key to return to main menu." << endl;
+                                cout << "Too many unsuccessful attempts. Press return to return to main menu." << endl;
                                 cin.ignore();  // If there's a chance you might have used cin before this point
                                 clearInputBuffer();
                                 cin.get();     // This will wait for a key press
@@ -179,7 +179,7 @@ int main() {
                 if (selectedVenuesForEmail.empty()) {
                     clearConsole();
                     cout << "No venues selected. Please add venues before sending emails." << endl;
-                    cout << "Press any key to return to Main Menu..." << endl;
+                    cout << "Press return to return to Main Menu..." << endl;
                     cin.ignore();  // If there's a chance you might have used cin before this point
                     clearInputBuffer();
                     cin.get();     // This will wait for a key press
@@ -260,7 +260,7 @@ int main() {
                         } else {
                             clearConsole();
                             cout << "Email saved for sending/editing." << endl;
-                            cout << "Press any key to return to the Main Menu..." << endl;
+                            cout << "Press return to return to the Main Menu..." << endl;
                             cin.ignore();  // If there's a chance you might have used cin before this point
                             clearInputBuffer();
                             cin.get();     // This will wait for a key press
@@ -279,7 +279,7 @@ int main() {
                 if (confirmExit == 'Y' || confirmExit == 'y') {
 
                     // Exit VenueSender
-                    cout << "Exiting the program. Press any key..." << endl;
+                    cout << "Exiting the program. Press return..." << endl;
                     cin.ignore();  // If there's a chance you might have used cin before this point
                     clearInputBuffer();
                     cin.get();     // This will wait for a key press
@@ -288,14 +288,14 @@ int main() {
                     cout << "Returning to the main menu." << endl;
                     // The user chose not to exit, return to the main menu
                 } else {
-                    cout << "Invalid choice. Press any key..." << endl;
+                    cout << "Invalid choice. Press return..." << endl;
                     cin.ignore();  // If there's a chance you might have used cin before this point
                     clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     // The user entered an invalid choice, return to the main menu
                 }
             } else {
-                cout << "Invalid choice. Press any key..." << endl;
+                cout << "Invalid choice. Press return..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
                 clearInputBuffer();
                 cin.get();     // This will wait for a key press

@@ -97,7 +97,7 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
     // Validate input length
     if (userInput.length() > MAX_INPUT_LENGTH) {
         output << "Input too long. Please try again." << endl;
-        cout << "Press any key to continue..." << endl;
+        cout << "Press return to continue..." << endl;
         cin.ignore();  // If there's a chance you might have used cin before this point
         clearInputBuffer();
         cin.get();     // This will wait for a key press
@@ -111,7 +111,7 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
             size_t selectedIndex = stoul(indexStr);
             if (selectedIndex == 0) {
                 output << "Invalid index format. Skipping." << endl;
-                cout << "Press any key to continue..." << endl;
+                cout << "Press return to continue..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
                 clearInputBuffer();
                 cin.get();     // This will wait for a key press
@@ -122,7 +122,7 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                 selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
             } else {
                 output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << endl;
-                cout << "Press any key to continue..." << endl;
+                cout << "Press return to continue..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
                 clearInputBuffer();
                 cin.get();     // This will wait for a key press  
@@ -130,7 +130,7 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
             }
         } catch (const invalid_argument& e) {
             output << "Invalid input. Skipping." << endl;
-            cout << "Press any key to continue..." << endl;
+            cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
             clearInputBuffer();
             cin.get();     // This will wait for a key press 
@@ -191,7 +191,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
             cout << "Invalid index. Skipping." << endl;
-            cout << "Press any key to continue..." << endl;
+            cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
             clearInputBuffer();
             cin.get();     // This will wait for a key press            
@@ -212,7 +212,7 @@ vector<SelectedVenue> filterByOptionCommon(const vector<Venue>& venues,
             }
         } else {
             cout << "Invalid index. Skipping." << endl;
-            cout << "Press any key to continue..." << endl;
+            cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
             clearInputBuffer();
             cin.get();     // This will wait for a key press   
@@ -261,7 +261,7 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
             cout << "Invalid index format. Skipping." << endl;
-            cout << "Press any key to continue..." << endl;
+            cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
             clearInputBuffer();
             cin.get();     // This will wait for a key press 
@@ -280,7 +280,7 @@ vector<SelectedVenue> filterByCapacity(const vector<Venue>& venues,
             }
         } else {
             cout << "Invalid index: " << selectedIndex << endl;
-            cout << "Press any key to continue..." << endl;
+            cout << "Press return to continue..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
             clearInputBuffer();
             cin.get();     // This will wait for a key press 
