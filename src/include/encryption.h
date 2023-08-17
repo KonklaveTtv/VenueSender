@@ -5,17 +5,19 @@
 #include <iostream>
 #include <sodium.h>
 
-// Extern global variables to store the encryption key and nonce
-extern std::array<unsigned char, crypto_secretbox_KEYBYTES> globalEncryptionKey;
-extern std::array<unsigned char, crypto_secretbox_NONCEBYTES> globalEncryptionNonce;
+class EncryptionManager {
+private:
+    std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
+    std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
 
-// Function to initialize encryption key and nonce
-void initializeEncryptionParams();
+public:
+    EncryptionManager(); // Constructor will initialize encryption key and nonce
 
-// Utility function to encrypt the email and smtp passwords
-bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword);
+    // Utility function to encrypt the email and SMTP passwords
+    bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword);
 
-// Utility function to decrypt the email and smtp passwords
-std::string decryptPassword(const std::string& encryptedPassword);
+    // Utility function to decrypt the email and SMTP passwords
+    std::string decryptPassword(const std::string& encryptedPassword);
+};
 
 #endif // ENCRYPTION_H

@@ -337,15 +337,15 @@ TEST_CASE("Test Convert Venue to SelectedVenue", "[convertToSelectedVenue]") {
 
 TEST_CASE("Encrypt and decrypt email password", "[encryption][decryption]") {
     // Initialize encryption parameters
-    initializeEncryptionParams();
+    EncryptionManager encryptionManager;
 
     string mailPassword = "enter_email_password";
 
     string encryptedmailPass;
-    REQUIRE(encryptPassword(mailPassword, encryptedmailPass) == true);
+    REQUIRE(encryptionManager.encryptPassword(mailPassword, encryptedmailPass) == true);
 
     string mailPassDecrypted;
-    string decryptedmailPass = decryptPassword(encryptedmailPass);
+    string decryptedmailPass = encryptionManager.decryptPassword(encryptedmailPass);
     REQUIRE(decryptedmailPass == mailPassword);
 
     REQUIRE(mailPassword == decryptedmailPass);

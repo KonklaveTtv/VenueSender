@@ -4,7 +4,6 @@ using namespace std;
 
 CurlHandleWrapper curlWrapper;
 
-
 // Function to check if an email address is in a valid format
 bool isValidEmail(const string& email) {
     // A simple regex pattern to check the format of the email

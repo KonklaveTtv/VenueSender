@@ -2,6 +2,8 @@
 
 using namespace std;
 
+EncryptionManager encryptionManager;
+
 // Function to trim leading and trailing spaces from a string
 string trim(const string& str){
     // Trimming function
@@ -126,7 +128,7 @@ bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost,
     string mailPassEncrypted;
 
     if (!ismailPassEncrypted) {
-        if (!encryptPassword(mailPass, mailPassEncrypted)) {
+        if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
             cerr << "Failed to encrypt email password for saving in " << configPath << "." << endl;
             return false;
         }
@@ -144,7 +146,7 @@ bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost,
     configFileOut.close();
 
     // Decryption
-    string mailPassDecrypted = decryptPassword(mailPassEncrypted);
+    string mailPassDecrypted = encryptionManager.decryptPassword(mailPassEncrypted);
     if (mailPassDecrypted.empty()) {
         cerr << "Email password decryption failed." << endl;
         return false;

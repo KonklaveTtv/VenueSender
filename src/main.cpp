@@ -3,6 +3,7 @@
 using namespace confPaths;
 using namespace std;
 
+
 // Exclude the following code block if UNIT_TESTING is defined
 #ifndef UNIT_TESTING
 
@@ -13,7 +14,7 @@ int main() {
     int smtpPort;
     bool useSSL, verifyPeer, verifyHost;
 
-    initializeEncryptionParams();
+    EncryptionManager encryptionManager;
 
     // Load the config settings from the JSON file
     if (!loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath)) {
@@ -22,7 +23,7 @@ int main() {
     }
 
     // Attempt to decrypt the stored password
-    mailPassDecrypted = decryptPassword(mailPass);
+    mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << endl;
         exit(1);  // Exit with an error status
