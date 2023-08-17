@@ -40,8 +40,13 @@ void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyH
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost ? 2L : 0L);
 }
 
-CurlHandleWrapper::CurlHandleWrapper() {
+CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
     curl = curl_easy_init();
+    if (!curl) {
+        cerr << "Failed to initialize libcurl." << endl;
+        return;
+    }
+
     if (curl) {
         // Keeping these options as they're unique and not present in `setupCurlHandle`.
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
@@ -73,11 +78,12 @@ void CurlHandleWrapper::cleanup() {
 
 // Setter for emailBeingSent
 void CurlHandleWrapper::setEmailBeingSent(const std::string& email) {
+    std::lock_guard<std::mutex> lock(mtx);
     emailBeingSent = email;
 }
 
-// Getter for emailBeingSent
 std::string CurlHandleWrapper::getEmailBeingSent() const {
+    std::lock_guard<std::mutex> lock(mtx);
     return emailBeingSent;
 }
 

@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <mutex>
 
 #include <curl/curl.h>
 
@@ -27,6 +28,7 @@ private:
     CURL* curl;
     double progress;
     std::string emailBeingSent;
+    mutable std::mutex mtx;
 };
 
 CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost,
