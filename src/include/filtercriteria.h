@@ -26,6 +26,12 @@ struct FilterCriteria {
     int capacity = 0; // Change to int type
 };
 
+// Member pointers as static constexpr members
+static constexpr auto genreMemberPtr = &Venue::genre;
+static constexpr auto stateMemberPtr = &Venue::state;
+static constexpr auto cityMemberPtr = &Venue::city;
+static constexpr auto capacityMemberPtr = &Venue::capacity;
+
 // Venue selection indices max char length
 const int MAX_INPUT_LENGTH = 256;
 const char CSV_DELIMITER = ','; // Delimiter used in CSV files

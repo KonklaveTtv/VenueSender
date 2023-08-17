@@ -15,12 +15,6 @@ enum class ReturnCode {
     SmtpPassDecryptionError
 };
 
-// Member pointers as static constexpr members
-static constexpr auto genreMemberPtr = &Venue::genre;
-static constexpr auto stateMemberPtr = &Venue::state;
-static constexpr auto cityMemberPtr = &Venue::city;
-static constexpr auto capacityMemberPtr = &Venue::capacity;
-
 // Constants
 const int MAX_EMAIL_LENGTH = 500; // Maximum length for an email address, adjust as needed
 const int MAX_SUBJECT_LENGTH = 50; // Maximum length for an email address, adjust as needed
