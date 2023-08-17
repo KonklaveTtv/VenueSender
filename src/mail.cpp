@@ -4,6 +4,37 @@ using namespace std;
 
 CurlHandleWrapper curlWrapper;
 
+void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost,
+                       const string& senderEmail, const string& mailPassDecrypted,
+                       int smtpPort, const string& smtpServer) {
+
+#ifdef UNIT_TESTING
+    cout << "===== Email Settings =====" << endl;
+    cout << "SMTP Server: " << smtpServer << endl;
+    cout << "SMTP Port: " << smtpPort << endl;
+    cout << "Sender Email: " << senderEmail << endl;
+    cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
+    cout << "SSL: " << (useSSL ? "true" : "false") << endl;
+    cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
+    cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
+    cout << "===========================" << endl;
+#else
+    cout << "===== Email Settings =====" << endl;
+    cout << "SMTP Server: " << smtpServer << endl;
+    cout << "SMTP Port: " << smtpPort << endl;
+    cout << "Sender Email: " << senderEmail << endl;
+    cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
+    cout << "SSL: " << (useSSL ? "true" : "false") << endl;
+    cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
+    cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
+    cout << "===========================" << endl;
+    cout << "Press return to return to Main Menu" << endl;
+    cin.ignore();  // If there's a chance you might have used cin before this point
+    ConsoleUtils::clearInputBuffer();
+    cin.get();     // This will wait for a key press
+#endif
+}
+
 // Function to check if an email address is in a valid format
 bool EmailManager::isValidEmail(const string& email) {
     // A simple regex pattern to check the format of the email

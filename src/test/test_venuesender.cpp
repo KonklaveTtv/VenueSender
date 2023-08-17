@@ -141,8 +141,10 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
     streambuf* oldCoutStreamBuf = cout.rdbuf();
     cout.rdbuf(oss.rdbuf());
 
+    EmailManager emailManager;
+
     // Call the function
-    viewEmailSettings("useSSL", "verifyPeer", "verifyHost", "mock@example.com", "mock_email_password", 587, "mock_smtp_server");
+    emailManager.viewEmailSettings("useSSL", "verifyPeer", "verifyHost", "mock@example.com", "mock_email_password", 587, "mock_smtp_server");
 
     cout.rdbuf(oldCoutStreamBuf);
 

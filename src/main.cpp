@@ -110,7 +110,7 @@ int main() {
             } else if (choice == SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
                 ConsoleUtils::clearConsole();
-                viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
+                emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
             } else if (choice == VIEW_EDIT_EMAILS_OPTION) {
                 ConsoleUtils::clearConsole();
                 int attempts = 0;
