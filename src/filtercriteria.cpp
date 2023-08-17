@@ -81,7 +81,6 @@ vector<int> getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr)
     return uniqueValues;
 }
 
-// Function to process user input and select venues
 void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                            vector<SelectedVenue>& selectedVenuesForEmail,
                            istream& input,
@@ -119,7 +118,26 @@ void processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
             }
             selectedIndex--; // Decrement index to match 0-based indexing
             if (selectedIndex < temporaryFilteredVenues.size()) {
-                selectedVenuesForEmail.push_back(temporaryFilteredVenues[selectedIndex]);
+                const SelectedVenue& selectedVenue = temporaryFilteredVenues[selectedIndex];
+
+                // Check if the selected venue is already in the selectedVenuesForEmail vector
+                bool isDuplicate = false;
+                for (const SelectedVenue& existingVenue : selectedVenuesForEmail) {
+                    if (existingVenue.name == selectedVenue.name && existingVenue.email == selectedVenue.email) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+
+                if (!isDuplicate) {
+                    selectedVenuesForEmail.push_back(selectedVenue);
+                } else {
+                    output << "Venue already selected. Skipping." << endl;
+                    cout << "Press return to continue..." << endl;
+                    cin.ignore();  // If there's a chance you might have used cin before this point
+                    clearInputBuffer();
+                    cin.get();     // This will wait for a key press
+                }
             } else {
                 output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << endl;
                 cout << "Press return to continue..." << endl;
