@@ -81,10 +81,7 @@ bool sendIndividualEmail(CURL* curl,
                         const string& subject,
                         const string& message,
                         const string& smtpServer,
-                        int smtpPort,
-                        const string& smtpUsername,
-                        const string& mailPassDecrypted,
-                        double& progress) {
+                        int smtpPort) {
     // Set the value of emailBeingSent
     curlWrapper.setEmailBeingSent(selectedVenue.email);
 
@@ -100,9 +97,6 @@ bool sendIndividualEmail(CURL* curl,
     struct curl_slist* recipients = nullptr;
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
-
-    // Set the email sender
-    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
 
     // Construct headers and payload for the email content
     string toHeader = "To: " + selectedVenue.email;
@@ -121,29 +115,7 @@ bool sendIndividualEmail(CURL* curl,
     curl_easy_setopt(curl, CURLOPT_READDATA, &payload); // Pass the message string to the read function
     curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
 
-    // Set the URL for the SMTP server
-    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
-    curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
-
-    // Set the sender's SMTP port
-    curl_easy_setopt(curl, CURLOPT_PORT, smtpPort);
-
-    // Set SMTP username and password
-    string smtpUserPass = mailPassDecrypted;
-    curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
-    curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
-
     cout << "Authenticating with SMTP server..." << endl;
-
-    // Set SSL options for secure connection
-    curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L); // Enable peer certificate verification
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L); // Check that the certificate's common name matches the host name
-
-    // Set the progress callback function
-    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback); 
-    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 
     // Perform the email sending
     CURLcode res = curl_easy_perform(curl);
@@ -170,17 +142,14 @@ void viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedV
                               const string& subject,
                               const string& message,
                               const string& smtpServer,
-                              int smtpPort,
-                              const string& smtpUsername,
-                              const string& mailPassDecrypted,
-                              double& progress) {
+                              int smtpPort) {
     for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
         const SelectedVenue& venue = selectedVenuesForEmail[i];
         curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent
         cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << endl;
 
         // Send the individual email with progress tracking
-        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
+        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort);
 
         curlWrapper.setEmailBeingSent(""); // Reset the value of emailBeingSent
     }

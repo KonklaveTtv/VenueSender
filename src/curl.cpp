@@ -17,14 +17,26 @@ int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, doubl
     return 0;
 }
 
+void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyHost) {
+    if (useSSL) {
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
+    } else {
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_NONE);  // no SSL
+    }
+
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer ? 1L : 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost ? 2L : 0L);
+}
+
 CurlHandleWrapper::CurlHandleWrapper() {
     curl = curl_easy_init();
     if (curl) {
+        // Keeping these options as they're unique and not present in `setupCurlHandle`.
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-	    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
+        curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 
-        // Set up location of SSL certs for linux
+        // Set up location of SSL certs for Linux
         curl_easy_setopt(curl, CURLOPT_CAINFO, "/etc/ssl/certs/ca-certificates.crt");
     }
 }
@@ -62,71 +74,26 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
                       const string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
 
     CURL* curl = curlWrapper.get();
-   
-   	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-    // Handle libcurl errors and display enhanced error messages
     if (!curl) {
-        cerr << "Failed to initialize libcurl easy handle." << endl;
+        std::cerr << "Failed to initialize libcurl." << std::endl;
         return nullptr;
     }
+    
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
-    // Set SSL to True or False
-    CURLcode res;
-    res = curl_easy_setopt(curl, CURLOPT_USE_SSL, useSSL);
-    if (!checkCurlError(res, "Failed to set useSSL option")) {
-        curl_easy_cleanup(curl);
-        return nullptr;
-    }
+    // Set the SSL options using the CurlHandleWrapper method
+    curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
 
-    // Set verifyPeer to True or False
-    res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer);
-    if (!checkCurlError(res, "Failed to set verifyPeer option")) {
-        curl_easy_cleanup(curl);
-        return nullptr;
-    }
+    // SMTP server configuration
+    std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
+    curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 
-    // Set verifyHost to True or False
-    res = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost);
-    if (!checkCurlError(res, "Failed to set verifyHost option")) {
-        curl_easy_cleanup(curl);
-        return nullptr;
-    }
+    // SMTP authentication
+    curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
 
-    // Set the sender email address
-    res = curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
-    if (!checkCurlError(res, "Failed to set libcurl sender email option")) {
-        curl_easy_cleanup(curl);
-        return nullptr;
-    }
-
-    // Set the SMTP username
-    res = curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
-    if (!checkCurlError(res, "Failed to set libcurl SMTP username option")) {
-        curl_easy_cleanup(curl);
-        return nullptr;
-    }
-
-    // Set the email password for authentication
-    res = curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
-    if (!checkCurlError(res, "Failed to set libcurl email password option")) {
-        curl_easy_cleanup(curl);
-        return nullptr;
-    }
-
-    // Set the sender's SMTP port
-    res = curl_easy_setopt(curl, CURLOPT_PORT, smtpPort);
-    if (!checkCurlError(res, "Failed to set libcurl SMTP port option")) {
-        curl_easy_cleanup(curl);
-        return nullptr;
-    }
-
-    // Connect to the SMTP server
-    string smtpUrl = "smtp://" + smtpServer;
-    res = curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
-    if (!checkCurlError(res, "Failed to set libcurl URL option")) {
-        return nullptr;
-    }
+    // Set the sender
+    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
 
     return curl;
 }

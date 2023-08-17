@@ -11,7 +11,6 @@ int main() {
     vector<Venue> venues;
     string venuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message;
     int smtpPort;
-    double progress;
     bool useSSL, verifyPeer, verifyHost;
 
     initializeEncryptionParams();
@@ -242,14 +241,14 @@ int main() {
                             emailSendProgress = 0; // Reset progress
                             for (const SelectedVenue& venue : selectedVenuesForEmail) {
                                 sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
-                                                    smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
+                                                    smtpServer, smtpPort);
                                 ++emailSendProgress;
 
                                 // Update the progress
                                 curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
 
                                 // Display email sending progress
-                                viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
+                                viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort);
                             }
 
                             filteredVenues.clear(); // Clear the filtered venues for the next round of emails

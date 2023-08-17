@@ -19,6 +19,9 @@ public:
     void setEmailBeingSent(const std::string& email);
     std::string getEmailBeingSent() const;
 
+    // Add a method to set SSL options
+    void setSSLOptions(bool useSSL = true, bool verifyPeer = true, bool verifyHost = true);
+
 private:
     CURL* curl;
     double progress;
