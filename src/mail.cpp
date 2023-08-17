@@ -104,17 +104,22 @@ bool sendIndividualEmail(CURL* curl,
     // Set the email sender
     curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
 
-    // Set the email subject
+    // Construct headers and payload for the email content
+    string toHeader = "To: " + selectedVenue.email;
+    string fromHeader = "From: " + senderEmail;
     string subjectHeader = "Subject: " + subject;
+
     struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, toHeader.c_str());
+    headers = curl_slist_append(headers, fromHeader.c_str());
     headers = curl_slist_append(headers, subjectHeader.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-    // Set the email body (message)
-    string payload = message; // Make a copy of the message since the read callback modifies the string
+    // Set the email body (message) with the desired formatting
+    string payload = "\r\n" + message; // Make sure the message starts on a new line
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, readCallback); // Set custom read function
     curl_easy_setopt(curl, CURLOPT_READDATA, &payload); // Pass the message string to the read function
-    curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(message.length()));
+    curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
 
     // Set the URL for the SMTP server
     string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
