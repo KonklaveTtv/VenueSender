@@ -38,10 +38,11 @@ private:
 
 public:
     ConfigManager();
-    bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost,
-                            std::string& senderEmail, std::string& smtpUsername,
-                            std::string& mailPass, int& smtpPort, std::string& smtpServer,
-                            std::string& venuesCsvPath);
+    bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, 
+                        std::string& senderEmail, std::string& smtpUsername, 
+                        std::string& mailPass, int& smtpPort, std::string& smtpServer, 
+                        std::string& venuesCsvPath);
+
     void resetConfigFile();
 };
 

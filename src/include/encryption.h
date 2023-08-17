@@ -5,11 +5,10 @@
 #include <iostream>
 #include <sodium.h>
 
-class EncryptionManager {
-private:
-    std::array<unsigned char, crypto_secretbox_KEYBYTES> encryptionKey;
-    std::array<unsigned char, crypto_secretbox_NONCEBYTES> encryptionNonce;
+extern std::array<unsigned char, crypto_secretbox_KEYBYTES> globalEncryptionKey;
+extern std::array<unsigned char, crypto_secretbox_NONCEBYTES> globalEncryptionNonce;
 
+class EncryptionManager {
 public:
     EncryptionManager(); // Constructor will initialize encryption key and nonce
 
