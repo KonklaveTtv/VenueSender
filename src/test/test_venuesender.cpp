@@ -238,8 +238,6 @@ TEST_CASE("Test Email Validation", "[validation]") {
     REQUIRE(isValid2 == false);
 }
 
-/* We cannot run this test without a valid SMTP server
-----------------------------------------------------------------------------------------------
 TEST_CASE("Test View Email Sending Progress", "[email]") {
     // Set up mock data for viewEmailSendingProgress function
     CurlHandleWrapper curlWrapper;
@@ -255,7 +253,6 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
 
     // Declare and initialize mailPassDecrypted and progress
     string mailPassDecrypted = "your_decrypted_email_password"; // Initialize with the actual decrypted SMTP password
-    double progress = 0.0; // Initialize progress to 0.0
 
     // Simulate adding some selected venues
     Venue testVenue1("Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100);
@@ -276,9 +273,11 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     streambuf* coutBuffer = cout.rdbuf();
     cout.rdbuf(outputCapture.rdbuf());
 
+    EmailManager emailManager;
+
     // Call the viewEmailSendingProgress function
-    viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message,
-                             smtpServer, smtpPort, smtpUsername, mailPassDecrypted, progress);
+    emailManager.viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message,
+                             smtpServer, smtpPort);
 
     // Restore cout
     cout.rdbuf(coutBuffer);
@@ -289,8 +288,6 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     REQUIRE(output.find("Sending email 2 of 2 to: venue2@mock.com") != string::npos);
     REQUIRE(output.find("Email sending progress completed.") != string::npos);
 }
-----------------------------------------------------------------------------------------------
-*/
 
 
 // -----------------------
