@@ -117,7 +117,9 @@ int main() {
                 bool modified = false;
 
                 while (attempts < 3) {
+                    cout << "-------------------------\n";
                     cout << "----- EMAIL DETAILS -----\n";
+                    cout << "-------------------------\n";
                     cout << "From: \"Sender Name\" <" << senderEmail << ">\n"; // replace with real sender name if available
                     cout << "Subject: " << subject << "\n";
                     cout << "\n" << message << "\n";
@@ -145,7 +147,7 @@ int main() {
                     } else {
                         ConsoleUtils::clearConsole();
                         cout << "Email saved for sending/editing." << endl;
-                        cout << "Press return to return to the Main Menu..." << endl;
+                        cout << "Press return to go to the Main Menu..." << endl;
                         cin.ignore();  // If there's a chance you might have used cin before this point
                         ConsoleUtils::clearInputBuffer();
                         cin.get();
@@ -184,7 +186,7 @@ int main() {
                 if (selectedVenuesForEmail.empty()) {
                     ConsoleUtils::clearConsole();
                     cout << "No venues selected. Please add venues before sending emails." << endl;
-                    cout << "Press return to return to Main Menu..." << endl;
+                    cout << "Press return to go to Main Menu..." << endl;
                     cin.ignore();  // If there's a chance you might have used cin before this point
                     ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
@@ -211,7 +213,9 @@ int main() {
                         }
                     }
                     ConsoleUtils::clearConsole();
+                    cout << "-------------------------\n";
                     cout << "----- EMAIL DETAILS -----\n";
+                    cout << "-------------------------\n";
                     cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
                     cout << "Subject: " << subject << "\n";
                     cout << "\n" << message << "\n";
@@ -265,7 +269,7 @@ int main() {
                         } else {
                             ConsoleUtils::clearConsole();
                             cout << "Email saved for sending/editing." << endl;
-                            cout << "Press return to return to the Main Menu..." << endl;
+                            cout << "Press return to go to the Main Menu..." << endl;
                             cin.ignore();  // If there's a chance you might have used cin before this point
                             ConsoleUtils::clearInputBuffer();
                             cin.get();     // This will wait for a key press
@@ -291,6 +295,7 @@ int main() {
                     break;
                 } else if (confirmExit == 'N' || confirmExit == 'n') {
                     cout << "Returning to the main menu." << endl;
+                    this_thread::sleep_for(chrono::milliseconds(1000));
                     // The user chose not to exit, return to the main menu
                 } else {
                     cout << "Invalid choice. Press return..." << endl;

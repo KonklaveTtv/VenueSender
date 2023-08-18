@@ -186,7 +186,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
     vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
     ConsoleUtils::clearConsole();
     cout << "===== Filter By " << filterType << " =====" << endl;
-
+    
     cout << "Available Options: " << endl;
     for (size_t i = 0; i < filterOptions.size(); ++i) {
         cout << i + 1 << ". " << filterOptions[i] << endl;

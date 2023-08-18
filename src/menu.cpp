@@ -28,7 +28,9 @@ int MenuManager::displayMenuOptions() {
 #ifdef UNIT_TESTING
     int choice;
     do {
+        cout << "====================="<< endl;
         cout << "===== Main Menu =====" << endl;
+        cout << "====================="<< endl;
         cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
         cout << static_cast<int>(MenuManager::MenuOption::FilterByState) << ". Filter by State" << endl;
         cout << static_cast<int>(MenuManager::MenuOption::FilterByCity) << ". Filter by City" << endl;
@@ -57,7 +59,9 @@ int MenuManager::displayMenuOptions() {
 #else
     int choice;
     do {
+        cout << "====================="<< endl;
         cout << "===== Main Menu =====" << endl;
+        cout << "====================="<< endl;
         cout << static_cast<int>(MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
         cout << static_cast<int>(MenuOption::FilterByState) << ". Filter by State" << endl;
         cout << static_cast<int>(MenuOption::FilterByCity) << ". Filter by City" << endl;
@@ -96,7 +100,9 @@ int MenuManager::displayMenuOptions() {
 // Function to display selected venues to the user
 void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
 #ifdef UNIT_TESTING
+    cout << "==========================="<< endl;
     cout << "===== Selected Venues =====" << endl;
+    cout << "==========================="<< endl;
     if (selectedVenues.empty()) {
         cout << "No venues selected yet." << endl;
     } else {
@@ -109,7 +115,9 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
     }
     cout << "===========================" << endl;
 #else
+    cout << "==========================="<< endl;
     cout << "===== Selected Venues =====" << endl;
+    cout << "==========================="<< endl;
     if (selectedVenues.empty()) {
         cout << "No venues selected yet." << endl;
     } else {

@@ -25,7 +25,9 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
                        const string& senderEmail, int smtpPort, const string& smtpServer) {
 
 #ifdef UNIT_TESTING
+    cout << "=========================="<< endl;
     cout << "===== Email Settings =====" << endl;
+    cout << "=========================="<< endl;
     cout << "SMTP Server: " << smtpServer << endl;
     cout << "SMTP Port: " << smtpPort << endl;
     cout << "Sender Email: " << senderEmail << endl;
@@ -35,7 +37,9 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "verbose: " << (verbose ? "true" : "false") << endl;    
     cout << "===========================" << endl;
 #else
+    cout << "=========================="<< endl;
     cout << "===== Email Settings =====" << endl;
+    cout << "=========================="<< endl;
     cout << "SMTP Server: " << smtpServer << endl;
     cout << "SMTP Port: " << smtpPort << endl;
     cout << "Sender Email: " << senderEmail << endl;
@@ -44,7 +48,7 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
     cout << "verbose: " << (verbose ? "true" : "false") << endl;    
     cout << "===========================" << endl;
-    cout << "Press return to return to Main Menu" << endl;
+    cout << "Press return to go to Main Menu" << endl;
     cin.ignore();  // If there's a chance you might have used cin before this point
     ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press
@@ -68,7 +72,9 @@ bool EmailManager::isValidEmail(const string& email) {
  * @param in - Input stream, defaulted to standard input (cin)
  */
 void EmailManager::constructEmail(string &subject, string &message, istream &in = cin) {
+    cout << "==========================="<< endl;
     cout << "===== Construct Email =====" << endl;
+    cout << "==========================="<< endl;
         // Prompt user to enter email subject and message
     do {
         cout << "Enter subject for the email: ";
@@ -80,7 +86,11 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
     const int maxMessageLength = EmailManager::MAX_EMAIL_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
-        cout << "Subject too long. Please try again." << endl;
+        cout << "Subject cannot be longer than 50 characters in length." << endl;
+        cout << "Press return to go back..." << endl;
+        cin.ignore();  // If there's a chance you might have used cin before this point
+        ConsoleUtils::clearInputBuffer();
+        cin.get();     // This will wait for a key press     
         subject.clear(); // Clear the subject if it's too long.
         return;
     }
@@ -89,7 +99,11 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
         string line;
         while (getline(in, line) && !line.empty()) {
             if (message.length() + line.length() > maxMessageLength) {
-                cout << "Message too long. Truncating to maximum length." << endl;
+                cout << "Message cannot be longer than 2000 characters in length." << endl;
+                cout << "Press return to go back..." << endl;
+                cin.ignore();  // If there's a chance you might have used cin before this point
+                ConsoleUtils::clearInputBuffer();
+                cin.get();     // This will wait for a key press     
                 int charsToAdd = maxMessageLength - message.length();
                 message += ConsoleUtils::trim(line).substr(0, charsToAdd); // Add as many characters as possible
                 break;
@@ -98,7 +112,11 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
         }
         cout << "============================" << endl;
         if (message.empty()) {
-            cout << "Message cannot be blank. Please enter a message." << endl;
+            cout << "Message cannot be blank." << endl;
+            cout << "Press return to go back..." << endl;
+            cin.ignore();  // If there's a chance you might have used cin before this point
+            ConsoleUtils::clearInputBuffer();
+            cin.get();     // This will wait for a key press     
         }
     } while (message.empty());
 
@@ -185,6 +203,11 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
             cerr << "Connection to SMTP server failed." << endl;
         } else if (res == CURLE_LOGIN_DENIED) {
             cerr << "Authentication with SMTP server failed." << endl;
+                cout << "Email sending progress completed." << endl;
+                cout << "Press return to continue..." << endl;
+                cin.ignore();  // If there's a chance you might have used cin before this point
+                ConsoleUtils::clearInputBuffer();
+                cin.get();     // This will wait for a key press     
         }
         return false;
     }
@@ -215,4 +238,8 @@ void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVen
     }
 
     cout << "Email sending progress completed." << endl;
+    cout << "Press return to continue..." << endl;
+    cin.ignore();  // If there's a chance you might have used cin before this point
+    ConsoleUtils::clearInputBuffer();
+    cin.get();     // This will wait for a key press     
 }
