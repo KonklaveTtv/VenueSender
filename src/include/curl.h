@@ -1,6 +1,7 @@
 #ifndef CURL_H
 #define CURL_H
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <mutex>
