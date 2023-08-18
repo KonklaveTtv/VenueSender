@@ -282,7 +282,7 @@ TEST_CASE("Test View Email Sending Progress", "[email]") {
     // Restore cout
     cout.rdbuf(coutBuffer);
 
-    // Compare the result with expected values
+    // We don't test the sending of an actual email, simply that it completes the process
     string output = outputCapture.str();
     REQUIRE(output.find("Sending email 1 of 2 to: venue1@mock.com") != string::npos);
     REQUIRE(output.find("Sending email 2 of 2 to: venue2@mock.com") != string::npos);
