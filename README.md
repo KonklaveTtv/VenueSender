@@ -18,7 +18,7 @@ To run this project, you need the following installed on your system:
 ### Dependencies
 
       sudo apt-get update
-      sudo apt-get install g++ libjsoncpp-dev libcurl4-openssl-dev libsodium-dev catch2
+      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libsodium-dev catch2
 
 ### Installation
 
