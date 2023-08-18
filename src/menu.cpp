@@ -129,7 +129,7 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
         }
     }
     cout << "===========================" << endl;
-    cout << "Press return to return to Main Menu" << endl;
+    cout << "Press return to go back to Main Menu" << endl;
     cin.ignore();  // If there's a chance you might have used cin before this point
     ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press

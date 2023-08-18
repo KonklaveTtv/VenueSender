@@ -162,13 +162,13 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     mailPass = config["email_password"].asString();
 
     // SMTP/Mail Encryption Check
-    bool ismailPassEncrypted = config.isMember("email_pass_encrypted") ? config["email_pass_encrypted"].asBool() : false;
+    bool ismailPassEncrypted = config.get("email_pass_encrypted", false).asBool();
 
     string mailPassEncrypted;
 
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
-        if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
+        if (!EncryptionManager::encryptPassword(mailPass, mailPassEncrypted)) {
             cerr << "Failed to encrypt email password for saving in config.json." << endl;
             return false;
         }
@@ -217,7 +217,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     string mailPassDecrypted;
 
     // Decrypt the encrypted mail password
-    mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
+    mailPassDecrypted = EncryptionManager::decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         cerr << "Email password decryption failed." << endl;
         return false;
@@ -239,15 +239,14 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
                                     venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded;
 
     // Display messages based on loaded settings
-    if (smtpServerLoaded || smtpPortLoaded || smtpUsernameLoaded || venuesCsvPathLoaded || mailPassLoaded || senderEmailLoaded) {
+    if (smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded && venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded) {
         cout << "Configuration settings loaded from config.json." << endl;
         configLoadedSuccessfully = true;
     } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded) {
         cout << "Email settings loaded from config.json." << endl;
-    } else if (!configLoadedSuccessfully) {
+    } else {
         cerr << "Failed to load configuration settings from config.json." << endl;
     }
-
     return configLoadedSuccessfully;
 }
 

@@ -43,7 +43,7 @@ public:
                             std::string& mailPass, int& smtpPort, std::string& smtpServer, 
                             std::string& venuesCsvPath);
 
-    void resetConfigFile();
+    static void resetConfigFile();
 };
 
 #endif // FILEUTILS_H

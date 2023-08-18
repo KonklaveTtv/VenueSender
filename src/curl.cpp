@@ -6,7 +6,7 @@ using namespace std;
 /*-------------------*/
 int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
     if (dltotal > 0) {
-        progress= (dlnow / dltotal) * 100;
+        progress = (dlnow / dltotal) * 100;
         if (progress <= 100) {
             cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
         }
@@ -35,7 +35,7 @@ void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyH
     if (useSSL) {
         curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
     } else {
-        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY); // try or no SSL
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY); // try or revert to no SSL
     }
 
     // Set within the config.json and mock_config.json
@@ -112,7 +112,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
     curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
 
-    // Lets clear the memory for the decrypted password here
+    // Lets clear the memory for the mailPassDecrypted here after CURLOPT_PASSWORD is set
     fill(mailPassDecrypted.begin(), mailPassDecrypted.end(), '\0');
     mailPassDecrypted.clear();
 
@@ -122,7 +122,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     // Set SSL options using the CurlHandleWrapper method
     curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
 
-    // Enable verbose mode for debugging (if needed)
+    // Enable verbose mode for debugging in config.json (if needed)
     curl_easy_setopt(curl, CURLOPT_VERBOSE, verbose ? 1L : 0L);
 
     return curl;
