@@ -10,8 +10,6 @@
 #include <set>
 #include <vector>
 
-struct Venue;
-
 // Structure to hold filter criteria
 struct FilterCriteria {
     bool filterFlag = false;
