@@ -16,10 +16,10 @@ int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, doubl
 
 
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
-    std::string* payload = static_cast<std::string*>(userp);
+    auto* payload = static_cast<std::string*>(userp);
     size_t totalsize = size * nmemb;
 
-    if (payload->size()) {
+    if (!payload->empty()) {
         size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
         memcpy(ptr, payload->c_str(), toCopy);
         payload->erase(0, toCopy);

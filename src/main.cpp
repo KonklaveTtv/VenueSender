@@ -139,6 +139,7 @@ int main() {
                             cerr << "An error occurred while entering subject and message: " << e.what() << endl;
                             subject.clear(); // Clear existing subject
                             message.clear(); // Clear existing message
+                            attempts++; // Increment the attempts
                             continue; // Loop back to prompt for email details again
                         }
                     } else {

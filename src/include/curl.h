@@ -26,7 +26,7 @@ public:
     static size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
 private:
     CURL* curl;
-    double progress;
+    double progress{};
     std::string emailBeingSent;
     mutable std::mutex mtx;
 };
