@@ -8,5 +8,6 @@
 	"useSSL" : false, // Set to true or false
 	"venues_csv_path" : "venues.csv", // Provide the path to your venues CSV file
 	"verifyHost" : false,
-	"verifyPeer" : false
+	"verifyPeer" : false,
+	"verbose" : false
 }

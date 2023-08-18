@@ -78,6 +78,7 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     bool useSSL;
     bool verifyPeer;
     bool verifyHost;
+    bool verbose;
     string senderEmail;
     string smtpUsername;
     string mailPass;
@@ -88,13 +89,14 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     ConfigManager configManager;
 
     std::string testVenuesPathCopy = "src/test/mock_venues.csv";
-    bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, 
+    bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, 
                                      smtpUsername, mailPass, smtpPort, smtpServer, testVenuesPathCopy);
     
     REQUIRE(result == true);
     REQUIRE(useSSL == true);
     REQUIRE(verifyHost == true);
     REQUIRE(verifyPeer == true);
+    REQUIRE(verbose == true);
     REQUIRE(senderEmail == "mock@example.com");
     REQUIRE(smtpUsername == "mock_smtp_username");
     REQUIRE(smtpPort == 587);
@@ -149,8 +151,7 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
 
     EmailManager emailManager;
 
-    // Call the function
-    emailManager.viewEmailSettings("useSSL", "verifyPeer", "verifyHost", "mock@example.com", "mock_email_password", 587, "mock_smtp_server");
+    emailManager.viewEmailSettings("useSSL", "verifyPeer", "verifyHost", "verbose", "mock@example.com", 587, "mock_smtp_server");
 
     cout.rdbuf(oldCoutStreamBuf);
 
@@ -167,9 +168,10 @@ TEST_CASE("viewEmailSettings function", "[Display]") {
     REQUIRE(outputLines[2] == "SMTP Port: 587");
     REQUIRE(outputLines[3] == "Sender Email: mock@example.com");
     // We skip the password line as we are not validating its content
-    REQUIRE(outputLines[5] == "SSL: true");
-    REQUIRE(outputLines[6] == "verifyPeer: true");
-    REQUIRE(outputLines[7] == "verifyHost: true");
+    REQUIRE(outputLines[4] == "SSL: true");
+    REQUIRE(outputLines[5] == "verifyPeer: true");
+    REQUIRE(outputLines[6] == "verifyHost: true");
+    REQUIRE(outputLines[7] == "verbose: true");
     REQUIRE(outputLines[8] == "===========================");
 }
 

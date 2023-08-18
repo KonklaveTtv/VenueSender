@@ -21,7 +21,7 @@ string EmailManager::sanitizeSubject(string& subject) {
     return sanitized;
 }
 
-void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost,
+void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
                        const string& senderEmail, int smtpPort, const string& smtpServer) {
 
 #ifdef UNIT_TESTING
@@ -32,6 +32,7 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "SSL: " << (useSSL ? "true" : "false") << endl;
     cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
+    cout << "verbose: " << (verbose ? "true" : "false") << endl;    
     cout << "===========================" << endl;
 #else
     cout << "===== Email Settings =====" << endl;
@@ -41,6 +42,7 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "SSL: " << (useSSL ? "true" : "false") << endl;
     cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
+    cout << "verbose: " << (verbose ? "true" : "false") << endl;    
     cout << "===========================" << endl;
     cout << "Press return to return to Main Menu" << endl;
     cin.ignore();  // If there's a chance you might have used cin before this point

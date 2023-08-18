@@ -7,6 +7,7 @@
 	"mock_smtp_username" : "mock_smtp_username",
 	"mock_venues_csv_path" : "mock_venues.csv",
 	"useSSL" : true,
+	"verbose" : true,
 	"verifyHost" : true,
 	"verifyPeer" : true
 }

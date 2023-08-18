@@ -38,6 +38,7 @@ void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyH
         curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY); // try or no SSL
     }
 
+    // Set within the config.json and mock_config.json
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer ? 1L : 0L);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost ? 2L : 0L);
 }
@@ -94,9 +95,8 @@ void CurlHandleWrapper::clearEmailBeingSent() {
     emailBeingSent.clear();
 }
 
-CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost,
-                      const string& senderEmail, const string& smtpUsername,
-                      const string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
+CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose, 
+                      const string& senderEmail, const string& smtpUsername, const string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
 
     CURL* curl = curlWrapper.get();
     if (!curl) {
@@ -119,7 +119,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
 
     // Enable verbose mode for debugging (if needed)
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, verbose ? 1L : 0L);
 
     return curl;
 }

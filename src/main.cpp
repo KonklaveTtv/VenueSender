@@ -11,7 +11,7 @@ int main() {
     vector<Venue> venues;
     string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message;
     int smtpPort;
-    bool useSSL, verifyPeer, verifyHost;
+    bool useSSL, verifyPeer, verifyHost, verbose;
 
     ConfigManager configManager;
     CsvReader csvReader;
@@ -23,7 +23,7 @@ int main() {
 
     // Load the config settings from the JSON file
     std::string venuesPathCopy = confPaths::venuesCsvPath;
-    if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
+    if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
@@ -38,7 +38,7 @@ int main() {
     // Set up and initialize CURL
     CurlHandleWrapper curlWrapper;
     CurlHandleWrapper::init();
-    CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
+    CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
     if (!curl) {
         return 1;  // Return error if CURL setup failed
     }
@@ -110,7 +110,7 @@ int main() {
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
                 ConsoleUtils::clearConsole();
-                emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpPort, smtpServer);
+                emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
             } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
                 ConsoleUtils::clearConsole();
                 int attempts = 0;

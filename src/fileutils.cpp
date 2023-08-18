@@ -80,10 +80,10 @@ void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
 ConfigManager::ConfigManager() {}
 
 // Function to load the settings config.json data and encrypt and decrypt email password
-bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, 
-                        std::string& senderEmail, std::string& smtpUsername, 
-                        std::string& mailPass, int& smtpPort, std::string& smtpServer, 
-                        std::string& venuesCsvPath) {
+bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
+                                       std::string& senderEmail, std::string& smtpUsername, 
+                                       std::string& mailPass, int& smtpPort, std::string& smtpServer, 
+                                       std::string& venuesCsvPath) {
 
     // Load configuration settings from config.json into respective variables
     // Return true if successful, false otherwise
@@ -102,12 +102,14 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     smtpPort = config["mock_smtp_port"].asInt();
     smtpServer = config["mock_smtp_server"].asString();
     smtpUsername = config["mock_smtp_username"].asString();
-    
+
     // Load SSL settings
     useSSL = config["useSSL"].asBool();
     verifyPeer = config["verifyPeer"].asBool();
     verifyHost = config["verifyHost"].asBool();
 
+    // Enable verbose for cURL
+    verbose = config["verbose"].asBool();
 #else
     Json::Value config;
     ifstream configFile(confPaths::configJsonPath);
@@ -129,6 +131,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     verifyPeer = config["verifyPeer"].asBool();
     verifyHost = config["verifyHost"].asBool();
 
+    // Enable verbose for cURL
+    verbose = config["verbose"].asBool();
 #endif
 
 // SMTP/Mail Encryption/Decryption

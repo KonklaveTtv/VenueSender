@@ -27,7 +27,7 @@ std::string getCurrentDateRfc2822();
 std::string sanitizeSubject(std::string& subject);
 
 // Function to display the email settings set in config.json to the user
-void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, 
+void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,  
                        const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
 
 // Check if an email address is in a valid format
