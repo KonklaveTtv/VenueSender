@@ -3,6 +3,7 @@
 
 #include <array>
 #include <iostream>
+
 #include <sodium.h>
 
 extern std::array<unsigned char, crypto_secretbox_KEYBYTES> globalEncryptionKey;

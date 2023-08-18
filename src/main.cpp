@@ -59,7 +59,6 @@ int main() {
     int totalSelectedVenues = selectedVenuesForEmail.size();
     int emailSendProgress = 0;
 
-
     // Main loop for interacting with the user
     while (true) {
         // Display menu options and get user's choice
@@ -111,7 +110,7 @@ int main() {
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
                 ConsoleUtils::clearConsole();
-                emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, mailPassDecrypted, smtpPort, smtpServer);
+                emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpPort, smtpServer);
             } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
                 ConsoleUtils::clearConsole();
                 int attempts = 0;

@@ -11,7 +11,7 @@
 #include <sstream>
 #include <vector>
 
-#include "json/json.h"
+#include <json/json.h>
 
 namespace confPaths {
     extern std::string venuesCsvPath;

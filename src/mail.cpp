@@ -22,15 +22,13 @@ string EmailManager::sanitizeSubject(string& subject) {
 }
 
 void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost,
-                       const string& senderEmail, const string& mailPassDecrypted,
-                       int smtpPort, const string& smtpServer) {
+                       const string& senderEmail, int smtpPort, const string& smtpServer) {
 
 #ifdef UNIT_TESTING
     cout << "===== Email Settings =====" << endl;
     cout << "SMTP Server: " << smtpServer << endl;
     cout << "SMTP Port: " << smtpPort << endl;
     cout << "Sender Email: " << senderEmail << endl;
-    cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
     cout << "SSL: " << (useSSL ? "true" : "false") << endl;
     cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
@@ -40,7 +38,6 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "SMTP Server: " << smtpServer << endl;
     cout << "SMTP Port: " << smtpPort << endl;
     cout << "Sender Email: " << senderEmail << endl;
-    cout << "Mail Password: " << mailPassDecrypted << endl; // only user for testing, will be removed in production
     cout << "SSL: " << (useSSL ? "true" : "false") << endl;
     cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;

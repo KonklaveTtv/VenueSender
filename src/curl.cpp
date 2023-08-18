@@ -119,7 +119,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
 
     // Enable verbose mode for debugging (if needed)
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
 
     return curl;
 }

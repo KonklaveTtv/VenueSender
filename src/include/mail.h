@@ -28,8 +28,7 @@ std::string sanitizeSubject(std::string& subject);
 
 // Function to display the email settings set in config.json to the user
 void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, 
-                       const std::string& senderEmail, const std::string& mailPassDecrypted,
-                       int smtpPort, const std::string& smtpServer);
+                       const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
 
 // Check if an email address is in a valid format
 bool isValidEmail(const std::string& email);
