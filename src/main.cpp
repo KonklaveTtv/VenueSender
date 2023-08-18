@@ -9,7 +9,7 @@ using namespace std;
 int main() {
     // Initialize data and configuration settings
     vector<Venue> venues;
-    string venuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message;
+    string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message;
     int smtpPort;
     bool useSSL, verifyPeer, verifyHost;
 
@@ -22,7 +22,8 @@ int main() {
     VenueUtilities venueUtilities;
 
     // Load the config settings from the JSON file
-    if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath)) {
+    std::string venuesPathCopy = confPaths::venuesCsvPath;
+    if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
@@ -43,7 +44,7 @@ int main() {
     }
 
     // Read venues data from CSV file
-    csvReader.readCSV(venues, venuesCsvPath);
+    csvReader.readCSV(venues, confPaths::venuesCsvPath);
 
     // Extract unique genres, states, cities, and capacities from the venues data
     set<string> uniqueGenres = venueUtilities.getUniqueGenres(venues);

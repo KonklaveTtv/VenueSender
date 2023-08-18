@@ -4,16 +4,17 @@ using namespace std;
 
 /* CurlHandleWrapper*/
 /*-------------------*/
-int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
+int CurlHandleWrapper::progressCallback(void* clientp, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
+    auto* instance = static_cast<CurlHandleWrapper*>(clientp);
+
     if (dltotal > 0) {
-        double progress = (dlnow / dltotal) * 100;
-        if (progress <= 100) {
-            cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
+        instance->progress = (dlnow / dltotal) * 100;  // set the progress here
+        if (instance->progress <= 100) {
+            cout << "Email sending progress: " << instance->progress << "% (" << instance->getEmailBeingSent() << ")" << endl;
         }
     }
     return 0;
 }
-
 
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
     auto* payload = static_cast<std::string*>(userp);
@@ -50,7 +51,7 @@ CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
     if (curl) {
         // Keeping these options as they're unique and not present in `setupCurlHandle`.
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-        curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
+        curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 
         // Set up location of SSL certs for Linux

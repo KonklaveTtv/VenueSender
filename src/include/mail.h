@@ -49,8 +49,5 @@ void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& sele
                               const std::string& message,
                               const std::string& smtpServer,
                               int smtpPort);
-private:
-    // Custom read callback function to read from a string
-    size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
 };
 #endif // MAIL_H

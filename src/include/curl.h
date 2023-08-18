@@ -16,7 +16,7 @@ public:
     static void cleanup();
 
     // Change visibility of progressCallback to public
-    int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
+    static int progressCallback(void* clientp, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
 
     void setEmailBeingSent(const std::string& email);
     std::string getEmailBeingSent() const;

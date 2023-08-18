@@ -136,8 +136,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     curl_slist_free_all(recipients);
     curl_slist_free_all(headers);
 
-    if (res != CURLE_OK) {
-        cerr << "Failed to send email: " << curl_easy_strerror(res) << endl;
+    if (!checkCurlError(res, "Failed to send email")) {
         if (res == CURLE_COULDNT_CONNECT) {
             cerr << "Connection to SMTP server failed." << endl;
         } else if (res == CURLE_LOGIN_DENIED) {
@@ -155,6 +154,11 @@ void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVen
                               const string& message,
                               const string& smtpServer,
                               int smtpPort) {
+    if(!isValidEmail(senderEmail)) {
+        cerr << "Error: The sender email '" << senderEmail << "'is not a valid format." << endl;
+        cerr << "Please set it correctly in your custom.json file." << endl;
+        return;
+}
     for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
         const SelectedVenue& venue = selectedVenuesForEmail[i];
         curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent
@@ -165,6 +169,9 @@ void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVen
 
         curlWrapper.setEmailBeingSent(""); // Reset the value of emailBeingSent
     }
+
+    curlWrapper.cleanup();
+
     cout << "Email sending progress completed." << endl;
     cout << "Press return to go back to Main Menu." << endl;
     cin.ignore();

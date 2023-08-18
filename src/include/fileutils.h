@@ -14,10 +14,10 @@
 #include "json/json.h"
 
 namespace confPaths {
-    const std::string venuesCsvPath = "venues.csv";
-    const std::string configJsonPath = "config.json";
-    const std::string mockVenuesCsvPath = "src/test/mock_venues.csv";
-    const std::string mockConfigJsonPath = "src/test/mock_config.json";
+    extern std::string venuesCsvPath;
+    extern std::string configJsonPath;
+    extern std::string mockVenuesCsvPath;
+    extern std::string mockConfigJsonPath;
 }
 
 class ConsoleUtils {
@@ -29,7 +29,7 @@ public:
 
 class CsvReader {
 public:
-    static void readCSV(std::vector<Venue>& venues, const std::string& venuesCsvPath);
+    static void readCSV(std::vector<Venue>& venues, std::string& venuesCsvPath);
 };
 
 class ConfigManager {

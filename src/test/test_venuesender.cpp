@@ -13,7 +13,6 @@
 #include <cstdlib>
 #include <ctime>
 
-using namespace confPaths;
 using namespace std;
 
 class CinGuard {
@@ -88,8 +87,9 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
 
     ConfigManager configManager;
 
+    std::string testVenuesPathCopy = "src/test/mock_venues.csv";
     bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, senderEmail, 
-                                     smtpUsername, mailPass, smtpPort, smtpServer, venuesCsvPath);
+                                     smtpUsername, mailPass, smtpPort, smtpServer, testVenuesPathCopy);
     
     REQUIRE(result == true);
     REQUIRE(useSSL == true);
@@ -99,8 +99,9 @@ TEST_CASE("LoadConfigSettingsTest", "[fileutils]") {
     REQUIRE(smtpUsername == "mock_smtp_username");
     REQUIRE(smtpPort == 587);
     REQUIRE(smtpServer == "mock_smtp_server");
-    REQUIRE(venuesCsvPath == confPaths::mockVenuesCsvPath);
+    REQUIRE(testVenuesPathCopy == "src/test/mock_venues.csv");
 }
+
 
 // -----------------------
 // Test Group: Menu Operations

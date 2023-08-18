@@ -4,6 +4,13 @@ using namespace std;
 
 EncryptionManager encryptionManager;
 
+namespace confPaths {
+std::string venuesCsvPath = "venues.csv";
+std::string configJsonPath = "config.json";
+std::string mockVenuesCsvPath = "src/test/mock_venues.csv";
+std::string mockConfigJsonPath = "src/test/mock_config.json";
+}
+
 // Function to trim leading and trailing spaces from a string
 string ConsoleUtils::trim(const string& str){
     // Trimming function
@@ -30,7 +37,7 @@ void ConsoleUtils::clearConsole() {
 }
 
 // Function to read venue data from CSV file
-void CsvReader::readCSV(vector<Venue>& venues, const string& venuesCsvPath) {
+void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     ifstream file(venuesCsvPath);
     if (!file.is_open()) {
         cerr << "Failed to open CSV file: " << venuesCsvPath << endl;
@@ -101,8 +108,6 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     verifyPeer = config["verifyPeer"].asBool();
     verifyHost = config["verifyHost"].asBool();
 
-    // Load venues.csv path from config
-    venuesCsvPath = confPaths::mockVenuesCsvPath;
 #else
     Json::Value config;
     ifstream configFile(confPaths::configJsonPath);
@@ -124,8 +129,6 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     verifyPeer = config["verifyPeer"].asBool();
     verifyHost = config["verifyHost"].asBool();
 
-    // Load venues.csv path from config
-    venuesCsvPath = confPaths::venuesCsvPath;
 #endif
 
 // SMTP/Mail Encryption/Decryption
