@@ -253,10 +253,9 @@ int main() {
 
                                 // Update the progress
                                 curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
-
-                                // Display email sending progress
-                                emailManager.viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort);
                             }
+                            // Display email sending progress
+                            emailManager.viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort);
 
                             filteredVenues.clear(); // Clear the filtered venues for the next round of emails
                             selectedVenuesForEmail.clear();  // Clear the selected venues after sending the emails
