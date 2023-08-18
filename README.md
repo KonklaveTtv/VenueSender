@@ -10,7 +10,7 @@ To run this project, you need the following installed on your system:
 
 - GCC (GNU Compiler Collection)
 - C++17 compatible compiler
-- JSONCpp library
+- libjsoncpp
 - libcurl
 - libsodium
 - Catch2
@@ -18,9 +18,13 @@ To run this project, you need the following installed on your system:
 ### Dependencies
 
       sudo apt-get update
-      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libsodium-dev catch2
+      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libsodium-dev
 
-### Installation
+Install this dependency if you wish to run unit tests:
+
+      catch2
+
+### Installation (without tests)
 
 1. Clone the repository:
 
@@ -35,13 +39,26 @@ Compile the project:
 
       make
 
-Running VenueSender:
 
-      ./venuesender
+### Installation (with tests)
+
+2. Clone the repository:
+
+      git clone https://github.com/konklavettv/venuesender.git
+
+
+Navigate to the project directory:
+
+      cd venuesender
+
+Compile the project:
+
+      make test
+
 
 ### Usage
 
-1. Prepare your config.json file with the necessary SMTP and email settings:
+3. Prepare your config.json file with the necessary SMTP and email settings:
             
             ```
             {
@@ -59,7 +76,7 @@ Running VenueSender:
             }
             ```
 
-2. Prepare a venues.csv file with the list of venues in the following format:
+4. Prepare a venues.csv file with the list of venues in the following format:
 
       ```
       Venue1,venue1@mock.com,all,AL,Daphne,100
@@ -67,7 +84,7 @@ Running VenueSender:
       ```
 
 
-3. Run the Venue Sender:
+5. Run VenueSender:
 
       ./venuesender
 
@@ -76,10 +93,17 @@ The program will prompt you to select filter options and compose the email subje
 
 ### Running Tests
 
-To run the unit tests, execute:
+To run the test binary
+
+      ./bin/venuesender 
+
+To run the unit tests, either execute:
 
       ./run_tests.sh
 
+or execute:
+
+      ./bin/venuesender_test -s
 
 ### Contributing
 
