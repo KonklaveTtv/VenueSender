@@ -3,7 +3,6 @@
 
 #include "mail.h"
 #include "structs.h"
-#include "templates.h"
 
 #include <algorithm>
 #include <iomanip>
