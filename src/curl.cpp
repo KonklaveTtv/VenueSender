@@ -6,7 +6,7 @@ using namespace std;
 /*-------------------*/
 int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
     if (dltotal > 0) {
-        double progress = (dlnow / dltotal) * 100;
+        progress= (dlnow / dltotal) * 100;
         if (progress <= 100) {
             cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
         }
@@ -96,7 +96,7 @@ void CurlHandleWrapper::clearEmailBeingSent() {
 }
 
 CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose, 
-                      const string& senderEmail, const string& smtpUsername, const string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
+                      const string& senderEmail, const string& smtpUsername, string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
 
     CURL* curl = curlWrapper.get();
     if (!curl) {

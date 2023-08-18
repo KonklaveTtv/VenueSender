@@ -58,7 +58,7 @@ private:
 
 // Set up the CURL handle with appropriate options
 CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
-                                        const std::string& senderEmail, const std::string& smtpUsername, const std::string& mailPassDecrypted, int smtpPort, const std::string& smtpServer);
+                                        const std::string& senderEmail, const std::string& smtpUsername, std::string& mailPassDecrypted, int smtpPort, const std::string& smtpServer);
 
 // Check the result of a CURL operation and print an error message if necessary
 bool checkCurlError(CURLcode res, const char* errorMessage);
