@@ -7,7 +7,6 @@
 #include <regex>
 #include <thread>
 
-
 class EmailManager {
 public:
 // Define enums for return codes

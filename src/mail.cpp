@@ -167,7 +167,9 @@ void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVen
         // Send the individual email with progress tracking
         sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort);
 
-        curlWrapper.setEmailBeingSent(""); // Reset the value of emailBeingSent
+        this_thread::sleep_for(chrono::milliseconds(100));
+        
+        curlWrapper.clearEmailBeingSent();
     }
 
     curlWrapper.cleanup();

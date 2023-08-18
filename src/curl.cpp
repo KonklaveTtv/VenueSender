@@ -14,7 +14,6 @@ int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, doubl
     return 0;
 }
 
-
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
     string* payload = static_cast<string*>(userp);
     size_t totalsize = size * nmemb;
@@ -88,6 +87,11 @@ void CurlHandleWrapper::setEmailBeingSent(const std::string& email) {
 std::string CurlHandleWrapper::getEmailBeingSent() const {
     std::lock_guard<std::mutex> lock(mtx);
     return emailBeingSent;
+}
+
+void CurlHandleWrapper::clearEmailBeingSent() {
+    std::lock_guard<std::mutex> lock(mtx);
+    emailBeingSent.clear();
 }
 
 CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost,
