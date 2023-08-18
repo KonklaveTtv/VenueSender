@@ -14,7 +14,7 @@ string EmailManager::getCurrentDateRfc2822() {
     return buffer;
 }
 
-string EmailManager::sanitizeSubject(const string& subject) {
+string EmailManager::sanitizeSubject(string& subject) {
     string sanitized = subject;
     replace(sanitized.begin(), sanitized.end(), '\n', ' '); // replace newlines with spaces
     replace(sanitized.begin(), sanitized.end(), '\r', ' '); // replace carriage returns with spaces
@@ -115,7 +115,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                         const SelectedVenue& selectedVenue,
                         const string& senderEmail,
                         string& subject,
-                        const string& message,
+                        string& message,
                         const string& smtpServer,
                         int smtpPort) {
 
@@ -196,7 +196,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
                               const string& senderEmail,
                               string& subject,
-                              const string& message,
+                              string& message,
                               const string& smtpServer,
                               int smtpPort) {
     if(!isValidEmail(senderEmail)) {

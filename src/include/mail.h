@@ -24,7 +24,7 @@ static const int MAX_SUBJECT_LENGTH = 50; // Maximum length for an email address
 
 std::string getCurrentDateRfc2822();
 
-std::string sanitizeSubject(const std::string& subject);
+std::string sanitizeSubject(std::string& subject);
 
 // Function to display the email settings set in config.json to the user
 void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, 
@@ -42,7 +42,7 @@ bool sendIndividualEmail(CURL* curl,
                         const SelectedVenue& selectedVenue,
                         const std::string& senderEmail,
                         std::string& subject,
-                        const std::string& message,
+                        std::string& message,
                         const std::string& smtpServer,
                         int smtpPort);
 
@@ -50,7 +50,7 @@ bool sendIndividualEmail(CURL* curl,
 void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
                               const std::string& senderEmail,
                               std::string& subject,
-                              const std::string& message,
+                              std::string& message,
                               const std::string& smtpServer,
                               int smtpPort);
 };
