@@ -260,10 +260,10 @@ int main() {
                             }
 
                             filteredVenues.clear(); // Clear the filtered venues for the next round of emails
+                            selectedVenuesForEmail.clear();  // Clear the selected venues after sending the emails
                             subject.clear(); // Reset subject
                             message.clear(); // Reset message
                             break; // Break out of the inner loop after sending
-
                         } else {
                             ConsoleUtils::clearConsole();
                             cout << "Email saved for sending/editing." << endl;
