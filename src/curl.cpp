@@ -4,30 +4,32 @@ using namespace std;
 
 /* CurlHandleWrapper*/
 /*-------------------*/
-int CurlHandleWrapper::progressCallback(void* clientp, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
-    auto* instance = static_cast<CurlHandleWrapper*>(clientp);
-
+int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
     if (dltotal > 0) {
-        instance->progress = (dlnow / dltotal) * 100;  // set the progress here
-        if (instance->progress <= 100) {
-            cout << "Email sending progress: " << instance->progress << "% (" << instance->getEmailBeingSent() << ")" << endl;
+        double progress = (dlnow / dltotal) * 100;
+        if (progress <= 100) {
+            cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
         }
     }
     return 0;
 }
 
+
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
-    auto* payload = static_cast<std::string*>(userp);
+    string* payload = static_cast<string*>(userp);
     size_t totalsize = size * nmemb;
 
-    if (!payload->empty()) {
+    if (payload->size()) {
+        // Calculate the size of data to copy to ptr
         size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
-        memcpy(ptr, payload->c_str(), toCopy);
-        payload->erase(0, toCopy);
+
+        memcpy(ptr, payload->c_str(), toCopy); // Copy data to ptr
+        payload->erase(0, toCopy); // Remove the portion that has been read from the payload
+
         return toCopy;
     }
 
-    return 0;
+    return 0; // Return 0 to signify no data left to read
 }
 
 void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyHost) {
