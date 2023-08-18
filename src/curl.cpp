@@ -35,7 +35,7 @@ void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyH
     if (useSSL) {
         curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
     } else {
-        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_NONE);  // no SSL
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY); // try or no SSL
     }
 
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, verifyPeer ? 1L : 0L);

@@ -4,6 +4,23 @@ using namespace std;
 
 CurlHandleWrapper curlWrapper;
 
+string EmailManager::getCurrentDateRfc2822() {
+    char buffer[100];
+    time_t now;
+    struct tm *tm_now;
+    time(&now);
+    tm_now = gmtime(&now);
+    strftime(buffer, sizeof buffer, "%a, %d %b %Y %H:%M:%S %Z", tm_now);
+    return buffer;
+}
+
+string EmailManager::sanitizeSubject(const string& subject) {
+    string sanitized = subject;
+    replace(sanitized.begin(), sanitized.end(), '\n', ' '); // replace newlines with spaces
+    replace(sanitized.begin(), sanitized.end(), '\r', ' '); // replace carriage returns with spaces
+    return sanitized;
+}
+
 void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost,
                        const string& senderEmail, const string& mailPassDecrypted,
                        int smtpPort, const string& smtpServer) {
@@ -57,6 +74,7 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
     do {
         cout << "Enter subject for the email: ";
         getline(in, subject);
+        subject = sanitizeSubject(subject);  // Sanitize the subject
     } while (subject.empty());
 
     const int maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
@@ -84,16 +102,24 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
             cout << "Message cannot be blank. Please enter a message." << endl;
         }
     } while (message.empty());
+
+    size_t pos = 0;
+    while ((pos = message.find("\n.\n", pos)) != string::npos) {
+    message.replace(pos + 1, 1, "..");
+    pos += 3;
+}
 }
 
 // Function to send an individual email to a recipient with custom subject and message using libcurl
 bool EmailManager::sendIndividualEmail(CURL* curl,
                         const SelectedVenue& selectedVenue,
                         const string& senderEmail,
-                        const string& subject,
+                        string& subject,
                         const string& message,
                         const string& smtpServer,
                         int smtpPort) {
+
+
     // Set the value of emailBeingSent
     curlWrapper.setEmailBeingSent(selectedVenue.email);
 
@@ -104,11 +130,17 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     }
 
     cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
+    this_thread::sleep_for(chrono::milliseconds(1000));
 
     // Set the recipient email address
     struct curl_slist* recipients = nullptr;
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+    
+    const int maxSubjectHeaderLength = 68; // 78 - "Subject: ".length()
+    if (subject.length() > maxSubjectHeaderLength) {
+        subject = subject.substr(0, maxSubjectHeaderLength - 3) + "...";
+    }
 
     // Construct headers for the email content
     string toHeader = "To: " + selectedVenue.email;
@@ -116,18 +148,31 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     string subjectHeader = "Subject: " + subject;
 
     struct curl_slist* headers = nullptr;
+    string dateHeader = "Date: " + getCurrentDateRfc2822();
+    headers = curl_slist_append(headers, dateHeader.c_str());
     headers = curl_slist_append(headers, toHeader.c_str());
     headers = curl_slist_append(headers, fromHeader.c_str());
     headers = curl_slist_append(headers, subjectHeader.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     // Set the email body (message) with the desired formatting
-    string payload = "\r\n" + message; // Make sure the message starts on a new line
+    string payload = dateHeader + "\r\n" + 
+                 toHeader + "\r\n" + 
+                 fromHeader + "\r\n" + 
+                 subjectHeader + "\r\n\r\n" + 
+                 message; 
+    size_t pos = 0;
+    while((pos = payload.find('\n', pos)) != string::npos) {
+        payload.replace(pos, 1, "\r\n");
+        pos += 2;  // Skip the newly added characters to avoid infinite loop
+    }
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback); // Set custom read function
     curl_easy_setopt(curl, CURLOPT_READDATA, &payload); // Pass the message string to the read function
     curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
 
     cout << "Authenticating with SMTP server..." << endl;
+
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
     // Perform the email sending
     CURLcode res = curl_easy_perform(curl);
@@ -150,7 +195,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
 void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
                               const string& senderEmail,
-                              const string& subject,
+                              string& subject,
                               const string& message,
                               const string& smtpServer,
                               int smtpPort) {
@@ -167,8 +212,6 @@ void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVen
         // Send the individual email with progress tracking
         sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort);
 
-        this_thread::sleep_for(chrono::milliseconds(100));
-        
         curlWrapper.clearEmailBeingSent();
     }
 

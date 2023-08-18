@@ -4,6 +4,7 @@
 #include "fileutils.h"
 
 #include <chrono>
+#include <ctime>
 #include <regex>
 #include <thread>
 
@@ -21,6 +22,10 @@ enum class ReturnCode {
 static const int MAX_EMAIL_LENGTH = 500; // Maximum length for an email address, adjust as needed
 static const int MAX_SUBJECT_LENGTH = 50; // Maximum length for an email address, adjust as needed
 
+std::string getCurrentDateRfc2822();
+
+std::string sanitizeSubject(const std::string& subject);
+
 // Function to display the email settings set in config.json to the user
 void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, 
                        const std::string& senderEmail, const std::string& mailPassDecrypted,
@@ -36,7 +41,7 @@ void constructEmail(std::string &subject, std::string &message, std::istream &in
 bool sendIndividualEmail(CURL* curl,
                         const SelectedVenue& selectedVenue,
                         const std::string& senderEmail,
-                        const std::string& subject,
+                        std::string& subject,
                         const std::string& message,
                         const std::string& smtpServer,
                         int smtpPort);
@@ -44,7 +49,7 @@ bool sendIndividualEmail(CURL* curl,
 // Function to view the progress of email sending done by sendIndividualEmail()
 void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
                               const std::string& senderEmail,
-                              const std::string& subject,
+                              std::string& subject,
                               const std::string& message,
                               const std::string& smtpServer,
                               int smtpPort);
