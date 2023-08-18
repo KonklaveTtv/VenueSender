@@ -312,6 +312,10 @@ int main() {
         // to reset the flags and passwords in the config.json file
         configManager.resetConfigFile();  
 
+
+        // cURL library cleanup
+        CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
+
     return 0;
 }
 #endif // UNIT_TESTING

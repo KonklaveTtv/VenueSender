@@ -172,11 +172,5 @@ void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVen
         curlWrapper.clearEmailBeingSent();
     }
 
-    curlWrapper.cleanup();
-
     cout << "Email sending progress completed." << endl;
-    cout << "Press return to go back to Main Menu." << endl;
-    cin.ignore();
-    ConsoleUtils::clearInputBuffer();
-    cin.get();
 }

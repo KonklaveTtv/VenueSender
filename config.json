@@ -1,10 +1,10 @@
 {
 	"email_pass_encrypted" : false,
 	"email_password" : "enter_email_password",
-	"sender_email" : "enter_your_sender_email", // Replace with your sender email address
+	"sender_email" : "spencerlievens@gmail.com", // Replace with your sender email address
 	"smtp_port" : 587, // Replace with your SMTP port number (i.e. 587, 443)
-	"smtp_server" : "enter_your_smtp_server", // Replace with your SMTP server address
-	"smtp_username" : "enter_your_smtp_username", // Replace with your SMTP username
+	"smtp_server" : "smtp.gmail.com", // Replace with your SMTP server address
+	"smtp_username" : "spencerlievens@gmail.com", // Replace with your SMTP username
 	"useSSL" : false, // Set to true or false
 	"venues_csv_path" : "venues.csv", // Provide the path to your venues CSV file
 	"verifyHost" : false,
