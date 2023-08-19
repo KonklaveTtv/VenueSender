@@ -4,7 +4,6 @@
 #include "fileutils.h"
 #include "structs.h"
 
-#include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <set>

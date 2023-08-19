@@ -5,8 +5,6 @@
 
 #include <iostream>
 
-
-
 class ErrorHandler {
 public:
     enum class ErrorType {

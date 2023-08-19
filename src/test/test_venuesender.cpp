@@ -12,8 +12,6 @@
 
 #include "catch.hpp"
 
-#include <cstdlib>
-
 using namespace std;
 
 class CinGuard {

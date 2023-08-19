@@ -1,7 +1,7 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
-#include <string>
+#include <iostream>
 
 // Venue structure
 struct Venue {
