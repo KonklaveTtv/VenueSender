@@ -23,6 +23,12 @@ bool MenuManager::isValidMenuChoice(int choice) {
            choice <= static_cast<int>(MenuOption::Exit);
 }
 
+void MenuManager::displayErrorAndPause(const string& errorMessage, istream& input, ostream& output) {
+    output << errorMessage << endl;
+    ConsoleUtils::clearInputBuffer();
+    input.get();
+}
+
 // Function to display the menu to the user
 int MenuManager::displayMenuOptions() {
 #ifdef UNIT_TESTING

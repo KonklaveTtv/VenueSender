@@ -74,8 +74,8 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
         subject = ConsoleUtils::trim(subject); // To remove trailing space
     } while (subject.empty());
 
-    const std::string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
-    const std::string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
+    const string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
+    const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
         cout << "Subject cannot be longer than 50 characters in length." << endl;

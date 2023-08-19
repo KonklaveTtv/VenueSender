@@ -22,7 +22,7 @@ int main() {
     VenueUtilities venueUtilities;
 
     // Load the config settings from the JSON file
-    std::string venuesPathCopy = confPaths::venuesCsvPath;
+    string venuesPathCopy = confPaths::venuesCsvPath;
     if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately

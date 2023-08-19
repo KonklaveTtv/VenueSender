@@ -5,10 +5,10 @@ using namespace std;
 EncryptionManager encryptionManager;
 
 namespace confPaths {
-std::string venuesCsvPath = "venues.csv";
-std::string configJsonPath = "config.json";
-std::string mockVenuesCsvPath = "src/test/mock_venues.csv";
-std::string mockConfigJsonPath = "src/test/mock_config.json";
+string venuesCsvPath = "venues.csv";
+string configJsonPath = "config.json";
+string mockVenuesCsvPath = "src/test/mock_venues.csv";
+string mockConfigJsonPath = "src/test/mock_config.json";
 }
 
 // Function to trim leading and trailing spaces from a string
@@ -81,9 +81,9 @@ ConfigManager::ConfigManager() {}
 
 // Function to load the settings config.json data and encrypt and decrypt email password
 bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
-                                       std::string& senderEmail, std::string& smtpUsername, 
-                                       std::string& mailPass, int& smtpPort, std::string& smtpServer, 
-                                       std::string& venuesCsvPath) {
+                                       string& senderEmail, string& smtpUsername, 
+                                       string& mailPass, int& smtpPort, string& smtpServer, 
+                                       string& venuesCsvPath) {
 
     // Load configuration settings from config.json into respective variables
     // Return true if successful, false otherwise
@@ -254,9 +254,9 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 void ConfigManager::resetConfigFile() {
     Json::Value config;
 
-    std::string configPath = confPaths::configJsonPath;
-    std::string emailPasswordKey = "email_password";
-    std::string isEmailPassEncryptedKey = "email_pass_encrypted";
+    string configPath = confPaths::configJsonPath;
+    string emailPasswordKey = "email_password";
+    string isEmailPassEncryptedKey = "email_pass_encrypted";
 
 #ifdef UNIT_TESTING
     configPath = confPaths::mockConfigJsonPath;

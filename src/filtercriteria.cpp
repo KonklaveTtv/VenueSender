@@ -2,6 +2,8 @@
 
 using namespace std;
 
+MenuManager menuManager;
+
 // Convert Venue to SelectedVenue
 SelectedVenue VenueUtilities::convertToSelectedVenue(const Venue& venue) {
     // Create a SelectedVenue instance based on Venue data
@@ -188,15 +190,15 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
     }
 
     cout << "Enter comma-separated indices of options to select: ";
-    string input;
+    string userInput;
     ConsoleUtils::clearInputBuffer();
-    getline(input, userInput);
+    menuManager.displayErrorAndPause("Invalid index format. Skipping.", cin, cout);
 
     cout << endl; // Add a line of space
 
     // Validate and process the user's input
     vector<size_t> selectedIndices;
-    istringstream iss(input);
+    istringstream iss(userInput);
     string indexStr;
     while (getline(iss, indexStr, CSV_DELIMITER)) {
         try {
@@ -204,9 +206,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
             cout << "Invalid index. Skipping." << endl;
-            cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
-            cin.get();     // This will wait for a key press            
+            menuManager.displayErrorAndPause("Invalid index format. Skipping.", cin, cout);            
         }
     }
 
@@ -256,15 +256,15 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
     }
 
     cout << "Enter comma-separated indices of options to select: ";
-    string input;
+    string userInput;
     ConsoleUtils::clearInputBuffer();
-    getline(input, userInput);
+    getline(cin, userInput);
 
     cout << endl; // Add a line of space
 
     // Validate and process the user's input
     vector<size_t> selectedIndices;
-    istringstream iss(input);
+    istringstream iss(userInput);
     string indexStr;
     while (getline(iss, indexStr, CSV_DELIMITER)) {
         try {

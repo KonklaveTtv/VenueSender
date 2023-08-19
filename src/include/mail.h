@@ -8,6 +8,8 @@
 #include <regex>
 #include <thread>
 
+#include "menu.h"
+
 class EmailManager {
 public:
 // Define enums for return codes
