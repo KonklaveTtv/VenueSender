@@ -2,8 +2,6 @@
 
 using namespace std;
 
-EncryptionManager encryptionManager;
-
 namespace confPaths {
 std::string venuesCsvPath = "venues.csv";
 std::string configJsonPath = "config.json";

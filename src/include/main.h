@@ -1,8 +1,9 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "menu.h"
-#include "curl.h"
 #include "fileutils.h"
+#include "filtercriteria.h"
+#include "mail.h"
+#include "errorhandler.h"
 
 #endif // MAIN_H

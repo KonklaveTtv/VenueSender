@@ -2,7 +2,8 @@
 
 using namespace std;
 
-CurlHandleWrapper curlWrapper;
+CurlHandleWrapper curlHandleWrapper;
+ErrorHandler errorHandler;
 
 string EmailManager::getCurrentDateRfc2822() {
     char buffer[100];
@@ -36,9 +37,7 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "verbose: " << (verbose ? "true" : "false") << endl;    
 cout << "==========================" << endl;
 #ifndef UNIT_TESTING
-    cout << "Press return to go to Main Menu" << endl;
-    ConsoleUtils::clearInputBuffer();
-    cin.get();     // This will wait for a key press
+    errorHandler.showInfoAndReturn();
 #endif
 }
 
@@ -83,7 +82,7 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
         cout << "Press return to go back..." << endl;
         cin.ignore();  // If there's a chance you might have used cin before this point
         ConsoleUtils::clearInputBuffer();
-        cin.get();     // This will wait for a key press     
+        cin.get();     // This will wait for a key press
 #endif
         subject.clear(); // Clear the subject if it's too long.
         return;
@@ -148,11 +147,11 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
 
     // Set the value of emailBeingSent
-    curlWrapper.setEmailBeingSent(selectedVenue.email);
+    curlHandleWrapper.setEmailBeingSent(selectedVenue.email);
 
     // Set up and send an email using libcurl
     if (!curl) {
-        cerr << "Failed to initialize libcurl." << endl;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return false;
     }
 

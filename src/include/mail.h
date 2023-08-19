@@ -1,7 +1,11 @@
 #ifndef MAIL_H
 #define MAIL_H
 
+#include "curl.h"
 #include "fileutils.h"
+#include "menu.h"
+#include "errorhandler.h"
+#include "structs.h"
 
 #include <chrono>
 #include <ctime>

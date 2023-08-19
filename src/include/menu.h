@@ -1,8 +1,12 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "encryption.h"
-#include "filtercriteria.h"
+#include "errorhandler.h"
+#include "fileutils.h"
+#include "structs.h"
+
+#include <iostream>
+#include <vector>
 
 class MenuManager {
 public:
@@ -34,9 +38,6 @@ public:
     static const int VIEW_EDIT_EMAILS_OPTION;
     static const int FINISH_AND_SEND_EMAILS_OPTION;
     static const int EXIT_OPTION;
-
-    // Function to show info to user before returning
-    void showInfoAndReturn();
 
     // Function to validate user input
     bool isValidMenuChoice(int choice);

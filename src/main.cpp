@@ -3,6 +3,15 @@
 using namespace confPaths;
 using namespace std;
 
+ConfigManager configManager;
+CsvReader csvReader;
+CurlHandleWrapper curlWrapper;
+EmailManager emailManager;
+EncryptionManager encryptionManager;
+MenuManager menuManager;
+VenueFilter venueFilter;
+VenueUtilities venueUtilities;
+
 // Exclude the following code block if UNIT_TESTING is defined
 #ifndef UNIT_TESTING
 
@@ -13,30 +22,23 @@ int main() {
     int smtpPort;
     bool useSSL, verifyPeer, verifyHost, verbose;
 
-    ConfigManager configManager;
-    CsvReader csvReader;
-    EncryptionManager encryptionManager;
-    EmailManager emailManager;
-    MenuManager menuManager;
-    VenueFilter venueFilter;
-    VenueUtilities venueUtilities;
-
     // Load the config settings from the JSON file
     std::string venuesPathCopy = confPaths::venuesCsvPath;
     if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
-        cerr << "Failed to load configuration settings from config.json." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
         exit(1); // Handle the error appropriately
     }
 
     // Attempt to decrypt the stored password
     mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
-        cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::DECRYPTION_ERROR);
         exit(1);  // Exit with an error status
     }
 
     // Set up and initialize CURL
-    CurlHandleWrapper curlWrapper;
     CurlHandleWrapper::init();
     CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
     if (!curl) {
@@ -100,7 +102,8 @@ int main() {
                 ConsoleUtils::clearConsole();
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl;
-                menuManager.showInfoAndReturn();              
+                ErrorHandler errorHandler;
+                errorHandler.showInfoAndReturn();              
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
                 ConsoleUtils::clearConsole();
@@ -132,7 +135,8 @@ int main() {
                             emailManager.constructEmail(subject, message, cin);
                             modified = true;
                         } catch (const exception& e) {
-                            cerr << "An error occurred while entering subject and message: " << e.what() << endl;
+                            ErrorHandler errorHandler;
+                            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
                             subject.clear(); // Clear existing subject
                             message.clear(); // Clear existing message
                             attempts++; // Increment the attempts
@@ -141,7 +145,8 @@ int main() {
                     } else {
                         ConsoleUtils::clearConsole();
                         cout << "Email saved for sending/editing." << endl;
-                        menuManager.showInfoAndReturn();
+                        ErrorHandler errorHandler;
+                        errorHandler.showInfoAndReturn();
                         break;
                     }
 
@@ -152,13 +157,15 @@ int main() {
                         try {
                             emailManager.constructEmail(subject, message, cin);
                         } catch (const exception& e) {
-                            cerr << "An error occurred while entering subject and message: " << e.what() << endl;
+                            ErrorHandler errorHandler;
+                            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
                             subject.clear(); // Clear existing subject
                             message.clear(); // Clear existing message
                             attempts++; // Increment the attempts
                             if (attempts >= 3) {
                                 cout << "Too many unsuccessful attempts." << endl;
-                                menuManager.showInfoAndReturn();
+                                ErrorHandler errorHandler;
+                                errorHandler.showInfoAndReturn();
                                 break; // Break out of the loop after too many attempts
                             }
                             continue; // Loop back to prompt for email details again
@@ -175,7 +182,8 @@ int main() {
                 if (selectedVenuesForEmail.empty()) {
                     ConsoleUtils::clearConsole();
                     cout << "No venues selected. Please add venues before sending emails." << endl;
-                    menuManager.showInfoAndReturn();
+                    ErrorHandler errorHandler;
+                    errorHandler.showInfoAndReturn();
                     continue; // Return to the main menu
                 }
 
@@ -187,7 +195,8 @@ int main() {
                         try {
                             emailManager.constructEmail(subject, message, cin);
                         } catch (const exception& e) {
-                            cerr << "An error occurred while entering subject and message: " << e.what() << endl;
+                            ErrorHandler errorHandler;
+                            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
                             subject.clear(); // Clear existing subject
                             message.clear(); // Clear existing message
                             attempts++; // Increment the attempts
@@ -219,7 +228,8 @@ int main() {
                         try {
                             emailManager.constructEmail(subject, message, cin);
                         } catch (const exception& e) {
-                            cerr << "An error occurred while entering subject and message: " << e.what() << endl;
+                            ErrorHandler errorHandler;
+                            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
                             subject.clear(); // Clear existing subject
                             message.clear(); // Clear existing message
                             continue; // Loop back to prompt for email details again
@@ -257,7 +267,8 @@ int main() {
                         } else {
                             ConsoleUtils::clearConsole();
                             cout << "Email saved for sending/editing." << endl;
-                            menuManager.showInfoAndReturn();
+                            ErrorHandler errorHandler;
+                            errorHandler.showInfoAndReturn();
                             break; // Break out of the inner loop without sending
                         }
                     }
