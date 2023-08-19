@@ -80,18 +80,18 @@ void CurlHandleWrapper::cleanup() {
 }
 
 // Setter for emailBeingSent
-void CurlHandleWrapper::setEmailBeingSent(const string& email) {
-    lock_guard<mutex> lock(mtx);
+void CurlHandleWrapper::setEmailBeingSent(const std::string& email) {
+    std::lock_guard<std::mutex> lock(mtx);
     emailBeingSent = email;
 }
 
-string CurlHandleWrapper::getEmailBeingSent() const {
-    lock_guard<mutex> lock(mtx);
+std::string CurlHandleWrapper::getEmailBeingSent() const {
+    std::lock_guard<std::mutex> lock(mtx);
     return emailBeingSent;
 }
 
 void CurlHandleWrapper::clearEmailBeingSent() {
-    lock_guard<mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
     emailBeingSent.clear();
 }
 
@@ -100,12 +100,12 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
 
     CURL* curl = curlWrapper.get();
     if (!curl) {
-        cerr << "Failed to initialize libcurl." << endl;
+        std::cerr << "Failed to initialize libcurl." << std::endl;
         return nullptr;
     }
     
     // SMTP server configuration
-    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
+    std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 
     // SMTP authentication

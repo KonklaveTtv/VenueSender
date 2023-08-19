@@ -2,7 +2,6 @@
 #define FILTERCRITERIA_H
 
 #include "mail.h"
-#include "menu.h"
 #include "structs.h"
 
 #include <algorithm>

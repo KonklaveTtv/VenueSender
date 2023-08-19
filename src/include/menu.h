@@ -4,8 +4,6 @@
 #include "encryption.h"
 #include "filtercriteria.h"
 
-#include <iostream>
-
 class MenuManager {
 public:
 
@@ -40,14 +38,11 @@ public:
     // Function to validate user input
     bool isValidMenuChoice(int choice);
 
-    // Function to allow the user time to see the error messages
-    void displayErrorAndPause(const std::string& errorMessage, std::istream& input = std::cin, std::ostream& output = std::cout);
-
     // Function to display the menu to the user
-    int displayMenuOptions(std::istream& input = std::cin, std::ostream& output = std::cout);
+    int displayMenuOptions();
 
     // Function to display selected venues to the user
-    void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues, std::istream& input = std::cin, std::ostream& output = std::cout);
+    void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
 };
 
 #endif // MENU_H

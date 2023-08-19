@@ -23,44 +23,33 @@ bool MenuManager::isValidMenuChoice(int choice) {
            choice <= static_cast<int>(MenuOption::Exit);
 }
 
-void MenuManager::displayErrorAndPause(const string& errorMessage, istream& input, ostream& output) {
-    output << errorMessage << endl;
-    ConsoleUtils::clearInputBuffer(input);
-    input.get();
-}
-
 // Function to display the menu to the user
-int MenuManager::displayMenuOptions(std::istream& input, std::ostream& output) {
+int MenuManager::displayMenuOptions() {
 #ifdef UNIT_TESTING
     int choice;
     do {
-        output << "====================="<< endl;
-        output << "===== Main Menu =====" << endl;
-        output << "====================="<< endl;
-        output << static_cast<int>(MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
-        output << static_cast<int>(MenuOption::FilterByState) << ". Filter by State" << endl;
-        output << static_cast<int>(MenuOption::FilterByCity) << ". Filter by City" << endl;
-        output << static_cast<int>(MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
-        output << static_cast<int>(MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
-        output << static_cast<int>(MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
-        output << static_cast<int>(MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
-        output << static_cast<int>(MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
-        output << static_cast<int>(MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
-        output << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
-        output << "Enter your choice: ";
+        cout << "====================="<< endl;
+        cout << "===== Main Menu =====" << endl;
+        cout << "====================="<< endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FilterByState) << ". Filter by State" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FilterByCity) << ". Filter by City" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::Exit) << ". Exit VenueSender" << endl;
+        cout << "Enter your choice: ";
 
-        if (!(input >> choice)) {
-            output << "Invalid input, please enter a number. Press return to retry..." << endl;
-            input.ignore();
-            input.get();
+        if (!(cin >> choice)) {
+            cout << "Invalid input, please enter a number." << endl;
         } else if (!isValidMenuChoice(choice)) {
-            output << "Invalid choice. Please enter a number between " 
-                 << static_cast<int>(MenuOption::FilterByGenre) 
+            cout << "Invalid choice. Please enter a number between " 
+                 << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
                  << " and " 
-                 << static_cast<int>(MenuOption::Exit) << "." << endl;
-            output << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer(input);
-            input.get();
+                 << static_cast<int>(MenuManager::MenuOption::Exit) << "." << endl;
         } else {
             break;
         }
@@ -70,33 +59,33 @@ int MenuManager::displayMenuOptions(std::istream& input, std::ostream& output) {
 #else
     int choice;
     do {
-        output << "====================="<< endl;
-        output << "===== Main Menu =====" << endl;
-        output << "====================="<< endl;
-        output << static_cast<int>(MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
-        output << static_cast<int>(MenuOption::FilterByState) << ". Filter by State" << endl;
-        output << static_cast<int>(MenuOption::FilterByCity) << ". Filter by City" << endl;
-        output << static_cast<int>(MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
-        output << static_cast<int>(MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
-        output << static_cast<int>(MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
-        output << static_cast<int>(MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
-        output << static_cast<int>(MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
-        output << static_cast<int>(MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
-        output << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
-        output << "Enter your choice: ";
+        cout << "====================="<< endl;
+        cout << "===== Main Menu =====" << endl;
+        cout << "====================="<< endl;
+        cout << static_cast<int>(MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
+        cout << static_cast<int>(MenuOption::FilterByState) << ". Filter by State" << endl;
+        cout << static_cast<int>(MenuOption::FilterByCity) << ". Filter by City" << endl;
+        cout << static_cast<int>(MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
+        cout << static_cast<int>(MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
+        cout << static_cast<int>(MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
+        cout << static_cast<int>(MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
+        cout << static_cast<int>(MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
+        cout << static_cast<int>(MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
+        cout << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
+        cout << "Enter your choice: ";
 
-        if (!(input >> choice)) {
-            output << "Invalid input, please enter a number. Press return to retry..." << endl;
-            input.ignore();
-            input.get();
+        if (!(cin >> choice)) {
+            cout << "Invalid input, please enter a number. Press return to retry..." << endl;
+            cin.ignore();  // If there's a chance you might have used cin before this point
+            cin.get();     // This will wait for a key press
         } else if (!isValidMenuChoice(choice)) {
-            output << "Invalid choice. Please enter a number between " 
+            cout << "Invalid choice. Please enter a number between " 
                  << static_cast<int>(MenuOption::FilterByGenre) 
                  << " and " 
                  << static_cast<int>(MenuOption::Exit) << "." << endl;
-            output << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer(input);
-            input.get();
+            cout << "Press return to continue..." << endl;
+            ConsoleUtils::clearInputBuffer();
+            cin.get();     // This will wait for a key press
         } else {
             break;
         }
@@ -106,24 +95,26 @@ int MenuManager::displayMenuOptions(std::istream& input, std::ostream& output) {
 #endif
 }
 
-void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues, istream& /*input*/, ostream& output) {
-    output << "==========================="<< endl;
-    output << "===== Selected Venues =====" << endl;
-    output << "==========================="<< endl;
+// Function to display selected venues to the user
+void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
+    cout << "==========================="<< endl;
+    cout << "===== Selected Venues =====" << endl;
+    cout << "==========================="<< endl;
     if (selectedVenues.empty()) {
-        output << "No venues selected yet." << endl;
+        cout << "No venues selected yet." << endl;
     } else {
         for (const auto& venue : selectedVenues) {
-            output << "Name: " << venue.name << endl;
-            output << "Email: " << venue.email << endl;
-            output << "City: " << venue.city << endl;
-            output << "--------------------------" << endl;
+            cout << "Name: " << venue.name << endl;
+            cout << "Email: " << venue.email << endl;
+            cout << "City: " << venue.city << endl;
+            cout << "--------------------------" << endl;
         }
     }
-
-    #ifndef UNIT_TESTING
-        output << "===========================" << endl;
-        output << "Press return to go back to Main Menu" << endl;
-        ConsoleUtils::clearInputBuffer(/*input*/);
-    #endif
+#ifndef UNIT_TESTING
+    cout << "===========================" << endl;
+    cout << "Press return to go back to Main Menu" << endl;
+    cin.ignore();  // Clear input buffer
+    ConsoleUtils::clearInputBuffer();
+    cin.get();     // This will wait for a key press
+#endif
 }

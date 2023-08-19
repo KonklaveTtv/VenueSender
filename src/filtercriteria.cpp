@@ -2,8 +2,6 @@
 
 using namespace std;
 
-MenuManager menuManager;
-
 // Convert Venue to SelectedVenue
 SelectedVenue VenueUtilities::convertToSelectedVenue(const Venue& venue) {
     // Create a SelectedVenue instance based on Venue data
@@ -99,7 +97,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
     if (userInput.length() > MAX_INPUT_LENGTH) {
         output << "Input too long. Please try again." << endl;
         cout << "Press return to continue..." << endl;
-        ConsoleUtils::clearInputBuffer(input);
+        ConsoleUtils::clearInputBuffer();
         cin.get();     // This will wait for a key press
         return; // Or handle the error appropriately
     }
@@ -112,7 +110,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
             if (selectedIndex == 0) {
                 output << "Invalid index format. Skipping." << endl;
                 cout << "Press return to continue..." << endl;
-                ConsoleUtils::clearInputBuffer(input);
+                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press
                 continue;
             }
@@ -134,20 +132,20 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                 } else {
                     output << "Venue already selected. Skipping." << endl;
                     cout << "Press return to continue..." << endl;
-                    ConsoleUtils::clearInputBuffer(input);
+                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                 }
             } else {
                 output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << endl;
                 cout << "Press return to continue..." << endl;
-                ConsoleUtils::clearInputBuffer(input);
+                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press  
                 continue;
             }
         } catch (const invalid_argument& e) {
             output << "Invalid input. Skipping." << endl;
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer(input);
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 
             continue;
         }
@@ -190,15 +188,15 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
     }
 
     cout << "Enter comma-separated indices of options to select: ";
-    string userInput;
-    ConsoleUtils::clearInputBuffer(cin);
-    menuManager.displayErrorAndPause("Invalid index format. Skipping.", cin, cout);
+    string input;
+    ConsoleUtils::clearInputBuffer();
+    getline(cin, input);
 
     cout << endl; // Add a line of space
 
     // Validate and process the user's input
     vector<size_t> selectedIndices;
-    istringstream iss(userInput);
+    istringstream iss(input);
     string indexStr;
     while (getline(iss, indexStr, CSV_DELIMITER)) {
         try {
@@ -206,7 +204,9 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
             cout << "Invalid index. Skipping." << endl;
-            menuManager.displayErrorAndPause("Invalid index format. Skipping.", cin, cout);            
+            cout << "Press return to continue..." << endl;
+            ConsoleUtils::clearInputBuffer();
+            cin.get();     // This will wait for a key press            
         }
     }
 
@@ -225,7 +225,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
         } else {
             cout << "Invalid index. Skipping." << endl;
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer(cin);
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press   
         }
     }
@@ -256,15 +256,15 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
     }
 
     cout << "Enter comma-separated indices of options to select: ";
-    string userInput;
-    ConsoleUtils::clearInputBuffer(cin);
-    getline(cin, userInput);
+    string input;
+    ConsoleUtils::clearInputBuffer();
+    getline(cin, input);
 
     cout << endl; // Add a line of space
 
     // Validate and process the user's input
     vector<size_t> selectedIndices;
-    istringstream iss(userInput);
+    istringstream iss(input);
     string indexStr;
     while (getline(iss, indexStr, CSV_DELIMITER)) {
         try {
@@ -273,7 +273,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
         } catch (const exception& e) {
             cout << "Invalid index format. Skipping." << endl;
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer(cin);
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 
         }
     }
@@ -291,7 +291,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
         } else {
             cout << "Invalid index: " << selectedIndex << endl;
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer(cin);
+            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 
         }
     }

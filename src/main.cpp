@@ -22,8 +22,8 @@ int main() {
     VenueUtilities venueUtilities;
 
     // Load the config settings from the JSON file
-    string venuesPathCopy = confPaths::venuesCsvPath;
-    if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy, std::cerr, std::cerr)) {
+    std::string venuesPathCopy = confPaths::venuesCsvPath;
+    if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
         cerr << "Failed to load configuration settings from config.json." << endl;
         exit(1); // Handle the error appropriately
     }
@@ -44,7 +44,7 @@ int main() {
     }
 
     // Read venues data from CSV file
-    csvReader.readCSV(venues, confPaths::venuesCsvPath, std::cerr);
+    csvReader.readCSV(venues, confPaths::venuesCsvPath);
 
     // Extract unique genres, states, cities, and capacities from the venues data
     set<string> uniqueGenres = venueUtilities.getUniqueGenres(venues);
@@ -101,7 +101,7 @@ int main() {
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl;
                 cout << "Press return to go back to the Main Menu..." << endl;
-                ConsoleUtils::clearInputBuffer(cin);
+                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press                
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
@@ -124,7 +124,7 @@ int main() {
                     cout << "Do you wish to modify this email? (Y/N): ";
                     char modifyEmailChoice;
                     cin >> modifyEmailChoice;
-                    ConsoleUtils::clearInputBuffer(cin);
+                    ConsoleUtils::clearInputBuffer();
                     ConsoleUtils::clearConsole();
                     if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
                         subject.clear(); // Clear existing subject
@@ -144,7 +144,7 @@ int main() {
                         ConsoleUtils::clearConsole();
                         cout << "Email saved for sending/editing." << endl;
                         cout << "Press return to go back to the Main Menu..." << endl;
-                        ConsoleUtils::clearInputBuffer(cin);
+                        ConsoleUtils::clearInputBuffer();
                         cin.get();
                         break;
                     }
@@ -152,7 +152,7 @@ int main() {
                     ConsoleUtils::clearConsole();
                     if (subject.empty() || message.empty()) {
                         cout << "Subject and Message are required. Please set them." << endl;
-                        ConsoleUtils::clearInputBuffer(cin);
+                        ConsoleUtils::clearInputBuffer();
                         try {
                             emailManager.constructEmail(subject, message, cin);
                         } catch (const exception& e) {
@@ -162,7 +162,7 @@ int main() {
                             attempts++; // Increment the attempts
                             if (attempts >= 3) {
                                 cout << "Too many unsuccessful attempts. Press return to go back to main menu." << endl;
-                                ConsoleUtils::clearInputBuffer(cin);
+                                ConsoleUtils::clearInputBuffer();
                                 cin.get();     // This will wait for a key press
                                 break; // Break out of the loop after too many attempts
                             }
@@ -181,7 +181,7 @@ int main() {
                     ConsoleUtils::clearConsole();
                     cout << "No venues selected. Please add venues before sending emails." << endl;
                     cout << "Press return to go back to Main Menu..." << endl;
-                    ConsoleUtils::clearInputBuffer(cin);
+                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     continue; // Return to the main menu
                 }
@@ -190,7 +190,7 @@ int main() {
                     int attempts = 0;
                     if (subject.empty() || message.empty()) {
                         cout << "Subject and Message are required. Please set them." << endl;
-                        ConsoleUtils::clearInputBuffer(cin);
+                        ConsoleUtils::clearInputBuffer();
                         try {
                             emailManager.constructEmail(subject, message, cin);
                         } catch (const exception& e) {
@@ -217,7 +217,7 @@ int main() {
                     cout << "Do you wish to modify this email? (Y/N): ";
                     char modifyEmailChoice;
                     cin >> modifyEmailChoice;
-                    ConsoleUtils::clearInputBuffer(cin);
+                    ConsoleUtils::clearInputBuffer();
 
                     if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
                         subject.clear(); // Clear existing subject
@@ -237,7 +237,7 @@ int main() {
                         cout << "Do you wish to send this email? (Y/N): ";
                         char confirmSend;
                         cin >> confirmSend;
-                        ConsoleUtils::clearInputBuffer(cin);
+                        ConsoleUtils::clearInputBuffer();
 
                         if (confirmSend == 'Y' || confirmSend == 'y') {
                             // Proceed to send emails if confirmed
@@ -265,7 +265,7 @@ int main() {
                             ConsoleUtils::clearConsole();
                             cout << "Email saved for sending/editing." << endl;
                             cout << "Press return to go back to the Main Menu..." << endl;
-                            ConsoleUtils::clearInputBuffer(cin);
+                            ConsoleUtils::clearInputBuffer();
                             cin.get();     // This will wait for a key press
                             break; // Break out of the inner loop without sending
                         }
@@ -277,13 +277,13 @@ int main() {
                 cout << "Are you sure you want to exit? (Y/N): ";
                 char confirmExit;
                 cin >> confirmExit;
-                ConsoleUtils::clearInputBuffer(cin);
+                ConsoleUtils::clearInputBuffer();
 
                 if (confirmExit == 'Y' || confirmExit == 'y') {
 
                     // Exit VenueSender
                     cout << "Exiting the program. Press return..." << endl;
-                    ConsoleUtils::clearInputBuffer(cin);
+                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     break;
                 } else if (confirmExit == 'N' || confirmExit == 'n') {
@@ -292,13 +292,13 @@ int main() {
                     // The user chose not to exit, return to the main menu
                 } else {
                     cout << "Invalid choice. Press return..." << endl;
-                    ConsoleUtils::clearInputBuffer(cin);
+                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     // The user entered an invalid choice, return to the main menu
                 }
             } else {
                 cout << "Invalid choice. Press return..." << endl;
-                ConsoleUtils::clearInputBuffer(cin);
+                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press
             }
         }
