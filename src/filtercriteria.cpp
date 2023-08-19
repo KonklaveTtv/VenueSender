@@ -190,7 +190,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
     cout << "Enter comma-separated indices of options to select: ";
     string input;
     ConsoleUtils::clearInputBuffer();
-    getline(cin, input);
+    getline(input, userInput);
 
     cout << endl; // Add a line of space
 
@@ -258,7 +258,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
     cout << "Enter comma-separated indices of options to select: ";
     string input;
     ConsoleUtils::clearInputBuffer();
-    getline(cin, input);
+    getline(input, userInput);
 
     cout << endl; // Add a line of space
 
