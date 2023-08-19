@@ -24,7 +24,6 @@ string EmailManager::sanitizeSubject(string& subject) {
 void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
                        const string& senderEmail, int smtpPort, const string& smtpServer) {
 
-#ifdef UNIT_TESTING
     cout << "=========================="<< endl;
     cout << "===== Email Settings =====" << endl;
     cout << "=========================="<< endl;
@@ -35,19 +34,8 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
     cout << "verbose: " << (verbose ? "true" : "false") << endl;    
-    cout << "==========================" << endl;
-#else
-    cout << "=========================="<< endl;
-    cout << "===== Email Settings =====" << endl;
-    cout << "=========================="<< endl;
-    cout << "SMTP Server: " << smtpServer << endl;
-    cout << "SMTP Port: " << smtpPort << endl;
-    cout << "Sender Email: " << senderEmail << endl;
-    cout << "SSL: " << (useSSL ? "true" : "false") << endl;
-    cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
-    cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
-    cout << "verbose: " << (verbose ? "true" : "false") << endl;    
-    cout << "==========================" << endl;
+cout << "==========================" << endl;
+#ifndef UNIT_TESTING
     cout << "Press return to go to Main Menu" << endl;
     ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press
