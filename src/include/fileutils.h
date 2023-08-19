@@ -22,14 +22,14 @@ namespace confPaths {
 
 class ConsoleUtils {
 public:
-    static void clearInputBuffer();
-    static void clearConsole();
     static std::string trim(const std::string& str);
+    static void clearInputBuffer(std::istream& input);
+    static void clearConsole();
 };
 
 class CsvReader {
 public:
-    static void readCSV(std::vector<Venue>& venues, std::string& venuesCsvPath);
+    static void readCSV(std::vector<Venue>& venues, std::string& venuesCsvPath, std::ostream& errorOutput);
 };
 
 class ConfigManager {
@@ -41,7 +41,7 @@ public:
     bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
                             std::string& senderEmail, std::string& smtpUsername, 
                             std::string& mailPass, int& smtpPort, std::string& smtpServer, 
-                            std::string& venuesCsvPath);
+                            std::string& venuesCsvPath, std::ostream& output, std::ostream& errorOutput);
 
     static void resetConfigFile();
 };

@@ -55,8 +55,11 @@ TEST_CASE("CsvReader::readCSV() functionality", "[CsvReader]") {
     vector<Venue> venues;
     string venuesCsvPath = confPaths::mockVenuesCsvPath;
 
+    // Create a stringstream to capture error messages
+    std::stringstream errorStream;
+
     // Call the readCSV function
-    CsvReader::readCSV(venues, venuesCsvPath);
+    CsvReader::readCSV(venues, confPaths::mockVenuesCsvPath, errorStream);
 
     // Compare the result with expected values
     REQUIRE(venues.size() == 2);
@@ -91,8 +94,7 @@ TEST_CASE("ConfigManager::loadConfigSettings() functionality", "[ConfigManager]"
     ConfigManager configManager;
 
     std::string testVenuesPathCopy = "src/test/mock_venues.csv";
-    bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, 
-                                     smtpUsername, mailPass, smtpPort, smtpServer, testVenuesPathCopy);
+    bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, testVenuesPathCopy, std::cerr, std::cerr);
     
     REQUIRE(result == true);
     REQUIRE(useSSL == true);

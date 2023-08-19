@@ -37,7 +37,7 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
 cout << "==========================" << endl;
 #ifndef UNIT_TESTING
     cout << "Press return to go to Main Menu" << endl;
-    ConsoleUtils::clearInputBuffer();
+    ConsoleUtils::clearInputBuffer(cin);
     cin.get();     // This will wait for a key press
 #endif
 }
@@ -82,7 +82,7 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
 #ifndef UNIT_TESTING
         cout << "Press return to go back..." << endl;
         cin.ignore();  // If there's a chance you might have used cin before this point
-        ConsoleUtils::clearInputBuffer();
+        ConsoleUtils::clearInputBuffer(cin);
         cin.get();     // This will wait for a key press     
 #endif
         subject.clear(); // Clear the subject if it's too long.
@@ -102,7 +102,7 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
 #ifndef UNIT_TESTING
                 cout << "Press return to go back..." << endl;
                 cin.ignore();  // If there's a chance you might have used cin before this point
-                ConsoleUtils::clearInputBuffer();
+                ConsoleUtils::clearInputBuffer(cin);
                 cin.get();     // This will wait for a key press     
 #endif  
                 int charsToAdd = maxMessageLength - message.length();
@@ -119,7 +119,7 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
 #ifndef UNIT_TESTING
             cout << "Press return to go back..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            ConsoleUtils::clearInputBuffer();
+            ConsoleUtils::clearInputBuffer(cin);
             cin.get();     // This will wait for a key press     
 #endif
         }
@@ -215,7 +215,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
             cerr << "Authentication with SMTP server failed." << endl;
                 cout << "Email sending progress completed." << endl;
                 cout << "Press return to continue..." << endl;
-                ConsoleUtils::clearInputBuffer();
+                ConsoleUtils::clearInputBuffer(cin);
                 cin.get();     // This will wait for a key press     
         }
         return false;
@@ -233,6 +233,6 @@ void EmailManager::viewEmailSendingProgress(const string& senderEmail) {
 
     cout << "Email sending progress completed." << endl;
     cout << "Press return to continue..." << endl;
-    ConsoleUtils::clearInputBuffer();
+    ConsoleUtils::clearInputBuffer(cin);
     cin.get();     // This will wait for a key press     
 }

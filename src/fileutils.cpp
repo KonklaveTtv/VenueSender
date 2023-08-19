@@ -21,31 +21,29 @@ string ConsoleUtils::trim(const string& str){
 }
 
 // Clear the input buffer
-void ConsoleUtils::clearInputBuffer() {
-    // Clear the input buffer
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
+void ConsoleUtils::clearInputBuffer(istream& input) {
+    input.clear();
+    input.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
-// Function to clear the console screen
 void ConsoleUtils::clearConsole() {
 #ifdef _WIN32
-    system("cls"); // For Windows
+    system("cls");
 #else
-    system("clear"); // For other platforms
+    system("clear");
 #endif
 }
 
 // Function to read venue data from CSV file
-void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
+void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath, ostream& errorOutput) {
     ifstream file(venuesCsvPath);
     if (!file.is_open()) {
-        cerr << "Failed to open CSV file: " << venuesCsvPath << endl;
+        errorOutput << "Failed to open CSV file: " << venuesCsvPath << endl;
         return;
     }
 
     string line;
-    getline(file, line); // Skip the header line
+    getline(file, line);
 
     while (getline(file, line)) {
         istringstream ss(line);
@@ -66,11 +64,11 @@ void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
             try {
             venue.capacity = stoi(rowData[5]);
             } catch (const exception& ex) {
-                cerr << "Invalid capacity in CSV file:" << venuesCsvPath << endl;
+                errorOutput << "Invalid capacity in CSV file:" << venuesCsvPath << endl;
             }
             venues.push_back(venue);
         } else {
-            cerr << "Invalid data in CSV file: " << venuesCsvPath << endl;
+            errorOutput << "Invalid data in CSV file: " << venuesCsvPath << endl;
         }
     }
 
@@ -83,7 +81,7 @@ ConfigManager::ConfigManager() {}
 bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
                                        string& senderEmail, string& smtpUsername, 
                                        string& mailPass, int& smtpPort, string& smtpServer, 
-                                       string& venuesCsvPath) {
+                                       string& venuesCsvPath, ostream& output, ostream& errorOutput) {
 
     // Load configuration settings from config.json into respective variables
     // Return true if successful, false otherwise
@@ -240,12 +238,12 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Display messages based on loaded settings
     if (smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded && venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded) {
-        cout << "Configuration settings loaded from config.json." << endl;
+        output << "Configuration settings loaded from config.json." << endl;
         configLoadedSuccessfully = true;
     } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded) {
-        cout << "Email settings loaded from config.json." << endl;
+        output << "Email settings loaded from config.json." << endl;
     } else {
-        cerr << "Failed to load configuration settings from config.json." << endl;
+        errorOutput << "Failed to load configuration settings from config.json." << endl;
     }
     return configLoadedSuccessfully;
 }

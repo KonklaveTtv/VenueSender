@@ -41,13 +41,13 @@ public:
     bool isValidMenuChoice(int choice);
 
     // Function to allow the user time to see the error messages
-    void displayErrorAndPause(const std::string& errorMessage, std::istream& input, std::ostream& output);
+    void displayErrorAndPause(const std::string& errorMessage, std::istream& input = std::cin, std::ostream& output = std::cout);
 
     // Function to display the menu to the user
-    int displayMenuOptions();
+    int displayMenuOptions(std::istream& input = std::cin, std::ostream& output = std::cout);
 
     // Function to display selected venues to the user
-    void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
+    void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues, std::istream& input = std::cin, std::ostream& output = std::cout);
 };
 
 #endif // MENU_H
