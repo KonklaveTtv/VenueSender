@@ -104,7 +104,6 @@ int main() {
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl;
                 cout << "Press return to go back to the Main Menu..." << endl;
-                cin.ignore();  // If there's a chance you might have used cin before this point
                 ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press                
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
@@ -148,7 +147,6 @@ int main() {
                         ConsoleUtils::clearConsole();
                         cout << "Email saved for sending/editing." << endl;
                         cout << "Press return to go back to the Main Menu..." << endl;
-                        cin.ignore();  // If there's a chance you might have used cin before this point
                         ConsoleUtils::clearInputBuffer();
                         cin.get();
                         break;
@@ -167,7 +165,6 @@ int main() {
                             attempts++; // Increment the attempts
                             if (attempts >= 3) {
                                 cout << "Too many unsuccessful attempts. Press return to go back to main menu." << endl;
-                                cin.ignore();  // If there's a chance you might have used cin before this point
                                 ConsoleUtils::clearInputBuffer();
                                 cin.get();     // This will wait for a key press
                                 break; // Break out of the loop after too many attempts
@@ -187,7 +184,6 @@ int main() {
                     ConsoleUtils::clearConsole();
                     cout << "No venues selected. Please add venues before sending emails." << endl;
                     cout << "Press return to go back to Main Menu..." << endl;
-                    cin.ignore();  // If there's a chance you might have used cin before this point
                     ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     continue; // Return to the main menu
@@ -270,7 +266,6 @@ int main() {
                             ConsoleUtils::clearConsole();
                             cout << "Email saved for sending/editing." << endl;
                             cout << "Press return to go back to the Main Menu..." << endl;
-                            cin.ignore();  // If there's a chance you might have used cin before this point
                             ConsoleUtils::clearInputBuffer();
                             cin.get();     // This will wait for a key press
                             break; // Break out of the inner loop without sending
@@ -289,7 +284,6 @@ int main() {
 
                     // Exit VenueSender
                     cout << "Exiting the program. Press return..." << endl;
-                    cin.ignore();  // If there's a chance you might have used cin before this point
                     ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     break;
@@ -299,14 +293,12 @@ int main() {
                     // The user chose not to exit, return to the main menu
                 } else {
                     cout << "Invalid choice. Press return..." << endl;
-                    cin.ignore();  // If there's a chance you might have used cin before this point
                     ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     // The user entered an invalid choice, return to the main menu
                 }
             } else {
                 cout << "Invalid choice. Press return..." << endl;
-                cin.ignore();  // If there's a chance you might have used cin before this point
                 ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press
             }

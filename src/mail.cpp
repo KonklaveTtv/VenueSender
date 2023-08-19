@@ -35,7 +35,7 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
     cout << "verbose: " << (verbose ? "true" : "false") << endl;    
-    cout << "===========================" << endl;
+    cout << "==========================" << endl;
 #else
     cout << "=========================="<< endl;
     cout << "===== Email Settings =====" << endl;
@@ -47,9 +47,8 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl;
     cout << "verifyHost: " << (verifyHost ? "true" : "false") << endl;
     cout << "verbose: " << (verbose ? "true" : "false") << endl;    
-    cout << "===========================" << endl;
+    cout << "==========================" << endl;
     cout << "Press return to go to Main Menu" << endl;
-    cin.ignore();  // If there's a chance you might have used cin before this point
     ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press
 #endif
@@ -82,13 +81,12 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
         subject = sanitizeSubject(subject);  // Sanitize the subject
     } while (subject.empty());
 
-    const int maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
-    const int maxMessageLength = EmailManager::MAX_EMAIL_LENGTH;
+    const std::string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
+    const std::string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
         cout << "Subject cannot be longer than 50 characters in length." << endl;
         cout << "Press return to go back..." << endl;
-        cin.ignore();  // If there's a chance you might have used cin before this point
         ConsoleUtils::clearInputBuffer();
         cin.get();     // This will wait for a key press     
         subject.clear(); // Clear the subject if it's too long.
@@ -101,7 +99,6 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
             if (message.length() + line.length() > maxMessageLength) {
                 cout << "Message cannot be longer than 2000 characters in length." << endl;
                 cout << "Press return to go back..." << endl;
-                cin.ignore();  // If there's a chance you might have used cin before this point
                 ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press     
                 int charsToAdd = maxMessageLength - message.length();
@@ -114,7 +111,6 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
         if (message.empty()) {
             cout << "Message cannot be blank." << endl;
             cout << "Press return to go back..." << endl;
-            cin.ignore();  // If there's a chance you might have used cin before this point
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press     
         }
@@ -205,7 +201,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
             cerr << "Authentication with SMTP server failed." << endl;
                 cout << "Email sending progress completed." << endl;
                 cout << "Press return to continue..." << endl;
-                cin.ignore();  // If there's a chance you might have used cin before this point
                 ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press     
         }
@@ -239,7 +234,6 @@ void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVen
 
     cout << "Email sending progress completed." << endl;
     cout << "Press return to continue..." << endl;
-    cin.ignore();  // If there's a chance you might have used cin before this point
     ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press     
 }

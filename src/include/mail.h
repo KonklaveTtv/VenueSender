@@ -19,8 +19,8 @@ enum class ReturnCode {
 };
 
 // Constants
-static const int MAX_EMAIL_LENGTH = 2000; // Maximum length for an email address, adjust as needed
-static const int MAX_SUBJECT_LENGTH = 50; // Maximum length for an email address, adjust as needed
+static inline const int MAX_MESSAGE_LENGTH = 2000;
+static inline const int MAX_SUBJECT_LENGTH = 50;
 
 std::string getCurrentDateRfc2822();
 

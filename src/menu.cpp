@@ -77,7 +77,6 @@ int MenuManager::displayMenuOptions() {
         if (!(cin >> choice)) {
             cout << "Invalid input, please enter a number. Press return to retry..." << endl;
             cin.ignore();  // If there's a chance you might have used cin before this point
-            ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press
         } else if (!isValidMenuChoice(choice)) {
             cout << "Invalid choice. Please enter a number between " 
@@ -85,7 +84,6 @@ int MenuManager::displayMenuOptions() {
                  << " and " 
                  << static_cast<int>(MenuOption::Exit) << "." << endl;
             cout << "Press return to continue..." << endl;
-            cin.ignore();  // If there's a chance you might have used cin before this point
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press
         } else {
@@ -99,7 +97,6 @@ int MenuManager::displayMenuOptions() {
 
 // Function to display selected venues to the user
 void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
-#ifdef UNIT_TESTING
     cout << "==========================="<< endl;
     cout << "===== Selected Venues =====" << endl;
     cout << "==========================="<< endl;
@@ -113,24 +110,10 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
             cout << "--------------------------" << endl;
         }
     }
-    cout << "===========================" << endl;
-#else
-    cout << "==========================="<< endl;
-    cout << "===== Selected Venues =====" << endl;
-    cout << "==========================="<< endl;
-    if (selectedVenues.empty()) {
-        cout << "No venues selected yet." << endl;
-    } else {
-        for (const auto& venue : selectedVenues) {
-            cout << "Name: " << venue.name << endl;
-            cout << "Email: " << venue.email << endl;
-            cout << "City: " << venue.city << endl;
-            cout << "--------------------------" << endl;
-        }
-    }
+#ifndef UNIT_TESTING
     cout << "===========================" << endl;
     cout << "Press return to go back to Main Menu" << endl;
-    cin.ignore();  // If there's a chance you might have used cin before this point
+    cin.ignore();  // Clear input buffer
     ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press
 #endif

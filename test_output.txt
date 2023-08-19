@@ -1,0 +1,28 @@
+Configuration settings loaded from config.json.
+===========================
+===== Construct Email =====
+===========================
+Enter subject for the email: Enter the message for the email (press Enter on a new line to finish):
+============================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+venuesender_test is a Catch v2.13.8 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+EmailManager::constructEmail() functionality
+  Subject sanitization
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:299
+...............................................................................
+
+src/test/test_venuesender.cpp:305: FAILED:
+  REQUIRE( subject == "Hello World" )
+with expansion:
+  "Hello" == "Hello World"
+
+===========================
+===== Construct Email =====
+===========================
+Enter subject for the email: Subject cannot be longer than 50 characters in length.
+Press return to go back...
