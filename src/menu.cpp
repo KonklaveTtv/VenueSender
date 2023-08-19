@@ -16,6 +16,13 @@ const int MenuManager::VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuManager::M
 const int MenuManager::FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail);
 const int MenuManager::EXIT_OPTION = static_cast<int>(MenuManager::MenuOption::Exit);
 
+// Function to show info to user before returning
+void MenuManager::showInfoAndReturn() {
+    cout << "Press return to go back to Main Menu..." << endl;
+    ConsoleUtils::clearInputBuffer();
+    cin.get();     // This will wait for a key press
+}
+
 // Function to validate user input
 bool MenuManager::isValidMenuChoice(int choice) {
     // Validate if the choice is within valid menu options

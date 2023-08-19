@@ -35,6 +35,9 @@ public:
     static const int FINISH_AND_SEND_EMAILS_OPTION;
     static const int EXIT_OPTION;
 
+    // Function to show info to user before returning
+    void showInfoAndReturn();
+
     // Function to validate user input
     bool isValidMenuChoice(int choice);
 

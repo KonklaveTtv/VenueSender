@@ -100,9 +100,7 @@ int main() {
                 ConsoleUtils::clearConsole();
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl;
-                cout << "Press return to go back to the Main Menu..." << endl;
-                ConsoleUtils::clearInputBuffer();
-                cin.get();     // This will wait for a key press                
+                menuManager.showInfoAndReturn();              
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
                 ConsoleUtils::clearConsole();
@@ -143,9 +141,7 @@ int main() {
                     } else {
                         ConsoleUtils::clearConsole();
                         cout << "Email saved for sending/editing." << endl;
-                        cout << "Press return to go back to the Main Menu..." << endl;
-                        ConsoleUtils::clearInputBuffer();
-                        cin.get();
+                        menuManager.showInfoAndReturn();
                         break;
                     }
 
@@ -161,9 +157,8 @@ int main() {
                             message.clear(); // Clear existing message
                             attempts++; // Increment the attempts
                             if (attempts >= 3) {
-                                cout << "Too many unsuccessful attempts. Press return to go back to main menu." << endl;
-                                ConsoleUtils::clearInputBuffer();
-                                cin.get();     // This will wait for a key press
+                                cout << "Too many unsuccessful attempts." << endl;
+                                menuManager.showInfoAndReturn();
                                 break; // Break out of the loop after too many attempts
                             }
                             continue; // Loop back to prompt for email details again
@@ -180,9 +175,7 @@ int main() {
                 if (selectedVenuesForEmail.empty()) {
                     ConsoleUtils::clearConsole();
                     cout << "No venues selected. Please add venues before sending emails." << endl;
-                    cout << "Press return to go back to Main Menu..." << endl;
-                    ConsoleUtils::clearInputBuffer();
-                    cin.get();     // This will wait for a key press
+                    menuManager.showInfoAndReturn();
                     continue; // Return to the main menu
                 }
 
@@ -264,9 +257,7 @@ int main() {
                         } else {
                             ConsoleUtils::clearConsole();
                             cout << "Email saved for sending/editing." << endl;
-                            cout << "Press return to go back to the Main Menu..." << endl;
-                            ConsoleUtils::clearInputBuffer();
-                            cin.get();     // This will wait for a key press
+                            menuManager.showInfoAndReturn();
                             break; // Break out of the inner loop without sending
                         }
                     }
@@ -282,13 +273,13 @@ int main() {
                 if (confirmExit == 'Y' || confirmExit == 'y') {
 
                     // Exit VenueSender
-                    cout << "Exiting the program. Press return..." << endl;
+                    cout << "Exiting the program." << endl;
                     ConsoleUtils::clearInputBuffer();
-                    cin.get();     // This will wait for a key press
+                    this_thread::sleep_for(chrono::milliseconds(1500));
                     break;
                 } else if (confirmExit == 'N' || confirmExit == 'n') {
                     cout << "Returning to the main menu." << endl;
-                    this_thread::sleep_for(chrono::milliseconds(1000));
+                    this_thread::sleep_for(chrono::milliseconds(1500));
                     // The user chose not to exit, return to the main menu
                 } else {
                     cout << "Invalid choice. Press return..." << endl;

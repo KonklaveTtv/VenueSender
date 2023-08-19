@@ -7,7 +7,7 @@
 	"smtp_username" : "enter_your_smtp_username",
 	"useSSL" : false,
 	"venues_csv_path" : "venues.csv",
+	"verbose" : false,
 	"verifyHost" : false,
-	"verifyPeer" : false,
-	"verbose" : false
+	"verifyPeer" : false
 }
