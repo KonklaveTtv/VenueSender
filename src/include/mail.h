@@ -46,11 +46,6 @@ bool sendIndividualEmail(CURL* curl,
                         int smtpPort);
 
 // Function to view the progress of email sending done by sendIndividualEmail()
-void viewEmailSendingProgress(CURL* curl, const std::vector<SelectedVenue>& selectedVenuesForEmail,
-                              const std::string& senderEmail,
-                              std::string& subject,
-                              std::string& message,
-                              const std::string& smtpServer,
-                              int smtpPort);
+void viewEmailSendingProgress(const std::string& senderEmail);
 };
 #endif // MAIL_H

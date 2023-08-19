@@ -71,14 +71,19 @@ bool EmailManager::isValidEmail(const string& email) {
  * @param in - Input stream, defaulted to standard input (cin)
  */
 void EmailManager::constructEmail(string &subject, string &message, istream &in = cin) {
-    cout << "==========================="<< endl;
+    cout << "===========================" << endl;
     cout << "===== Construct Email =====" << endl;
-    cout << "==========================="<< endl;
-        // Prompt user to enter email subject and message
+    cout << "===========================" << endl;
+
+    // Prompt user to enter email subject and message
     do {
         cout << "Enter subject for the email: ";
-        getline(in, subject);
-        subject = sanitizeSubject(subject);  // Sanitize the subject
+        string line;
+        while (getline(in, line)) {
+            if (line.empty()) break; // exit on a blank line
+            subject += sanitizeSubject(line) + " ";
+        }
+        subject = ConsoleUtils::trim(subject); // To remove trailing space
     } while (subject.empty());
 
     const std::string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
@@ -86,41 +91,62 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
 
     if (subject.length() > maxSubjectLength) {
         cout << "Subject cannot be longer than 50 characters in length." << endl;
+#ifndef UNIT_TESTING
         cout << "Press return to go back..." << endl;
+        cin.ignore();  // If there's a chance you might have used cin before this point
         ConsoleUtils::clearInputBuffer();
         cin.get();     // This will wait for a key press     
+#endif
         subject.clear(); // Clear the subject if it's too long.
         return;
     }
+
+    bool inputProvided;  // Declare outside of the loop
     do {
         cout << "Enter the message for the email (press Enter on a new line to finish):\n";
         string line;
-        while (getline(in, line) && !line.empty()) {
+        inputProvided = false;  // Initialize to false at the start of each loop iteration
+
+        while (getline(in, line)) {
+            if (line.empty()) break;
             if (message.length() + line.length() > maxMessageLength) {
                 cout << "Message cannot be longer than 2000 characters in length." << endl;
+#ifndef UNIT_TESTING
                 cout << "Press return to go back..." << endl;
+                cin.ignore();  // If there's a chance you might have used cin before this point
                 ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press     
+#endif  
                 int charsToAdd = maxMessageLength - message.length();
                 message += ConsoleUtils::trim(line).substr(0, charsToAdd); // Add as many characters as possible
                 break;
             }
             message += ConsoleUtils::trim(line) + "\n";
         }
-        cout << "============================" << endl;
-        if (message.empty()) {
+
+        if (in.eof()) {
+            inputProvided = true;  // Set to true to indicate that input has been provided
+        } else if (message.empty()) {
             cout << "Message cannot be blank." << endl;
+#ifndef UNIT_TESTING
             cout << "Press return to go back..." << endl;
+            cin.ignore();  // If there's a chance you might have used cin before this point
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press     
+#endif
         }
-    } while (message.empty());
+
+        if (!inputProvided) {  // If no input is provided, exit the loop
+            break;
+        }
+
+    } while (!inputProvided);
 
     size_t pos = 0;
     while ((pos = message.find("\n.\n", pos)) != string::npos) {
-    message.replace(pos + 1, 1, "..");
-    pos += 3;
-}
+        message.replace(pos + 1, 1, "..");
+        pos += 3;
+    }
 }
 
 // Function to send an individual email to a recipient with custom subject and message using libcurl
@@ -210,27 +236,12 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     return true;
 }
 
-void EmailManager::viewEmailSendingProgress(CURL* curl, const vector<SelectedVenue>& selectedVenuesForEmail,
-                              const string& senderEmail,
-                              string& subject,
-                              string& message,
-                              const string& smtpServer,
-                              int smtpPort) {
+void EmailManager::viewEmailSendingProgress(const string& senderEmail) {
     if(!isValidEmail(senderEmail)) {
         cerr << "Error: The sender email '" << senderEmail << "'is not a valid format." << endl;
         cerr << "Please set it correctly in your custom.json file." << endl;
         return;
 }
-    for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
-        const SelectedVenue& venue = selectedVenuesForEmail[i];
-        curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent
-        cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << endl;
-
-        // Send the individual email with progress tracking
-        sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort);
-
-        curlWrapper.clearEmailBeingSent();
-    }
 
     cout << "Email sending progress completed." << endl;
     cout << "Press return to continue..." << endl;

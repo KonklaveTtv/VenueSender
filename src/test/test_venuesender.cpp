@@ -32,6 +32,7 @@ public:
     ~CoutGuard() { cout.rdbuf(orig_cout); }
 };
 
+
 // -----------------------
 // Test Group: ConsoleUtils
 // -----------------------
@@ -284,9 +285,6 @@ TEST_CASE("EmailManager::isValidEmailTest() functionality", "[EmailManager]") {
     REQUIRE(isValid2 == false);
 }
 
-TEST_CASE("EmailManager::constructEmail() functionality", "[EmailManager]") {
-}
-
 TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]") {
 
     EmailManager manager;
@@ -321,10 +319,6 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
         REQUIRE(result == false);
     }
 }
-
-
-
-
 
 
 // -----------------------

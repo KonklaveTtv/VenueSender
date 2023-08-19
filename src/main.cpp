@@ -56,9 +56,6 @@ int main() {
     vector<SelectedVenue> selectedVenuesForEmail;
     vector<SelectedVenue> filteredVenues;
 
-    int totalSelectedVenues = selectedVenuesForEmail.size();
-    int emailSendProgress = 0;
-
     // Main loop for interacting with the user
     while (true) {
         // Display menu options and get user's choice
@@ -244,18 +241,20 @@ int main() {
 
                         if (confirmSend == 'Y' || confirmSend == 'y') {
                             // Proceed to send emails if confirmed
-                            totalSelectedVenues = selectedVenuesForEmail.size();
-                            emailSendProgress = 0; // Reset progress
-                            for (const SelectedVenue& venue : selectedVenuesForEmail) {
-                                emailManager.sendIndividualEmail(curlWrapper.get(), venue, senderEmail, subject, message,
-                                                    smtpServer, smtpPort);
-                                ++emailSendProgress;
 
-                                // Update the progress
-                                curlWrapper.progressCallback(nullptr, emailSendProgress, totalSelectedVenues, 0, 0);
+                            for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
+                                const SelectedVenue& venue = selectedVenuesForEmail[i];
+                                curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent
+                                cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << endl;
+
+                                // Send the individual email with progress tracking
+                                emailManager.sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort);
+
+                                curlWrapper.clearEmailBeingSent();
                             }
+
                             // Display email sending progress
-                            emailManager.viewEmailSendingProgress(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort);
+                            emailManager.viewEmailSendingProgress(senderEmail);
 
                             filteredVenues.clear(); // Clear the filtered venues for the next round of emails
                             selectedVenuesForEmail.clear();  // Clear the selected venues after sending the emails
