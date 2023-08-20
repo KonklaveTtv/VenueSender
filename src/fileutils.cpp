@@ -3,10 +3,10 @@
 using namespace std;
 
 namespace confPaths {
-std::string venuesCsvPath = "venues.csv";
-std::string configJsonPath = "config.json";
-std::string mockVenuesCsvPath = "src/test/mock_venues.csv";
-std::string mockConfigJsonPath = "src/test/mock_config.json";
+const std::string venuesCsvPath = "venues.csv";
+const std::string configJsonPath = "config.json";
+const std::string mockVenuesCsvPath = "src/test/mock_venues.csv";
+const std::string mockConfigJsonPath = "src/test/mock_config.json";
 }
 
 // Function to trim leading and trailing spaces from a string
