@@ -285,7 +285,6 @@ int main() {
 
                     // Exit VenueSender
                     cout << "Exiting the program." << endl;
-                    ConsoleUtils::clearInputBuffer();
                     this_thread::sleep_for(chrono::milliseconds(1500));
                     break;
                 } else if (confirmExit == 'N' || confirmExit == 'n') {
