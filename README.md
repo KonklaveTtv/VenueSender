@@ -62,17 +62,17 @@ Compile the project:
             
             ```
             {
-            "email_pass_encrypted" : false, // don't change this
-            "email_password" : "enter_email_password", // Replace with your email password
-            "sender_email" : "enter_your_sender_email", // Replace with your sender email address
-            "smtp_port" : 587, // Replace with your SMTP port number (i.e. 587, 443)
-            "smtp_server" : "enter_your_smtp_server", // Replace with your SMTP server address
-            "smtp_username" : "enter_your_smtp_username", // Replace with your SMTP username
-            "useSSL" : false, // Set to true or false
-            "venues_csv_path" : "venues.csv", // Provide the path to your venues CSV file
-            "verifyHost" : false, // Set to true or false
-            "verifyPeer" : false, // Set to true or false
-            "verbose" : false // Set to true or false
+            "email_pass_encrypted" : false, // DO NOT CHANGE
+            "email_password" : "enter_email_password",
+            "sender_email" : "enter_your_sender_email",
+            "smtp_port" : 587,
+            "smtp_server" : "enter_your_smtp_server",
+            "smtp_username" : "enter_your_smtp_username",
+            "useSSL" : false,
+            "venues_csv_path" : "venues.csv",
+            "verifyHost" : false,
+            "verifyPeer" : false,
+            "verbose" : false
             }
             ```
 
