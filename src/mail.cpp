@@ -5,6 +5,50 @@ using namespace std;
 CurlHandleWrapper curlHandleWrapper;
 ErrorHandler errorHandler;
 
+vector<char> EmailManager::readFile(const string& filePath, string& attachmentName, string& attachmentSize) {
+    ifstream file(filePath, ios::binary | ios::ate);
+    if (!file.is_open()) {
+        throw runtime_error("Failed to open file: " + filePath);
+    }
+
+    std::streamsize fileSize = file.tellg();
+    file.seekg(0, ios::beg);
+
+    std::vector<char> buffer(fileSize);
+    if (!file.read(buffer.data(), fileSize)) {
+        throw runtime_error("Failed to read file: " + filePath);
+    }
+
+    // Get the file name from the file path
+    size_t lastSlash = filePath.find_last_of("/\\");
+    if (lastSlash == string::npos) {
+        attachmentName = filePath;
+    } else {
+        attachmentName = filePath.substr(lastSlash + 1);
+    }
+
+    // Get the file size as a string
+    attachmentSize = to_string(fileSize);
+
+    return buffer;
+}
+
+string EmailManager::base64Encode(const vector<char>& data) {
+    if (data.empty()){
+        return "";
+    }
+
+    size_t outputMaxLen = sodium_base64_ENCODED_LEN(data.size(), sodium_base64_VARIANT_ORIGINAL);
+
+    char output[outputMaxLen];
+
+    if (sodium_bin2base64(output, outputMaxLen, reinterpret_cast<const unsigned char*>(&data[0]), data.size(), sodium_base64_VARIANT_ORIGINAL) == NULL) {
+        return "";
+    }
+
+    return string(output);
+}
+
 string EmailManager::getCurrentDateRfc2822() {
     char buffer[100];
     time_t now;
@@ -134,6 +178,8 @@ void EmailManager::constructEmail(string &subject, string &message, istream &in 
         message.replace(pos + 1, 1, "..");
         pos += 3;
     }
+
+    // add attachment
 }
 
 // Function to send an individual email to a recipient with custom subject and message using libcurl
@@ -181,6 +227,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     headers = curl_slist_append(headers, subjectHeader.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
+    // amend header for attachments
     // Set the email body (message) with the desired formatting
     string payload = dateHeader + "\r\n" + 
                  toHeader + "\r\n" + 

@@ -11,6 +11,8 @@
 #include <regex>
 #include <thread>
 
+#include <sodium.h> //Base64 Encoding
+
 class EmailManager {
 public:
 // Define enums for return codes
@@ -24,6 +26,12 @@ enum class ReturnCode {
 // Constants
 static inline const int MAX_MESSAGE_LENGTH = 2000;
 static inline const int MAX_SUBJECT_LENGTH = 50;
+
+// Function to read the attachment file location
+static std::vector<char> readFile(const std::string& filePath, std::string& attachmentName, std::string& attachmentSize);
+
+// Function to encode the attachment to Base64
+std::string base64Encode(const std::vector<char>& data);
 
 std::string getCurrentDateRfc2822();
 
