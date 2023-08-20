@@ -287,7 +287,11 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
 
     EmailManager manager;
     CURL* mockCurl = nullptr;  // Normally, you'd mock the CURL* or create a real handle if needed.
-    
+
+    string attachmentName;
+    string attachmentSize;
+    const string attachmentPath;
+
     // Mock venue data
     SelectedVenue venue;
     venue.email = "venue1@mock.com";
@@ -299,10 +303,12 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
     std::string smtpServer = "mock_smtp_server";
     int smtpPort = 587;
 
+
+
     SECTION("Sending email with valid parameters") {
         // Normally, we would mock the curl_easy_perform function to ensure that it doesn't actually 
         // send an email but for the purpose of this example, we'll just call the function.
-        bool result = manager.sendIndividualEmail(mockCurl, venue, senderEmail, subject, message, smtpServer, smtpPort);
+        bool result = manager.sendIndividualEmail(mockCurl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
         
         // Here, the expected value is false because our mockCurl is nullptr.
         REQUIRE(result == false);
@@ -311,7 +317,7 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
     SECTION("Sending email with invalid email") {
         venue.email = "invalid.email.com";  // Missing '@'
         
-        bool result = manager.sendIndividualEmail(mockCurl, venue, senderEmail, subject, message, smtpServer, smtpPort);
+        bool result = manager.sendIndividualEmail(mockCurl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
         
         // Here, the expected value is false because our mockCurl is nullptr and email is invalid.
         REQUIRE(result == false);

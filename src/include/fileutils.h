@@ -13,10 +13,10 @@
 #include <json/json.h>
     
 namespace confPaths {
-    extern const std::string venuesCsvPath;
-    extern const std::string configJsonPath;
-    extern const std::string mockVenuesCsvPath;
-    extern const std::string mockConfigJsonPath;
+    extern std::string venuesCsvPath;
+    extern std::string configJsonPath;
+    extern std::string mockVenuesCsvPath;
+    extern std::string mockConfigJsonPath;
 }
 
 class ConsoleUtils {

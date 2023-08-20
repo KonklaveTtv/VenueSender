@@ -123,6 +123,9 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     // Set SSL options using the CurlHandleWrapper method
     curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
 
+    // Increase timeout for larger attachments
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60L);
+
     // Enable verbose mode for debugging in config.json (if needed)
     curl_easy_setopt(curl, CURLOPT_VERBOSE, verbose ? 1L : 0L);
 
