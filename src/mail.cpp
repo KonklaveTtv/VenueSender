@@ -1,23 +1,30 @@
 #include "mail.h"
 
+#include <cstdio>
+
 using namespace std;
 
 CurlHandleWrapper curlHandleWrapper;
 ErrorHandler errorHandler;
 
 vector<char> EmailManager::readFile(const string& filePath, string& attachmentName, string& attachmentSize) {
-    ifstream file(filePath, ios::binary | ios::ate);
-    if (!file.is_open()) {
+    FILE* file = fopen(filePath.c_str(), "rb"); // Open the file in binary mode
+    if (!file) {
         throw runtime_error("Failed to open file: " + filePath);
     }
 
-    std::streamsize fileSize = file.tellg();
-    file.seekg(0, ios::beg);
+    fseek(file, 0, SEEK_END); // Move the file pointer to the end
+    long fileSize = ftell(file); // Get the file size
+    fseek(file, 0, SEEK_SET); // Move the file pointer back to the beginning
 
-    std::vector<char> buffer(fileSize);
-    if (!file.read(buffer.data(), fileSize)) {
+    vector<char> buffer(fileSize);
+    size_t bytesRead = fread(buffer.data(), 1, fileSize, file); // Read the file content
+    if (bytesRead != static_cast<size_t>(fileSize)) {
+        fclose(file);
         throw runtime_error("Failed to read file: " + filePath);
     }
+
+    fclose(file);
 
     // Get the file name from the file path
     size_t lastSlash = filePath.find_last_of("/\\");
@@ -47,6 +54,24 @@ string EmailManager::base64Encode(const vector<char>& data) {
     }
 
     return string(output);
+}
+
+// Callback function for cURL's MIME encoding with base64
+size_t base64EncodeCallback(void *contents, size_t size, size_t nmemb, void *userdata) {
+    // Calculate the total size of the data to be encoded
+    size_t totalSize = size * nmemb;
+    
+    // Cast the userdata pointer to EmailManager
+    EmailManager *emailManager = static_cast<EmailManager *>(userdata);
+
+    // Encode the data using the base64Encode method
+    std::string encodedData = emailManager->base64Encode(std::vector<char>(static_cast<char *>(contents), static_cast<char *>(contents) + totalSize));
+
+    // Copy the encoded data back to the 'contents' buffer
+    memcpy(contents, encodedData.c_str(), encodedData.length());
+
+    // Return the length of the encoded data
+    return encodedData.length();
 }
 
 string EmailManager::getCurrentDateRfc2822() {

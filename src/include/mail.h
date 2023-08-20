@@ -33,6 +33,9 @@ static std::vector<char> readFile(const std::string& filePath, std::string& atta
 // Function to encode the attachment to Base64
 std::string base64Encode(const std::vector<char>& data);
 
+// Functin to callback the attachment data
+std::size_t base64EncodeCallback(void *contents, size_t size, size_t nmemb, void *userdata);
+
 std::string getCurrentDateRfc2822();
 
 std::string sanitizeSubject(std::string& subject);
