@@ -7,6 +7,7 @@ using namespace std;
 CurlHandleWrapper curlHandleWrapper;
 ErrorHandler errorHandler;
 
+// We don't want to clash with fileutils.cpp use of ifstream, so we use fopen instead
 vector<char> EmailManager::readFile(const string& filePath, string& attachmentName, string& attachmentSize) {
     FILE* file = fopen(filePath.c_str(), "rb"); // Open the file in binary mode
     if (!file) {
