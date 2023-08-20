@@ -113,7 +113,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
     curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
 
-    // Lets clear the memory for the mailPassDecrypted here after CURLOPT_PASSWORD is set
+    // Let's clear the memory for the mailPassDecrypted here after CURLOPT_PASSWORD is set
     fill(mailPassDecrypted.begin(), mailPassDecrypted.end(), '\0');
     mailPassDecrypted.clear();
 

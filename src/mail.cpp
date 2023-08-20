@@ -123,10 +123,11 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     cout << "Enter the path of the file to attach: ";
     getline(cin, attachmentPath);
     cout << "Debug: Got the path." << endl;
-
+    cout << "Path size: " << attachmentPath.size() << endl;
     // Remove single quotes from the path
     attachmentPath.erase(std::remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
-
+    attachmentPath = ConsoleUtils::trim(attachmentPath);
+    
     // Step 2: Get name
     size_t lastSlash = attachmentPath.find_last_of("/\\\\");
     if (lastSlash == string::npos) {
