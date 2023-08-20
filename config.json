@@ -1,10 +1,10 @@
 {
 	"email_pass_encrypted" : false,
 	"email_password" : "enter_email_password",
-	"sender_email" : "spencerlievens@gmail.com",
+	"sender_email" : "enter_your_sender_email",
 	"smtp_port" : 587,
-	"smtp_server" : "smtp.gmail.com",
-	"smtp_username" : "spencerlievens@gmail.com",
+	"smtp_server" : "enter_your_smtp_server",
+	"smtp_username" : "enter_your_smtp_username",
 	"useSSL" : false,
 	"venues_csv_path" : "venues.csv",
 	"verbose" : false,
