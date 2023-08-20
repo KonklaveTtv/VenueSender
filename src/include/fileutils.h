@@ -2,6 +2,7 @@
 #define FILEUTILS_H
 
 #include "encryption.h"
+#include "errorhandler.h"
 #include "structs.h"
 
 #include <algorithm>

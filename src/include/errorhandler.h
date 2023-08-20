@@ -12,7 +12,10 @@ public:
     SUBJECT_MESSAGE_ERROR,
     CONFIG_LOAD_ERROR,
     DECRYPTION_ERROR,
-    LIBCURL_ERROR
+    LIBCURL_ERROR,
+    SMTP_CONNECTION_ERROR,
+    SMTP_AUTH_ERROR,
+    CSV_LOAD_ERROR
     };
 
     // Function to allow the user time to see the information

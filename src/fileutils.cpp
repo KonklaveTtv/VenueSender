@@ -38,7 +38,8 @@ void ConsoleUtils::clearConsole() {
 void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     ifstream file(venuesCsvPath);
     if (!file.is_open()) {
-        cerr << "Failed to open CSV file: " << venuesCsvPath << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CSV_LOAD_ERROR);
         return;
     }
 

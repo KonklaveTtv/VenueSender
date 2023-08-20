@@ -26,6 +26,15 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
         case ErrorType::LIBCURL_ERROR:
             cerr << "Failed to initialize libcurl." << endl;
             [[fallthrough]];
+        case ErrorType::SMTP_CONNECTION_ERROR:
+            cerr << "Connection to SMTP server failed." << endl;
+            [[fallthrough]];
+        case ErrorType::SMTP_AUTH_ERROR:
+            cerr << "Authentication with SMTP server failed." << endl;
+            [[fallthrough]];
+        case ErrorType::CSV_LOAD_ERROR:
+            cerr << "Failed to open CSV file: " << confPaths::venuesCsvPath << endl;
+            [[fallthrough]];
         default:
             cerr << "An unknown error occurred." << endl;
             break;

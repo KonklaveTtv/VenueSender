@@ -1,6 +1,8 @@
 #ifndef CURL_H
 #define CURL_H
 
+#include "errorhandler.h"
+
 #include <algorithm>
 #include <cstring>
 #include <iostream>

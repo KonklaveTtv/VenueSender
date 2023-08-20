@@ -46,7 +46,8 @@ void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyH
 CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
     curl = curl_easy_init();
     if (!curl) {
-        cerr << "Failed to initialize libcurl." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return;
     }
 
