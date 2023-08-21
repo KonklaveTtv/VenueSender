@@ -141,6 +141,12 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
             attachmentSize = to_string(fileSize) + " bytes";
             cout << "File Size: " << fileSize << " bytes" << endl;
 
+            // Check if the file size exceeds the maximum allowed size
+            if (fileSize > MAX_ATTACHMENT_SIZE) {
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                return;
+            }
+
             cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
         } else {
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);

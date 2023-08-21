@@ -24,6 +24,7 @@ enum class ReturnCode {
 // Constants
 static inline const int MAX_MESSAGE_LENGTH = 2000;
 static inline const int MAX_SUBJECT_LENGTH = 50;
+const size_t MAX_ATTACHMENT_SIZE = 24 * 1024 * 1024;  // 24 MB in bytes
 
 std::string getCurrentDateRfc2822();
 std::string sanitizeSubject(std::string& subject);
