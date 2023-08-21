@@ -18,7 +18,7 @@ size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, voi
     string* payload = static_cast<string*>(userp);
     size_t totalsize = size * nmemb;
 
-    if (payload->size()) {
+    if (!payload->empty()) {
         // Calculate the size of data to copy to ptr
         size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
 
