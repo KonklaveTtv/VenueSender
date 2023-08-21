@@ -31,7 +31,8 @@ void ConsoleUtils::clearInputBuffer() {
 void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     ifstream file(venuesCsvPath);
     if (!file.is_open()) {
-        cerr << "Failed to open CSV file: " << confPaths::venuesCsvPath << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, venuesCsvPath);
         return;
     }
 
@@ -55,13 +56,15 @@ void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
             venue.state = rowData[3];
             venue.city = rowData[4];
             try {
-            venue.capacity = stoi(rowData[5]);
+                venue.capacity = stoi(rowData[5]);
             } catch (const exception& ex) {
-            cerr << "Invalid capacity in CSV file:" << venuesCsvPath << endl;
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CAPACITY_IN_CSV, venuesCsvPath);
             }
             venues.push_back(venue);
         } else {
-            cerr << "Invalid data in CSV file: " << venuesCsvPath << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV, venuesCsvPath);
         }
     }
 
@@ -142,7 +145,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
         if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
-            cerr << "Failed to encrypt email password for saving in config.json." << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
             return false;
         }
         config["mock_email_password"] = mailPassEncrypted;
@@ -162,7 +166,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
         if (!EncryptionManager::encryptPassword(mailPass, mailPassEncrypted)) {
-            cerr << "Failed to encrypt email password for saving in config.json." << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
             return false;
         }
         config["email_password"] = mailPassEncrypted;
@@ -176,7 +181,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 #ifdef UNIT_TESTING
     ofstream configFileOut(confPaths::mockConfigJsonPath);
     if (!configFileOut.is_open()) {
-        cerr << "Failed to open config.json for writing." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR);
         return false;
     }
     configFileOut << config;
@@ -264,7 +270,8 @@ void ConfigManager::resetConfigFile() {
     // Read the existing configuration
     ifstream configFile(configPath);
     if (!configFile.is_open()) {
-        cerr << "Failed to open " << configPath << "." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, configPath);
         return;
     }
     configFile >> config;
@@ -277,7 +284,8 @@ void ConfigManager::resetConfigFile() {
     // Write the modified JSON object back to the appropriate file
     ofstream configFileOut(configPath);
     if (!configFileOut.is_open()) {
-        cerr << "Failed to open " << configPath << " for writing." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR, configPath);
         return;
     }
     configFileOut << config;

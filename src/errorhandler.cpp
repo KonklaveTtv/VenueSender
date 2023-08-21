@@ -20,7 +20,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
     handleErrorAndReturn(error, "");
 }
 
-void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extraInfo) {
+void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extraInfo = "") {
     switch (error) {
         case ErrorType::INVALID_INPUT_ERROR:
             cerr << "Invalid input. Skipping." << endl;
@@ -85,13 +85,19 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extr
             showInfoAndReturn();
             break;
         case ErrorType::CONFIG_OPEN_ERROR:
-            cerr << "Failed to open config.json." << endl;
+            cerr << "Failed to open " << extraInfo << "." << endl;
             break;
         case ErrorType::CONFIG_LOAD_ERROR:
             cerr << "Failed to load configuration settings from config.json." << endl;
             break;
         case ErrorType::CONFIG_OPEN_TO_WRITE_ERROR:
-            cerr << "Failed to open config.json for writing." << endl;
+            cerr << "Failed to open " << extraInfo << " for writing." << endl;
+            break;
+        case ErrorType::INVALID_CAPACITY_IN_CSV:
+            cerr << "Invalid capacity in CSV file: " << extraInfo << endl;
+            break;
+        case ErrorType::INVALID_DATA_IN_CSV:
+            cerr << "Invalid data in CSV file: " << extraInfo << endl;
             break;
         case ErrorType::ENCRYPTION_ERROR:
             cerr << "Failed to encrypt email password for saving in config.json." << endl;
