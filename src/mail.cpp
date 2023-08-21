@@ -251,7 +251,8 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     curl_slist_free_all(recipients);
     curl_slist_free_all(headers);
 
-    if (!checkCurlError(res, "Failed to send email")) {
+    if (!checkCurlError(res, "")) {
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR); 
         if (res == CURLE_COULDNT_CONNECT) {
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
         } else if (res == CURLE_LOGIN_DENIED) {

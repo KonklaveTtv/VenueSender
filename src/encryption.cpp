@@ -26,7 +26,8 @@ bool EncryptionManager::encryptPassword(const string& decryptedPassword, string&
     // Encrypt the password using the global encryption key and nonce
     if (crypto_secretbox_easy(encryptedBuffer, reinterpret_cast<const unsigned char*>(decryptedPassword.c_str()), decryptedPassword.size(),
                               globalEncryptionNonce.data(), globalEncryptionKey.data()) != 0) {
-        cerr << "Failed to encrypt password." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_ENCRYPTION_ERROR);
         return false;
     }
 
@@ -60,7 +61,9 @@ string EncryptionManager::decryptPassword(const string& encryptedPassword) {
     // Decrypt the ciphertext using the global encryption key and extracted nonce
     if (crypto_secretbox_open_easy(decryptedBuffer, reinterpret_cast<const unsigned char*>(ciphertext.c_str()), ciphertext.size(),
                                    reinterpret_cast<const unsigned char*>(nonce.c_str()), globalEncryptionKey.data()) != 0) {
-        throw runtime_error("Failed to decrypt password or corrupted password.");
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
+        throw runtime_error("");
     }
 
     // Return the decrypted password

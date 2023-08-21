@@ -13,14 +13,6 @@
 
 class EmailManager {
 public:
-// Define enums for return codes
-enum class ReturnCode {
-    Success,
-    ConfigLoadError,
-    EmailDecryptionError,
-    SmtpPassDecryptionError
-};
-
 // Constants
 static inline const int MAX_MESSAGE_LENGTH = 2000;
 static inline const int MAX_SUBJECT_LENGTH = 50;

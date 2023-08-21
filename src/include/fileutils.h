@@ -31,9 +31,6 @@ public:
 };
 
 class ConfigManager {
-private:
-    EncryptionManager encryptionManager;
-
 public:
     ConfigManager();
     bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
