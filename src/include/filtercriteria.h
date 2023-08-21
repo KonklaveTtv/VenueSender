@@ -11,15 +11,9 @@
 
 // Structure to hold filter criteria
 struct FilterCriteria {
-    bool filterFlag = false;
-    bool filterByGenre = false;
-    bool filterByState = false;
-    bool filterByCity = false;
-    bool filterByCapacity = false;
     std::string genre;
     std::string state;
     std::string city;
-    int capacity = 0; // Change to int type
 };
 
 class VenueUtilities {
@@ -39,14 +33,7 @@ std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
 std::set<std::string> getUniqueStates(const std::vector<Venue>& venues);
 std::set<std::string> getUniqueCities(const std::vector<Venue>& venues);
 std::set<int> getUniqueCapacities(const std::vector<Venue>& venues);
-
-// Declaration for getUniqueValues with a member pointer to a string
-std::vector<std::string> getUniqueValues(const std::vector<Venue>& venues, std::string Venue::* memberPtr);
-
-// Declaration for getUniqueValues with a member pointer to an integer
-std::vector<int> getUniqueValues(const std::vector<Venue>& venues, int Venue::* memberPtr);
 };
-
 
 class VenueFilter {
 private:

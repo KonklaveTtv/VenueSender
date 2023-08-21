@@ -57,30 +57,6 @@ set<int> VenueUtilities::getUniqueCapacities(const vector<Venue>& venues) {
     return uniqueCapacities;
 }
 
-// Utility function to get unique values of a member using a member pointer
-vector<string> VenueUtilities::getUniqueValues(const vector<Venue>& venues, string Venue::* memberPtr) {
-    vector<string> uniqueValues;
-    for (const Venue& venue : venues) {
-        string value = venue.*memberPtr;
-        if (find(uniqueValues.begin(), uniqueValues.end(), value) == uniqueValues.end()) {
-            uniqueValues.push_back(value);
-        }
-    }
-    return uniqueValues;
-}
-
-// Utility function to get unique values of a member using a member pointer
-vector<int> VenueUtilities::getUniqueValues(const vector<Venue>& venues, int Venue::* memberPtr) {
-    vector<int> uniqueValues;
-    for (const Venue& venue : venues) {
-        int value = venue.*memberPtr;
-        if (find(uniqueValues.begin(), uniqueValues.end(), value) == uniqueValues.end()) {
-            uniqueValues.push_back(value);
-        }
-    }
-    return uniqueValues;
-}
-
 void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                            vector<SelectedVenue>& selectedVenuesForEmail,
                            istream& input,

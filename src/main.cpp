@@ -254,7 +254,7 @@ int main() {
                             for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
                                 const SelectedVenue& venue = selectedVenuesForEmail[i];
                                 curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent
-                                cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << venue.email << endl;
+                                cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << curlWrapper.getEmailBeingSent() << endl;
 
                                 // Send the individual email with progress tracking
                                 emailManager.sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
