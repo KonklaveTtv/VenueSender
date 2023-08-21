@@ -59,13 +59,16 @@ string EncryptionManager::decryptPassword(const string& encryptedPassword) {
     unsigned char decryptedBuffer[ciphertext.size() - crypto_secretbox_MACBYTES];
 
     // Decrypt the ciphertext using the global encryption key and extracted nonce
-    if (crypto_secretbox_open_easy(decryptedBuffer, reinterpret_cast<const unsigned char*>(ciphertext.c_str()), ciphertext.size(),
-                                   reinterpret_cast<const unsigned char*>(nonce.c_str()), globalEncryptionKey.data()) != 0) {
+    if (crypto_secretbox_open_easy(decryptedBuffer, 
+                                   reinterpret_cast<const unsigned char*>(ciphertext.c_str()), 
+                                   ciphertext.size(),
+                                   reinterpret_cast<const unsigned char*>(nonce.c_str()), 
+                                   globalEncryptionKey.data()) != 0) {
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
         throw runtime_error("");
     }
 
     // Return the decrypted password
-    return string(reinterpret_cast<char*>(decryptedBuffer), ciphertext.size() - crypto_secretbox_MACBYTES);
+    return std::string(reinterpret_cast<char*>(decryptedBuffer), ciphertext.size() - crypto_secretbox_MACBYTES);
 }
