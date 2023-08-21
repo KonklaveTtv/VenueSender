@@ -44,7 +44,9 @@ int MenuManager::displayMenuOptions() {
         cout << "Enter your choice: ";
 
         if (!(cin >> choice)) {
-            cout << "Invalid input, please enter a number." << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_INPUT_ERROR);
+            
         } else if (!isValidMenuChoice(choice)) {
             cout << "Invalid choice. Please enter a number between " 
                  << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
@@ -75,7 +77,8 @@ int MenuManager::displayMenuOptions() {
         cout << "Enter your choice: ";
 
         if (!(cin >> choice)) {
-            cout << "Invalid input, please enter a number. Press return to retry..." << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_INPUT_ERROR);
             cin.ignore();  // If there's a chance you might have used cin before this point
             cin.get();     // This will wait for a key press
         } else if (!isValidMenuChoice(choice)) {
@@ -101,7 +104,8 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
     cout << "===== Selected Venues =====" << endl;
     cout << "==========================="<< endl;
     if (selectedVenues.empty()) {
-        cout << "No venues selected yet." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
     } else {
         for (const auto& venue : selectedVenues) {
             cout << "Name: " << venue.name << endl;

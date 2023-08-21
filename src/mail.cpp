@@ -67,7 +67,8 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     const std::string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
-        cout << "Subject cannot be longer than 50 characters in length." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
 #ifndef UNIT_TESTING
         cout << "Press return to go back..." << endl;
         cin.ignore();
@@ -87,7 +88,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
         while (getline(in, line)) {
             if (line.empty()) break;
             if (message.length() + line.length() > maxMessageLength) {
-                cout << "Message cannot be longer than 2000 characters in length." << endl;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
 #ifndef UNIT_TESTING
                 cout << "Press return to go back..." << endl;
                 cin.ignore();
@@ -104,7 +105,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
         if (in.eof()) {
             inputProvided = true;
         } else if (message.empty()) {
-            cout << "Message cannot be blank." << endl;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_BLANK_ERROR);
 #ifndef UNIT_TESTING
             cout << "Press return to go back..." << endl;
             cin.ignore();
@@ -119,11 +120,8 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
 
     } while (!inputProvided);
 
-    cout << "Debug: About to get the path." << endl;
     cout << "Enter the path of the file to attach: ";
     getline(cin, attachmentPath);
-    cout << "Debug: Got the path." << endl;
-    cout << "Path size: " << attachmentPath.size() << endl;
     // Remove single quotes from the path
     attachmentPath.erase(std::remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
     attachmentPath = ConsoleUtils::trim(attachmentPath);
@@ -135,12 +133,9 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     } else {
         attachmentName = attachmentPath.substr(lastSlash + 1);
     }
-    cout << "Debug: Got the name." << endl;
 
     try {
         if (fs::exists(attachmentPath)) {
-            cout << "File exists!" << endl;
-
             // Step 3: Get size
             size_t fileSize = fs::file_size(attachmentPath);
             attachmentSize = to_string(fileSize) + " bytes";
@@ -148,7 +143,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
 
             cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
         } else {
-            cout << "File does not exist at the specified path." << endl;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
         }
     } catch (const fs::filesystem_error& e) {
         cout << "Filesystem error: " << e.what() << endl;
@@ -239,9 +234,9 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
     if (!checkCurlError(res, "Failed to send email")) {
         if (res == CURLE_COULDNT_CONNECT) {
-            cerr << "Connection to SMTP server failed." << endl;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
         } else if (res == CURLE_LOGIN_DENIED) {
-            cerr << "Authentication with SMTP server failed." << endl;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
         }
         return false;
     }

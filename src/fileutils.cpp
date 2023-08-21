@@ -29,8 +29,7 @@ void ConsoleUtils::clearInputBuffer() {
 void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     ifstream file(venuesCsvPath);
     if (!file.is_open()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CSV_LOAD_ERROR);
+        cerr << "Failed to open CSV file: " << confPaths::venuesCsvPath << endl;
         return;
     }
 
@@ -56,7 +55,7 @@ void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
             try {
             venue.capacity = stoi(rowData[5]);
             } catch (const exception& ex) {
-                cerr << "Invalid capacity in CSV file:" << venuesCsvPath << endl;
+            cerr << "Invalid capacity in CSV file:" << venuesCsvPath << endl;
             }
             venues.push_back(venue);
         } else {
@@ -81,7 +80,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     Json::Value config;
     ifstream configFile(confPaths::mockConfigJsonPath);
     if (!configFile.is_open()) {
-        cerr << "Failed to open config.json." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
         return false;
     }
 
@@ -104,7 +104,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     Json::Value config;
     ifstream configFile(confPaths::configJsonPath);
     if (!configFile.is_open()) {
-        cerr << "Failed to open config.json." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
         return false;
     }
 
@@ -188,13 +189,15 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Decrypt the encrypted mail password
     mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
-        cerr << "Email password decryption failed." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
         return false;
     }
 #else
     ofstream configFileOut(confPaths::configJsonPath);
     if (!configFileOut.is_open()) {
-        cerr << "Failed to open config.json for writing." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR);
         return false;
     }
     configFileOut << config;
@@ -209,7 +212,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Decrypt the encrypted mail password
     mailPassDecrypted = EncryptionManager::decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
-        cerr << "Email password decryption failed." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
         return false;
     }
 #endif
@@ -235,7 +239,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded) {
         cout << "Email settings loaded from config.json." << endl;
     } else {
-        cerr << "Failed to load configuration settings from config.json." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
     }
     return configLoadedSuccessfully;
 }

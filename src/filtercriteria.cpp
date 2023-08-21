@@ -71,7 +71,8 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
 
     // Validate input length
     if (userInput.length() > MAX_INPUT_LENGTH) {
-        output << "Input too long. Please try again." << endl;
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
         cout << "Press return to continue..." << endl;
         ConsoleUtils::clearInputBuffer();
         cin.get();     // This will wait for a key press
@@ -84,7 +85,8 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
         try {
             size_t selectedIndex = stoul(indexStr);
             if (selectedIndex == 0) {
-                output << "Invalid index format. Skipping." << endl;
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 cout << "Press return to continue..." << endl;
                 ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press
@@ -106,7 +108,8 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                 if (!isDuplicate) {
                     selectedVenuesForEmail.push_back(selectedVenue);
                 } else {
-                    output << "Venue already selected. Skipping." << endl;
+                    ErrorHandler errorHandler;
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR);
                     cout << "Press return to continue..." << endl;
                     ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
@@ -119,7 +122,8 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                 continue;
             }
         } catch (const invalid_argument& e) {
-            output << "Invalid input. Skipping." << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 
@@ -179,7 +183,8 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             size_t selectedIndex = stoi(indexStr) - 1;
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
-            cout << "Invalid index. Skipping." << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press            
@@ -199,7 +204,8 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                 }
             }
         } else {
-            cout << "Invalid index. Skipping." << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press   
@@ -247,7 +253,8 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
             size_t selectedIndex = stoi(indexStr) - 1;
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
-            cout << "Invalid index format. Skipping." << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 
