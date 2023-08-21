@@ -5,7 +5,6 @@ using namespace std;
 // Function to show info to user before returning
 void ErrorHandler::showInfoAndReturn() {
     cout << "Press return to go back to Main Menu..." << endl;
-    ConsoleUtils::clearInputBuffer();
     cin.get();     // This will wait for a key press
 }
 

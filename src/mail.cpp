@@ -53,16 +53,6 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     cout << "===== Construct Email =====" << endl;
     cout << "===========================" << endl;
 
-    // Clear input buffer and check stream state
-    if (&in == &cin) {
-        ConsoleUtils::clearInputBuffer();
-    }
-
-    if (!in.good()) {
-        cerr << "Input stream is not in a good state." << endl;
-        return;
-    }
-
     do {
         cout << "Enter subject for the email (press Enter on a new line to finish): ";
         string line;
@@ -71,6 +61,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
             subject += sanitizeSubject(line) + " ";
         }
         subject = ConsoleUtils::trim(subject);
+
     } while (subject.empty());
 
     const std::string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;

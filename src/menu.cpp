@@ -116,9 +116,8 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
     }
 #ifndef UNIT_TESTING
     cout << "===========================" << endl;
-    cout << "Press return to go back to Main Menu" << endl;
-    cin.ignore();  // Clear input buffer
-    ConsoleUtils::clearInputBuffer();
+    ErrorHandler errorHandler;
+    errorHandler.showInfoAndReturn();
     cin.get();     // This will wait for a key press
 #endif
 }
