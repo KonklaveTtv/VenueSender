@@ -70,5 +70,5 @@ string EncryptionManager::decryptPassword(const string& encryptedPassword) {
     }
 
     // Return the decrypted password
-    return std::string(reinterpret_cast<char*>(decryptedBuffer), ciphertext.size() - crypto_secretbox_MACBYTES);
+    return string(reinterpret_cast<char*>(decryptedBuffer), ciphertext.size() - crypto_secretbox_MACBYTES);
 }
