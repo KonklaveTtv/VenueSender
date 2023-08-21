@@ -62,7 +62,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
         cerr << "Input stream is not in a good state." << endl;
         return;
     }
-    
+
     do {
         cout << "Enter subject for the email (press Enter on a new line to finish): ";
         string line;
@@ -130,39 +130,51 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
 
     } while (!inputProvided);
 
-    cout << "Enter the path of the file to attach: ";
-    getline(cin, attachmentPath);
-    // Remove single quotes from the path
-    attachmentPath.erase(std::remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
-    attachmentPath = ConsoleUtils::trim(attachmentPath);
+    while (true) {
+        cout << "Enter the path of the file to attach: ";
+        getline(cin, attachmentPath);
+        attachmentPath.erase(std::remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
+        attachmentPath = ConsoleUtils::trim(attachmentPath);
 
-    // Step 2: Get name
-    size_t lastSlash = attachmentPath.find_last_of("/\\\\");
-    if (lastSlash == string::npos) {
-        attachmentName = attachmentPath;
-    } else {
-        attachmentName = attachmentPath.substr(lastSlash + 1);
-    }
-
-    try {
-        if (fs::exists(attachmentPath)) {
-            // Step 3: Get size
-            size_t fileSize = fs::file_size(attachmentPath);
-            attachmentSize = to_string(fileSize) + " bytes";
-            cout << "File Size: " << fileSize << " bytes" << endl;
-
-            // Check if the file size exceeds the maximum allowed size
-            if (fileSize > MAX_ATTACHMENT_SIZE) {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
-                return;
-            }
-
-            cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
+        size_t lastSlash = attachmentPath.find_last_of("/\\\\");
+        if (lastSlash == string::npos) {
+            attachmentName = attachmentPath;
         } else {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+            attachmentName = attachmentPath.substr(lastSlash + 1);
         }
-    } catch (const fs::filesystem_error& e) {
-        cout << "Filesystem error: " << e.what() << endl;
+
+        try {
+            if (fs::exists(attachmentPath)) {
+                size_t fileSize = fs::file_size(attachmentPath);
+                attachmentSize = to_string(fileSize) + " bytes";
+                cout << "File Size: " << fileSize << " bytes" << endl;
+
+                if (fileSize > MAX_ATTACHMENT_SIZE) {
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                    attachmentPath.clear();
+                    attachmentName.clear();
+                    attachmentSize.clear();
+                    cout << "Do you want to add a different attachment? (Y/N): ";
+                    char choice;
+                    cin >> choice;
+                    ConsoleUtils::clearInputBuffer();
+                    if (choice == 'Y' || choice == 'y') {
+                        continue;  // Go back to asking for a new file
+                    } else {
+                        return;  // Exit the loop and function
+                    }
+                }
+
+                cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
+                break;  // Exit the loop if the file is valid
+            } else {
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                return;  // Exit the function if the path is invalid
+            }
+        } catch (const fs::filesystem_error& e) {
+            cout << "Filesystem error: " << e.what() << endl;
+            return;  // Exit the function if a filesystem error occurs
+        }
     }
 }
 
