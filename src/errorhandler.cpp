@@ -9,6 +9,12 @@ void ErrorHandler::showInfoAndReturn() {
     cin.get();     // This will wait for a key press
 }
 
+void ErrorHandler::showInfoAndRetry() {
+    cout << "Press return to continue..." << endl;
+    ConsoleUtils::clearInputBuffer();
+    cin.get();
+}
+
 void ErrorHandler::handleErrorAndReturn(ErrorType error) {
     switch (error) {
         case ErrorType::INVALID_INPUT_ERROR:
@@ -33,10 +39,10 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
             cerr << "Venue already selected. Skipping." << endl;
             break;
         case ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR:
-            cerr << "Too many unsuccessful attempts." << endl;
+            cerr << "Subject and Message are required. Please set them." << endl;
             break;
         case ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR:
-            cerr << "Subject and Message are required. Please set them." << endl;
+            cerr << "Too many unsuccessful attempts." << endl;
             break;
         case ErrorType::NO_VENUES_SELECTED_FOR_EMAIL_ERROR:
             cerr << "No venues selected. Please add venues before sending emails." << endl;
@@ -102,5 +108,4 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
             cerr << "An unknown error occurred." << endl;
             break;
     }
-    showInfoAndReturn();
 }

@@ -103,7 +103,7 @@ int main() {
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl;
                 ErrorHandler errorHandler;
-                errorHandler.showInfoAndReturn();              
+                errorHandler.showInfoAndRetry();              
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
                 
@@ -157,7 +157,7 @@ int main() {
                     if (subject.empty() || message.empty()) {
                         ErrorHandler errorHandler;
                         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
-                        ConsoleUtils::clearInputBuffer();
+                        errorHandler.showInfoAndRetry();
                         try {
                             emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                         } catch (const exception& e) {
@@ -169,7 +169,7 @@ int main() {
                             if (attempts >= 3) {
                                 ErrorHandler errorHandler;
                                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
-                                errorHandler.showInfoAndReturn();
+                                errorHandler.showInfoAndRetry();
                                 break; // Break out of the loop after too many attempts
                             }
                             continue; // Loop back to prompt for email details again
@@ -186,7 +186,7 @@ int main() {
                 if (selectedVenuesForEmail.empty()) {
                     ErrorHandler errorHandler;        
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_FOR_EMAIL_ERROR);
-                    errorHandler.showInfoAndReturn();
+                    errorHandler.showInfoAndRetry();
                     continue; // Return to the main menu
                 }
 
@@ -194,8 +194,7 @@ int main() {
                     int attempts = 0;
                     if (subject.empty() || message.empty()) {
                         ErrorHandler errorHandler;
-                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);
-                        ConsoleUtils::clearInputBuffer();
+                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
                         try {
                             emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                         } catch (const exception& e) {
@@ -301,14 +300,12 @@ int main() {
                 } else {
                     ErrorHandler errorHandler;
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
-                    ConsoleUtils::clearInputBuffer();
                     cin.get();     // This will wait for a key press
                     // The user entered an invalid choice, return to the main menu
                 }
             } else {
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
-                ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press
             }
         }

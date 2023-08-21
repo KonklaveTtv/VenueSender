@@ -39,8 +39,11 @@ public:
     SMTP_AUTH_ERROR
     };
 
-    // Function to allow the user time to see the information
+    // Function to allow the user time to see the information before returning to main menu
     void showInfoAndReturn();
+
+    // Function to allow the user time to see the information before continuing
+    void showInfoAndRetry();
 
     // Function to show info to user before returning
     void handleErrorAndReturn(ErrorType error);

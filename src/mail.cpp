@@ -39,7 +39,7 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "==========================" << endl;
 
 #ifndef UNIT_TESTING
-    errorHandler.showInfoAndReturn();
+    errorHandler.showInfoAndRetry();
 #endif
 }
 
@@ -53,6 +53,16 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     cout << "===== Construct Email =====" << endl;
     cout << "===========================" << endl;
 
+    // Clear input buffer and check stream state
+    if (&in == &cin) {
+        ConsoleUtils::clearInputBuffer();
+    }
+
+    if (!in.good()) {
+        cerr << "Input stream is not in a good state." << endl;
+        return;
+    }
+    
     do {
         cout << "Enter subject for the email (press Enter on a new line to finish): ";
         string line;
