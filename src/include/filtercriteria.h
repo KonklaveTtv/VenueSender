@@ -17,13 +17,6 @@ struct FilterCriteria {
 };
 
 class VenueUtilities {
-private:
-    // Member pointers as static constexpr members
-    static constexpr auto genreMemberPtr = &Venue::genre;
-    static constexpr auto stateMemberPtr = &Venue::state;
-    static constexpr auto cityMemberPtr = &Venue::city;
-    static constexpr auto capacityMemberPtr = &Venue::capacity;
-
 public:
 // Convert Venue to SelectedVenue
 static SelectedVenue convertToSelectedVenue(const Venue& venue);

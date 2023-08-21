@@ -1,5 +1,7 @@
 #include "include/errorhandler.h"
 
+#include "include/fileutils.h" // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
+
 using namespace std;
 
 // Function to show info to user before returning
@@ -15,6 +17,10 @@ void ErrorHandler::showInfoAndRetry() {
 }
 
 void ErrorHandler::handleErrorAndReturn(ErrorType error) {
+    handleErrorAndReturn(error, "");
+}
+
+void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extraInfo) {
     switch (error) {
         case ErrorType::INVALID_INPUT_ERROR:
             cerr << "Invalid input. Skipping." << endl;
@@ -71,7 +77,12 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
             cerr << "File exceeds the 24MB limit." << endl;
             break;
         case ErrorType::FILESYSTEM_ERROR:
-            cerr << "Filesystem error: " << endl;
+            cerr << "Filesystem error: ";
+            if (!extraInfo.empty()) {
+                cerr << extraInfo;
+            }
+            cerr << endl;
+            showInfoAndReturn();
             break;
         case ErrorType::CONFIG_OPEN_ERROR:
             cerr << "Failed to open config.json." << endl;

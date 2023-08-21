@@ -1,8 +1,8 @@
 #include "include/fileutils.h"
 
-using namespace std;
+#include "errorhandler.h" // Include here due to circular dependency between fileutils.h and errorhandler.h
 
-EncryptionManager encryptionManager;
+using namespace std;
 
 namespace confPaths {
 std::string venuesCsvPath = "venues.csv";

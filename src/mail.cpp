@@ -1,5 +1,4 @@
 #include "include/mail.h"
-#include <filesystem>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -162,8 +161,9 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
                 return;  // Exit the function if the path is invalid
             }
-        } catch (const fs::filesystem_error& e) {
-            cout << "Filesystem error: " << e.what() << endl;
+        } catch (const std::filesystem::filesystem_error& e) {
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
             return;  // Exit the function if a filesystem error occurs
         }
     }

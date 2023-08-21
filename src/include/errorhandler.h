@@ -1,9 +1,11 @@
 #ifndef ERRORHANDLER_H
 #define ERRORHANDLER_H
 
-#include "fileutils.h"
-
 #include <iostream>
+
+// Forward declarations due to circular dependency between fileutils.h and errorhandler.h
+class CsvReader; 
+class ConfigManager; 
 
 class ErrorHandler {
 public:
@@ -47,6 +49,7 @@ public:
 
     // Function to show info to user before returning
     void handleErrorAndReturn(ErrorType error);
+    void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
 };
 
 #endif // ERRORHANDLER_H

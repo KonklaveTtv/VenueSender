@@ -2,7 +2,6 @@
 #define FILEUTILS_H
 
 #include "encryption.h"
-#include "errorhandler.h"
 #include "structs.h"
 
 #include <algorithm>
@@ -11,7 +10,9 @@
 #include <vector>
 
 #include <json/json.h>
-    
+
+class ErrorHandler; // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
+
 namespace confPaths {
     extern std::string venuesCsvPath;
     extern std::string configJsonPath;
@@ -31,6 +32,9 @@ public:
 };
 
 class ConfigManager {
+private:
+    EncryptionManager encryptionManager;
+
 public:
     ConfigManager();
     bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
