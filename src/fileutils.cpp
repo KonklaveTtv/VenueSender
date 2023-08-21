@@ -25,15 +25,6 @@ void ConsoleUtils::clearInputBuffer() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
 }
 
-// Function to clear the console screen
-void ConsoleUtils::clearConsole() {
-#ifdef _WIN32
-    system("cls"); // For Windows
-#else
-    system("clear"); // For other platforms
-#endif
-}
-
 // Function to read venue data from CSV file
 void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     ifstream file(venuesCsvPath);

@@ -137,7 +137,7 @@ void VenueFilter::displayFilteredVenues(const vector<SelectedVenue>& selectedVen
         cout << "No venues found." << endl;
         return;
     }
-    ConsoleUtils::clearConsole();
+
     cout << "Filtered Venues: " << endl;
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
@@ -155,7 +155,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                                                 const string& filterType,
                                                 vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
-    ConsoleUtils::clearConsole();
+
     cout << "===== Filter By " << filterType << " =====" << endl;
     
     cout << "Available Options: " << endl;
@@ -222,7 +222,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
                                             const set<int>& uniqueCapacities,
                                             vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
-    ConsoleUtils::clearConsole();
+
     cout << "===== Filter By Capacity =====" << endl;
 
 

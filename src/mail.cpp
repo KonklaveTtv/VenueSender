@@ -127,7 +127,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     // Remove single quotes from the path
     attachmentPath.erase(std::remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
     attachmentPath = ConsoleUtils::trim(attachmentPath);
-    
+
     // Step 2: Get name
     size_t lastSlash = attachmentPath.find_last_of("/\\\\");
     if (lastSlash == string::npos) {
@@ -173,7 +173,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     }
 
     cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
-    this_thread::sleep_for(chrono::milliseconds(1000));
 
     struct curl_slist* recipients = nullptr;
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());

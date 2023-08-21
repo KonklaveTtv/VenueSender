@@ -22,7 +22,6 @@ namespace confPaths {
 class ConsoleUtils {
 public:
     static void clearInputBuffer();
-    static void clearConsole();
     static std::string trim(const std::string& str);
 };
 
