@@ -4,7 +4,7 @@
 using namespace std;
 namespace fs = filesystem;
 
-// Global objects for CURL and error handling
+// Define global objects for CURL and error handling
 CurlHandleWrapper curlHandleWrapper;
 ErrorHandler errorHandler;
 
@@ -19,7 +19,7 @@ string EmailManager::getCurrentDateRfc2822() {
     return buffer;
 }
 
-// Function to sanitize the subject line of an email
+// Function to sanitize the subject line of an email by replacing newline and carriage return characters with spaces
 string EmailManager::sanitizeSubject(string& subject) {
     string sanitized = subject;
     replace(sanitized.begin(), sanitized.end(), '\n', ' '); // replace newlines with spaces
@@ -30,6 +30,7 @@ string EmailManager::sanitizeSubject(string& subject) {
 // Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
                                      const string& senderEmail, int smtpPort, const string& smtpServer) {
+    // Display the email settings in a structured format
     cout << "=========================="<< endl;
     cout << "===== Email Settings =====" << endl;
     cout << "=========================="<< endl;
@@ -42,23 +43,25 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "verbose: " << (verbose ? "true" : "false") << endl;    
     cout << "==========================" << endl;
 
+    // If not in unit testing mode, prompt the user to acknowledge the displayed information
 #ifndef UNIT_TESTING
     errorHandler.showInfoAndRetry();
 #endif
 }
 
-// Function to validate if a string is a valid email address
+// Function to validate if the provided string is a valid email address format
 bool EmailManager::isValidEmail(const string& email) {
     static const regex emailPattern(R"((?=.{1,256})(?=.{1,64}@.{1,255})[^\s@]+@[^\s@]+\.[^\s@]+)");
     return regex_match(email, emailPattern);
 }
 
-// Function to construct an email with subject, message, and attachment
+// Function to guide the user in constructing an email with a subject, message, and optional attachment
 void EmailManager::constructEmail(string &subject, string &message, string &attachmentName, string &attachmentSize, string &attachmentPath, istream &in) {
     cout << "===========================" << endl;
     cout << "===== Construct Email =====" << endl;
     cout << "===========================" << endl;
 
+    // Prompt the user to enter the subject and perform checks
     do {
         cout << "Enter subject for the email (press Enter on a new line to finish): ";
         string line;
@@ -86,6 +89,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
         return;
     }
 
+    // Prompt the user to enter the message for the email and perform checks
     bool inputProvided;
     do {
         cout << "Enter the message for the email (press Enter on a new line to finish):\n";
@@ -127,12 +131,14 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
 
     } while (!inputProvided);
 
+    // Prompt the user to add an attachment
     while (true) {
         cout << "Enter the path of the file to attach: ";
         getline(cin, attachmentPath);
         attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
         attachmentPath = ConsoleUtils::trim(attachmentPath);
 
+        // Clean the path provided by the user and set the attachment name
         size_t lastSlash = attachmentPath.find_last_of("/\\\\");
         if (lastSlash == string::npos) {
             attachmentName = attachmentPath;
@@ -140,12 +146,14 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
             attachmentName = attachmentPath.substr(lastSlash + 1);
         }
 
+        // Calculate and set the size of the attachment
         try {
             if (fs::exists(attachmentPath)) {
                 size_t fileSize = fs::file_size(attachmentPath);
                 attachmentSize = to_string(fileSize) + " bytes";
                 cout << "File Size: " << fileSize << " bytes" << endl;
 
+                // Check the attachment size doesn't exceed 24MB
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                     attachmentPath.clear();
@@ -156,19 +164,22 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
                     cin >> choice;
                     ConsoleUtils::clearInputBuffer();
                     if (choice == 'Y' || choice == 'y') {
-                        continue;  // Go back to asking for a new file
+                        continue; // Go back to asking for a new file
                     } else {
-                        return;  // Exit the loop and function
+                        return; // Exit the loop and function
                     }
                 }
 
+                // Show the attachment name, size and path to the user
                 cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
                 break;  // Exit the loop if the file is valid
             } else {
+                // Error handling for attachment path
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
                 return;  // Exit the function if the path is invalid
             }
         } catch (const filesystem::filesystem_error& e) {
+            // Error handling for filesystem errors
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
             return;  // Exit the function if a filesystem error occurs
@@ -176,7 +187,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     }
 }
 
-// Function to send an individual email to a selected venue
+// Function to send an individual email to a selected venue with specified configurations
 bool EmailManager::sendIndividualEmail(CURL* curl,
                                        const SelectedVenue& selectedVenue,
                                        const string& senderEmail,
@@ -187,6 +198,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                                        string& attachmentName,
                                        string& attachmentSize,
                                        const string& attachmentPath) {
+    // Implementation involves using the cURL library to send the email with the provided configuration and content
     curlHandleWrapper.setEmailBeingSent(selectedVenue.email);
 
     if (!curl) {
@@ -261,8 +273,10 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
     if (!errorHandler.handleCurlError(res)) {
         if (res == CURLE_COULDNT_CONNECT) {
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
         } else if (res == CURLE_LOGIN_DENIED) {
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
         }
         return false;
@@ -272,9 +286,11 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 }
 
 
-// Function to display the progress of email sending
+// Function to display the progress of email sending to the user
 void EmailManager::viewEmailSendingProgress(const string& senderEmail) {
+    // Define global objects for CURL and error handling
     if (!isValidEmail(senderEmail)) {
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
         cerr << "Please set it correctly in your custom.json file." << endl;
         return;
