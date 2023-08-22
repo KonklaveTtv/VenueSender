@@ -9,6 +9,7 @@ using namespace std;
 // Progress callback to show progress in percentage for email sending
 int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
     if (dltotal > 0) {
+        cout << "Callback called: dltotal=" << dltotal << ", dlnow=" << dlnow << endl;
         progress = (dlnow / dltotal) * 100;
         if (progress <= 100) {
             cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
@@ -94,19 +95,16 @@ void CurlHandleWrapper::cleanup() {
 
 // Setter for emailBeingSent
 void CurlHandleWrapper::setEmailBeingSent(const string& email) {
-    lock_guard<mutex> lock(mtx);
     emailBeingSent = email;
 }
 
 // Getter for emailBeingSent
 string CurlHandleWrapper::getEmailBeingSent() const {
-    lock_guard<mutex> lock(mtx);
     return emailBeingSent;
 }
 
 // Function to clear the email being sent
 void CurlHandleWrapper::clearEmailBeingSent() {
-    lock_guard<mutex> lock(mtx);
     emailBeingSent.clear();
 }
 

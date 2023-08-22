@@ -10,7 +10,7 @@ using namespace std;
 // Declare global objects to be used across different parts of the code
 ConfigManager configManager;
 CsvReader csvReader;
-CurlHandleWrapper curlWrapper;
+CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
 EmailManager emailManager;
 EncryptionManager encryptionManager;
 MenuManager menuManager;
@@ -42,7 +42,7 @@ int main() {
 
     // Set up and initialize CURL
     CurlHandleWrapper::init();
-    CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
+        CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
     if (!curl) {
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
@@ -255,14 +255,11 @@ int main() {
                                 curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent
                                 cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << curlWrapper.getEmailBeingSent() << endl;
 
-                                // Send the individual email with progress tracking
-                                emailManager.sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                                // Send the individual email
+                                emailManager.sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail);
 
                                 curlWrapper.clearEmailBeingSent();
                             }
-
-                            // Display email sending progress
-                            emailManager.viewEmailSendingProgress(senderEmail);
 
                             filteredVenues.clear(); // Clear the filtered venues for the next round of emails
                             selectedVenuesForEmail.clear();  // Clear the selected venues after sending the emails

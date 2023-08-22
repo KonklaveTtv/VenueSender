@@ -5,8 +5,12 @@ using namespace std;
 namespace fs = filesystem;
 
 // Define global objects for CURL and error handling
-CurlHandleWrapper curlHandleWrapper;
+CurlHandleWrapper& curlHandleWrapper = CurlHandleWrapper::getInstance();
 ErrorHandler errorHandler;
+
+// Global progress counters
+static int successfulSends = 0; // Counter for successful email sends
+int totalEmails;
 
 // Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
@@ -175,15 +179,29 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                                        int smtpPort,
                                        string& attachmentName,
                                        string& attachmentSize,
-                                       const string& attachmentPath) {
-    // Implementation involves using the cURL library to send the email with the provided configuration and content
-    curlHandleWrapper.setEmailBeingSent(selectedVenue.email);
+                                       const string& attachmentPath,
+                                       const vector<SelectedVenue>& selectedVenuesForEmail) {
+
+    CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
+
+    // Reset the count
+    successfulSends = 0;
+
+    //Update totalEmails dynamically
+    totalEmails = selectedVenuesForEmail.size();
 
     if (!curl) {
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return false;
     }
 
+    if (!isValidEmail(senderEmail)) {
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+        cerr << "Please set it correctly in your custom.json file." << endl;
+        return false;
+    }
+    
     cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
 
     struct curl_slist* recipients = nullptr;
@@ -234,20 +252,33 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
         curl_easy_setopt(curl, CURLOPT_READDATA, &payload);
         curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
-    }
+        }
 
-    cout << "Authenticating with SMTP server..." << endl;
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+        cout << "Authenticating with SMTP server..." << endl;
+        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
-    CURLcode res = curl_easy_perform(curl);
+        //Update totalEmails dynamically
+        totalEmails = selectedVenuesForEmail.size();
 
-    // Free the MIME structure
-    if (mime) {
-        curl_mime_free(mime);
-    }
+        res = curl_easy_perform(curl);
+        if (res == 0) { // Check if email was sent successfully
+            successfulSends++;
+            double progressPercentage = 0.0;
+            if (totalEmails != 0) {
+                progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
+            }
+            cout << "Progress: " << progressPercentage << "%" << endl;
+        }
 
-    curl_slist_free_all(recipients);
-    curl_slist_free_all(headers);
+        // Free the MIME structure
+        if (mime) {
+            curl_mime_free(mime);
+        }
+
+        curl_slist_free_all(recipients);
+        curl_slist_free_all(headers);
+
+        cout << "Email sending progress completed." << endl;
 
     if (!errorHandler.handleCurlError(res)) {
         if (res == CURLE_COULDNT_CONNECT) {
@@ -261,21 +292,4 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     }
 
     return true;
-}
-
-
-// Function to display the progress of email sending to the user
-void EmailManager::viewEmailSendingProgress(const string& senderEmail) {
-    // Define global objects for CURL and error handling
-    if (!isValidEmail(senderEmail)) {
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
-        cerr << "Please set it correctly in your custom.json file." << endl;
-        return;
-    }
-
-    cout << "Email sending progress completed." << endl;
-    cout << "Press return to continue..." << endl;
-    ConsoleUtils::clearInputBuffer();
-    cin.get();
 }

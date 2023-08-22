@@ -5,6 +5,9 @@
 // Use the standard namespace
 using namespace std;
 
+// Define the static member variable
+std::mutex ErrorHandler::outputMutex;
+
 // Function to handle CURL errors
 bool ErrorHandler::handleCurlError(CURLcode res) {
     // Check if CURL operation was successful
@@ -23,6 +26,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
 
 // Function to handle various types of errors and display appropriate messages
 void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo = "") {
+    std::lock_guard<std::mutex> lock(outputMutex); // Lock the mutex
     // Switch statement to handle different types of errors
     switch (error) {
         case ErrorType::INVALID_INPUT_ERROR:

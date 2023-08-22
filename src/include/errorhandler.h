@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 
 #include <iostream>
+#include <mutex>
 
 // Forward declarations due to circular dependency between fileutils.h and errorhandler.h
 class CsvReader; 
@@ -11,6 +12,8 @@ class ConfigManager;
 
 // ErrorHandler class to manage different types of errors
 class ErrorHandler {
+private:
+    static std::mutex outputMutex; // Mutex for thread-safe output
 public:
     // Enumeration to represent different types of errors that can be encountered
     enum class ErrorType {

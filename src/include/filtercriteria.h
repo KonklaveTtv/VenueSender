@@ -89,6 +89,8 @@ private:
                                                     const std::set<std::string>& uniqueOptions,
                                                     const std::string& filterType,
                                                     std::vector<SelectedVenue>& temporaryFilteredVenues);
+    
+    std::vector<SelectedVenue> selectedVenuesForEmail;
 
 public:
     // Function to process user input and select venues based on it
@@ -111,6 +113,8 @@ public:
     std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                                                 const std::set<int>& uniqueCapacities,
                                                 std::vector<SelectedVenue>& temporaryFilteredVenues);
+
+    size_t getSelectedVenuesCount() const { return selectedVenuesForEmail.size(); }
 };
 
 #endif // FILTERCRITERIA_H

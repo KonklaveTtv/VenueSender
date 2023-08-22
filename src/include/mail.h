@@ -63,10 +63,8 @@ public:
                              int smtpPort,
                              std::string& attachmentName,
                              std::string& attachmentSize,
-                             const std::string& attachmentPath);
-
-    // Function to display the progress of email sending
-    void viewEmailSendingProgress(const std::string& senderEmail);
+                             const std::string& attachmentPath,
+                             const std::vector<SelectedVenue>& selectedVenuesForEmail);
 };
 
 #endif // MAIL_H

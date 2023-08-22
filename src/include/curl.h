@@ -14,11 +14,15 @@
 // Class to manage the cURL handle and associated operations
 class CurlHandleWrapper {
 public:
-    // Constructor: Initializes the cURL handle
-    CurlHandleWrapper();
+    // Deleted copy constructor and assignment operator
+    CurlHandleWrapper(const CurlHandleWrapper&) = delete;
+    CurlHandleWrapper& operator=(const CurlHandleWrapper&) = delete;
 
-    // Destructor: Cleans up the cURL handle
-    ~CurlHandleWrapper();
+    // Static method to return an instance of the class
+    static CurlHandleWrapper& getInstance() {
+        static CurlHandleWrapper instance; // Guaranteed to be destroyed, instantiated on first use.
+        return instance;
+    }
 
     // Get the cURL handle for use in other operations
     CURL* get() const;
@@ -28,6 +32,10 @@ public:
 
     // Clean up the cURL library (should be called at program end)
     static void cleanup();
+
+    inline double getProgress() const {
+        return progress;
+    }
 
     // Callback function to update the progress of ongoing operations
     int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
@@ -48,6 +56,9 @@ public:
     static size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
 
 private:
+    CurlHandleWrapper();  // Made private to enforce Singleton pattern
+    ~CurlHandleWrapper(); // Destructor
+
     // The actual cURL handle
     CURL* curl;
 
