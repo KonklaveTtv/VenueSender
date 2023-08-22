@@ -9,8 +9,10 @@
 class CsvReader; 
 class ConfigManager; 
 
+// ErrorHandler class to manage different types of errors
 class ErrorHandler {
 public:
+    // Enumeration to represent different types of errors that can be encountered
     enum class ErrorType {
     INVALID_INPUT_ERROR,
     INVALID_MENU_INPUT_ERROR,
@@ -49,17 +51,19 @@ public:
     SMTP_AUTH_ERROR
     };
 
-    // Function to allow the user time to see the information before returning to main menu
+    // Function to pause the program and show info to the user before returning to the main menu
     void showInfoAndReturn();
 
-    // Function to allow the user time to see the information before continuing
+    // Function to pause the program and show info to the user before continuing with the next operation
     void showInfoAndRetry();
 
-    // Function to show error to user before returning
+    // Function to handle errors and display appropriate messages based on the type of error
     void handleErrorAndReturn(ErrorType error);
+    
+    // Overloaded version with extra information
     void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
 
-    // Function to handle cURL related errors
+    // Handles cURL errors and returns a boolean to indicate success/failure
     bool handleCurlError(CURLcode res);
 };
 

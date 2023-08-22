@@ -2,8 +2,10 @@
 
 #include "errorhandler.h" // Include here due to circular dependency between fileutils.h and errorhandler.h
 
+// Use the standard namespace
 using namespace std;
 
+// Namespace to hold configuration file paths
 namespace confPaths {
 string venuesCsvPath = "venues.csv";
 string configJsonPath = "config.json";
@@ -20,15 +22,18 @@ string ConsoleUtils::trim(const string& str){
     return (first < last ? string(first, last) : string());
 }
 
-// Clear the input buffer
+// Function to clear the input buffer
 void ConsoleUtils::clearInputBuffer() {
     // Clear the input buffer
     cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
 }
 
-// Function to read venue data from CSV file
+// Function to read venue data from a CSV file
 void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
+    // Open the CSV file for reading
+    // Read each line, split it into parts, and populate the `venues` vector
+    // Handle any errors that may occur
     ifstream file(venuesCsvPath);
     if (!file.is_open()) {
         ErrorHandler errorHandler;
@@ -71,16 +76,18 @@ void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     file.close();
 }
 
+// Default constructor for ConfigManager
 ConfigManager::ConfigManager() {}
 
-// Function to load the settings config.json data and encrypt and decrypt email password
+// Function to load settings from a configuration file
 bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
                                        string& senderEmail, string& smtpUsername, 
                                        string& mailPass, int& smtpPort, string& smtpServer, 
                                        string& venuesCsvPath) {
-
-    // Load configuration settings from config.json into respective variables
-    // Return true if successful, false otherwise
+    // Logic to read and load settings from a JSON file
+    // Includes conditional compilation for unit testing
+    // Handles encryption and decryption of email passwords
+    // Validates the loaded settings and returns a boolean flag to indicate success or failure
 #ifdef UNIT_TESTING
     Json::Value config;
     ifstream configFile(confPaths::mockConfigJsonPath);
@@ -253,8 +260,11 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     return configLoadedSuccessfully;
 }
 
-// Function to reset flags and passwords in config.json
+// Function to reset flags and passwords in the configuration file
 void ConfigManager::resetConfigFile() {
+    // Logic to read the existing JSON configuration
+    // Modify specific keys and values
+    // Write the updated JSON back to the file
     Json::Value config;
 
     string configPath = confPaths::configJsonPath;

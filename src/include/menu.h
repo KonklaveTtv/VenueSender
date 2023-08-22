@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 
+// Class to manage menu-related operations
 class MenuManager {
 public:
 
@@ -25,13 +26,13 @@ public:
         Exit
     };
 
-    // Options for filtering venues by different criteria
+    // Constants for menu options related to filtering venues
     static const int FILTER_BY_GENRE_OPTION;
     static const int FILTER_BY_STATE_OPTION;
     static const int FILTER_BY_CITY_OPTION;
     static const int FILTER_BY_CAPACITY_OPTION;
 
-    // Other menu options
+    // Constants for other menu options
     static const int CLEAR_SELECTED_VENUES_OPTION;
     static const int VIEW_SELECTED_VENUES_OPTION;
     static const int SHOW_EMAIL_SETTINGS_OPTION;
@@ -39,13 +40,13 @@ public:
     static const int FINISH_AND_SEND_EMAILS_OPTION;
     static const int EXIT_OPTION;
 
-    // Function to validate user input
+    // Function to validate if the user's menu choice is valid
     bool isValidMenuChoice(int choice);
 
-    // Function to display the menu to the user
+    // Function to display the available menu options to the user
     int displayMenuOptions();
 
-    // Function to display selected venues to the user
+    // Function to display the list of venues selected by the user
     void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
 };
 

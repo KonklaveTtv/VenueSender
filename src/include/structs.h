@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-// Venue structure
+// Structure to represent a venue
 struct Venue {
     std::string name;
     std::string email;
@@ -12,17 +12,17 @@ struct Venue {
     std::string city;
     int capacity;
 
-    // Default constructor
+    // Default constructor to allow for uninitialized Venue objects
     Venue() = default;
 
-    // Parameterized constructor to initialize all members
+    // Parameterized constructor to initialize all members of the struct
     Venue(const std::string& name, const std::string& email, const std::string& genre,
           const std::string& state, const std::string& city, int capacity)
         : name(name), email(email), genre(genre), state(state), city(city), capacity(capacity) {}
 };
 
 
-// Selected Venue structure (used for email sending)
+// Structure to represent a venue selected for email sending
 struct SelectedVenue {
     std::string name;
     std::string email;
@@ -31,10 +31,10 @@ struct SelectedVenue {
     std::string city;
     int capacity;
 
-    // Default constructor
+    // Default constructor to allow for uninitialized SelectedVenue objects
     SelectedVenue() = default;
 
-    // Copy constructor to initialize from a Venue object
+    // Parameterized constructor to initialize all members of the struct
     SelectedVenue(const std::string& name, const std::string& email, const std::string& genre,
           const std::string& state, const std::string& city, int capacity)
         : name(name), email(email), genre(genre), state(state), city(city), capacity(capacity) {}

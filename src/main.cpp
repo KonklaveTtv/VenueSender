@@ -1,8 +1,10 @@
 #include "include/main.h"
 
+// Use relevant namespaces
 using namespace confPaths;
 using namespace std;
 
+// Declare global objects to be used across different parts of the code
 ConfigManager configManager;
 CsvReader csvReader;
 CurlHandleWrapper curlWrapper;
@@ -16,13 +18,13 @@ VenueUtilities venueUtilities;
 #ifndef UNIT_TESTING
 
 int main() {
-    // Initialize data and configuration settings
+    // Initialize necessary variables
     vector<Venue> venues;
     string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort;
     bool useSSL, verifyPeer, verifyHost, verbose;
 
-    // Load the config settings from the JSON file
+    // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
     if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
         ErrorHandler errorHandler;
@@ -56,6 +58,7 @@ int main() {
     set<string> uniqueCities = venueUtilities.getUniqueCities(venues);
     set<int> uniqueCapacities = venueUtilities.getUniqueCapacities(venues);
 
+    //Initialize variables for filters and selected venues
     FilterCriteria criteria;
     vector<SelectedVenue> selectedVenuesForEmail;
     vector<SelectedVenue> filteredVenues;
@@ -65,7 +68,7 @@ int main() {
         // Display menu options and get user's choice
         
         int choice = menuManager.displayMenuOptions();
-            // Handle menu choices
+            // Handle different menu options
             if (choice >= static_cast<int>(MenuManager::MenuOption::FilterByGenre) &&
                 choice <= MenuManager::FILTER_BY_CAPACITY_OPTION) {
                 // Declare a temporary vector to store filtered venues
@@ -90,14 +93,15 @@ int main() {
                     temporaryFilteredVenues = venueFilter.filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
                 }
 
-                // Display filtered venues
+                // Display venues that have been selected so far
                 venueFilter.displayFilteredVenues(temporaryFilteredVenues);
 
                 // Call the new function to process venue selection
                 venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
             } else if (choice == MenuManager::VIEW_SELECTED_VENUES_OPTION) {
                 // View Selected Venues
-                
+
+                // Clear out any venues that have been selected so far
                 menuManager.displaySelectedVenues(selectedVenuesForEmail);
             } else if (choice == MenuManager::CLEAR_SELECTED_VENUES_OPTION) {
                 // Clear Selected Venues
@@ -108,7 +112,7 @@ int main() {
                 errorHandler.showInfoAndRetry();              
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
-                
+                // Handle email editing or viewing                
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
             } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
                 
@@ -244,7 +248,7 @@ int main() {
                         }
                         continue; // Loop back to show the modified email details
                     } else {
-                        
+                        // Finalize the email content and send it to the selected venues                        
                         cout << "Do you wish to send this email? (Y/N): ";
                         char confirmSend;
                         cin >> confirmSend;
@@ -281,42 +285,34 @@ int main() {
                         }
                     }
                 }
-            } else if (choice == MenuManager::EXIT_OPTION) {
-                
+            } else if (choice == MenuManager::EXIT_OPTION) {                
                 // Prompt for confirmation before exiting
                 cout << "Are you sure you want to exit? (Y/N): ";
                 char confirmExit;
                 cin >> confirmExit;
-                ConsoleUtils::clearInputBuffer();
-
+                ConsoleUtils::clearInputBuffer();                
+                // Handle program exit
                 if (confirmExit == 'Y' || confirmExit == 'y') {
-
                     // Exit VenueSender
                     cout << "Exiting the program." << endl;
-                    this_thread::sleep_for(chrono::milliseconds(1500));
                     break;
                 } else if (confirmExit == 'N' || confirmExit == 'n') {
                     cout << "Returning to the main menu." << endl;
-                    this_thread::sleep_for(chrono::milliseconds(1500));
-                    // The user chose not to exit, return to the main menu
                 } else {
+                    // The user entered an invalid choice, return to the main menu
                     ErrorHandler errorHandler;
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
-                    cin.get();     // This will wait for a key press
-                    // The user entered an invalid choice, return to the main menu
+                    cin.get(); // This will wait for a key press
                 }
-            } else {
+            } else {                
+                // Handle invalid menu choice
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
-                cin.get();     // This will wait for a key press
+                cin.get(); // This will wait for a key press
             }
         }
-        // Before the program exits, call the resetConfigFile function
-        // to reset the flags and passwords in the config.json file
+        // Reset configurations and cleanup before exiting
         configManager.resetConfigFile();  
-
-
-        // cURL library cleanup
         CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
 
     return 0;

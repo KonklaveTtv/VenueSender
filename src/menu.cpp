@@ -1,8 +1,9 @@
 #include "include/menu.h"
 
+// Use the standard namespace
 using namespace std;
 
-// Options for filtering venues by different criteria
+// Initialize constants for menu options
 const int MenuManager::FILTER_BY_GENRE_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByGenre);
 const int MenuManager::FILTER_BY_STATE_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByState);
 const int MenuManager::FILTER_BY_CITY_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByCity);
@@ -16,18 +17,20 @@ const int MenuManager::VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuManager::M
 const int MenuManager::FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail);
 const int MenuManager::EXIT_OPTION = static_cast<int>(MenuManager::MenuOption::Exit);
 
-// Function to validate user input
+// Function to validate if the user's choice is a valid menu option
 bool MenuManager::isValidMenuChoice(int choice) {
+    
     // Validate if the choice is within valid menu options
     return choice >= static_cast<int>(MenuOption::FilterByGenre) &&
            choice <= static_cast<int>(MenuOption::Exit);
 }
 
-// Function to display the menu to the user
+// Function to display the menu options to the user and get their choice
 int MenuManager::displayMenuOptions() {
 #ifdef UNIT_TESTING
     int choice;
     do {
+        // Display the main menu options
         cout << "====================="<< endl;
         cout << "===== Main Menu =====" << endl;
         cout << "====================="<< endl;
@@ -43,11 +46,13 @@ int MenuManager::displayMenuOptions() {
         cout << static_cast<int>(MenuManager::MenuOption::Exit) << ". Exit VenueSender" << endl;
         cout << "Enter your choice: ";
 
-        if (!(cin >> choice)) {
+        // Get user's choice
+        if (!(cin >> choice)) {            
+            // Handle invalid menu input (non-numeric)
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_INPUT_ERROR);
-            
         } else if (!isValidMenuChoice(choice)) {
+                // Handle choice that is out of valid range
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR); 
             cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
@@ -62,6 +67,7 @@ int MenuManager::displayMenuOptions() {
 #else
     int choice;
     do {
+        // Display the main menu options
         cout << "====================="<< endl;
         cout << "===== Main Menu =====" << endl;
         cout << "====================="<< endl;
@@ -77,11 +83,13 @@ int MenuManager::displayMenuOptions() {
         cout << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
         cout << "Enter your choice: ";
 
+        // Get user's choice
         if (!(cin >> choice)) {
+            // Handle invalid menu input (non-numeric)
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_INPUT_ERROR);
-            cin.ignore();  // If there's a chance you might have used cin before this point
-            cin.get();     // This will wait for a key press
+            cin.ignore(); // If there's a chance you might have used cin before this point
+            cin.get(); // This will wait for a key press
         } else if (!isValidMenuChoice(choice)) {
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR); 
@@ -90,7 +98,7 @@ int MenuManager::displayMenuOptions() {
                  << static_cast<int>(MenuManager::MenuOption::Exit) << "." << endl;
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
-            cin.get();     // This will wait for a key press
+            cin.get(); // This will wait for a key press
         } else {
             break;
         }
@@ -100,15 +108,22 @@ int MenuManager::displayMenuOptions() {
 #endif
 }
 
-// Function to display selected venues to the user
+// Function to display the venues that have been selected by the user
 void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
+
+    // Display header
     cout << "==========================="<< endl;
     cout << "===== Selected Venues =====" << endl;
     cout << "==========================="<< endl;
+
+    // Check if any venues have been selected
     if (selectedVenues.empty()) {
+        
+        // Handle case where no venues have been selected
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
     } else {
+        // Loop through and display each selected venue's details
         for (const auto& venue : selectedVenues) {
             cout << "Name: " << venue.name << endl;
             cout << "Email: " << venue.email << endl;
@@ -117,9 +132,10 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
         }
     }
 #ifndef UNIT_TESTING
+    // Show additional information if not in unit testing mode
     cout << "===========================" << endl;
     ErrorHandler errorHandler;
     errorHandler.showInfoAndReturn();
-    cin.get();     // This will wait for a key press
+    cin.get(); // This will wait for a key press
 #endif
 }

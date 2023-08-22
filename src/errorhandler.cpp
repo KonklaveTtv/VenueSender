@@ -2,34 +2,40 @@
 
 #include "include/fileutils.h" // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
 
+// Use the standard namespace
 using namespace std;
 
-// Function to show info to user before returning
+// Function to display a message asking the user to press return to go back to the Main Menu
 void ErrorHandler::showInfoAndReturn() {
     cout << "Press return to go back to Main Menu..." << endl;
-    cin.get();     // This will wait for a key press
+    cin.get(); // This will wait for a key press
 }
 
+// Function to display a message asking the user to press return to continue
 void ErrorHandler::showInfoAndRetry() {
     cout << "Press return to continue..." << endl;
-    ConsoleUtils::clearInputBuffer();
     cin.get();
 }
 
+// Function to handle CURL errors
 bool ErrorHandler::handleCurlError(CURLcode res) {
+    // Check if CURL operation was successful
     if (res != CURLE_OK) {
-        cerr << "CURL Error: " << curl_easy_strerror(res) << endl;
-        handleErrorAndReturn(ErrorType::LIBCURL_ERROR);
+        cerr << "CURL Error: " << curl_easy_strerror(res) << endl; // Display CURL error message
+        handleErrorAndReturn(ErrorType::LIBCURL_ERROR); // Handle the error
         return false;
     }
     return true;
 }
 
+// Overloaded function to handle errors without extra information
 void ErrorHandler::handleErrorAndReturn(ErrorType error) {
     handleErrorAndReturn(error, "");
 }
 
+// Function to handle various types of errors and display appropriate messages
 void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo = "") {
+    // Switch statement to handle different types of errors
     switch (error) {
         case ErrorType::INVALID_INPUT_ERROR:
             cerr << "Invalid input. Skipping." << endl;

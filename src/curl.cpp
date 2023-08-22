@@ -1,9 +1,12 @@
 #include "include/curl.h"
 
+// Use the standard namespace
 using namespace std;
 
-/* CurlHandleWrapper*/
-/*-------------------*/
+/* CurlHandleWrapper Class Implementation */
+/*---------------------------------------*/
+
+// Progress callback to show progress in percentage for email sending
 int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
     if (dltotal > 0) {
         progress = (dlnow / dltotal) * 100;
@@ -14,6 +17,7 @@ int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, doubl
     return 0;
 }
 
+// Callback function to read data for sending in the request
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
     string* payload = static_cast<string*>(userp);
     size_t totalsize = size * nmemb;
@@ -31,6 +35,7 @@ size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, voi
     return 0; // Return 0 to signify no data left to read
 }
 
+// Function to set SSL options for cURL
 void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyHost) {
     if (useSSL) {
         curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
@@ -43,7 +48,9 @@ void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyH
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verifyHost ? 2L : 0L);
 }
 
+// Constructor for CurlHandleWrapper class
 CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
+    // Initialize cURL handle and set basic options
     curl = curl_easy_init();
     if (!curl) {
         ErrorHandler errorHandler;
@@ -62,20 +69,25 @@ CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
     }
 }
 
+// Destructor for CurlHandleWrapper class
 CurlHandleWrapper::~CurlHandleWrapper() {
+    // Clean up cURL handle
     if (curl) {
         curl_easy_cleanup(curl);
     }
 }
 
+// Function to get the underlying cURL handle
 CURL* CurlHandleWrapper::get() const {
     return curl;
 }
 
+// Global cURL initialization
 void CurlHandleWrapper::init() {
     curl_global_init(CURL_GLOBAL_DEFAULT);
 }
 
+// Global cURL cleanup
 void CurlHandleWrapper::cleanup() {
     curl_global_cleanup();
 }
@@ -86,21 +98,26 @@ void CurlHandleWrapper::setEmailBeingSent(const string& email) {
     emailBeingSent = email;
 }
 
+// Getter for emailBeingSent
 string CurlHandleWrapper::getEmailBeingSent() const {
     lock_guard<mutex> lock(mtx);
     return emailBeingSent;
 }
 
+// Function to clear the email being sent
 void CurlHandleWrapper::clearEmailBeingSent() {
     lock_guard<mutex> lock(mtx);
     emailBeingSent.clear();
 }
 
+// Function to set up a cURL handle with various settings
 CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose, 
                       const string& senderEmail, const string& smtpUsername, string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
 
+    // Initialize the curlWrapper
     CURL* curl = curlWrapper.get();
     if (!curl) {
+        // Handle error
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return nullptr;

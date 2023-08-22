@@ -1,11 +1,14 @@
 #include "include/mail.h"
 
+// Use the standard namespace and alias for filesystem
 using namespace std;
 namespace fs = filesystem;
 
+// Global objects for CURL and error handling
 CurlHandleWrapper curlHandleWrapper;
 ErrorHandler errorHandler;
 
+// Function to get the current date in RFC 2822 format
 string EmailManager::getCurrentDateRfc2822() {
     char buffer[100];
     time_t now;
@@ -16,6 +19,7 @@ string EmailManager::getCurrentDateRfc2822() {
     return buffer;
 }
 
+// Function to sanitize the subject line of an email
 string EmailManager::sanitizeSubject(string& subject) {
     string sanitized = subject;
     replace(sanitized.begin(), sanitized.end(), '\n', ' '); // replace newlines with spaces
@@ -23,6 +27,7 @@ string EmailManager::sanitizeSubject(string& subject) {
     return sanitized;
 }
 
+// Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
                                      const string& senderEmail, int smtpPort, const string& smtpServer) {
     cout << "=========================="<< endl;
@@ -42,11 +47,13 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
 #endif
 }
 
+// Function to validate if a string is a valid email address
 bool EmailManager::isValidEmail(const string& email) {
     static const regex emailPattern(R"((?=.{1,256})(?=.{1,64}@.{1,255})[^\s@]+@[^\s@]+\.[^\s@]+)");
     return regex_match(email, emailPattern);
 }
 
+// Function to construct an email with subject, message, and attachment
 void EmailManager::constructEmail(string &subject, string &message, string &attachmentName, string &attachmentSize, string &attachmentPath, istream &in) {
     cout << "===========================" << endl;
     cout << "===== Construct Email =====" << endl;
@@ -169,6 +176,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     }
 }
 
+// Function to send an individual email to a selected venue
 bool EmailManager::sendIndividualEmail(CURL* curl,
                                        const SelectedVenue& selectedVenue,
                                        const string& senderEmail,
@@ -264,6 +272,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 }
 
 
+// Function to display the progress of email sending
 void EmailManager::viewEmailSendingProgress(const string& senderEmail) {
     if (!isValidEmail(senderEmail)) {
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
