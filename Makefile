@@ -71,7 +71,7 @@ $(DEBUG_TARGET): $(DEBUG_OBJS)
 
 # Link the venuesender_test
 $(TEST_TARGET): $(TEST_OBJS) $(TEST_MAIN_OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(filter-out $(OBJDIR)/test_main.o, $(TEST_MAIN_OBJS)) $(LIBS) -lCatch2
+	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(filter-out $(OBJDIR)/test_main.o, $(TEST_MAIN_OBJS)) $(LIBS)
 
 # Run tests
 run_tests: test $(TEST_TARGET)

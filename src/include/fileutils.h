@@ -10,7 +10,7 @@
 #include <vector>
 
 // Include headers for JSON processing
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 
 // Forward declaration to resolve circular dependency with errorhandler.h
 class ErrorHandler; // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
