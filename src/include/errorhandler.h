@@ -1,6 +1,8 @@
 #ifndef ERRORHANDLER_H
 #define ERRORHANDLER_H
 
+#include <curl/curl.h>
+
 #include <iostream>
 
 // Forward declarations due to circular dependency between fileutils.h and errorhandler.h
@@ -14,6 +16,7 @@ public:
     INVALID_MENU_INPUT_ERROR,
     INPUT_LENGTH_ERROR,
     INVALID_CHOICE_ERROR,
+    INVALID_INDEX_ERROR,
     INVALID_INDEX_FORMAT_ERROR,
     NO_VENUES_SELECTED_ERROR,
     VENUE_ALREADY_SELECTED_ERROR,
@@ -28,16 +31,19 @@ public:
     EMAIL_WRITING_ATTEMPTS_ERROR,
     ATTACHMENT_PATH_ERROR,
     ATTACHMENT_SIZE_ERROR,
+    SENDER_EMAIL_FORMAT_ERROR,
     FILESYSTEM_ERROR,
     CONFIG_OPEN_ERROR,
     CONFIG_LOAD_ERROR,
     CONFIG_OPEN_TO_WRITE_ERROR,
     INVALID_CAPACITY_IN_CSV,
     INVALID_DATA_IN_CSV,
+    LIBSODIUM_INIT_ERROR,
     ENCRYPTION_ERROR,
     DECRYPTION_ERROR,
     EMAIL_PASSWORD_ENCRYPTION_ERROR,
     EMAIL_PASSWORD_DECRYPTION_ERROR,
+    EMAIL_PASSWORD_ENCRYPTION_FORMAT_ERROR,
     LIBCURL_ERROR,
     SMTP_CONNECTION_ERROR,
     SMTP_AUTH_ERROR
@@ -49,9 +55,12 @@ public:
     // Function to allow the user time to see the information before continuing
     void showInfoAndRetry();
 
-    // Function to show info to user before returning
+    // Function to show error to user before returning
     void handleErrorAndReturn(ErrorType error);
     void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
+
+    // Function to handle cURL related errors
+    bool handleCurlError(CURLcode res);
 };
 
 #endif // ERRORHANDLER_H

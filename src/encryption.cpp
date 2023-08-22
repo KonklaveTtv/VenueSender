@@ -9,7 +9,9 @@ array<unsigned char, crypto_secretbox_NONCEBYTES> globalEncryptionNonce;
 EncryptionManager::EncryptionManager() {
     // Initialize libsodium
     if (sodium_init() < 0) {
-        throw runtime_error("Failed to initialize libsodium.");
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBSODIUM_INIT_ERROR);
+        exit(EXIT_FAILURE); // Terminate the program
     }
 
     // Generate a random encryption key
@@ -46,7 +48,9 @@ string EncryptionManager::decryptPassword(const string& encryptedPassword) {
 
     // Check if the encrypted password is long enough to contain the nonce and MAC
     if (encryptedPassword.size() < crypto_secretbox_MACBYTES + NONCE_LENGTH) {
-        throw invalid_argument("Invalid encrypted password format.");
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_ENCRYPTION_FORMAT_ERROR);
+        exit(EXIT_FAILURE); // Terminate the program
     }
 
     // Extract the encryption nonce from the encrypted password
@@ -66,7 +70,7 @@ string EncryptionManager::decryptPassword(const string& encryptedPassword) {
                                    globalEncryptionKey.data()) != 0) {
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
-        throw runtime_error("");
+        exit(EXIT_FAILURE); // Terminate the program
     }
 
     // Return the decrypted password

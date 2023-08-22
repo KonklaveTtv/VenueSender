@@ -76,7 +76,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
         cout << "Press return to continue..." << endl;
         ConsoleUtils::clearInputBuffer();
         cin.get();     // This will wait for a key press
-        return; // Or handle the error appropriately
+        return;
     }
 
     istringstream iss(userInput);
@@ -115,7 +115,8 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                     cin.get();     // This will wait for a key press
                 }
             } else {
-                output << "Invalid index: " << selectedIndex + 1 << ". Skipping." << endl;
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 cout << "Press return to continue..." << endl;
                 ConsoleUtils::clearInputBuffer();
                 cin.get();     // This will wait for a key press  
@@ -272,7 +273,8 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
                 }
             }
         } else {
-            cout << "Invalid index: " << selectedIndex << endl;
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR, std::to_string(selectedIndex));
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press 

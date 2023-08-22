@@ -16,11 +16,20 @@ void ErrorHandler::showInfoAndRetry() {
     cin.get();
 }
 
+bool ErrorHandler::handleCurlError(CURLcode res) {
+    if (res != CURLE_OK) {
+        cerr << "CURL Error: " << curl_easy_strerror(res) << endl;
+        handleErrorAndReturn(ErrorType::LIBCURL_ERROR);
+        return false;
+    }
+    return true;
+}
+
 void ErrorHandler::handleErrorAndReturn(ErrorType error) {
     handleErrorAndReturn(error, "");
 }
 
-void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extraInfo = "") {
+void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo = "") {
     switch (error) {
         case ErrorType::INVALID_INPUT_ERROR:
             cerr << "Invalid input. Skipping." << endl;
@@ -34,8 +43,11 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extr
         case ErrorType::INVALID_CHOICE_ERROR:
             cerr << "Invalid choice. Press return..." << endl;
             break;
+        case ErrorType::INVALID_INDEX_ERROR:
+            cerr << "Invalid index: " << extraInfo << endl;
+            break;
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
-            cerr << "Invalid index format. Skipping." << endl;
+            cerr << "Invalid index format." << extraInfo << "Skipping." << endl;
             break;
         case ErrorType::NO_VENUES_SELECTED_ERROR:
             cerr << "No venues selected yet." << endl;
@@ -76,6 +88,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extr
         case ErrorType::ATTACHMENT_SIZE_ERROR:
             cerr << "File exceeds the 24MB limit." << endl;
             break;
+        case ErrorType::SENDER_EMAIL_FORMAT_ERROR:
+            cerr << "Error: The sender email '" << extraInfo << "' is not the valid format." << endl;
+            break;
         case ErrorType::FILESYSTEM_ERROR:
             cerr << "Filesystem error: ";
             if (!extraInfo.empty()) {
@@ -99,6 +114,13 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extr
         case ErrorType::INVALID_DATA_IN_CSV:
             cerr << "Invalid data in CSV file: " << extraInfo << endl;
             break;
+        case ErrorType::LIBSODIUM_INIT_ERROR:
+            cerr << "Failed to initialize libsodium.";
+            if (!extraInfo.empty()) {
+                cerr << " " << extraInfo;
+            }
+            cerr << endl;
+            break;        
         case ErrorType::ENCRYPTION_ERROR:
             cerr << "Failed to encrypt email password for saving in config.json." << endl;
             break;
@@ -111,8 +133,15 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const std::string& extr
         case ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR:
             cerr << "Email password decryption failed." << endl;
             break;
+        case ErrorType::EMAIL_PASSWORD_ENCRYPTION_FORMAT_ERROR:
+            cerr << "Invalid encrypted password format." << endl;
+            break;
         case ErrorType::LIBCURL_ERROR:
             cerr << "Failed to initialize libcurl." << endl;
+            if (!extraInfo.empty()) {
+                cerr << " " << extraInfo;
+            }
+            cerr << endl;
             break;
         case ErrorType::SMTP_CONNECTION_ERROR:
             cerr << "Connection to SMTP server failed." << endl;

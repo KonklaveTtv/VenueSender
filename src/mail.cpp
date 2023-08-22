@@ -1,7 +1,7 @@
 #include "include/mail.h"
 
 using namespace std;
-namespace fs = std::filesystem;
+namespace fs = filesystem;
 
 CurlHandleWrapper curlHandleWrapper;
 ErrorHandler errorHandler;
@@ -63,8 +63,8 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
 
     } while (subject.empty());
 
-    const std::string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
-    const std::string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
+    const string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
+    const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
         ErrorHandler errorHandler;
@@ -123,7 +123,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     while (true) {
         cout << "Enter the path of the file to attach: ";
         getline(cin, attachmentPath);
-        attachmentPath.erase(std::remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
+        attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
         attachmentPath = ConsoleUtils::trim(attachmentPath);
 
         size_t lastSlash = attachmentPath.find_last_of("/\\\\");
@@ -161,7 +161,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
                 return;  // Exit the function if the path is invalid
             }
-        } catch (const std::filesystem::filesystem_error& e) {
+        } catch (const filesystem::filesystem_error& e) {
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
             return;  // Exit the function if a filesystem error occurs
@@ -209,7 +209,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     if (!attachmentPath.empty()) {
         mime = curl_mime_init(curl);
 
-        size_t fileSize = std::filesystem::file_size(attachmentPath);
+        size_t fileSize = filesystem::file_size(attachmentPath);
         attachmentSize = to_string(fileSize) + " bytes";
 
         // Add the message part
@@ -251,8 +251,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     curl_slist_free_all(recipients);
     curl_slist_free_all(headers);
 
-    if (!checkCurlError(res, "")) {
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR); 
+    if (!errorHandler.handleCurlError(res)) {
         if (res == CURLE_COULDNT_CONNECT) {
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
         } else if (res == CURLE_LOGIN_DENIED) {
@@ -267,7 +266,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
 void EmailManager::viewEmailSendingProgress(const string& senderEmail) {
     if (!isValidEmail(senderEmail)) {
-        cerr << "Error: The sender email '" << senderEmail << "' is not a valid format." << endl;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
         cerr << "Please set it correctly in your custom.json file." << endl;
         return;
     }

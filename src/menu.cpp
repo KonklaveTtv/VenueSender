@@ -48,8 +48,9 @@ int MenuManager::displayMenuOptions() {
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_INPUT_ERROR);
             
         } else if (!isValidMenuChoice(choice)) {
-            cout << "Invalid choice. Please enter a number between " 
-                 << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR); 
+            cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
                  << " and " 
                  << static_cast<int>(MenuManager::MenuOption::Exit) << "." << endl;
         } else {
@@ -82,10 +83,11 @@ int MenuManager::displayMenuOptions() {
             cin.ignore();  // If there's a chance you might have used cin before this point
             cin.get();     // This will wait for a key press
         } else if (!isValidMenuChoice(choice)) {
-            cout << "Invalid choice. Please enter a number between " 
-                 << static_cast<int>(MenuOption::FilterByGenre) 
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR); 
+            cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
                  << " and " 
-                 << static_cast<int>(MenuOption::Exit) << "." << endl;
+                 << static_cast<int>(MenuManager::MenuOption::Exit) << "." << endl;
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get();     // This will wait for a key press

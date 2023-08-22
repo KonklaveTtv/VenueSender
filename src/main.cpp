@@ -23,11 +23,11 @@ int main() {
     bool useSSL, verifyPeer, verifyHost, verbose;
 
     // Load the config settings from the JSON file
-    std::string venuesPathCopy = confPaths::venuesCsvPath;
+    string venuesPathCopy = confPaths::venuesCsvPath;
     if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
-        exit(1); // Handle the error appropriately
+        exit(1);
     }
 
     // Attempt to decrypt the stored password
@@ -35,13 +35,15 @@ int main() {
     if (mailPassDecrypted.empty()) {
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::DECRYPTION_ERROR);
-        exit(1);  // Exit with an error status
+        exit(1);
     }
 
     // Set up and initialize CURL
     CurlHandleWrapper::init();
     CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
     if (!curl) {
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return 1;  // Return error if CURL setup failed
     }
 
