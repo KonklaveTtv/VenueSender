@@ -3,61 +3,6 @@
 // Use the standard namespace
 using namespace std;
 
-// Utility function to convert a Venue object to a SelectedVenue object
-SelectedVenue VenueUtilities::convertToSelectedVenue(const Venue& venue) {
-    // Create a SelectedVenue instance based on Venue data
-    SelectedVenue selectedVenue;
-    selectedVenue.name = venue.name;
-    selectedVenue.email = venue.email;
-    selectedVenue.genre = venue.genre;
-    selectedVenue.state = venue.state;
-    selectedVenue.city = venue.city;
-    selectedVenue.capacity = venue.capacity;
-    return selectedVenue;
-}
-
-// Utility function to get unique genres from a list of venues
-set<string> VenueUtilities::getUniqueGenres(const vector<Venue>& venues) {
-    set<string> uniqueGenres;
-    for (const auto& venue : venues) {
-        if (uniqueGenres.find(venue.genre) == uniqueGenres.end()) {
-            uniqueGenres.insert(venue.genre);
-        }
-    }
-    return uniqueGenres;
-}
-
-// Utility function to get unique states from a list of venues
-set<string> VenueUtilities::getUniqueStates(const vector<Venue>& venues) {
-    set<string> uniqueStates;
-    for (const auto& venue : venues) {
-        if (uniqueStates.find(venue.state) == uniqueStates.end()) {
-            uniqueStates.insert(venue.state);
-        }
-    }
-    return uniqueStates;
-}
-
-// Utility function to get unique cities from a list of venues
-set<string> VenueUtilities::getUniqueCities(const vector<Venue>& venues) {
-    set<string> uniqueCities;
-    for (const auto& venue : venues) {
-        if (uniqueCities.find(venue.city) == uniqueCities.end()) {
-            uniqueCities.insert(venue.city);
-        }
-    }
-    return uniqueCities;
-}
-
-// Utility function to get unique capacities from a list of venues
-set<int> VenueUtilities::getUniqueCapacities(const vector<Venue>& venues) {
-    set<int> uniqueCapacities;
-    for (const Venue& venue : venues) {
-        uniqueCapacities.insert(venue.capacity);
-    }
-    return uniqueCapacities;
-}
-
 // Function to process venue selection based on user input
 void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                            vector<SelectedVenue>& selectedVenuesForEmail,
@@ -76,7 +21,8 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
         cout << "Press return to continue..." << endl;
-        ConsoleUtils::clearInputBuffer();
+        ConsoleUtils consoleUtils;
+        consoleUtils.clearInputBuffer();
         cin.get(); // This will wait for a key press
         return;
     }
@@ -90,7 +36,8 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 cout << "Press return to continue..." << endl;
-                ConsoleUtils::clearInputBuffer();
+                ConsoleUtils consoleUtils;
+                consoleUtils.clearInputBuffer();
                 cin.get(); // This will wait for a key press
                 continue;
             }
@@ -113,14 +60,16 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                     ErrorHandler errorHandler;
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR);
                     cout << "Press return to continue..." << endl;
-                    ConsoleUtils::clearInputBuffer();
+                    ConsoleUtils consoleUtils;
+                    consoleUtils.clearInputBuffer();
                     cin.get(); // This will wait for a key press
                 }
             } else {
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 cout << "Press return to continue..." << endl;
-                ConsoleUtils::clearInputBuffer();
+                ConsoleUtils consoleUtils;
+                consoleUtils.clearInputBuffer();
                 cin.get(); // This will wait for a key press  
                 continue;
             }
@@ -128,7 +77,8 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
+            ConsoleUtils consoleUtils;
+            consoleUtils.clearInputBuffer();
             cin.get(); // This will wait for a key press 
             continue;
         }
@@ -172,7 +122,8 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
 
     cout << "Enter comma-separated indices of options to select: ";
     string input;
-    ConsoleUtils::clearInputBuffer();
+    ConsoleUtils consoleUtils;
+    consoleUtils.clearInputBuffer();
     getline(cin, input);
 
     cout << endl; // Add a line of space
@@ -189,7 +140,8 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
+            ConsoleUtils consoleUtils;
+            consoleUtils.clearInputBuffer();
             cin.get(); // This will wait for a key press            
         }
     }
@@ -210,7 +162,8 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
+            ConsoleUtils consoleUtils;
+            consoleUtils.clearInputBuffer();
             cin.get(); // This will wait for a key press   
         }
     }
@@ -242,7 +195,8 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
 
     cout << "Enter comma-separated indices of options to select: ";
     string input;
-    ConsoleUtils::clearInputBuffer();
+    ConsoleUtils consoleUtils;
+    consoleUtils.clearInputBuffer();
     getline(cin, input);
 
     cout << endl; // Add a line of space
@@ -259,7 +213,8 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
+            ConsoleUtils consoleUtils;
+            consoleUtils.clearInputBuffer();
             cin.get(); // This will wait for a key press 
         }
     }
@@ -278,7 +233,8 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR, std::to_string(selectedIndex));
             cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
+            ConsoleUtils consoleUtils;
+            consoleUtils.clearInputBuffer();
             cin.get(); // This will wait for a key press 
         }
     }

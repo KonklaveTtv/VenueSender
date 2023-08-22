@@ -40,8 +40,13 @@ public:
     static const int FINISH_AND_SEND_EMAILS_OPTION;
     static const int EXIT_OPTION;
 
-    // Function to validate if the user's menu choice is valid
-    bool isValidMenuChoice(int choice);
+    // Function to validate if the user's choice is a valid menu option
+    inline bool isValidMenuChoice(int choice) {
+        
+        // Validate if the choice is within valid menu options
+        return choice >= static_cast<int>(MenuOption::FilterByGenre) &&
+               choice <= static_cast<int>(MenuOption::Exit);
+    }
 
     // Function to display the available menu options to the user
     int displayMenuOptions();

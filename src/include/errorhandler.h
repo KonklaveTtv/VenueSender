@@ -51,12 +51,6 @@ public:
     SMTP_AUTH_ERROR
     };
 
-    // Function to pause the program and show info to the user before returning to the main menu
-    void showInfoAndReturn();
-
-    // Function to pause the program and show info to the user before continuing with the next operation
-    void showInfoAndRetry();
-
     // Function to handle errors and display appropriate messages based on the type of error
     void handleErrorAndReturn(ErrorType error);
     

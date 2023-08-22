@@ -17,14 +17,6 @@ const int MenuManager::VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuManager::M
 const int MenuManager::FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail);
 const int MenuManager::EXIT_OPTION = static_cast<int>(MenuManager::MenuOption::Exit);
 
-// Function to validate if the user's choice is a valid menu option
-bool MenuManager::isValidMenuChoice(int choice) {
-    
-    // Validate if the choice is within valid menu options
-    return choice >= static_cast<int>(MenuOption::FilterByGenre) &&
-           choice <= static_cast<int>(MenuOption::Exit);
-}
-
 // Function to display the menu options to the user and get their choice
 int MenuManager::displayMenuOptions() {
 #ifdef UNIT_TESTING
@@ -134,8 +126,5 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
 #ifndef UNIT_TESTING
     // Show additional information if not in unit testing mode
     cout << "===========================" << endl;
-    ErrorHandler errorHandler;
-    errorHandler.showInfoAndReturn();
-    cin.get(); // This will wait for a key press
 #endif
 }

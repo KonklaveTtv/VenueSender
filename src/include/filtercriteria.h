@@ -19,14 +19,60 @@ struct FilterCriteria {
 // Utility class to perform common venue-related operations
 class VenueUtilities {
 public:
-    // Convert a Venue object to a SelectedVenue object
-    static SelectedVenue convertToSelectedVenue(const Venue& venue);
+    // Utility function to convert a Venue object to a SelectedVenue object
+    inline static SelectedVenue convertToSelectedVenue(const Venue& venue) {
+        // Create a SelectedVenue instance based on Venue data
+        SelectedVenue selectedVenue;
+        selectedVenue.name = venue.name;
+        selectedVenue.email = venue.email;
+        selectedVenue.genre = venue.genre;
+        selectedVenue.state = venue.state;
+        selectedVenue.city = venue.city;
+        selectedVenue.capacity = venue.capacity;
+        return selectedVenue;
+    }
 
-    // Functions to get unique genres, states, cities, and capacities from a list of venues
-    std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
-    std::set<std::string> getUniqueStates(const std::vector<Venue>& venues);
-    std::set<std::string> getUniqueCities(const std::vector<Venue>& venues);
-    std::set<int> getUniqueCapacities(const std::vector<Venue>& venues);
+    // Utility function to get unique genres from a list of venues
+    inline std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues) {
+        std::set<std::string> uniqueGenres;
+        for (const auto& venue : venues) {
+            if (uniqueGenres.find(venue.genre) == uniqueGenres.end()) {
+                uniqueGenres.insert(venue.genre);
+            }
+        }
+        return uniqueGenres;
+    }
+
+    // Utility function to get unique states from a list of venues
+    inline std::set<std::string> getUniqueStates(const std::vector<Venue>& venues) {
+        std::set<std::string> uniqueStates;
+        for (const auto& venue : venues) {
+            if (uniqueStates.find(venue.state) == uniqueStates.end()) {
+                uniqueStates.insert(venue.state);
+            }
+        }
+        return uniqueStates;
+    }
+
+    // Utility function to get unique cities from a list of venues
+    inline std::set<std::string> getUniqueCities(const std::vector<Venue>& venues) {
+        std::set<std::string> uniqueCities;
+        for (const auto& venue : venues) {
+            if (uniqueCities.find(venue.city) == uniqueCities.end()) {
+                uniqueCities.insert(venue.city);
+            }
+        }
+        return uniqueCities;
+    }
+
+    // Utility function to get unique capacities from a list of venues
+    inline std::set<int> getUniqueCapacities(const std::vector<Venue>& venues) {
+        std::set<int> uniqueCapacities;
+        for (const Venue& venue : venues) {
+            uniqueCapacities.insert(venue.capacity);
+        }
+        return uniqueCapacities;
+    }
 };
 
 // Class to handle venue filtering logic

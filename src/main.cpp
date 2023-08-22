@@ -4,6 +4,9 @@
 using namespace confPaths;
 using namespace std;
 
+// Exclude the following code block if UNIT_TESTING is defined
+#ifndef UNIT_TESTING
+
 // Declare global objects to be used across different parts of the code
 ConfigManager configManager;
 CsvReader csvReader;
@@ -13,9 +16,6 @@ EncryptionManager encryptionManager;
 MenuManager menuManager;
 VenueFilter venueFilter;
 VenueUtilities venueUtilities;
-
-// Exclude the following code block if UNIT_TESTING is defined
-#ifndef UNIT_TESTING
 
 int main() {
     // Initialize necessary variables
@@ -107,9 +107,7 @@ int main() {
                 // Clear Selected Venues
                 
                 selectedVenuesForEmail.clear();
-                cout << "Selected venues cleared." << endl;
-                ErrorHandler errorHandler;
-                errorHandler.showInfoAndRetry();              
+                cout << "Selected venues cleared." << endl; 
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 // View Email Settings
                 // Handle email editing or viewing                
@@ -154,8 +152,6 @@ int main() {
                     } else {
                         
                         cout << "Email saved for sending/editing." << endl;
-                        ErrorHandler errorHandler;
-                        errorHandler.showInfoAndReturn();
                         break;
                     }
 
@@ -163,7 +159,6 @@ int main() {
                     if (subject.empty() || message.empty()) {
                         ErrorHandler errorHandler;
                         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
-                        errorHandler.showInfoAndRetry();
                         try {
                             emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                         } catch (const exception& e) {
@@ -175,7 +170,6 @@ int main() {
                             if (attempts >= 3) {
                                 ErrorHandler errorHandler;
                                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
-                                errorHandler.showInfoAndRetry();
                                 break; // Break out of the loop after too many attempts
                             }
                             continue; // Loop back to prompt for email details again
@@ -192,7 +186,6 @@ int main() {
                 if (selectedVenuesForEmail.empty()) {
                     ErrorHandler errorHandler;        
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_FOR_EMAIL_ERROR);
-                    errorHandler.showInfoAndRetry();
                     continue; // Return to the main menu
                 }
 
@@ -279,8 +272,6 @@ int main() {
                         } else {
                             
                             cout << "Email saved for sending/editing." << endl;
-                            ErrorHandler errorHandler;
-                            errorHandler.showInfoAndReturn();
                             break; // Break out of the inner loop without sending
                         }
                     }

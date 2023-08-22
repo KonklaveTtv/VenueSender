@@ -5,18 +5,6 @@
 // Use the standard namespace
 using namespace std;
 
-// Function to display a message asking the user to press return to go back to the Main Menu
-void ErrorHandler::showInfoAndReturn() {
-    cout << "Press return to go back to Main Menu..." << endl;
-    cin.get(); // This will wait for a key press
-}
-
-// Function to display a message asking the user to press return to continue
-void ErrorHandler::showInfoAndRetry() {
-    cout << "Press return to continue..." << endl;
-    cin.get();
-}
-
 // Function to handle CURL errors
 bool ErrorHandler::handleCurlError(CURLcode res) {
     // Check if CURL operation was successful
@@ -103,7 +91,6 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
                 cerr << extraInfo;
             }
             cerr << endl;
-            showInfoAndReturn();
             break;
         case ErrorType::CONFIG_OPEN_ERROR:
             cerr << "Failed to open " << extraInfo << "." << endl;

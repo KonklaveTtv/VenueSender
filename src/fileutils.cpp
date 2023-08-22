@@ -22,13 +22,6 @@ string ConsoleUtils::trim(const string& str){
     return (first < last ? string(first, last) : string());
 }
 
-// Function to clear the input buffer
-void ConsoleUtils::clearInputBuffer() {
-    // Clear the input buffer
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
-}
-
 // Function to read venue data from a CSV file
 void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     // Open the CSV file for reading
@@ -89,6 +82,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Handles encryption and decryption of email passwords
     // Validates the loaded settings and returns a boolean flag to indicate success or failure
 #ifdef UNIT_TESTING
+
     Json::Value config;
     ifstream configFile(confPaths::mockConfigJsonPath);
     if (!configFile.is_open()) {
@@ -141,6 +135,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 // SMTP/Mail Encryption/Decryption
 
 #ifdef UNIT_TESTING
+
     // Load plain text passwords from mock_config.json
     mailPass = config["mock_email_password"].asString();
 
@@ -186,6 +181,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Open the config file for writing and save the updated JSON object
 #ifdef UNIT_TESTING
+
     ofstream configFileOut(confPaths::mockConfigJsonPath);
     if (!configFileOut.is_open()) {
         ErrorHandler errorHandler;

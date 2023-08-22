@@ -408,7 +408,6 @@ bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
            lhs.state == rhs.state && lhs.city == rhs.city && lhs.capacity == rhs.capacity;
 }
 
-CATCH_CONFIG_RUNNER // This line will define Catch2's main function
 
 int main( int argc, char* argv[] )
 {   
@@ -423,3 +422,5 @@ int main( int argc, char* argv[] )
     // Return the test results
     return result;
 }
+
+CATCH_CONFIG_RUNNER // This line will define Catch2's main function

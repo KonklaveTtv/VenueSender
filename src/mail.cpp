@@ -8,25 +8,6 @@ namespace fs = filesystem;
 CurlHandleWrapper curlHandleWrapper;
 ErrorHandler errorHandler;
 
-// Function to get the current date in RFC 2822 format
-string EmailManager::getCurrentDateRfc2822() {
-    char buffer[100];
-    time_t now;
-    struct tm *tm_now;
-    time(&now);
-    tm_now = gmtime(&now);
-    strftime(buffer, sizeof buffer, "%a, %d %b %Y %H:%M:%S %Z", tm_now);
-    return buffer;
-}
-
-// Function to sanitize the subject line of an email by replacing newline and carriage return characters with spaces
-string EmailManager::sanitizeSubject(string& subject) {
-    string sanitized = subject;
-    replace(sanitized.begin(), sanitized.end(), '\n', ' '); // replace newlines with spaces
-    replace(sanitized.begin(), sanitized.end(), '\r', ' '); // replace carriage returns with spaces
-    return sanitized;
-}
-
 // Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
                                      const string& senderEmail, int smtpPort, const string& smtpServer) {
@@ -44,9 +25,6 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "==========================" << endl;
 
     // If not in unit testing mode, prompt the user to acknowledge the displayed information
-#ifndef UNIT_TESTING
-    errorHandler.showInfoAndRetry();
-#endif
 }
 
 // Function to validate if the provided string is a valid email address format

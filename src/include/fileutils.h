@@ -27,8 +27,12 @@ namespace confPaths {
 // Class for utility functions related to the console
 class ConsoleUtils {
 public:
-    // Method to clear the input buffer
-    static void clearInputBuffer();
+    // Function to clear the input buffer
+    inline static void clearInputBuffer() {
+        // Clear the input buffer
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
+    }
 
     // Method to trim leading and trailing spaces from a string
     static std::string trim(const std::string& str);

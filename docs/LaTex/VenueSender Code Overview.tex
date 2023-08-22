@@ -86,6 +86,7 @@
 		VenueUtilities venueUtilities;
 		
 		#ifndef UNIT_TESTING
+
 		
 		int main() {
 			// ... (truncated for brevity)
@@ -1000,14 +1001,6 @@
 		
 		using namespace std;
 		
-		void ErrorHandler::showInfoAndReturn() {
-			// Implementation for displaying an info message and waiting for user action
-		}
-		
-		void ErrorHandler::showInfoAndRetry() {
-			// Implementation to display a message and ask the user to retry
-		}
-		
 		bool ErrorHandler::handleCurlError(CURLcode res) {
 			// Implementation to handle CURL errors
 		}
@@ -1023,8 +1016,6 @@
 \end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{showInfoAndReturn}: Displays an information message and waits for the user to press return to continue.
-		\item \textbf{showInfoAndRetry}: Displays a message and waits for the user to press return to retry.
 		\item \textbf{handleCurlError}: Handles errors from the cURL library and displays appropriate error messages.
 		\item \textbf{handleErrorAndReturn (Overloaded version)}: Handles various error types without additional context or information.
 		\item \textbf{handleErrorAndReturn}: Manages different types of errors, displaying corresponding error messages. It can also incorporate additional context or information, provided as the `extraInfo` parameter.
@@ -1052,12 +1043,6 @@
 				// Different error types are listed here...
 			};
 			
-			// Function to display info and pause before returning to the main menu
-			void showInfoAndReturn();
-			
-			// Function to display info and pause before retrying an operation
-			void showInfoAndRetry();
-			
 			// Function to handle errors and display appropriate messages
 			void handleErrorAndReturn(ErrorType error);
 			
@@ -1075,8 +1060,6 @@
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{ErrorType Enumeration}: Represents different types of errors that the application can encounter.
-		\item \textbf{showInfoAndReturn}: Displays a message and waits for the user's input before returning to the main menu.
-		\item \textbf{showInfoAndRetry}: Shows an error message and waits for the user's input before retrying a particular operation.
 		\item \textbf{handleErrorAndReturn}: Manages different error types and displays corresponding error messages.
 		\item \textbf{handleErrorAndReturn (Overloaded version)}: This version of the function allows for an additional string parameter to provide more context to the error.
 		\item \textbf{handleCurlError}: Manages errors from the cURL library and provides feedback on whether an operation was successful or not.
