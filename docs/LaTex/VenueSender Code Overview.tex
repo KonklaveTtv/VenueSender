@@ -1,39 +1,28 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
-\usepackage{listings}
-\usepackage{color}
-\usepackage[a4paper, margin=1in]{geometry}
-\usepackage{hyperref}
-\usepackage{fancyhdr}
-\usepackage{tcolorbox}
-\usepackage{enumitem}
-\usepackage{microtype}
-
-% Font
 \usepackage{fontspec}
-\setmainfont{Arial} % Or any other modern font like Helvetica, etc.
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{mdframed}
 
-% Header/Footer
-\pagestyle{fancy}
-\fancyhf{}
-\lhead{VenueSender Codebase Overview}
-\rhead{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
+\setmainfont{Arial}
 
-% Colors
-\definecolor{moderngreen}{rgb}{0.2,0.6,0.3}
-\definecolor{moderndark}{rgb}{0.1,0.1,0.1}
-\definecolor{modernpurple}{rgb}{0.5,0,0.6}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+\definecolor{background}{RGB}{40,40,40}
+\definecolor{textcolor}{RGB}{230,230,230}
+\definecolor{accent}{RGB}{90,90,255}
+\pagecolor{background}
+\color{textcolor}
+
+\geometry{a4paper, margin=0.8in, top=1.2in, bottom=1.2in}
 
 \lstdefinestyle{mystyle}{
-	backgroundcolor=\color{backcolour},
-	commentstyle=\color{moderngreen},
-	keywordstyle=\color{moderndark},
-	numberstyle=\tiny\color{moderndark},
-	stringstyle=\color{modernpurple},
-	basicstyle=\ttfamily\footnotesize,
+	backgroundcolor=\color{background},
+	commentstyle=\color{accent},
+	keywordstyle=\color{textcolor},
+	numberstyle=\tiny\color{textcolor},
+	stringstyle=\color{accent},
+	basicstyle=\ttfamily\footnotesize\color{textcolor},
 	breakatwhitespace=false,
 	breaklines=true,
 	captionpos=b,
@@ -45,10 +34,29 @@
 	showtabs=false,
 	tabsize=2
 }
-
 \lstset{style=mystyle}
 
+% Hyperref for links
+\usepackage[colorlinks=true, allcolors=accent]{hyperref}
+
+% Header/Footer setup for dark theme
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\color{textcolor}VenueSender Codebase Overview}
+\rhead{\color{textcolor}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \footrulewidth\hfill}}
+
+% Other packages
+\usepackage{enumitem}
+\usepackage{microtype}
+
 \title{VenueSender Codebase Overview}
+
+
 \author{Created by Spencer Lievens}
 \date{\today}
 
@@ -61,6 +69,7 @@
 	\section{main.cpp}
 	
 	\subsection*{Source Code}
+\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=5pt, innerbottommargin=5pt]
 	\begin{lstlisting}[language=C++]
 		#include "include/main.h"
 		
@@ -84,6 +93,7 @@
 		}
 		#endif // UNIT_TESTING
 	\end{lstlisting}
+\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -104,6 +114,7 @@
 	\subsection{main.h}
 	
 	\subsection*{Header File}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=5pt, innerbottommargin=0pt]
 	\begin{lstlisting}[language=C++]
 		#ifndef MAIL_H
 		#define MAIL_H
@@ -147,7 +158,7 @@
 		
 		#endif // MAIL_H
 	\end{lstlisting}
-	
+\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{Header Guards}: \texttt{MAIL\_H} is used as the header guard. This ensures that the header file's content is included only once in the compilation process.
@@ -162,9 +173,11 @@
 		\end{itemize}
 	\end{itemize}
 	
+	\newpage{}
 	\section{menu.cpp}
 	
 	\subsection*{Source Code}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=0pt]
 	\begin{lstlisting}[language=C++]
 		#include "include/menu.h"
 		
@@ -199,7 +212,7 @@
 			// ... (truncated for brevity)
 		}
 	\end{lstlisting}
-	
+\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{Namespace Utilization}: The standard namespace (\texttt{std}) is used throughout the code.
@@ -239,6 +252,7 @@
 	\section{filtercriteria.cpp}
 	
 	\subsection*{Source Code}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=0pt]
 	\begin{lstlisting}[language=C++]
 		#include "include/filtercriteria.h"
 		
@@ -306,7 +320,7 @@
 			// ... (truncated for brevity)
 		}
 	\end{lstlisting}
-	
+\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{Namespace Utilization}: The standard namespace (\texttt{std}) is used throughout the code.
@@ -324,6 +338,7 @@
 	\subsection{filtercriteria.h}
 	
 	\subsection*{Header File}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=0pt]
 	\begin{lstlisting}[language=C++]
 		#ifndef FILTERCRITERIA_H
 		#define FILTERCRITERIA_H
@@ -382,6 +397,7 @@
 		
 		#endif // FILTERCRITERIA_H
 	\end{lstlisting}
+\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -394,6 +410,7 @@
 	\section{structs.h}
 	
 	\subsection*{Header File}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=0pt]
 	\begin{lstlisting}[language=C++]
 		#ifndef STRUCTS_H
 		#define STRUCTS_H
@@ -430,7 +447,7 @@
 		
 		#endif // STRUCTS_H
 	\end{lstlisting}
-	
+	\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{Dependencies}: The header file includes the `iostream` library for string manipulation and input/output operations.
@@ -451,6 +468,7 @@
 	\section{mail.cpp}
 	
 	\subsection*{Source Code}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#include "include/mail.h"
 		
@@ -499,6 +517,7 @@
 			// Implementation to display email sending progress...
 		}
 	\end{lstlisting}
+\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -515,6 +534,7 @@
 	\subsection{mail.h}
 	
 	\subsection*{Header File}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#ifndef MAIL_H
 		#define MAIL_H
@@ -558,6 +578,7 @@
 		
 		#endif // MAIL_H
 	\end{lstlisting}
+\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -578,6 +599,7 @@
 	\section{fileutils.cpp}
 	
 	\subsection*{Source Code}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#include "include/fileutils.h"
 		#include "errorhandler.h" // Include due to circular dependency between fileutils.h and errorhandler.h
@@ -651,6 +673,7 @@
 			// JSON back to the file.
 		}
 	\end{lstlisting}
+\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -666,6 +689,7 @@
 	\subsection{fileutils.h}
 	
 	\subsection*{Header File}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#ifndef FILEUTILS_H
 		#define FILEUTILS_H
@@ -714,7 +738,7 @@
 		
 		#endif // FILEUTILS_H
 	\end{lstlisting}
-	
+\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{Header Guards}: `FILEUTILS\_H` is used to prevent the file from being included more than once in a single compilation.
@@ -728,6 +752,7 @@
 	\section{encryption.cpp}
 	
 	\subsection*{Source Code}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#include "include/encryption.h"
 		
@@ -789,7 +814,7 @@
 			return string(reinterpret_cast<char*>(decryptedBuffer), ciphertext.size() - crypto_secretbox_MACBYTES);
 		}
 	\end{lstlisting}
-	
+\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{globalEncryptionKey \& globalEncryptionNonce}: Global arrays to store the encryption key and nonce.
@@ -801,6 +826,7 @@
 	\subsection{encryption.h}
 	
 	\subsection*{Header File}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#ifndef ENCRYPTION_H
 		#define ENCRYPTION_H
@@ -823,6 +849,7 @@
 		
 		#endif // ENCRYPTION_H
 	\end{lstlisting}
+	\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -836,6 +863,7 @@
 	\section{curl.cpp}
 	
 	\subsection*{Source Code}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#include "include/curl.h"
 		
@@ -892,7 +920,7 @@
 			// Function to set up a cURL handle with various settings
 		}
 	\end{lstlisting}
-	
+	\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{CurlHandleWrapper Class}: This class manages the cURL handle and the associated operations.
@@ -904,10 +932,10 @@
 		\item \textbf{setEmailBeingSent, getEmailBeingSent, \& clearEmailBeingSent}: Functions to manage the email address being sent.
 		\item \textbf{setupCurlHandle}: Sets up a cURL handle with various options including SSL, SMTP authentication, and other settings.
 	\end{itemize}
-	
 	\subsection{curl.h}
 	
 	\subsection*{Header File}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#ifndef CURL_H
 		#define CURL_H
@@ -946,6 +974,7 @@
 		
 		#endif // CURL_H
 	\end{lstlisting}
+\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -964,6 +993,7 @@
 	\section{errorhandler.cpp}
 	
 	\subsection*{Source Code}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#include "include/errorhandler.h"
 		#include "include/fileutils.h" // Forward declaration due to circular dependency
@@ -990,7 +1020,7 @@
 			// Implementation to handle various types of errors and display appropriate messages
 		}
 	\end{lstlisting}
-	
+\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{showInfoAndReturn}: Displays an information message and waits for the user to press return to continue.
@@ -1003,6 +1033,7 @@
 	\subsection{errorhandler.h}
 	
 	\subsection*{Header File}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#ifndef ERRORHANDLER_H
 		#define ERRORHANDLER_H
@@ -1039,6 +1070,7 @@
 		
 		#endif // ERRORHANDLER_H
 	\end{lstlisting}
+\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -1055,6 +1087,7 @@
 	This file is used for testing and should not be deleted.
 	
 	\subsection*{Imports and Namespace}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		#define CATCH_CONFIG_RUNNER
 		
@@ -1063,11 +1096,12 @@
 		
 		using namespace std;
 	\end{lstlisting}
-	
+\end{mdframed}	
 	\subsection*{CinGuard and CoutGuard Classes}
 	Utility classes to guard and redirect the standard input and output streams respectively.
 	
 	\subsubsection*{CinGuard}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		class CinGuard {
 			streambuf* orig_cin;
@@ -1076,8 +1110,11 @@
 			~CinGuard();
 		};
 	\end{lstlisting}
+\end{mdframed}
 	
+
 	\subsubsection*{CoutGuard}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
 	\begin{lstlisting}[language=C++]
 		class CoutGuard {
 			streambuf* orig_cout;
@@ -1086,53 +1123,64 @@
 			~CoutGuard();
 		};
 	\end{lstlisting}
+	\end{mdframed}
 	
 	\subsection*{Test Groups}
 	The file is organized into several test groups. Each test group corresponds to testing a specific component or functionality.
 	
 	\subsubsection*{ConsoleUtils Test Group}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
 	\begin{lstlisting}[language=C++]
 		TEST_CASE("ConsoleUtils::trim() functionality", "[ConsoleUtils]") {
 			// ... Test cases and REQUIRE statements
 		}
 	\end{lstlisting}
+	\end{mdframed}
 	
 	\subsubsection*{CsvReader Test Group}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
 	\begin{lstlisting}[language=C++]
 		TEST_CASE("CsvReader::readCSV() functionality", "[CsvReader]") {
 			// ... Test cases and REQUIRE statements
 		}
 	\end{lstlisting}
+	\end{mdframed}
 	
 	% ... (Continue with other test groups)
 	
 	\subsubsection*{EmailManager Test Group}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
 	\begin{lstlisting}[language=C++]
 		TEST_CASE("EmailManager::getCurrentDateRfc2822() functionality", "[EmailManager]") {
 			// ... Test cases and REQUIRE statements
 		}
 	\end{lstlisting}
+	\end{mdframed}
 	
 	% ... (Continue with other test groups)
 	
 	\subsubsection*{MenuManager Test Group}
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
 	\begin{lstlisting}[language=C++]
 		TEST_CASE("MenuManager::isValidMenuChoice() functionality", "[MenuManager]") {
 			// ... Test cases and REQUIRE statements
 		}
 	\end{lstlisting}
+	\end{mdframed}
 	
 	% ... (Continue with other test groups)
 	
 	\subsection*{Main Function}
 	This is the main function for the test runner which initializes the configurations, runs all tests, and cleans up afterward.
-	
+
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
 	\begin{lstlisting}[language=C++]
 		int main( int argc, char* argv[] ) {
 			// ... Initialization and test execution
 			return result;
 		}
 	\end{lstlisting}
+\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}

@@ -1,0 +1,194 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{mdframed}
+
+\setmainfont{Arial}
+
+\definecolor{background}{RGB}{40,40,40}
+\definecolor{textcolor}{RGB}{230,230,230}
+\definecolor{accent}{RGB}{90,90,255}
+\pagecolor{background}
+\color{textcolor}
+
+\geometry{a4paper, margin=0.8in, top=1.2in, bottom=1.2in}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{background},
+	commentstyle=\color{accent},
+	keywordstyle=\color{textcolor},
+	numberstyle=\tiny\color{textcolor},
+	stringstyle=\color{accent},
+	basicstyle=\ttfamily\footnotesize\color{textcolor},
+	breakatwhitespace=false,
+	breaklines=true,
+	captionpos=b,
+	keepspaces=true,
+	numbers=left,
+	numbersep=5pt,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	tabsize=2
+}
+\lstset{style=mystyle}
+
+% Hyperref for links
+\usepackage[colorlinks=true, allcolors=accent]{hyperref}
+
+% Header/Footer setup for dark theme
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\color{textcolor}VenueSender Codebase Overview}
+\rhead{\color{textcolor}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \footrulewidth\hfill}}
+
+% Other packages
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\title{\color{textcolor}User Guide for VenueSender}
+\begin{document}
+
+\author{Created by Spencer Lievens}
+\date{\today}
+
+	\maketitle
+	
+	\section*{Introduction}
+	Welcome to the VenueSender user guide! This tool facilitates managing and sending emails to a list of venues, ensuring efficient and streamlined communications. This guide provides step-by-step instructions to navigate and utilize the program effectively.
+	
+	\section*{Starting the Program}
+	Execute the VenueSender executable. Upon loading, the program initializes configurations and data. Should any setup issues emerge, descriptive error messages guide you through resolution.
+	
+	\section*{Configuration Files}
+	The program relies on specific configuration files to operate correctly:
+	\begin{itemize}
+		\item \texttt{venues.csv}: Contains venue data. Ensure it is located in the root directory.
+		\item \texttt{config.json}: Holds various configurations like SMTP settings and email details. It should also be in the root directory.
+		\item For testing purposes, \texttt{mock\_venues.csv} and \texttt{mock\_config.json} should be located in the \texttt{src/test/} directory.
+	\end{itemize}
+	
+	\section*{Venue Data Format}
+	The \texttt{venues.csv} file should be structured with six columns: name, email, genre, state, city, and capacity. Ensure this format is maintained to prevent reading errors.
+	
+	\section*{Main Menu}
+	After initiation, the main menu presents several options:
+	\begin{itemize}
+		\item Filter by Genre: Select venues based on genre.
+		\item Filter by State: Choose venues from a particular state.
+		\item Filter by City: Filter venues by city.
+		\item Filter by Capacity: Opt for venues based on capacity.
+		\item Clear Selected Venues: Reset your venue selections.
+		\item View Selected Venues: Review your chosen venues.
+		\item Show Email Settings: View email configurations.
+		\item View \& Edit Email: Inspect and modify the current email draft.
+		\item Finish \& Send Emails: Dispatch emails to the selected venues.
+		\item Exit VenueSender: Shut down the program.
+	\end{itemize}
+	
+	\section*{Filtering Venues}
+	VenueSender offers you the flexibility to tailor your audience by filtering venues based on various criteria.
+	
+	\subsection*{Filter by Genre}
+	VenueSender can identify unique genres from the list of venues. To filter:
+	\begin{itemize}
+		\item Available Genres: The program displays a list of genres.
+		\item Selection: Input comma-separated indices corresponding to desired genres.
+	\end{itemize}
+	
+	\subsection*{Filter by State}
+	Choose venues from specific states:
+	\begin{itemize}
+		\item Available States: A list of states is presented.
+		\item Selection: Enter comma-separated indices of your preferred states.
+	\end{itemize}
+	
+	\subsection*{Filter by City}
+	\begin{itemize}
+		\item Available Cities: A list of cities will be displayed.
+		\item Selection: Specify comma-separated indices of cities you're targeting.
+	\end{itemize}
+	
+	\subsection*{Filter by Capacity}
+	For targeting venues based on seating:
+	\begin{itemize}
+		\item Available Capacities: VenueSender showcases various venue capacities.
+		\item Selection: Indicate comma-separated indices that match the capacities you're interested in.
+	\end{itemize}
+	
+	\section*{Reviewing and Resetting Selections}
+	After filtering:
+	\begin{itemize}
+		\item View Selected Venues: Check the venues you've picked.
+		\item Clear Selected Venues: Use this to reconsider or correct any mistaken selections.
+	\end{itemize}
+	
+	\section*{Managing Your Email}
+	\subsection*{Constructing the Email}
+	Upon selecting View \& Edit Email:
+	\begin{itemize}
+		\item Subject: Enter the email subject. Remember, it shouldn't exceed a specified character limit. If it does, an error message will prompt you to shorten it.
+		\item Message: Write the email content. Be wary of the character limit. If exceeded, you'll be alerted to condense your message.
+		\item Attachment: Attach files by providing their paths. Ensure the attachment size doesn't surpass the limit (e.g., 24MB). If the file is too large, you'll be notified to pick a smaller file.
+	\end{itemize}
+	
+	\subsection*{Email Password Encryption}
+	For added security, the program can encrypt the email password stored in the configuration file. If the password is not encrypted, the program will automatically encrypt it upon initialization. 
+	
+	\subsection*{Email Settings}
+	Access Show Email Settings to review:
+	\begin{itemize}
+		\item SMTP Server
+		\item SMTP Port
+		\item Sender Email
+		\item SSL Status
+		\item verifyPeer Status
+		\item verifyHost Status
+		\item Verbose Mode
+	\end{itemize}
+	
+	\subsection*{Sending Emails}
+	Finish \& Send Emails initiates the process:
+	\begin{itemize}
+		\item The program checks the sender's email format. If it's incorrect, an error message instructs you to adjust it in your custom.json file.
+		\item Connects to the SMTP server and authenticates.
+		\item Emails are dispatched individually. For each, you'll receive a status update. Should any sending issues arise, you'll be informed (e.g., connection errors, authentication failures).
+		\item Once all emails are sent, a completion message appears. Press return to continue.
+	\end{itemize}
+	
+	\section*{Exiting the Program}
+	To leave:
+	\begin{itemize}
+		\item Exit VenueSender: Choose this from the main menu. A confirmation ensures your intent to close the program.
+	\end{itemize}
+	
+	\section*{Troubleshooting \& Error Handling}
+	VenueSender is engineered to offer informative error messages:
+	\begin{itemize}
+		\item If a problem arises, read the displayed message. It typically instructs on rectification steps.
+		\item Restarting the program might help.
+		\item For persistent issues, consult the FAQ or contact the support team.
+	\end{itemize}
+	
+	\section*{Understanding Error Messages}
+	VenueSender has built-in error handling to assist users in diagnosing problems. Here are some common errors and their solutions:
+	\begin{itemize}
+		\item \textbf{CONFIG\_OPEN\_ERROR}: The program can't access the configuration file. Ensure the file paths are correct and that the files exist.
+		\item \textbf{INVALID\_DATA\_IN\_CSV}: The CSV file's structure is not as expected. Verify that it has the correct columns and format.
+		\item \textbf{INVALID\_CAPACITY\_IN\_CSV}: The capacity value in the CSV file is not a valid number. Ensure all capacities are numeric.
+		\item \textbf{CONFIG\_LOAD\_ERROR}: There was an issue loading configurations from the JSON file. Double-check the file's structure and content.
+		% Add other relevant errors here
+	\end{itemize}
+	
+	\section*{Conclusion}
+	Thanks for choosing VenueSender! We hope this user guide aids in your software navigation. For further assistance or feedback, don't hesitate to reach out. Safe sending!
+	
+\end{document}
