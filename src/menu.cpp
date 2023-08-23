@@ -131,3 +131,26 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
     cout << "===========================" << endl;
 #endif
 }
+
+// Function to handle the exit option and prompt user for confirmation
+bool MenuManager::handleExitOption() {
+    cout << "Are you sure you want to exit? (Y/N): ";
+    char confirmExit;
+    cin >> confirmExit;
+    ConsoleUtils::clearInputBuffer();
+    
+    if (confirmExit == 'Y' || confirmExit == 'y') {
+        // Exit VenueSender
+        cout << "Exiting the program." << endl;
+        return true;
+    } else if (confirmExit == 'N' || confirmExit == 'n') {
+        cout << "Returning to the main menu." << endl;
+        return false;
+    } else {
+        // The user entered an invalid choice
+        ErrorHandler errorHandler;
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+        cin.get(); // This will wait for a key press
+        return false;
+    }
+}

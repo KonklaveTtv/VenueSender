@@ -55,6 +55,9 @@ public:
 
     // Function to display the list of venues selected by the user
     void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
+
+    // Function to handle the exiting/cleanup of the program
+    bool handleExitOption();
 };
 
 #endif // MENU_H

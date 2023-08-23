@@ -274,32 +274,17 @@ int main() {
                         }
                     }
                 }
-            } else if (choice == MenuManager::EXIT_OPTION) {                
-                // Prompt for confirmation before exiting
-                cout << "Are you sure you want to exit? (Y/N): ";
-                char confirmExit;
-                cin >> confirmExit;
-                ConsoleUtils::clearInputBuffer();                
-                // Handle program exit
-                if (confirmExit == 'Y' || confirmExit == 'y') {
-                    // Exit VenueSender
-                    cout << "Exiting the program." << endl;
+            } else if (choice == MenuManager::EXIT_OPTION) {
+                if (menuManager.handleExitOption()) {
                     break;
-                } else if (confirmExit == 'N' || confirmExit == 'n') {
-                    cout << "Returning to the main menu." << endl;
-                } else {
-                    // The user entered an invalid choice, return to the main menu
-                    ErrorHandler errorHandler;
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
-                    cin.get(); // This will wait for a key press
                 }
             } else {                
                 // Handle invalid menu choice
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
                 cin.get(); // This will wait for a key press
+                }
             }
-        }
         // Reset configurations and cleanup before exiting
         configManager.resetConfigFile();  
         CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
