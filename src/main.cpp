@@ -176,13 +176,14 @@ int main() {
                         }
                     }
                 }
-
                 if (!modified) {
                     // Return to the main menu if the email wasn't modified
                     continue;
                 }
+            } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION) {
+                    emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION) {
-                
+            
                 if (selectedVenuesForEmail.empty()) {
                     ErrorHandler errorHandler;        
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_FOR_EMAIL_ERROR);
@@ -247,8 +248,8 @@ int main() {
                         cin >> confirmSend;
                         ConsoleUtils::clearInputBuffer();
 
+                        // Proceed to send emails if confirmed
                         if (confirmSend == 'Y' || confirmSend == 'y') {
-                            // Proceed to send emails if confirmed
 
                             for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
                                 const SelectedVenue& venue = selectedVenuesForEmail[i];

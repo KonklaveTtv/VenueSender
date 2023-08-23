@@ -14,6 +14,7 @@ const int MenuManager::CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuManag
 const int MenuManager::VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues);
 const int MenuManager::SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuManager::MenuOption::ShowEmailSettings);
 const int MenuManager::VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::ViewEditEmail);
+const int MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION = static_cast<int>(MenuManager::MenuOption::EmailCustomAddress);
 const int MenuManager::FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail);
 const int MenuManager::EXIT_OPTION = static_cast<int>(MenuManager::MenuOption::Exit);
 
@@ -34,6 +35,7 @@ int MenuManager::displayMenuOptions() {
         cout << static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
         cout << static_cast<int>(MenuManager::MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
         cout << static_cast<int>(MenuManager::MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
+        cout << static_cast<int>(MenuManager::MenuOption::EmailCustomAddress) << ". Email Custom Address" << endl;
         cout << static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
         cout << static_cast<int>(MenuManager::MenuOption::Exit) << ". Exit VenueSender" << endl;
         cout << "Enter your choice: ";
@@ -71,6 +73,7 @@ int MenuManager::displayMenuOptions() {
         cout << static_cast<int>(MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
         cout << static_cast<int>(MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
         cout << static_cast<int>(MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
+        cout << static_cast<int>(MenuOption::EmailCustomAddress) << ". Email Custom Address" << endl;
         cout << static_cast<int>(MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
         cout << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
         cout << "Enter your choice: ";

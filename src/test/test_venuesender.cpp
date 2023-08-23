@@ -123,10 +123,11 @@ TEST_CASE("MenuManager::isValidMenuChoice() functionality", "[MenuManager]") {
     REQUIRE(menuManager.isValidMenuChoice(8) == true);
     REQUIRE(menuManager.isValidMenuChoice(9) == true);
     REQUIRE(menuManager.isValidMenuChoice(10) == true);
+    REQUIRE(menuManager.isValidMenuChoice(11) == true);    
 
     REQUIRE(menuManager.isValidMenuChoice(-1) == false);
     REQUIRE(menuManager.isValidMenuChoice(0) == false);
-    REQUIRE(menuManager.isValidMenuChoice(11) == false);
+    REQUIRE(menuManager.isValidMenuChoice(12) == false);
 }
 
 TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
@@ -160,8 +161,9 @@ TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
         "6. View Selected Venues" "\n"
         "7. Show Email Settings" "\n"
         "8. View & Edit Email" "\n"
-        "9. Finish & Send Emails" "\n"
-        "10. Exit VenueSender" "\n"
+        "9. Email Custom Address" "\n"
+        "10. Finish & Send Emails" "\n"
+        "11. Exit VenueSender" "\n"
         "Enter your choice: ";
 
     // Check the captured output and the returned choice

@@ -2,6 +2,7 @@
 #define MAIL_H
 
 #include "curl.h"
+#include "encryption.h"
 #include "fileutils.h"
 #include "menu.h"
 #include "errorhandler.h"
@@ -65,6 +66,16 @@ public:
                              std::string& attachmentSize,
                              const std::string& attachmentPath,
                              const std::vector<SelectedVenue>& selectedVenuesForEmail);
+
+    void emailCustomAddress(CURL* curl,
+                             const std::string& senderEmail,
+                             std::string& subject,
+                             std::string& message,
+                             const std::string& smtpServer,
+                             int smtpPort,
+                             std::string& attachmentName,
+                             std::string& attachmentSize,
+                             std::string& attachmentPath);
 };
 
 #endif // MAIL_H

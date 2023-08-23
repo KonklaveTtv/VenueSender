@@ -22,6 +22,7 @@ public:
         ViewSelectedVenues,
         ShowEmailSettings,
         ViewEditEmail,
+        EmailCustomAddress,
         FinishAndSendEmail,
         Exit
     };
@@ -37,6 +38,7 @@ public:
     static const int VIEW_SELECTED_VENUES_OPTION;
     static const int SHOW_EMAIL_SETTINGS_OPTION;
     static const int VIEW_EDIT_EMAILS_OPTION;
+    static const int EMAIL_CUSTOM_ADDRESS_OPTION;
     static const int FINISH_AND_SEND_EMAILS_OPTION;
     static const int EXIT_OPTION;
 
