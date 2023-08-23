@@ -307,11 +307,7 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
     std::string smtpServer = "mock_smtp_server";
     int smtpPort = 587;
 
-
-
     SECTION("Sending email with valid parameters") {
-        // Normally, we would mock the curl_easy_perform function to ensure that it doesn't actually 
-        // send an email but for the purpose of this example, we'll just call the function.
         bool result = manager.sendIndividualEmail(mockCurl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail);
         
         // Here, the expected value is false because our mockCurl is nullptr.
@@ -326,7 +322,25 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
         // Here, the expected value is false because our mockCurl is nullptr and email is invalid.
         REQUIRE(result == false);
     }
+
+    SECTION("Sending email in batches") {
+        // Add 60 mock venues to the selectedVenuesForEmail
+        for (int i = 0; i < 60; i++) {
+            SelectedVenue tempVenue;
+            tempVenue.email = "venue" + std::to_string(i + 2) + "@mock.com";  // venue2@mock.com, venue3@mock.com, ...
+            selectedVenuesForEmail.push_back(tempVenue);
+        }
+
+        // Normally, you'd mock the curl_easy_perform function to capture the "To:" and "BCC:" fields and verify
+        // the batching logic. Here, for simplicity, we're just calling the function.
+        bool result = manager.sendIndividualEmail(mockCurl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail);
+
+        // Here, the expected value is false because our mockCurl is nullptr.
+        // However, you'd want to validate that the emails are being batched correctly.
+        REQUIRE(result == false);
+    }
 }
+
 
 
 // -----------------------

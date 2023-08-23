@@ -187,7 +187,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     // Reset the count
     successfulSends = 0;
 
-    //Update totalEmails dynamically
+    // Update totalEmails dynamically
     totalEmails = selectedVenuesForEmail.size();
 
     if (!curl) {
@@ -205,6 +205,102 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
 
     struct curl_slist* recipients = nullptr;
+
+    if (selectedVenuesForEmail.size() <= 49) {
+        // Use "To:" for each email
+        for (const auto& venue : selectedVenuesForEmail) {
+            recipients = curl_slist_append(recipients, venue.email.c_str());
+        }
+    } else {
+        // Use "BCC:" for batch sending
+        int batchSize = 49;
+        for (size_t i = 0; i < selectedVenuesForEmail.size(); i += batchSize) {
+            recipients = nullptr;  // Reset the list for each batch
+            size_t end = min(i + batchSize, selectedVenuesForEmail.size());
+            for (size_t j = i; j < end; ++j) {
+                recipients = curl_slist_append(recipients, ("BCC: " + selectedVenuesForEmail[j].email).c_str());
+            }
+            
+            // Send the batch of emails
+            curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+            
+            string toHeader = "To: " + senderEmail;  // Use senderEmail as the main recipient for BCC batches
+            string fromHeader = "From: " + senderEmail;
+            string subjectHeader = "Subject: " + subject;
+
+            struct curl_slist* headers = nullptr;
+            string dateHeader = "Date: " + getCurrentDateRfc2822();
+            headers = curl_slist_append(headers, dateHeader.c_str());
+            headers = curl_slist_append(headers, toHeader.c_str());
+            headers = curl_slist_append(headers, fromHeader.c_str());
+            headers = curl_slist_append(headers, subjectHeader.c_str());
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+            curl_mime *mime = nullptr;
+
+            if (!attachmentPath.empty()) {
+                mime = curl_mime_init(curl);
+
+                size_t fileSize = filesystem::file_size(attachmentPath);
+                attachmentSize = to_string(fileSize) + " bytes";
+
+                // Add the message part
+                curl_mimepart *part = curl_mime_addpart(mime);
+                curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
+
+                // Add the attachment part
+                part = curl_mime_addpart(mime);
+                curl_mime_filedata(part, attachmentPath.c_str());
+
+                // Retrieve attachment filename
+                curl_mime_filename(part, attachmentName.c_str());
+
+                // Set MIME type for attachment
+                curl_mime_type(part, "application/octet-stream");
+
+                curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
+            } else {
+                string payload = dateHeader + "\r\n"
+                                 + toHeader + "\r\n"
+                                 + fromHeader + "\r\n"
+                                 + subjectHeader + "\r\n\r\n"
+                                 + message;
+                curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
+                curl_easy_setopt(curl, CURLOPT_READDATA, &payload);
+                curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
+            }
+
+            cout << "Authenticating with SMTP server..." << endl;
+            cout.flush();
+            curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+
+            res = curl_easy_perform(curl);
+            if (res == 0) { // Check if email was sent successfully
+                successfulSends++;
+                double progressPercentage = 0.0;
+                if (totalEmails != 0) {
+                    progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
+                }
+                cout << "Progress: " << progressPercentage << "%" << endl;
+                cout.flush();
+            }
+
+            // Free the MIME structure
+            if (mime) {
+                curl_mime_free(mime);
+            }
+
+            curl_slist_free_all(recipients);  // Free the list after each batch
+            curl_slist_free_all(headers);
+            
+            if (!errorHandler.handleCurlError(res)) {
+                return false;
+            }
+        }
+        return true;  // Return early after sending all batches
+    }
+
+    // Logic for sending individual emails with "To:"
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
@@ -252,35 +348,35 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
         curl_easy_setopt(curl, CURLOPT_READDATA, &payload);
         curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
-        }
+    }
 
-        cout << "Authenticating with SMTP server..." << endl;
+    cout << "Authenticating with SMTP server..." << endl;
+    cout.flush();
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+
+    // Update totalEmails dynamically
+    totalEmails = selectedVenuesForEmail.size();
+
+    res = curl_easy_perform(curl);
+    if (res == 0) { // Check if email was sent successfully
+        successfulSends++;
+        double progressPercentage = 0.0;
+        if (totalEmails != 0) {
+            progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
+        }
+        cout << "Progress: " << progressPercentage << "%" << endl;
         cout.flush();
-        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+    }
 
-        //Update totalEmails dynamically
-        totalEmails = selectedVenuesForEmail.size();
+    // Free the MIME structure
+    if (mime) {
+        curl_mime_free(mime);
+    }
 
-        res = curl_easy_perform(curl);
-        if (res == 0) { // Check if email was sent successfully
-            successfulSends++;
-            double progressPercentage = 0.0;
-            if (totalEmails != 0) {
-                progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
-            }
-            cout << "Progress: " << progressPercentage << "%" << endl;
-            cout.flush();
-        }
+    curl_slist_free_all(recipients);
+    curl_slist_free_all(headers);
 
-        // Free the MIME structure
-        if (mime) {
-            curl_mime_free(mime);
-        }
-
-        curl_slist_free_all(recipients);
-        curl_slist_free_all(headers);
-
-        cout << "Email sending progress completed." << endl;
+    cout << "Email sending progress completed." << endl;
 
     if (!errorHandler.handleCurlError(res)) {
         if (res == CURLE_COULDNT_CONNECT) {
