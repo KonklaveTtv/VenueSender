@@ -87,6 +87,9 @@
 		
 		#ifndef UNIT_TESTING
 
+		ConfigManager configManager;
+		CsvReader csvReader;
+		CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
 		
 		int main() {
 			// ... (truncated for brevity)
@@ -98,18 +101,24 @@
 	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{Namespaces}: The standard namespace (\texttt{std}) and \texttt{confPaths} namespace are utilized throughout the program.
-		\item \textbf{Global Objects}: Several global objects representing various functionalities (e.g., configuration management, email management, venue filtering) are declared and used throughout the program.
-		\item \textbf{Main Function}: The main function is the entry point for the VenueSender application. Within this function:
+		\item \textbf{Dependencies}: The main source file includes its corresponding header and makes use of two namespaces: `confPaths` and `std`.
+		
+		\item \textbf{Global Objects}: Several global objects are declared and will be used across different parts of the code. These objects handle configuration management, CSV reading, cURL operations, email management, encryption, menu display, venue filtering, and venue utility operations.
+		
+		\item \textbf{Main Function} (\texttt{int main()}): The entry point to the program. The function does the following:
 		\begin{itemize}
-			\item Variables necessary for the program are initialized.
-			\item Configurations are loaded from a JSON file.
-			\item The password is decrypted.
-			\item CURL is set up and initialized.
-			\item The main menu loop prompts the user for various actions (e.g., filtering venues, sending emails).
-			\item Before exiting, configurations are reset and resources are cleaned up.
+			\item Initializes various variables and loads configurations from a JSON file.
+			
+			\item Sets up and initializes CURL.
+			
+			\item Reads venue data from a CSV file and extracts unique genres, states, cities, and capacities.
+			
+			\item Contains the main loop to display menu options, filter venues based on user criteria, view and edit email settings, and send emails to selected venues.
+			
+			\item Handles exit scenarios and cleanup tasks.
 		\end{itemize}
-		\item \textbf{Unit Testing}: The main function is guarded by the \texttt{UNIT\_TESTING} preprocessor directive. When this is defined, the main function is excluded, which is useful for unit testing scenarios.
+		
+			\item \textbf{Conditional Compilation}: The main source file's entire body uses an \texttt{\#ifndef UNIT\_TESTING} directive. This implies that if \texttt{UNIT\_TESTING} is defined (likely during unit tests), the main function won't compile. Excluding parts of code during unit testing is a common practice.
 	\end{itemize}
 	
 	\subsection{main.h}
@@ -213,7 +222,7 @@
 			// ... (truncated for brevity)
 		}
 	\end{lstlisting}
-\end{mdframed}
+	\end{mdframed}
 	\subsection*{Explanation}
 	\begin{itemize}
 		\item \textbf{Namespace Utilization}: The standard namespace (\texttt{std}) is used throughout the code.
@@ -222,7 +231,7 @@
 		\item \textbf{Menu Display}: The `displayMenuOptions` function handles the display of the main menu. Depending on whether \texttt{UNIT\_TESTING} is defined, different behaviors are executed.
 		\item \textbf{Selected Venues Display}: The `displaySelectedVenues` function shows the venues chosen by the user. If no venues are selected, an error message is displayed.
 	\end{itemize}
-	
+
 	\subsection{menu.h}
 	
 	\subsection*{Header File}
@@ -340,74 +349,56 @@
 	
 	\subsection*{Header File}
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		#ifndef FILTERCRITERIA_H
-		#define FILTERCRITERIA_H
-		
-		#include "fileutils.h"
-		#include "structs.h"
-		
-		#include <iomanip>
-		#include <iostream>
-		#include <set>
-		#include <vector>
-		
-		// Structure to hold filter criteria for venues
-		struct FilterCriteria {
-			std::string genre;
-			std::string state;
-			std::string city;
-		};
-		
-		// Utility class to perform common venue-related operations
-		class VenueUtilities {
-			public:
-			static SelectedVenue convertToSelectedVenue(const Venue& venue);
-			std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
-			std::set<std::string> getUniqueStates(const std::vector<Venue>& venues);
-			std::set<std::string> getUniqueCities(const std::vector<Venue>& venues);
-			std::set<int> getUniqueCapacities(const std::vector<Venue>& venues);
-		};
-		
-		// Class to handle venue filtering logic
-		class VenueFilter {
-			private:
-			const std::string::size_type MAX_INPUT_LENGTH = 256;
-			const char CSV_DELIMITER = ',';
+		\begin{lstlisting}[language=C++]
+			#ifndef FILTERCRITERIA_H
+			#define FILTERCRITERIA_H
 			
-			std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
-			const std::set<std::string>& uniqueOptions,
-			const std::string& filterType,
-			std::vector<SelectedVenue>& temporaryFilteredVenues);
+			#include "fileutils.h"
+			#include "structs.h"
 			
-			public:
-			void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
-			std::vector<SelectedVenue>& selectedVenuesForEmail,
-			std::istream& input = std::cin,
-			std::ostream& output = std::cout);
+			#include <iomanip>
+			#include <iostream>
+			#include <set>
+			#include <vector>
 			
-			void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
-			std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
-			const std::string& filterType,
-			const std::set<std::string>& uniqueOptions,
-			std::vector<SelectedVenue>& temporaryFilteredVenues);
-			std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
-			const std::set<int>& uniqueCapacities,
-			std::vector<SelectedVenue>& temporaryFilteredVenues);
-		};
-		
-		#endif // FILTERCRITERIA_H
-	\end{lstlisting}
-\end{mdframed}
+			struct FilterCriteria {
+				std::string genre;
+				std::string state;
+				std::string city;
+			};
+			
+			class VenueUtilities {
+				// ... (methods and members of VenueUtilities)
+			};
+			
+			class VenueFilter {
+				// ... (methods and members of VenueFilter)
+			};
+			
+			#endif // FILTERCRITERIA_H
+		\end{lstlisting}
+	\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{Include Directives}: This header file includes references to other header files, namely `fileutils.h` and `structs.h`, along with standard library headers.
-		\item \textbf{FilterCriteria Structure}: Defines the criteria that can be used for filtering venues - genre, state, and city.
-		\item \textbf{VenueUtilities Class}: Provides utility functions related to venues such as converting between venue object types and getting unique attributes from a list of venues.
-		\item \textbf{VenueFilter Class}: Contains methods for filtering venues based on user input and criteria. This includes processing user input, displaying filtered venues, and filtering venues based on genre, state, city, and capacity.
+		\item \textbf{Dependencies}: The header file includes dependencies related to file utilities, struct definitions, and various standard libraries like iostream, vector, set, and iomanip.
+		
+		\item \textbf{Struct Definition: FilterCriteria}:
+		\begin{itemize}
+			\item Represents the filter criteria used to filter venues based on genre, state, and city.
+		\end{itemize}
+		
+		\item \textbf{Class Definition: VenueUtilities}:
+		\begin{itemize}
+			\item A utility class that provides several static methods related to venues. It offers functions to extract unique genres, states, cities, and capacities from a list of venues. Additionally, there's a function to convert a `Venue` object to a `SelectedVenue` object.
+		\end{itemize}
+		
+		\item \textbf{Class Definition: VenueFilter}:
+		\begin{itemize}
+			\item A class that manages venue filtering logic. It contains methods for processing user input related to venue selection, displaying filtered venues, filtering venues based on specific criteria like genre, state, city, and capacity. The class also maintains a list of venues selected for emailing.
+		\end{itemize}
 	\end{itemize}
-	
+		
 	\section{structs.h}
 	
 	\subsection*{Header File}
@@ -470,120 +461,122 @@
 	
 	\subsection*{Source Code}
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		#include "include/mail.h"
-		
-		using namespace std;
-		namespace fs = filesystem;
-		
-		CurlHandleWrapper curlHandleWrapper;
-		ErrorHandler errorHandler;
-		
-		string EmailManager::getCurrentDateRfc2822() {
-			// Implementation to get the current date in RFC 2822 format...
-		}
-		
-		string EmailManager::sanitizeSubject(string& subject) {
-			// Implementation to sanitize the email subject...
-		}
-		
-		void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
-		const string& senderEmail, int smtpPort, const string& smtpServer) {
-			// Implementation to display current email settings...
-		}
-		
-		bool EmailManager::isValidEmail(const string& email) {
-			// Implementation to check if a provided string is a valid email format...
-		}
-		
-		void EmailManager::constructEmail(string &subject, string &message, string &attachmentName, 
-		string &attachmentSize, string &attachmentPath, istream &in) {
-			// Implementation to guide the user in constructing an email...
-		}
-		
-		bool EmailManager::sendIndividualEmail(CURL* curl,
-		const SelectedVenue& selectedVenue,
-		const string& senderEmail,
-		string& subject,
-		string& message,
-		const string& smtpServer,
-		int smtpPort,
-		string& attachmentName,
-		string& attachmentSize,
-		const string& attachmentPath) {
-			// Implementation to send an individual email...
-		}
-		
-		void EmailManager::viewEmailSendingProgress(const string& senderEmail) {
-			// Implementation to display email sending progress...
-		}
-	\end{lstlisting}
-\end{mdframed}
+		\begin{lstlisting}[language=C++]
+			#include "include/mail.h"
+			
+			using namespace std;
+			namespace fs = filesystem;
+			
+			CurlHandleWrapper& curlHandleWrapper = CurlHandleWrapper::getInstance();
+			ErrorHandler errorHandler;
+			
+			static int successfulSends = 0; // Counter for successful email sends
+			int totalEmails;
+			
+			string EmailManager::getCurrentDateRfc2822() {
+				// Implementation to get the current date in RFC 2822 format...
+			}
+			
+			string EmailManager::sanitizeSubject(string& subject) {
+				// Implementation to sanitize the email subject...
+			}
+			
+			void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
+			const string& senderEmail, int smtpPort, const string& smtpServer) {
+				// Implementation to display current email settings...
+			}
+			
+			bool EmailManager::isValidEmail(const string& email) {
+				// Implementation to check if a provided string is a valid email format...
+			}
+			
+			void EmailManager::constructEmail(string &subject, string &message, string &attachmentName, 
+			string &attachmentSize, string &attachmentPath, istream &in) {
+				// Implementation to guide the user in constructing an email...
+			}
+			
+			bool EmailManager::sendIndividualEmail(CURL* curl,
+			const SelectedVenue& selectedVenue,
+			const string& senderEmail,
+			string& subject,
+			string& message,
+			const string& smtpServer,
+			int smtpPort,
+			string& attachmentName,
+			string& attachmentSize,
+			const string& attachmentPath,
+			const vector<SelectedVenue>& selectedVenuesForEmail) {
+				// Implementation to send an individual email...
+			}
+			
+		\end{lstlisting}
+	\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{Namespace and Global Objects}: This source file utilizes the standard namespace and a namespace alias for `filesystem`. Additionally, global objects for cURL handling and error handling are defined.
+		\item \textbf{Namespace, Global Objects, and Counters}: This source file utilizes the standard namespace and a namespace alias for `filesystem`. There are global objects for cURL handling and error handling. There are also global progress counters for successful email sends and total emails.
 		\item \textbf{getCurrentDateRfc2822()}: Returns the current date in RFC 2822 format.
-		\item \textbf{sanitizeSubject()}: Sanitizes the subject line of an email by replacing newline and carriage return characters with spaces.
+		\item \textbf{sanitizeSubject()}: Sanitizes the subject line of an email.
 		\item \textbf{viewEmailSettings()}: Displays the current email settings.
 		\item \textbf{isValidEmail()}: Validates whether the provided string conforms to a valid email format.
-		\item \textbf{constructEmail()}: Guides the user in constructing an email, with provisions for a subject, message, and optional attachment.
-		\item \textbf{sendIndividualEmail()}: Sends an individual email to a selected venue based on specified configurations.
-		\item \textbf{viewEmailSendingProgress()}: Displays the progress of email sending to the user.
+		\item \textbf{constructEmail()}: Guides the user in constructing an email, including subject, message, and optional attachment.
+		\item \textbf{sendIndividualEmail()}: Sends an individual email to a selected venue based on specified configurations and updates the progress of email sending.
 	\end{itemize}
 	
 	\subsection{mail.h}
 	
 	\subsection*{Header File}
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		#ifndef MAIL_H
-		#define MAIL_H
-		
-		#include "curl.h"
-		#include "fileutils.h"
-		#include "menu.h"
-		#include "errorhandler.h"
-		#include "structs.h"
-		
-		#include <ctime>
-		#include <filesystem>
-		#include <regex>
-		#include <thread>
-		
-		class EmailManager {
-			public:
-			static inline const int MAX_MESSAGE_LENGTH = 2000;
-			static inline const int MAX_SUBJECT_LENGTH = 50;
-			const size_t MAX_ATTACHMENT_SIZE = 24 * 1024 * 1024;
+		\begin{lstlisting}[language=C++]
+			#ifndef MAIL_H
+			#define MAIL_H
 			
-			std::string getCurrentDateRfc2822();
-			std::string sanitizeSubject(std::string& subject);
-			void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
-			const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
-			bool isValidEmail(const std::string& email);
-			void constructEmail(std::string &subject, std::string &message, std::string &attachmentPath, 
-			std::string &attachmentName, std::string &attachmentSize, std::istream &in = std::cin);
-			bool sendIndividualEmail(CURL* curl,
-			const SelectedVenue& selectedVenue,
-			const std::string& senderEmail,
-			std::string& subject,
-			std::string& message,
-			const std::string& smtpServer,
-			int smtpPort,
-			std::string& attachmentName,
-			std::string& attachmentSize,
-			const std::string& attachmentPath);
-			void viewEmailSendingProgress(const std::string& senderEmail);
-		};
-		
-		#endif // MAIL_H
-	\end{lstlisting}
-\end{mdframed}
+			#include "curl.h"
+			#include "fileutils.h"
+			#include "menu.h"
+			#include "errorhandler.h"
+			#include "structs.h"
+			#include "consoleutils.h"
+			
+			#include <ctime>
+			#include <filesystem>
+			#include <regex>
+			#include <thread>
+			
+			class EmailManager {
+				public:
+				static inline const int MAX_MESSAGE_LENGTH = 2000;
+				static inline const int MAX_SUBJECT_LENGTH = 50;
+				const size_t MAX_ATTACHMENT_SIZE = 24 * 1024 * 1024;
+				
+				std::string getCurrentDateRfc2822();
+				std::string sanitizeSubject(std::string& subject);
+				void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
+				const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
+				bool isValidEmail(const std::string& email);
+				void constructEmail(std::string &subject, std::string &message, std::string &attachmentPath, 
+				std::string &attachmentName, std::string &attachmentSize, std::istream &in = std::cin);
+				bool sendIndividualEmail(CURL* curl,
+				const SelectedVenue& selectedVenue,
+				const std::string& senderEmail,
+				std::string& subject,
+				std::string& message,
+				const std::string& smtpServer,
+				int smtpPort,
+				std::string& attachmentName,
+				std::string& attachmentSize,
+				const std::string& attachmentPath,
+				const std::vector<SelectedVenue>& selectedVenuesForEmail);
+				void viewEmailSendingProgress(const std::string& senderEmail);
+			};
+			
+			#endif // MAIL_H
+		\end{lstlisting}
+	\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{Dependencies}: The header file includes dependencies related to cURL, file utilities, menu handling, error handling, and data structures. Additionally, it utilizes the `ctime`, `filesystem`, `regex`, and `thread` libraries.
+		\item \textbf{Dependencies}: The header file includes dependencies related to cURL, file utilities, menu handling, error handling, console utilities, and data structures. Additionally, it utilizes the `ctime`, `filesystem`, `regex`, and `thread` libraries.
 		\item \textbf{Class Definition: EmailManager}:
 		\begin{itemize}
 			\item \textbf{Constants}: The class defines constants for the maximum lengths of email messages and subjects, as well as the maximum size for attachments.
@@ -591,9 +584,9 @@
 			\item \textbf{sanitizeSubject()}: Sanitizes the subject line of an email.
 			\item \textbf{viewEmailSettings()}: Displays the email settings.
 			\item \textbf{isValidEmail()}: Checks if a given string is a valid email format.
-			\item \textbf{constructEmail()}: Guides the user in constructing an email.
-			\item \textbf{sendIndividualEmail()}: Sends an individual email to a selected venue.
-			\item \textbf{viewEmailSendingProgress()}: Displays the progress of email sending.
+			\item \textbf{constructEmail()}: Guides the user in constructing an email with options for subject, message, and attachment.
+			\item \textbf{sendIndividualEmail()}: Sends an individual email to a selected venue, updating email sending progress dynamically.
+			\item \textbf{viewEmailSendingProgress()}: Displays the progress of email sending to the user.
 		\end{itemize}
 	\end{itemize}
 	
@@ -865,314 +858,279 @@
 	
 	\subsection*{Source Code}
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		#include "include/curl.h"
-		
-		using namespace std;
-		
-		/* CurlHandleWrapper Class Implementation */
-		
-		int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
-			// Implementation for displaying the progress of email sending
-		}
-		
-		size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
-			// Implementation for reading the email payload
-		}
-		
-		void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyHost) {
-			// Implementation to set SSL options for cURL
-		}
-		
-		CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
-			// Constructor implementation for CurlHandleWrapper
-		}
-		
-		CurlHandleWrapper::~CurlHandleWrapper() {
-			// Destructor implementation for CurlHandleWrapper
-		}
-		
-		CURL* CurlHandleWrapper::get() const {
-			// Implementation to get the cURL handle
-		}
-		
-		void CurlHandleWrapper::init() {
-			// Implementation for global cURL initialization
-		}
-		
-		void CurlHandleWrapper::cleanup() {
-			// Implementation for global cURL cleanup
-		}
-		
-		void CurlHandleWrapper::setEmailBeingSent(const string& email) {
+		\begin{lstlisting}[language=C++]
+			#include "include/curl.h"
+			
+			using namespace std;
+			
+			// CurlHandleWrapper Class Implementation
+			// ...
+			
+			// Progress callback to show progress for email sending
+			int CurlHandleWrapper::progressCallback(...){...}
+			
+			// Callback function to read data for sending
+			size_t CurlHandleWrapper::readCallback(...){...}
+			
+			// Function to set SSL options
+			void CurlHandleWrapper::setSSLOptions(...){...}
+			
+			// Constructor
+			CurlHandleWrapper::CurlHandleWrapper() {...}
+			
+			// Destructor
+			CurlHandleWrapper::~CurlHandleWrapper() {...}
+			
+			// Get the underlying cURL handle
+			CURL* CurlHandleWrapper::get() const {...}
+			
+			// Global cURL initialization
+			void CurlHandleWrapper::init() {...}
+			
+			// Global cURL cleanup
+			void CurlHandleWrapper::cleanup() {...}
+			
 			// Setter for emailBeingSent
-		}
-		
-		string CurlHandleWrapper::getEmailBeingSent() const {
+			void CurlHandleWrapper::setEmailBeingSent(const string& email) {...}
+			
 			// Getter for emailBeingSent
-		}
-		
-		void CurlHandleWrapper::clearEmailBeingSent() {
-			// Clears the emailBeingSent variable
-		}
-		
-		CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose, 
-		const string& senderEmail, const string& smtpUsername, string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
-			// Function to set up a cURL handle with various settings
-		}
-	\end{lstlisting}
+			string CurlHandleWrapper::getEmailBeingSent() const {...}
+			
+			// Clear the email being sent
+			void CurlHandleWrapper::clearEmailBeingSent() {...}
+			
+			// Setup a cURL handle
+			CURL* setupCurlHandle(...) {...}
+		\end{lstlisting}
 	\end{mdframed}
+	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{CurlHandleWrapper Class}: This class manages the cURL handle and the associated operations.
-		\item \textbf{progressCallback}: Function to update and display the progress of email sending.
-		\item \textbf{readCallback}: Callback function to read email payload data for sending in the request.
-		\item \textbf{setSSLOptions}: Sets the SSL options for the cURL handle.
-		\item \textbf{CurlHandleWrapper Constructor \& Destructor}: Initializes and cleans up the cURL handle.
-		\item \textbf{init \& cleanup}: Global functions for initializing and cleaning up the cURL library.
-		\item \textbf{setEmailBeingSent, getEmailBeingSent, \& clearEmailBeingSent}: Functions to manage the email address being sent.
-		\item \textbf{setupCurlHandle}: Sets up a cURL handle with various options including SSL, SMTP authentication, and other settings.
+		\item \textbf{CurlHandleWrapper Class}: This class provides a wrapper around the cURL handle to manage its behavior and settings.
+		\item \textbf{progressCallback()}: A callback to show email sending progress.
+		\item \textbf{readCallback()}: A callback function to read the data being sent.
+		\item \textbf{setSSLOptions()}: Configures SSL options for the cURL session.
+		\item \textbf{Constructor and Destructor}: Manages the lifecycle of the cURL handle.
+		\item \textbf{get()}: Returns the underlying cURL handle.
+		\item \textbf{init() and cleanup()}: Global initialization and cleanup functions for cURL.
+		\item \textbf{setEmailBeingSent(), getEmailBeingSent(), and clearEmailBeingSent()}: Manage the email currently being sent.
+		\item \textbf{setupCurlHandle()}: Configures a cURL handle with various settings.
 	\end{itemize}
+	
 	\subsection{curl.h}
 	
 	\subsection*{Header File}
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		#ifndef CURL_H
-		#define CURL_H
-		
-		#include "errorhandler.h"
-		
-		#include <algorithm>
-		#include <cstring>
-		#include <iostream>
-		#include <mutex>
-		#include <curl/curl.h>
-		
-		class CurlHandleWrapper {
-			public:
-			CurlHandleWrapper();
-			~CurlHandleWrapper();
-			CURL* get() const;
-			static void init();
-			static void cleanup();
-			int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
-			void setEmailBeingSent(const std::string& email);
-			std::string getEmailBeingSent() const;
-			void clearEmailBeingSent();
-			void setSSLOptions(bool useSSL = true, bool verifyPeer = true, bool verifyHost = true);
-			static size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
+		\begin{lstlisting}[language=C++]
+			#ifndef CURL_H
+			#define CURL_H
 			
-			private:
-			CURL* curl;
-			double progress{};
-			std::string emailBeingSent;
-			mutable std::mutex mtx;
-		};
-		
-		CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
-		const std::string& senderEmail, const std::string& smtpUsername, std::string& mailPassDecrypted, int smtpPort, const std::string& smtpServer);
-		
-		#endif // CURL_H
-	\end{lstlisting}
-\end{mdframed}
+			#include "errorhandler.h"
+			#include <algorithm>
+			#include <cstring>
+			#include <iostream>
+			#include <mutex>
+			#include <curl/curl.h>
+			
+			class CurlHandleWrapper {
+				public:
+				CurlHandleWrapper(const CurlHandleWrapper&) = delete;
+				CurlHandleWrapper& operator=(const CurlHandleWrapper&) = delete;
+				
+				static CurlHandleWrapper& getInstance();
+				CURL* get() const;
+				static void init();
+				static void cleanup();
+				inline double getProgress() const;
+				int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
+				void setEmailBeingSent(const std::string& email);
+				std::string getEmailBeingSent() const;
+				void clearEmailBeingSent();
+				void setSSLOptions(bool useSSL = true, bool verifyPeer = true, bool verifyHost = true);
+				static size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
+				
+				private:
+				CurlHandleWrapper();
+				~CurlHandleWrapper();
+				CURL* curl;
+				double progress{};
+				std::string emailBeingSent;
+				mutable std::mutex mtx;
+			};
+			
+			CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
+			const std::string& senderEmail, const std::string& smtpUsername, std::string& mailPassDecrypted, int smtpPort, const std::string& smtpServer);
+			
+			#endif // CURL_H
+		\end{lstlisting}
+	\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{CurlHandleWrapper}: This class manages the cURL handle and its associated operations.
-		\item \textbf{CurlHandleWrapper::CurlHandleWrapper}: Constructor initializes the cURL handle.
-		\item \textbf{CurlHandleWrapper::~CurlHandleWrapper}: Destructor cleans up the cURL handle.
-		\item \textbf{CurlHandleWrapper::get}: Returns the cURL handle for use in other operations.
-		\item \textbf{CurlHandleWrapper::init \& CurlHandleWrapper::cleanup}: Static methods to initialize and cleanup the cURL library respectively.
-		\item \textbf{CurlHandleWrapper::progressCallback}: Callback function to update the progress of ongoing operations.
-		\item \textbf{CurlHandleWrapper::setEmailBeingSent, CurlHandleWrapper::getEmailBeingSent, \& CurlHandleWrapper::clearEmailBeingSent}: Methods to set, get, and clear the email address that is currently being sent.
-		\item \textbf{CurlHandleWrapper::setSSLOptions}: Method to set SSL options for the cURL handle.
-		\item \textbf{CurlHandleWrapper::readCallback}: Static callback function for reading the email payload.
-		\item \textbf{setupCurlHandle}: Global function to set up a cURL handle with the provided options.
+		\item \textbf{Dependencies}: The header file includes the `errorhandler.h` for error handling, standard libraries, the cURL library, and utilities for multi-threading.
+		
+		\item \textbf{Class Definition: CurlHandleWrapper}:
+		\begin{itemize}
+			\item This class provides a Singleton pattern to ensure a single instance of the cURL handle.
+			\item The copy constructor and assignment operator are deleted to prevent copying.
+			\item \textbf{getInstance()}: Provides access to the single instance of this class.
+			\item \textbf{get()}: Returns the cURL handle.
+			\item \textbf{init() and cleanup()}: Static methods for initializing and cleaning up the cURL library.
+			\item \textbf{getProgress()}: Inline method to get the progress of the ongoing cURL operation.
+			\item \textbf{progressCallback()}: Callback to update the progress of ongoing operations.
+			\item \textbf{setEmailBeingSent(), getEmailBeingSent(), and clearEmailBeingSent()}: Manage the email currently being sent.
+			\item \textbf{setSSLOptions()}: Configures SSL options for the cURL session.
+			\item \textbf{readCallback()}: Callback function to read the email payload.
+			
+		\item \textbf{setupCurlHandle()}: A utility function to set up and configure a cURL handle with the given options.
+		\end{itemize}
+		
+		
 	\end{itemize}
+	
 	
 	\section{errorhandler.cpp}
 	
 	\subsection*{Source Code}
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		#include "include/errorhandler.h"
-		#include "include/fileutils.h" // Forward declaration due to circular dependency
-		
-		using namespace std;
-		
-		bool ErrorHandler::handleCurlError(CURLcode res) {
-			// Implementation to handle CURL errors
-		}
-		
-		void ErrorHandler::handleErrorAndReturn(ErrorType error) {
-			// Overloaded function to handle errors without extra information
-		}
-		
-		void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo = "") {
-			// Implementation to handle various types of errors and display appropriate messages
-		}
-	\end{lstlisting}
-\end{mdframed}
+		\begin{lstlisting}[language=C++]
+			#include "include/errorhandler.h"
+			#include "include/fileutils.h"
+			
+			using namespace std;
+			
+			std::mutex ErrorHandler::outputMutex;
+			
+			bool ErrorHandler::handleCurlError(CURLcode res) {
+				if (res != CURLE_OK) {
+					cerr << "CURL Error: " << curl_easy_strerror(res) << endl;
+					handleErrorAndReturn(ErrorType::LIBCURL_ERROR);
+					return false;
+				}
+				return true;
+			}
+			
+			void ErrorHandler::handleErrorAndReturn(ErrorType error) {
+				handleErrorAndReturn(error, "");
+			}
+			
+			void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo) {
+				std::lock_guard<std::mutex> lock(outputMutex);
+				switch (error) {
+					// ... (All the error handling cases go here)
+				}
+			}
+		\end{lstlisting}
+	\end{mdframed}
+	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{handleCurlError}: Handles errors from the cURL library and displays appropriate error messages.
-		\item \textbf{handleErrorAndReturn (Overloaded version)}: Handles various error types without additional context or information.
-		\item \textbf{handleErrorAndReturn}: Manages different types of errors, displaying corresponding error messages. It can also incorporate additional context or information, provided as the `extraInfo` parameter.
+		\item \textbf{Dependencies}: This source file imports the error handling and file utilities header files for proper functioning.
+		
+		\item \textbf{Mutex Initialization}: A mutex is defined for thread safety. It ensures that multiple threads don't concurrently access the error handling function, which could lead to interleaved error messages.
+		
+		\item \textbf{handleCurlError()}: This function checks for any cURL-related errors. If one occurs, it displays a relevant error message and returns `false`. Otherwise, it returns `true`.
+		
+		\item \textbf{handleErrorAndReturn() (Overloaded)}: Handles various error types and displays appropriate error messages. One version accepts only the error type, while the overloaded version accepts an error type and additional information for a more detailed error message.
+		
+		\item \textbf{Error Handling}: A comprehensive switch-case block is used to handle different types of errors, each providing a specific error message to help in debugging and user feedback.
 	\end{itemize}
-	
+		
 	\subsection{errorhandler.h}
 	
 	\subsection*{Header File}
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		#ifndef ERRORHANDLER_H
-		#define ERRORHANDLER_H
-		
-		#include <curl/curl.h>
-		#include <iostream>
-		
-		// Forward declarations due to circular dependency
-		class CsvReader; 
-		class ConfigManager; 
-		
-		class ErrorHandler {
-			public:
-			// Enumeration for different error types
-			enum class ErrorType {
-				// Different error types are listed here...
+		\begin{lstlisting}[language=C++]
+			#ifndef ERRORHANDLER_H
+			#define ERRORHANDLER_H
+			
+			#include <curl/curl.h>
+			#include <iostream>
+			#include <mutex>
+			
+			class CsvReader;
+			class ConfigManager;
+			
+			class ErrorHandler {
+				private:
+				static std::mutex outputMutex;
+				public:
+				enum class ErrorType {
+					// ... (All the error types go here)
+				};
+				
+				void handleErrorAndReturn(ErrorType error);
+				void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
+				bool handleCurlError(CURLcode res);
 			};
 			
-			// Function to handle errors and display appropriate messages
-			void handleErrorAndReturn(ErrorType error);
-			
-			// Overloaded function to handle errors with extra information
-			void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
-			
-			// Function to handle cURL library errors
-			bool handleCurlError(CURLcode res);
-		};
-		
-		#endif // ERRORHANDLER_H
-	\end{lstlisting}
-\end{mdframed}
+			#endif // ERRORHANDLER_H
+		\end{lstlisting}
+	\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item \textbf{ErrorType Enumeration}: Represents different types of errors that the application can encounter.
-		\item \textbf{handleErrorAndReturn}: Manages different error types and displays corresponding error messages.
-		\item \textbf{handleErrorAndReturn (Overloaded version)}: This version of the function allows for an additional string parameter to provide more context to the error.
-		\item \textbf{handleCurlError}: Manages errors from the cURL library and provides feedback on whether an operation was successful or not.
+		\item \textbf{Dependencies}: The header file includes dependencies related to cURL, input/output streams, and mutex handling for thread safety.
+		
+		\item \textbf{Forward Declarations}: Forward declarations for `CsvReader` and `ConfigManager` are present due to circular dependencies between `fileutils.h` and `errorhandler.h`.
+		
+		\item \textbf{Class Definition: ErrorHandler}:
+		\begin{itemize}
+			\item \textbf{Mutex}: A static mutex `outputMutex` is defined to ensure thread-safe output when handling errors.
+			
+			\item \textbf{ErrorType Enumeration}: Represents different types of errors that the system can encounter. This provides a clear structure to identify and handle different error scenarios.
+			
+			\item \textbf{handleErrorAndReturn()}: Handles various types of errors and displays appropriate error messages. There are two versions of this method: one accepts only the error type, while the overloaded version also takes additional information to provide a more detailed error message.
+			
+			\item \textbf{handleCurlError()}: Checks for any cURL-related errors and provides a feedback mechanism.
+		\end{itemize}
 	\end{itemize}
+	
 	
 	\section{test\_venuesender.cpp}
 	
-	This file is used for testing and should not be deleted.
-	
-	\subsection*{Imports and Namespace}
+	\subsection*{Source File}
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		#define CATCH_CONFIG_RUNNER
-		
-		#include "../include/main.h"
-		// ... (other includes)
-		
-		using namespace std;
-	\end{lstlisting}
-\end{mdframed}	
-	\subsection*{CinGuard and CoutGuard Classes}
-	Utility classes to guard and redirect the standard input and output streams respectively.
-	
-	\subsubsection*{CinGuard}
-	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		class CinGuard {
-			streambuf* orig_cin;
-			public:
-			CinGuard(streambuf* newbuf);
-			~CinGuard();
-		};
-	\end{lstlisting}
-\end{mdframed}
-	
-
-	\subsubsection*{CoutGuard}
-	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt]
-	\begin{lstlisting}[language=C++]
-		class CoutGuard {
-			streambuf* orig_cout;
-			public:
-			CoutGuard(streambuf* newbuf);
-			~CoutGuard();
-		};
-	\end{lstlisting}
+		\begin{lstlisting}[language=C++]
+			// This file is used for testing DO NOT DELETE
+			
+			#define CATCH_CONFIG_RUNNER
+			// ... (various includes)
+			
+			using namespace std;
+			
+			class CinGuard {
+				// ... (definition of CinGuard class)
+			};
+			
+			class CoutGuard {
+				// ... (definition of CoutGuard class)
+			};
+			
+			// Test groups and test cases follow...
+			
+			int main( int argc, char* argv[] ) {
+				// ... (main function for running tests)
+			}
+		\end{lstlisting}
 	\end{mdframed}
-	
-	\subsection*{Test Groups}
-	The file is organized into several test groups. Each test group corresponds to testing a specific component or functionality.
-	
-	\subsubsection*{ConsoleUtils Test Group}
-	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
-	\begin{lstlisting}[language=C++]
-		TEST_CASE("ConsoleUtils::trim() functionality", "[ConsoleUtils]") {
-			// ... Test cases and REQUIRE statements
-		}
-	\end{lstlisting}
-	\end{mdframed}
-	
-	\subsubsection*{CsvReader Test Group}
-	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
-	\begin{lstlisting}[language=C++]
-		TEST_CASE("CsvReader::readCSV() functionality", "[CsvReader]") {
-			// ... Test cases and REQUIRE statements
-		}
-	\end{lstlisting}
-	\end{mdframed}
-	
-	% ... (Continue with other test groups)
-	
-	\subsubsection*{EmailManager Test Group}
-	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
-	\begin{lstlisting}[language=C++]
-		TEST_CASE("EmailManager::getCurrentDateRfc2822() functionality", "[EmailManager]") {
-			// ... Test cases and REQUIRE statements
-		}
-	\end{lstlisting}
-	\end{mdframed}
-	
-	% ... (Continue with other test groups)
-	
-	\subsubsection*{MenuManager Test Group}
-	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
-	\begin{lstlisting}[language=C++]
-		TEST_CASE("MenuManager::isValidMenuChoice() functionality", "[MenuManager]") {
-			// ... Test cases and REQUIRE statements
-		}
-	\end{lstlisting}
-	\end{mdframed}
-	
-	% ... (Continue with other test groups)
-	
-	\subsection*{Main Function}
-	This is the main function for the test runner which initializes the configurations, runs all tests, and cleans up afterward.
-
-	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=-5pt, innerbottommargin=-7pt]
-	\begin{lstlisting}[language=C++]
-		int main( int argc, char* argv[] ) {
-			// ... Initialization and test execution
-			return result;
-		}
-	\end{lstlisting}
-\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
-		\item The file begins by defining a macro for the Catch2 test framework and including necessary header files.
-		\item Utility classes \texttt{CinGuard} and \texttt{CoutGuard} are defined to temporarily redirect the standard input and output streams.
-		\item Multiple \texttt{TEST\_CASE} blocks are used to define tests for different functionalities. Inside each test case, various scenarios are tested using the \texttt{REQUIRE} macro.
-		\item The main function initializes the test runner, runs all tests, and cleans up afterward.
+		\item \textbf{Purpose}: This source file is dedicated to unit testing. It is important to note that deleting or altering this file could impact the quality assurance process for the software.
+		
+		\item \textbf{Dependencies}: The file includes dependencies to header files associated with various components of the system. It also uses the Catch2 testing framework, as indicated by the \texttt{CATCH\_CONFIG\_RUNNER} preprocessor directive.
+
+		
+		\item \textbf{Utility Classes}: `CinGuard` and `CoutGuard` classes are utility classes that help in redirecting the standard input and output streams. These are especially useful in testing scenarios where you want to simulate user input or capture output for verification.
+		
+		\item \textbf{Test Groups}: Multiple test groups are present in this source file, each focusing on a specific component or functionality of the system. These groups include `ConsoleUtils`, `CsvReader`, `ConfigManager`, `MenuManager`, `EmailManager`, `VenueFilter`, `VenueUtilities`, and `EncryptionManager`.
+		
+		\item \textbf{Test Cases}: Each test group contains various test cases, which are units of testing that ascertain the correctness of specific functionalities. For instance, the `ConsoleUtils` test group has a test case for verifying the `trim` function's behavior.
+		
+		\item \textbf{Main Function}: At the end of the source file, a main function is defined to run all the test cases using the Catch2 framework. This main function also handles cleanup tasks after all tests have been executed.
 	\end{itemize}
-	
+		
 	\section{venues.csv}
 	
 	This file represents a CSV (Comma-Separated Values) database of music venues. Each line in the CSV file corresponds to a single venue and its attributes.
