@@ -90,6 +90,7 @@
 		\item View Selected Venues: Review your chosen venues.
 		\item Show Email Settings: View email configurations.
 		\item View \& Edit Email: Inspect and modify the current email draft.
+		\item Email Custom Address: Dispatch an email to a custom address.
 		\item Finish \& Send Emails: Dispatch emails to the selected venues.
 		\item Exit VenueSender: Shut down the program.
 	\end{itemize}
@@ -154,7 +155,7 @@
 		\item verifyHost Status
 		\item Verbose Mode
 	\end{itemize}
-	
+
 	\subsection*{Sending Emails}
 	Finish \& Send Emails initiates the process:
 	\begin{itemize}
@@ -164,6 +165,16 @@
 		\item Once all emails are sent, a completion message appears. Press return to continue.
 	\end{itemize}
 	
+	\subsection*{Custom Address Email Sending}
+	Access Show Email Settings to review:
+	\begin{itemize}
+		\item The user sets the custom email adress to be used.
+		\item The program checks the sender's email format. If it's incorrect, an error message instructs you to adjust it in your custom.json file.
+		\item Connects to the SMTP server and authenticates.
+		\item The email is dispatched and you receive a status update. Should any sending issues arise, you'll be informed (e.g., connection errors, authentication failures).
+		\item Once the email is sent, a completion message appears. Press return to continue.
+	\end{itemize}
+
 	\section*{Exiting the Program}
 	To leave:
 	\begin{itemize}

@@ -202,6 +202,7 @@
 		const int MenuManager::VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues);
 		const int MenuManager::SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuManager::MenuOption::ShowEmailSettings);
 		const int MenuManager::VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::ViewEditEmail);
+		const int MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION = static_cast<int>(MenuManager::MenuOption::EmailCustomAddress);
 		const int MenuManager::FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail);
 		const int MenuManager::EXIT_OPTION = static_cast<int>(MenuManager::MenuOption::Exit);
 		
@@ -508,7 +509,18 @@
 			const vector<SelectedVenue>& selectedVenuesForEmail) {
 				// Implementation to send an individual email...
 			}
-			
+		
+			void EmailManager::emailCustomAddress(CURL* curl,
+			const std::string& senderEmail,
+			std::string& subject,
+			std::string& message,
+			const std::string& smtpServer,
+			int smtpPort,
+			std::string& attachmentName,
+			std::string& attachmentSize,
+			std::string& attachmentPath) {
+				// Implementation to send an individual email to a custom address...
+							
 		\end{lstlisting}
 	\end{mdframed}
 	
@@ -521,6 +533,7 @@
 		\item \textbf{isValidEmail()}: Validates whether the provided string conforms to a valid email format.
 		\item \textbf{constructEmail()}: Guides the user in constructing an email, including subject, message, and optional attachment.
 		\item \textbf{sendIndividualEmail()}: Sends an individual email to a selected venue based on specified configurations and updates the progress of email sending.
+		\item \textbf{emailCustomAddress()}: Sends an individual email to a custom address based on specified configurations and updates the progress of email sending.
 	\end{itemize}
 	
 	\subsection{mail.h}
