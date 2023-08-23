@@ -142,7 +142,7 @@
 	\end{itemize}
 	
 	\subsection*{Email Password Encryption}
-	For added security, the program can encrypt the email password stored in the configuration file. If the password is not encrypted, the program will automatically encrypt it upon initialization. 
+	For added security, the program encrypts the email password stored in the configuration file. If the password is not encrypted, the program will automatically encrypt it upon initialization. 
 	
 	\subsection*{Email Settings}
 	Access Show Email Settings to review:
@@ -162,7 +162,7 @@
 		\item The program checks the sender's email format. If it's incorrect, an error message instructs you to adjust it in your custom.json file.
 		\item The program then checks if more than 49 venues have been selected, if so it sends using "Bcc", if less than 49 venues are selected then it sends an individual email to each.
 		\item Connects to the SMTP server and authenticates.
-		\item Emails are dispatched individually. For each, you'll receive a status update. Should any sending issues arise, you'll be informed (e.g., connection errors, authentication failures).
+		\item Emails are dispatched either individually or if more than 49 venues have been selected it sends via "Bcc:". For each, you'll receive a status update. Should any sending issues arise, you'll be informed (e.g., connection errors, authentication failures).
 		\item Once all emails are sent, a completion message appears. Press return to continue.
 	\end{itemize}
 	
