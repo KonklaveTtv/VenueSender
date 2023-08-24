@@ -169,8 +169,8 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     }
 }
 
-void EmailManager::viewEditEmails(const string& senderEmail, string &subject, string &message, 
-                               string& attachmentName, string& attachmentSize, string& attachmentPath) {
+void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, const vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
+                                  string &subject, string &message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists) {
     int attempts = 0;
     bool modified = false;
 
@@ -193,48 +193,54 @@ void EmailManager::viewEditEmails(const string& senderEmail, string &subject, st
         ConsoleUtils::clearInputBuffer();
         
         if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
-            subject.clear(); // Clear existing subject
-            message.clear(); // Clear existing message
-                                    
-            try {
-                constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
-                modified = true;
-            } catch (const exception& e) {
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+            if (templateExists) {
+                message.clear();
+                createBookingTemplate(curl, senderEmail, subject, message, smtpServer, smtpPort, 
+                                      attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
+            } else {
                 subject.clear(); // Clear existing subject
                 message.clear(); // Clear existing message
-                attempts++; // Increment the attempts
-                continue; // Loop back to prompt for email details again
-            } 
-        } else {                        
-                cout << "Email saved for sending/editing." << endl;
+                                    
+                try {
+                    constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
+                    modified = true;
+                } catch (const exception& e) {
+                    ErrorHandler errorHandler;
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+                    subject.clear(); // Clear existing subject
+                    message.clear(); // Clear existing message
+                    attempts++; // Increment the attempts
+                    continue; // Loop back to prompt for email details again
+                }
+            }
+
+            if (subject.empty() || message.empty()) {
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
+                try {
+                    constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
+                } catch (const exception& e) {
+                    ErrorHandler errorHandler;
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+                    subject.clear(); // Clear existing subject
+                    message.clear(); // Clear existing message
+                    attempts++; // Increment the attempts
+                    if (attempts >= 3) {
+                        ErrorHandler errorHandler;
+                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
+                        return; // Break out of the loop after too many attempts
+                    }
+                    continue; // Loop back to prompt for email details again
+                }
+            }
+
+            if (!modified) {
+                // Return to the main menu if the email wasn't modified
                 return;
             }
 
-            
-        if (subject.empty() || message.empty()) {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
-            try {
-                constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
-            } catch (const exception& e) {
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
-                subject.clear(); // Clear existing subject
-                message.clear(); // Clear existing message
-                attempts++; // Increment the attempts
-                if (attempts >= 3) {
-                    ErrorHandler errorHandler;
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
-                    return; // Break out of the loop after too many attempts
-                }
-                continue; // Loop back to prompt for email details again
-            }
-        }
-
-        if (!modified) {
-            // Return to the main menu if the email wasn't modified
+        } else {                        
+            cout << "Email saved for sending/editing." << endl;
             return;
         }
     }
@@ -461,6 +467,116 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     }
 
     return true;
+}
+
+void EmailManager::createBookingTemplate(CURL* curl,
+                                       const string& senderEmail,
+                                       string& subject,
+                                       string& message,
+                                       const string& smtpServer,
+                                       int smtpPort,
+                                       string& attachmentName,
+                                       string& attachmentSize,
+                                       const string& attachmentPath,
+                                       const vector<SelectedVenue>& selectedVenuesForEmail,
+                                       bool& templateExists) {
+    // Check if venues are selected
+    if (selectedVenuesForEmail.empty()) {
+        cerr << "Error: No venues have been selected. Please select venues first before attempting to send the template." << endl;
+        return;  // Exit the function
+    }
+
+    // Prompt the user for the required data to fill the placeholders
+    string genre, bandName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
+
+    cout << "Enter genre: ";
+    getline(cin, genre);
+
+    cout << "Enter band name: ";
+    getline(cin, bandName);
+
+    cout << "Enter hometown: ";
+    getline(cin, hometown);
+
+    cout << "Enter similar artists: ";
+    getline(cin, similarArtists);
+
+    cout << "Enter date: ";
+    getline(cin, date);
+
+    cout << "Enter music link: ";
+    getline(cin, musicLink);
+
+    cout << "Enter live performance video link: ";
+    getline(cin, livePerfVideo);
+
+    cout << "Enter music video link: ";
+    getline(cin, musicVideo);
+
+    cout << "Enter press quote: ";
+    getline(cin, pressQuote);
+
+    cout << "Enter your name: ";
+    getline(cin, name);
+
+    cout << "Enter social links: ";
+    getline(cin, socials);
+
+    // Construct the email template for each venue without sending it
+    for (const SelectedVenue& venue : selectedVenuesForEmail) {
+        string templateMessage = 
+    "Hi! I am booking a tour for my " + genre + 
+    " band called " + bandName + 
+    " from " + hometown + 
+    ". The music is in a similar vein as " + similarArtists + 
+    ". We are planning to be in the " + venue.city + 
+    " area on " + date + 
+    " and are wondering if you might be interested in booking us at " + venue.name + "?\n\n" +
+    "music: " + musicLink + "\n" +
+    "live video: " + livePerfVideo + "\n" +
+    "music video: " + musicVideo + "\n\n" +
+    "press quote: " + pressQuote + "\n\n" +
+    "Let me know if you have any questions, thanks for your time and consideration!\n" +
+    "Best,\n" + name + "\n\n" +
+    "social links:\n" + socials;
+
+        // Append to the final template with a newline separator
+        message += templateMessage + "\n\n";
+    }
+
+    // Display the completed template
+    cout << "=========================================\n";
+    cout << "Generated Email Template:\n";
+    cout << "=========================================\n";
+    cout << message << endl;
+    cout << "=========================================\n";
+
+    // Ask user if they want to modify or send
+    char choice;
+    cout << "Do you wish to modify this template? (Y/N): ";
+    cin >> choice;
+
+    if (choice == 'Y' || choice == 'y') {
+        // Clear the existing template and start over
+        createBookingTemplate(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
+    } else {
+        cout << "Do you want to send the template? (Y/N): ";
+        cin >> choice;
+        if (choice == 'Y' || choice == 'y') {
+            templateExists = false; // Reset the flag since we're sending the email
+
+            // Now, send the email using sendIndividualEmail() for each venue
+            for (const SelectedVenue& venue : selectedVenuesForEmail) {
+                bool sent = sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail);
+                if (!sent) {
+                    cerr << "Failed to send email to " << venue.email << endl;
+                }
+            }
+        } else {
+            templateExists = true; // Set the flag indicating a template exists
+            return;
+        }
+    }
 }
 
 void EmailManager::emailCustomAddress(CURL* curl,

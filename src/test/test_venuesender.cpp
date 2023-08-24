@@ -123,11 +123,13 @@ TEST_CASE("MenuManager::isValidMenuChoice() functionality", "[MenuManager]") {
     REQUIRE(menuManager.isValidMenuChoice(8) == true);
     REQUIRE(menuManager.isValidMenuChoice(9) == true);
     REQUIRE(menuManager.isValidMenuChoice(10) == true);
-    REQUIRE(menuManager.isValidMenuChoice(11) == true);    
+    REQUIRE(menuManager.isValidMenuChoice(11) == true);
+    REQUIRE(menuManager.isValidMenuChoice(12) == true);
+    REQUIRE(menuManager.isValidMenuChoice(13) == true);  
 
     REQUIRE(menuManager.isValidMenuChoice(-1) == false);
     REQUIRE(menuManager.isValidMenuChoice(0) == false);
-    REQUIRE(menuManager.isValidMenuChoice(12) == false);
+    REQUIRE(menuManager.isValidMenuChoice(14) == false);
 }
 
 TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
@@ -158,12 +160,14 @@ TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
         "3. Filter by City" "\n"
         "4. Filter by Capacity" "\n"
         "5. Clear Selected Venues" "\n"
-        "6. View Selected Venues" "\n"
-        "7. Show Email Settings" "\n"
-        "8. View & Edit Email" "\n"
-        "9. Email Custom Address" "\n"
-        "10. Finish & Send Emails" "\n"
-        "11. Exit VenueSender" "\n"
+        "6. Clear Booking Template" "\n"
+        "7. View Selected Venues" "\n"
+        "8. Show Email Settings" "\n"
+        "9. View & Edit Email" "\n"
+        "10. Venue Booking Template" "\n"
+        "11. Email Custom Address" "\n"
+        "12. Finish & Send Emails" "\n"
+        "13. Exit VenueSender" "\n"
         "Enter your choice: ";
 
     // Check the captured output and the returned choice

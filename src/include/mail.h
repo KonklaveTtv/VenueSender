@@ -55,7 +55,17 @@ public:
     void constructEmail(std::string &subject, std::string &message, std::string &attachmentPath, std::string &attachmentName, std::string &attachmentSize, std::istream &in = std::cin);
 
     // Function to allow the user to modify the email
-    void viewEditEmails(const std::string& senderEmail, std::string &subject, std::string &message, std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath);
+    void viewEditEmails(CURL* curl, 
+                        const std::string& smtpServer,
+                        int smtpPort,
+                        const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                        const std::string& senderEmail, 
+                        std::string &subject, 
+                        std::string &message, 
+                        std::string& attachmentName, 
+                        std::string& attachmentSize, 
+                        std::string& attachmentPath, 
+                        bool& templateExists);
 
     // Function to send an individual email to a selected venue
     bool sendIndividualEmail(CURL* curl,
@@ -69,6 +79,19 @@ public:
                              std::string& attachmentSize,
                              const std::string& attachmentPath,
                              const std::vector<SelectedVenue>& selectedVenuesForEmail);
+
+    // Function to send a booking template email
+    void createBookingTemplate(CURL* curl,
+                             const std::string& senderEmail,
+                             std::string& subject,
+                             std::string& message,
+                             const std::string& smtpServer,
+                             int smtpPort,
+                             std::string& attachmentName,
+                             std::string& attachmentSize,
+                             const std::string& attachmentPath,
+                             const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                             bool& templateExistss);
 
     // Function to send to a custom email address
     void emailCustomAddress(CURL* curl,
