@@ -93,22 +93,18 @@ int main() {
                 // Call the new function to process venue selection
                 venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
             } else if (choice == MenuManager::VIEW_SELECTED_VENUES_OPTION) {
-                // View Selected Venues
                 menuManager.displaySelectedVenues(selectedVenuesForEmail);
             } else if (choice == MenuManager::CLEAR_SELECTED_VENUES_OPTION) {
-                // Clear Selected Venues                
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl; 
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
-                // View Email Settings
-                // Handle email editing or viewing                
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
             } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
-                    emailManager.viewEditEmails(senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath);
+                emailManager.viewEditEmails(senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION) {
-                    emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION) {
-                    emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::EXIT_OPTION) {
                 if (menuManager.handleExitOption()) {
                     break;
