@@ -12,7 +12,9 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
         return;
     }
 
+    ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
     output << "Select venues to add (comma-separated indices): ";
+    ConsoleUtils::resetColor();
     string userInput;
     getline(input, userInput);
 
@@ -91,11 +93,15 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
 // Function to display filtered venues to the user
 void VenueFilter::displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay) {
     if (selectedVenuesForDisplay.empty()) {
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
         cout << "No venues found." << endl;
+        ConsoleUtils::resetColor();
         return;
     }
 
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
     cout << "Filtered Venues: " << endl;
+    ConsoleUtils::resetColor();
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
         cout << setw(2) << i + 1 << ". Name: " << venue.name << endl;
@@ -113,14 +119,19 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                                                 vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
 
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
     cout << "===== Filter By " << filterType << " =====" << endl;
     
     cout << "Available Options: " << endl;
+    ConsoleUtils::resetColor();
     for (size_t i = 0; i < filterOptions.size(); ++i) {
         cout << i + 1 << ". " << filterOptions[i] << endl;
     }
 
+
+    ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
     cout << "Enter comma-separated indices of options to select: ";
+    ConsoleUtils::resetColor();
     string input;
     ConsoleUtils consoleUtils;
     consoleUtils.clearInputBuffer();
@@ -185,6 +196,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
                                             vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
 
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
     cout << "===== Filter By Capacity =====" << endl;
 
 
@@ -192,8 +204,11 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
     for (size_t i = 0; i < filterOptions.size(); ++i) {
         cout << i + 1 << ". " << filterOptions[i] << endl;
     }
+    ConsoleUtils::resetColor();
 
+    ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
     cout << "Enter comma-separated indices of options to select: ";
+    ConsoleUtils::resetColor();
     string input;
     ConsoleUtils consoleUtils;
     consoleUtils.clearInputBuffer();

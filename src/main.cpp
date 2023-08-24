@@ -96,22 +96,32 @@ int main() {
                 menuManager.displaySelectedVenues(selectedVenuesForEmail);
             } else if (choice == MenuManager::CLEAR_SELECTED_VENUES_OPTION) {
                 selectedVenuesForEmail.clear();
+                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
                 cout << "Selected venues cleared." << endl; 
+                ConsoleUtils::resetColor();
             } else if (choice == MenuManager::CLEAR_BOOKING_TEMPLATE_OPTION) {
                 message.clear();
+                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
                 cout << "Booking template cleared." << endl; 
+                ConsoleUtils::resetColor();
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
             } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
                 emailManager.viewEditEmails(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath, templateExists);
             } else if (choice == MenuManager::VENUE_BOOKING_TEMPLATE_OPTION) {
                 emailManager.createBookingTemplate(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
-            } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION) {
+            } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION && !templateExists) {
+                emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+            } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION && templateExists) {
+                emailManager.clearAllEmailData(subject, message, attachmentName, attachmentSize, attachmentPath);
                 emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION && !templateExists) {
                 emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION && templateExists) {
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
                 cerr << "Template pending, go back to add more venues, send the template, or clear the template." << endl;
+                ConsoleUtils::resetColor();
+            
             } else if (choice == MenuManager::EXIT_OPTION) {
                 if (menuManager.handleExitOption()) {
                     break;

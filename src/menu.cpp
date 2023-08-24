@@ -1,130 +1,85 @@
 #include "include/menu.h"
 
-// Use the standard namespace
 using namespace std;
 
-// Initialize constants for menu options
-const int MenuManager::FILTER_BY_GENRE_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByGenre);
-const int MenuManager::FILTER_BY_STATE_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByState);
-const int MenuManager::FILTER_BY_CITY_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByCity);
-const int MenuManager::FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByCapacity);
-
-// Other menu options
-const int MenuManager::CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ClearSelectedVenues);
-const int MenuManager::CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuManager::MenuOption::ClearBookingTemplate);
-const int MenuManager::VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues);
-const int MenuManager::SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuManager::MenuOption::ShowEmailSettings);
-const int MenuManager::VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::ViewEditEmail);
-const int MenuManager::VENUE_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuManager::MenuOption::VenueBookingTemplate);
-const int MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION = static_cast<int>(MenuManager::MenuOption::EmailCustomAddress);
-const int MenuManager::FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail);
-const int MenuManager::EXIT_OPTION = static_cast<int>(MenuManager::MenuOption::Exit);
-
-// Function to display the menu options to the user and get their choice
 int MenuManager::displayMenuOptions() {
-#ifdef UNIT_TESTING
     int choice;
+
     do {
-        // Display the main menu options
-        cout << "====================="<< endl;
-        cout << "===== Main Menu =====" << endl;
-        cout << "====================="<< endl;
-        cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::FilterByState) << ". Filter by State" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::FilterByCity) << ". Filter by City" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::ClearBookingTemplate) << ". Clear Booking Template" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::VenueBookingTemplate) << ". Venue Booking Template" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::EmailCustomAddress) << ". Email Custom Address" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
-        cout << static_cast<int>(MenuManager::MenuOption::Exit) << ". Exit VenueSender" << endl;
-        cout << "Enter your choice: ";
-
-        // Get user's choice
-        if (!(cin >> choice)) {            
-            // Handle invalid menu input (non-numeric)
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_INPUT_ERROR);
-        } else if (!isValidMenuChoice(choice)) {
-                // Handle choice that is out of valid range
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR); 
-            cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
-                 << " and " 
-                 << static_cast<int>(MenuManager::MenuOption::Exit) << "." << endl;
-        } else {
-            break;
-        }
-    } while (true);
-
-    return choice;
-#else
-    int choice;
-    do {
-        // Display the main menu options
-        cout << "====================="<< endl;
-        cout << "===== Main Menu =====" << endl;
-        cout << "====================="<< endl;
-        cout << static_cast<int>(MenuOption::FilterByGenre) << ". Filter by Genre" << endl;
-        cout << static_cast<int>(MenuOption::FilterByState) << ". Filter by State" << endl;
-        cout << static_cast<int>(MenuOption::FilterByCity) << ". Filter by City" << endl;
-        cout << static_cast<int>(MenuOption::FilterByCapacity) << ". Filter by Capacity" << endl;
-        cout << static_cast<int>(MenuOption::ClearSelectedVenues) << ". Clear Selected Venues" << endl;
-        cout << static_cast<int>(MenuOption::ClearBookingTemplate) << ". Clear Booking Template" << endl;
-        cout << static_cast<int>(MenuOption::ViewSelectedVenues) << ". View Selected Venues" << endl;
-        cout << static_cast<int>(MenuOption::ShowEmailSettings) << ". Show Email Settings" << endl;
-        cout << static_cast<int>(MenuOption::ViewEditEmail) << ". View & Edit Email" << endl;
-        cout << static_cast<int>(MenuOption::VenueBookingTemplate) << ". Venue Booking Template" << endl;
-        cout << static_cast<int>(MenuOption::EmailCustomAddress) << ". Email Custom Address" << endl;
-        cout << static_cast<int>(MenuOption::FinishAndSendEmail) << ". Finish & Send Emails" << endl;
-        cout << static_cast<int>(MenuOption::Exit) << ". Exit VenueSender" << endl;
-        cout << "Enter your choice: ";
-
-        // Get user's choice
-        if (!(cin >> choice)) {
-            // Handle invalid menu input (non-numeric)
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_INPUT_ERROR);
-            cin.ignore(); // If there's a chance you might have used cin before this point
-            cin.get(); // This will wait for a key press
-        } else if (!isValidMenuChoice(choice)) {
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR); 
-            cout << static_cast<int>(MenuManager::MenuOption::FilterByGenre) 
-                 << " and " 
-                 << static_cast<int>(MenuManager::MenuOption::Exit) << "." << endl;
-            cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
-            cin.get(); // This will wait for a key press
-        } else {
-            break;
-        }
-    } while (true);
-
-    return choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
 #endif
+        cout << "====================="<< endl;
+        cout << "===== Main Menu =====" << endl;
+        cout << "====================="<< endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
+        // List out menu options
+        cout << FILTER_BY_GENRE_OPTION << ". Filter by Genre" << endl;
+        cout << FILTER_BY_STATE_OPTION << ". Filter by State" << endl;
+        cout << FILTER_BY_CITY_OPTION << ". Filter by City" << endl;
+        cout << FILTER_BY_CAPACITY_OPTION << ". Filter by Capacity" << endl;
+        cout << CLEAR_SELECTED_VENUES_OPTION << ". Clear Selected Venues" << endl;
+        cout << CLEAR_BOOKING_TEMPLATE_OPTION << ". Clear Booking Template" << endl;
+        cout << VIEW_SELECTED_VENUES_OPTION << ". View Selected Venues" << endl;
+        cout << SHOW_EMAIL_SETTINGS_OPTION << ". Show Email Settings" << endl;
+        cout << VIEW_EDIT_EMAILS_OPTION << ". View & Edit Email" << endl;
+        cout << VENUE_BOOKING_TEMPLATE_OPTION << ". Venue Booking Template" << endl;
+        cout << EMAIL_CUSTOM_ADDRESS_OPTION << ". Email Custom Address" << endl;
+        cout << FINISH_AND_SEND_EMAILS_OPTION << ". Finish & Send Emails" << endl;
+        cout << EXIT_OPTION << ". Exit VenueSender" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
+#endif
+        cout << "Enter your choice: ";
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        if (!(cin >> choice)) {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Error in red
+#endif
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_INPUT_ERROR);
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+            ConsoleUtils::clearInputBuffer();
+        } else if (!isValidMenuChoice(choice)) {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Error in red
+#endif
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+            cout << "Please choose a number between " << FILTER_BY_GENRE_OPTION << " and " << EXIT_OPTION << "." << endl;
+        } else {
+            break;
+        }
+    } while (true);
+
+    return choice;
 }
 
-// Function to display the venues that have been selected by the user
 void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
-
     // Display header
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Green for venue listings
+#endif
     cout << "==========================="<< endl;
     cout << "===== Selected Venues =====" << endl;
     cout << "==========================="<< endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
 
-    // Check if any venues have been selected
     if (selectedVenues.empty()) {
-        
-        // Handle case where no venues have been selected
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
     } else {
-        // Loop through and display each selected venue's details
         for (const auto& venue : selectedVenues) {
             cout << "Name: " << venue.name << endl;
             cout << "Email: " << venue.email << endl;
@@ -132,31 +87,26 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
             cout << "--------------------------" << endl;
         }
     }
-#ifndef UNIT_TESTING
-    // Show additional information if not in unit testing mode
-    cout << "===========================" << endl;
-#endif
 }
 
-// Function to handle the exit option and prompt user for confirmation
 bool MenuManager::handleExitOption() {
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
     cout << "Are you sure you want to exit? (Y/N): ";
+    ConsoleUtils::resetColor();
     char confirmExit;
     cin >> confirmExit;
-    ConsoleUtils::clearInputBuffer();
-    
+
     if (confirmExit == 'Y' || confirmExit == 'y') {
-        // Exit VenueSender
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
         cout << "Exiting the program." << endl;
+        ConsoleUtils::resetColor();
         return true;
     } else if (confirmExit == 'N' || confirmExit == 'n') {
         cout << "Returning to the main menu." << endl;
         return false;
     } else {
-        // The user entered an invalid choice
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
-        cin.get(); // This will wait for a key press
         return false;
     }
 }

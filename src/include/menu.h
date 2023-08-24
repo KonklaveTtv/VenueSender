@@ -30,30 +30,27 @@ public:
     };
 
     // Constants for menu options related to filtering venues
-    static const int FILTER_BY_GENRE_OPTION;
-    static const int FILTER_BY_STATE_OPTION;
-    static const int FILTER_BY_CITY_OPTION;
-    static const int FILTER_BY_CAPACITY_OPTION;
+    static constexpr int FILTER_BY_GENRE_OPTION = static_cast<int>(MenuOption::FilterByGenre);
+    static constexpr int FILTER_BY_STATE_OPTION = static_cast<int>(MenuOption::FilterByState);
+    static constexpr int FILTER_BY_CITY_OPTION = static_cast<int>(MenuOption::FilterByCity);
+    static constexpr int FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuOption::FilterByCapacity);
 
     // Constants for other menu options
-    static const int CLEAR_SELECTED_VENUES_OPTION;
-    static const int CLEAR_BOOKING_TEMPLATE_OPTION;
-    static const int VIEW_SELECTED_VENUES_OPTION;
-    static const int SHOW_EMAIL_SETTINGS_OPTION;
-    static const int VIEW_EDIT_EMAILS_OPTION;
-    static const int VENUE_BOOKING_TEMPLATE_OPTION;
-    static const int EMAIL_CUSTOM_ADDRESS_OPTION;
-    static const int FINISH_AND_SEND_EMAILS_OPTION;
-    static const int EXIT_OPTION;
+    static constexpr int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
+    static constexpr int CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuOption::ClearBookingTemplate);
+    static constexpr int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
+    static constexpr int SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuOption::ShowEmailSettings);
+    static constexpr int VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuOption::ViewEditEmail);
+    static constexpr int VENUE_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuOption::VenueBookingTemplate);
+    static constexpr int EMAIL_CUSTOM_ADDRESS_OPTION = static_cast<int>(MenuOption::EmailCustomAddress);
+    static constexpr int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmail);
+    static constexpr int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
     // Function to validate if the user's choice is a valid menu option
-    inline bool isValidMenuChoice(int choice) {
-        
-        // Validate if the choice is within valid menu options
-        return choice >= static_cast<int>(MenuOption::FilterByGenre) &&
-               choice <= static_cast<int>(MenuOption::Exit);
+    inline bool isValidMenuChoice(int choice) const {
+        return choice >= FILTER_BY_GENRE_OPTION && choice <= EXIT_OPTION;
     }
-
+    
     // Function to display the available menu options to the user
     int displayMenuOptions();
 

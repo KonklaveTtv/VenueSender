@@ -22,6 +22,78 @@ string ConsoleUtils::trim(const string& str){
     return (first < last ? string(first, last) : string());
 }
 
+void ConsoleUtils::setColor(ConsoleUtils::Color color) {
+    // Platform-specific code to set console colors.
+    // Windows:
+#ifdef _WIN32
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    switch(color) {
+        case ConsoleUtils::Color::RED:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+            break;
+        case ConsoleUtils::Color::GREEN:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
+            break;
+        case ConsoleUtils::Color::BLUE:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
+            break;
+        case ConsoleUtils::Color::MAGENTA:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+            break;
+        case ConsoleUtils::Color::YELLOW:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN);
+            break;
+        case ConsoleUtils::Color::CYAN:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_BLUE);
+            break;
+        case ConsoleUtils::Color::LIGHT_BLUE:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+            break;
+        default:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Default to white
+            break;
+    }
+#else
+    // UNIX-like systems (using ANSI escape codes):
+    switch(color) {
+        case ConsoleUtils::Color::RED:
+            std::cout << "\033[31m";
+            break;
+        case ConsoleUtils::Color::GREEN:
+            std::cout << "\033[32m";
+            break;
+        case ConsoleUtils::Color::BLUE:
+            std::cout << "\033[34m";
+            break;
+        case ConsoleUtils::Color::MAGENTA:
+            std::cout << "\033[35m";
+            break;
+        case ConsoleUtils::Color::YELLOW:
+            std::cout << "\033[33m";
+            break;
+        case ConsoleUtils::Color::CYAN:
+            std::cout << "\033[36m";
+            break;
+        case ConsoleUtils::Color::LIGHT_BLUE:
+            std::cout << "\033[94m";
+            break;
+        default:
+            std::cout << "\033[0m"; // Reset to default
+            break;
+    }
+#endif
+}
+
+
+void ConsoleUtils::resetColor() {
+#ifdef _WIN32
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to white
+#else
+    std::cout << "\033[0m"; // Reset to default for UNIX-like systems
+#endif
+}
+
 // Function to read venue data from a CSV file
 void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     // Open the CSV file for reading
@@ -245,13 +317,19 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Display messages based on loaded settings
     if (smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded && venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded) {
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
         cout << "Configuration settings loaded from config.json." << endl;
+        ConsoleUtils::resetColor(); // Reset color
         configLoadedSuccessfully = true;
     } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded) {
+        ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW); // Yellow for partial success
         cout << "Email settings loaded from config.json." << endl;
+        ConsoleUtils::resetColor(); // Reset color
     } else {
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Red for error
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
+        ConsoleUtils::resetColor(); // Reset color
     }
     return configLoadedSuccessfully;
 }

@@ -27,6 +27,10 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
 // Function to handle various types of errors and display appropriate messages
 void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo = "") {
     std::lock_guard<std::mutex> lock(outputMutex); // Lock the mutex
+
+    // Set text color to red for error messages
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+
     // Switch statement to handle different types of errors
     switch (error) {
         case ErrorType::INVALID_INPUT_ERROR:
@@ -150,4 +154,6 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "An unknown error occurred." << endl;
             break;
     }
+    // After displaying the error, reset the console text color
+    ConsoleUtils::resetColor();
 }

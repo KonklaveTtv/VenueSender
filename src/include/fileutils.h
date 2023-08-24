@@ -27,12 +27,29 @@ namespace confPaths {
 // Class for utility functions related to the console
 class ConsoleUtils {
 public:
+    enum class Color {
+        RED,
+        GREEN,
+        BLUE,
+        MAGENTA,
+        YELLOW,
+        CYAN,
+        LIGHT_BLUE,
+        DEFAULT
+    };
+
     // Function to clear the input buffer
     inline static void clearInputBuffer() {
         // Clear the input buffer
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
     }
+
+    // Method to set console text color
+    static void setColor(Color color);
+
+    // Method to reset console text color to default
+    static void resetColor();
 
     // Method to trim leading and trailing spaces from a string
     static std::string trim(const std::string& str);

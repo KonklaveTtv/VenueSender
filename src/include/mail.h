@@ -44,6 +44,26 @@ public:
         return sanitized;
     }
 
+    inline void clearAllEmailData(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+        subject.clear();
+        message.clear();
+        attachmentName.clear();
+        attachmentSize.clear();
+        attachmentPath.clear();
+    }
+
+    inline void clearAttachmentData(std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+        attachmentName.clear();
+        attachmentSize.clear();
+        attachmentPath.clear();
+    }
+
+    inline void clearSubjectMessageData(std::string &subject, std::string &message) {
+        subject.clear();
+        message.clear();
+    }
+
+
     // Function to display the email settings from the configuration file
     void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,  
                            const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
