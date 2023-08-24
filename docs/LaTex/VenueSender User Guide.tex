@@ -166,29 +166,46 @@
 		\item The program then dynamically generates the email template using the provided details and formats it for each selected venue.
 		\item Once the template is constructed, the user can review it. If desired, modifications can be made or the template can be sent directly to the selected venues.
 	\end{enumerate}
-	
+
+\newpage
 	\subsubsection*{Sample Email Template}
 	Here's a glimpse of how the constructed template might look:
-	
-	\begin{mdframed}[backgroundcolor=background, linecolor=accent]
+
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt, linecolor=accent]
 		\begin{lstlisting}
-			Hi! I am booking a tour for my [Genre] band called [Band Name] from [Hometown]. The music is in a similar vein as [Similar Artists]. We are planning to be in the [City] area on [Date] and are wondering if you might be interested in booking us at [Venue Name]?
+			--- Booking Inquiry for [Venue Name] ---
 			
-			music: [Music Link]
-			live video: [Live Performance Video Link]
-			music video: [Music Video Link]
+			Hi!,
 			
-			press quote: [Press Quote]
+			I am booking a tour for my [Genre] band, [Band Name], from 
 			
-			Let me know if you have any questions, thanks for your time and consideration!
-			Best,
+			[Hometown]. The music is in a similar vein as [Similar Artists].
+			
+			We're planning to be in the [City] area on [Date] and are
+			
+			wondering if you might be interested in booking us at [Venue Name].
+			
+			Here are some resources to familiarize you with our work:
+			
+			- Music: [Music Link]
+			- Live Performance: [Live Performance Video Link]
+			- Music Video: [Music Video Link]
+			
+			What people are saying about us:
+			"[Press Quote]"
+			
+			Please let me know if you have any questions or need additional information.
+			
+			We appreciate your time and consideration!
+			
+			Best wishes,
 			[Your Name]
 			
-			social links:
+			-- Social Links --
 			[Social Links]
 		\end{lstlisting}
 	\end{mdframed}
-	
+		
 	Note: The values enclosed in square brackets (e.g., [Genre], [Band Name]) are placeholders and will be replaced with the actual details provided by the user.
 	
 	\subsubsection*{Post-Creation Steps}

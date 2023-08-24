@@ -489,56 +489,59 @@ void EmailManager::createBookingTemplate(CURL* curl,
     // Prompt the user for the required data to fill the placeholders
     string genre, bandName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
 
-    cout << "Enter genre: ";
+    cout << "Enter Genre: ";
     getline(cin, genre);
 
-    cout << "Enter band name: ";
+    cout << "Enter Band Name: ";
     getline(cin, bandName);
 
-    cout << "Enter hometown: ";
+    cout << "Enter Hometown: ";
     getline(cin, hometown);
 
-    cout << "Enter similar artists: ";
+    cout << "Enter Similar Artists: ";
     getline(cin, similarArtists);
 
-    cout << "Enter date: ";
+    cout << "Enter Date: ";
     getline(cin, date);
 
-    cout << "Enter music link: ";
+    cout << "Enter Music Link: ";
     getline(cin, musicLink);
 
-    cout << "Enter live performance video link: ";
+    cout << "Enter Live Performance Video Link: ";
     getline(cin, livePerfVideo);
 
-    cout << "Enter music video link: ";
+    cout << "Enter Music Video Link: ";
     getline(cin, musicVideo);
 
-    cout << "Enter press quote: ";
+    cout << "Enter Press Quote: ";
     getline(cin, pressQuote);
 
-    cout << "Enter your name: ";
+    cout << "Enter Your Name: ";
     getline(cin, name);
 
-    cout << "Enter social links: ";
+    cout << "Enter Social Links: ";
     getline(cin, socials);
 
     // Construct the email template for each venue without sending it
     for (const SelectedVenue& venue : selectedVenuesForEmail) {
         string templateMessage = 
-    "Hi! I am booking a tour for my " + genre + 
-    " band called " + bandName + 
-    " from " + hometown + 
-    ". The music is in a similar vein as " + similarArtists + 
-    ". We are planning to be in the " + venue.city + 
-    " area on " + date + 
-    " and are wondering if you might be interested in booking us at " + venue.name + "?\n\n" +
-    "music: " + musicLink + "\n" +
-    "live video: " + livePerfVideo + "\n" +
-    "music video: " + musicVideo + "\n\n" +
-    "press quote: " + pressQuote + "\n\n" +
-    "Let me know if you have any questions, thanks for your time and consideration!\n" +
-    "Best,\n" + name + "\n\n" +
-    "social links:\n" + socials;
+        "--- Booking Inquiry for " + venue.name + " ---\n\n" +
+        "Hi!,\n\n" +
+        "I am booking a tour for my " + genre + " band, " + bandName + ", from \n\n" 
+        + hometown + ". " + "The music is in a similar vein as " + similarArtists + ".\n\n"
+        "We're planning to be in the " + venue.city + " area on " + date + " and are\n\n" 
+        " wondering if you might be interested in booking us at " + venue.name + ".\n\n" +
+        "Here are some resources to familiarize you with our work:\n\n" +
+        "- Music: " + musicLink + "\n" +
+        "- Live Performance: " + livePerfVideo + "\n" +
+        "- Music Video: " + musicVideo + "\n\n" +
+        "What people are saying about us:\n" +
+        "\""+ pressQuote + "\"\n\n" +
+        "Please let me know if you have any questions or need additional information.\n\n"
+        "We appreciate your time and consideration!\n\n" +
+        "Best wishes,\n" +
+        name + "\n\n" +
+        "-- Social Links --\n" + socials + "\n";
 
         // Append to the final template with a newline separator
         message += templateMessage + "\n\n";
