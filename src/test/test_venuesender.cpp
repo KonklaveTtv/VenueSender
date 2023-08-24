@@ -152,9 +152,9 @@ TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
 
     // Define the expected output string
     string expectedOutput = 
-        "=====================" "\n"
-        "===== Main Menu =====" "\n"
-        "=====================" "\n"
+      //"===========================""\n"
+        "         Main Menu         ""\n"
+        "===========================""\n"
         "1. Filter by Genre" "\n"
         "2. Filter by State" "\n"
         "3. Filter by City" "\n"
@@ -199,7 +199,7 @@ TEST_CASE("MenuManager::displaySelectedVenues() functionality", "[MenuManager]")
     // Expected output
     std::string expectedOutput = 
         "===========================\n"
-        "===== Selected Venues =====\n"
+        "      Selected Venues      \n"
         "===========================\n"
         "Name: Venue1\n"
         "Email: venue1@mock.com\n"
@@ -260,17 +260,16 @@ TEST_CASE("EmailManager::viewEmailSettings functionality", "[EmailManager]") {
     cout.rdbuf(oldCoutStreamBuf);
 
     string expectedOutput = 
-    "==========================\n"
-    "===== Email Settings =====\n"
-    "==========================\n"
+    "============================\n"
+    "       Email Settings       \n"
+    "============================\n"
     "SMTP Server: mock_smtp_server\n"
     "SMTP Port: 587\n"
     "Sender Email: mock@example.com\n"
     "SSL: true\n"
     "verifyPeer: true\n"
     "verifyHost: true\n"
-    "verbose: true\n"
-    "==========================\n";
+    "verbose: true\n";
     
     REQUIRE(oss.str() == expectedOutput);
 }

@@ -9,9 +9,9 @@ int MenuManager::displayMenuOptions() {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
 #endif
-        cout << "====================="<< endl;
-        cout << "===== Main Menu =====" << endl;
-        cout << "====================="<< endl;
+      //cout << "==========================="<< endl;
+        cout << "         Main Menu         " << endl;
+        cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
@@ -70,7 +70,7 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Green for venue listings
 #endif
     cout << "==========================="<< endl;
-    cout << "===== Selected Venues =====" << endl;
+    cout << "      Selected Venues      " << endl;
     cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();

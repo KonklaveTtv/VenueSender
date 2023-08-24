@@ -46,6 +46,15 @@ public:
     static constexpr int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmail);
     static constexpr int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
+    // Function to show the main title header of VenueSender
+    inline static void mainHeader() {
+        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
+        std::cout << "===========================\n";
+        std::cout << "        VenueSender        \n";
+      //std::cout << "===========================\n";
+        ConsoleUtils::resetColor();
+    }
+
     // Function to validate if the user's choice is a valid menu option
     inline bool isValidMenuChoice(int choice) const {
         return choice >= FILTER_BY_GENRE_OPTION && choice <= EXIT_OPTION;

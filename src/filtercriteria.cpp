@@ -1,5 +1,7 @@
 #include "include/filtercriteria.h"
 
+#include "mail.h" // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
+
 // Use the standard namespace
 using namespace std;
 
@@ -100,7 +102,9 @@ void VenueFilter::displayFilteredVenues(const vector<SelectedVenue>& selectedVen
     }
 
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    cout << "Filtered Venues: " << endl;
+    cout << "==========================="<< endl;
+    cout << "      Filtered Venues      " << endl;
+    cout << "==========================="<< endl;
     ConsoleUtils::resetColor();
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
@@ -118,11 +122,12 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                                                 const string& filterType,
                                                 vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
-
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    cout << "===== Filter By " << filterType << " =====" << endl;
     
-    cout << "Available Options: " << endl;
+    cout << "==========================="<< endl;
+    cout << "===== Filter By " << filterType << " =====" << endl;
+    cout << "==========================="<< endl;
+  //cout << "Available Options: " << endl;
     ConsoleUtils::resetColor();
     for (size_t i = 0; i < filterOptions.size(); ++i) {
         cout << i + 1 << ". " << filterOptions[i] << endl;

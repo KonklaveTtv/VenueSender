@@ -130,7 +130,7 @@ public:
                              std::string& attachmentSize,
                               std::string& attachmentPath,
                              std::vector<SelectedVenue>& selectedVenuesForEmail,
-                             bool& templateExistss);
+                             bool templateExists);
 
     // Function to send to a custom email address
     void emailCustomAddress(CURL* curl,

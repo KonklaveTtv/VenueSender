@@ -65,8 +65,10 @@ int main() {
 
     // Main loop for interacting with the user
     while (true) {
+
+        MenuManager::mainHeader();
+
         // Display menu options and get user's choice
-        
         int choice = menuManager.displayMenuOptions();
             // Handle different menu options
             if (choice >= static_cast<int>(MenuManager::MenuOption::FilterByGenre) &&

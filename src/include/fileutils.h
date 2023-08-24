@@ -36,6 +36,7 @@ public:
         ORANGE,
         CYAN,
         LIGHT_BLUE,
+        PURPLE,
         DEFAULT
     };
 

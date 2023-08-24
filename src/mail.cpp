@@ -19,9 +19,9 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    cout << "==========================" << endl
-         << "===== Email Settings =====" << endl
-         << "==========================" << endl;
+    cout << "============================" << endl
+         << "       Email Settings       " << endl
+         << "============================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -32,13 +32,6 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
          << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl
          << "verifyHost: " << (verifyHost ? "true" : "false") << endl
          << "verbose: " << (verbose ? "true" : "false") << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "==========================" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
 }
 
 // Function to validate if the provided string is a valid email address format
@@ -193,14 +186,18 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
 
 
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    cout << "-------------------------\n";
-    cout << "----- EMAIL DETAILS -----\n";
-    cout << "-------------------------\n";
+    cout << "===========================\n";
+    cout << "       EMAIL DETAILS       \n";
+    cout << "===========================\n";
     cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
     cout << "Subject: " << subject << "\n";
+    ConsoleUtils::resetColor();
+    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
     cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
     cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
     cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
+    ConsoleUtils::resetColor();
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
     cout << "\n" << message << "\n";
     cout << "-------------------------\n";
     ConsoleUtils::resetColor();
@@ -515,7 +512,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                        string& attachmentSize,
                                        string& attachmentPath,
                                        vector<SelectedVenue>& selectedVenuesForEmail,
-                                       bool& templateExists) {
+                                       bool templateExists) {
     // Check if venues are selected
     if (selectedVenuesForEmail.empty()) {
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -642,8 +639,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
             if (fs::exists(attachmentPath)) {
                 size_t fileSize = fs::file_size(attachmentPath);
                 attachmentSize = to_string(fileSize) + " bytes";
+                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
                 cout << "File Size: " << fileSize << " bytes" << endl;
-
+                ConsoleUtils::resetColor();
                 // Check the attachment size doesn't exceed 24MB
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
@@ -662,6 +660,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 }
 
                 // Show the attachment name, size and path to the user
+                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
                 cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
                 ConsoleUtils::resetColor(); // Resetting color after displaying attachment details
                 break;  // Exit the loop if the file is valid

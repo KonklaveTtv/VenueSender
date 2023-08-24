@@ -52,6 +52,10 @@ void ConsoleUtils::setColor(ConsoleUtils::Color color) {
         case ConsoleUtils::Color::LIGHT_BLUE:
             SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
             break;
+        case ConsoleUtils::Color::PURPLE:
+            HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+            break;
         default:
             SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Default to white
             break;
@@ -83,13 +87,15 @@ void ConsoleUtils::setColor(ConsoleUtils::Color color) {
         case ConsoleUtils::Color::LIGHT_BLUE:
             std::cout << "\033[38;5;75m";
             break;
+        case ConsoleUtils::Color::PURPLE:
+            std::cout << "\033[38;5;93m";
+            break;
         default:
             std::cout << "\033[0m"; // Reset to default
             break;
     }
 #endif
 }
-
 
 void ConsoleUtils::resetColor() {
 #ifdef _WIN32
