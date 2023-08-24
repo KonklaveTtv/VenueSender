@@ -73,26 +73,20 @@ int main() {
                 choice <= MenuManager::FILTER_BY_CAPACITY_OPTION) {
                 // Declare a temporary vector to store filtered venues
                 vector<SelectedVenue> temporaryFilteredVenues;
-
                 // Handle filtering options
                 if (choice == MenuManager::FILTER_BY_GENRE_OPTION) {
                     // Filter by Genre
-                    
                     temporaryFilteredVenues = venueFilter.filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
                 } else if (choice == MenuManager::FILTER_BY_STATE_OPTION) {
                     // Filter by State
-                    
                     temporaryFilteredVenues = venueFilter.filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
                 } else if (choice == MenuManager::FILTER_BY_CITY_OPTION) {
                     // Filter by City
-                    
                     temporaryFilteredVenues = venueFilter.filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
                 } else if (choice == MenuManager::FILTER_BY_CAPACITY_OPTION) {
                     // Filter by Capacity
-                    
                     temporaryFilteredVenues = venueFilter.filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
                 }
-
                 // Display venues that have been selected so far
                 venueFilter.displayFilteredVenues(temporaryFilteredVenues);
 
@@ -100,12 +94,9 @@ int main() {
                 venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
             } else if (choice == MenuManager::VIEW_SELECTED_VENUES_OPTION) {
                 // View Selected Venues
-
-                // Clear out any venues that have been selected so far
                 menuManager.displaySelectedVenues(selectedVenuesForEmail);
             } else if (choice == MenuManager::CLEAR_SELECTED_VENUES_OPTION) {
-                // Clear Selected Venues
-                
+                // Clear Selected Venues                
                 selectedVenuesForEmail.clear();
                 cout << "Selected venues cleared." << endl; 
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
@@ -113,167 +104,11 @@ int main() {
                 // Handle email editing or viewing                
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
             } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
-                
-                int attempts = 0;
-                bool modified = false;
-
-                while (attempts < 3) {
-                    cout << "-------------------------\n";
-                    cout << "----- EMAIL DETAILS -----\n";
-                    cout << "-------------------------\n";
-                    cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
-                    cout << "Subject: " << subject << "\n";
-                    cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
-                    cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
-                    cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
-                    cout << "\n" << message << "\n";
-                    cout << "-------------------------\n";
-
-                    cout << "Do you wish to modify this email? (Y/N): ";
-                    char modifyEmailChoice;
-                    cin >> modifyEmailChoice;
-                    ConsoleUtils::clearInputBuffer();
-                    
-                    if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
-                        subject.clear(); // Clear existing subject
-                        message.clear(); // Clear existing message
-                                                
-                        try {
-                            emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
-                            modified = true;
-                        } catch (const exception& e) {
-                            ErrorHandler errorHandler;
-                            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
-                            subject.clear(); // Clear existing subject
-                            message.clear(); // Clear existing message
-                            attempts++; // Increment the attempts
-                            continue; // Loop back to prompt for email details again
-                        }
-                    } else {
-                        
-                        cout << "Email saved for sending/editing." << endl;
-                        break;
-                    }
-
-                    
-                    if (subject.empty() || message.empty()) {
-                        ErrorHandler errorHandler;
-                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
-                        try {
-                            emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
-                        } catch (const exception& e) {
-                            ErrorHandler errorHandler;
-                            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
-                            subject.clear(); // Clear existing subject
-                            message.clear(); // Clear existing message
-                            attempts++; // Increment the attempts
-                            if (attempts >= 3) {
-                                ErrorHandler errorHandler;
-                                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
-                                break; // Break out of the loop after too many attempts
-                            }
-                            continue; // Loop back to prompt for email details again
-                        }
-                    }
-                }
-                if (!modified) {
-                    // Return to the main menu if the email wasn't modified
-                    continue;
-                }
+                    emailManager.viewEditEmails(senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION) {
                     emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION) {
-            
-                if (selectedVenuesForEmail.empty()) {
-                    ErrorHandler errorHandler;        
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_FOR_EMAIL_ERROR);
-                    continue; // Return to the main menu
-                }
-
-                while (true) {
-                    int attempts = 0;
-                    if (subject.empty() || message.empty()) {
-                        ErrorHandler errorHandler;
-                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
-                        try {
-                            emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
-                        } catch (const exception& e) {
-                            ErrorHandler errorHandler;
-                            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
-                            subject.clear(); // Clear existing subject
-                            message.clear(); // Clear existing message
-                            attempts++; // Increment the attempts
-                            if (attempts >= 3) { 
-                                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_WRITING_ATTEMPTS_ERROR);
-                                break; // Break out of the inner loop to go back to the main menu
-                            }
-                            continue; // Loop back to prompt for email details again
-                        }
-                    }
-                    
-                    cout << "-------------------------\n";
-                    cout << "----- EMAIL DETAILS -----\n";
-                    cout << "-------------------------\n";
-                    cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
-                    cout << "Subject: " << subject << "\n";
-                    cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
-                    cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
-                    cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
-                    cout << "\n" << message << "\n";
-                    cout << "-------------------------\n";
-
-                    cout << "Do you wish to modify this email? (Y/N): ";
-                    char modifyEmailChoice;
-                    cin >> modifyEmailChoice;
-                    ConsoleUtils::clearInputBuffer();
-
-                    if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
-                        subject.clear(); // Clear existing subject
-                        message.clear(); // Clear existing message
-                        
-                        try {
-                            emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
-                        } catch (const exception& e) {
-                            ErrorHandler errorHandler;
-                            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
-                            subject.clear(); // Clear existing subject
-                            message.clear(); // Clear existing message
-                            continue; // Loop back to prompt for email details again
-                        }
-                        continue; // Loop back to show the modified email details
-                    } else {
-                        // Finalize the email content and send it to the selected venues                        
-                        cout << "Do you wish to send this email? (Y/N): ";
-                        char confirmSend;
-                        cin >> confirmSend;
-                        ConsoleUtils::clearInputBuffer();
-
-                        // Proceed to send emails if confirmed
-                        if (confirmSend == 'Y' || confirmSend == 'y') {
-
-                            for (size_t i = 0; i < selectedVenuesForEmail.size(); ++i) {
-                                const SelectedVenue& venue = selectedVenuesForEmail[i];
-                                curlWrapper.setEmailBeingSent(venue.email); // Set the value of emailBeingSent
-                                cout << "Sending email " << (i + 1) << " of " << selectedVenuesForEmail.size() << " to: " << curlWrapper.getEmailBeingSent() << endl;
-
-                                // Send the individual email
-                                emailManager.sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail);
-
-                                curlWrapper.clearEmailBeingSent();
-                            }
-
-                            filteredVenues.clear(); // Clear the filtered venues for the next round of emails
-                            selectedVenuesForEmail.clear();  // Clear the selected venues after sending the emails
-                            subject.clear(); // Reset subject
-                            message.clear(); // Reset message
-                            break; // Break out of the inner loop after sending
-                        } else {
-                            
-                            cout << "Email saved for sending/editing." << endl;
-                            break; // Break out of the inner loop without sending
-                        }
-                    }
-                }
+                    emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::EXIT_OPTION) {
                 if (menuManager.handleExitOption()) {
                     break;

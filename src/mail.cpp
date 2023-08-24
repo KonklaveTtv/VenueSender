@@ -169,6 +169,77 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     }
 }
 
+void EmailManager::viewEditEmails(const string& senderEmail, string &subject, string &message, 
+                               string& attachmentName, string& attachmentSize, string& attachmentPath) {
+    int attempts = 0;
+    bool modified = false;
+
+    while (attempts < 3) {
+            
+        cout << "-------------------------\n";
+        cout << "----- EMAIL DETAILS -----\n";
+        cout << "-------------------------\n";
+        cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
+        cout << "Subject: " << subject << "\n";
+        cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
+        cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
+        cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
+        cout << "\n" << message << "\n";
+        cout << "-------------------------\n";
+
+        cout << "Do you wish to modify this email? (Y/N): ";
+        char modifyEmailChoice;
+        cin >> modifyEmailChoice;
+        ConsoleUtils::clearInputBuffer();
+        
+        if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
+            subject.clear(); // Clear existing subject
+            message.clear(); // Clear existing message
+                                    
+            try {
+                constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
+                modified = true;
+            } catch (const exception& e) {
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+                subject.clear(); // Clear existing subject
+                message.clear(); // Clear existing message
+                attempts++; // Increment the attempts
+                continue; // Loop back to prompt for email details again
+            } 
+        } else {                        
+                cout << "Email saved for sending/editing." << endl;
+                return;
+            }
+
+            
+        if (subject.empty() || message.empty()) {
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
+            try {
+                constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
+            } catch (const exception& e) {
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+                subject.clear(); // Clear existing subject
+                message.clear(); // Clear existing message
+                attempts++; // Increment the attempts
+                if (attempts >= 3) {
+                    ErrorHandler errorHandler;
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
+                    return; // Break out of the loop after too many attempts
+                }
+                continue; // Loop back to prompt for email details again
+            }
+        }
+
+        if (!modified) {
+            // Return to the main menu if the email wasn't modified
+            return;
+        }
+    }
+}
+
 // Function to send an individual email to a selected venue with specified configurations
 bool EmailManager::sendIndividualEmail(CURL* curl,
                                        const SelectedVenue& selectedVenue,
@@ -183,9 +254,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                                        const vector<SelectedVenue>& selectedVenuesForEmail) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
-
-    // Reset the count
-    successfulSends = 0;
 
     // Update totalEmails dynamically
     totalEmails = selectedVenuesForEmail.size();
@@ -207,7 +275,10 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     struct curl_slist* recipients = nullptr;
 
     if (selectedVenuesForEmail.size() <= 49) {
-        // Use "To:" for each email
+        // Reset the count
+        successfulSends = 0;
+
+        // Use "To:" for each email if 49 or less venues are selected
         for (const auto& venue : selectedVenuesForEmail) {
             recipients = curl_slist_append(recipients, venue.email.c_str());
         }
@@ -686,4 +757,55 @@ void EmailManager::emailCustomAddress(CURL* curl,
         attachmentPath.clear();
         return;
     }
+}
+
+void EmailManager::confirmSendEmail(CURL* curl,
+                      const vector<SelectedVenue>& selectedVenuesForEmail,
+                      const string& senderEmail,
+                      string& subject,
+                      string& message,
+                      const string& smtpServer,
+                      int smtpPort,
+                      string& attachmentName,
+                      string& attachmentSize,
+                      string& attachmentPath) {
+
+    // Display a summary of all emails to be sent.
+    cout << "===========================" << endl;
+    cout << "===== Email Summary ======" << endl;
+    cout << "===========================" << endl;
+    cout << "Number of emails to send: " << selectedVenuesForEmail.size() << endl;
+    cout << "Subject: " << subject << endl;
+    cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
+    cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
+    cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
+    cout << "===========================" << endl;
+
+    // Confirm with the user that they want to proceed.
+    cout << "Do you wish to send these emails? (Y/N): ";
+    char confirmSend;
+    cin >> confirmSend;
+    ConsoleUtils::clearInputBuffer();
+
+    if (confirmSend != 'Y' && confirmSend != 'y') {
+        cout << "Email sending aborted by user." << endl;
+        return;
+    }
+
+    // Send each email, displaying progress as it goes.
+    int sendCount = 0;
+    for (const auto& venue : selectedVenuesForEmail) {
+        if (sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail)) {
+            sendCount++;
+            cout << "Sent email " << sendCount << " of " << selectedVenuesForEmail.size() << " to " << venue.email << endl;
+        } else {
+            cout << "Failed to send email to " << venue.email << endl;
+        }
+    }
+
+    // Display a summary once all emails are sent.
+    cout << "===========================" << endl;
+    cout << "Email sending completed. " << endl;
+    cout << "Sent: " << sendCount << "/" << selectedVenuesForEmail.size() << endl;
+    cout << "===========================" << endl;
 }
