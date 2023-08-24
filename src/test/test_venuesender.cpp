@@ -298,7 +298,7 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
     
     string attachmentName;
     string attachmentSize;
-    const string attachmentPath;
+    string attachmentPath;
 
     // Mock venue data
     SelectedVenue venue;

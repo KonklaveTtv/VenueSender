@@ -162,7 +162,7 @@
 			int smtpPort,
 			std::string& attachmentName,
 			std::string& attachmentSize,
-			const std::string& attachmentPath);
+			std::string& attachmentPath);
 			void viewEmailSendingProgress(const std::string& senderEmail);
 		};
 		
@@ -237,7 +237,74 @@
 	\subsection{menu.h}
 	
 	\subsection*{Header File}
-	This header file defines the \texttt{MenuManager} class responsible for managing menu-related operations within VenueSender.
+	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt, linecolor=accent]
+		\begin{lstlisting}[language=C++]
+			#ifndef MENU_H
+			#define MENU_H
+			
+			#include "errorhandler.h"
+			#include "fileutils.h"
+			#include "structs.h"
+			
+			#include <iostream>
+			#include <vector>
+			
+			// Class to manage menu-related operations
+			class MenuManager {
+				public:
+				
+				// Enumeration representing the available options in the main menu
+				enum class MenuOption {
+					FilterByGenre = 1,
+					FilterByState,
+					FilterByCity,
+					FilterByCapacity,
+					ClearSelectedVenues,
+					ClearBookingTemplate,
+					ViewSelectedVenues,
+					ShowEmailSettings,
+					ViewEditEmail,
+					VenueBookingTemplate,
+					EmailCustomAddress,
+					FinishAndSendEmail,
+					Exit
+				};
+				
+				// Constants for menu options related to filtering venues
+				static constexpr int FILTER_BY_GENRE_OPTION = static_cast<int>(MenuOption::FilterByGenre);
+				static constexpr int FILTER_BY_STATE_OPTION = static_cast<int>(MenuOption::FilterByState);
+				static constexpr int FILTER_BY_CITY_OPTION = static_cast<int>(MenuOption::FilterByCity);
+				static constexpr int FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuOption::FilterByCapacity);
+				
+				// Constants for other menu options
+				static constexpr int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
+				static constexpr int CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuOption::ClearBookingTemplate);
+				static constexpr int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
+				static constexpr int SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuOption::ShowEmailSettings);
+				static constexpr int VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuOption::ViewEditEmail);
+				static constexpr int VENUE_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuOption::VenueBookingTemplate);
+				static constexpr int EMAIL_CUSTOM_ADDRESS_OPTION = static_cast<int>(MenuOption::EmailCustomAddress);
+				static constexpr int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmail);
+				static constexpr int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
+				
+				// Function to validate if the user's choice is a valid menu option
+				inline bool isValidMenuChoice(int choice) const {
+					return choice >= FILTER_BY_GENRE_OPTION && choice <= EXIT_OPTION;
+				}
+				
+				// Function to display the available menu options to the user
+				int displayMenuOptions();
+				
+				// Function to display the list of venues selected by the user
+				void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
+				
+				// Function to handle the exiting/cleanup of the program
+				bool handleExitOption();
+			};
+			
+			#endif // MENU_H
+		\end{lstlisting}
+	\end{mdframed}
 	
 	\subsection*{Explanation}
 	\begin{itemize}
@@ -363,18 +430,112 @@
 			#include <set>
 			#include <vector>
 			
+			// Structure to hold filter criteria for venues
 			struct FilterCriteria {
 				std::string genre;
 				std::string state;
 				std::string city;
 			};
 			
+			// Utility class to perform common venue-related operations
 			class VenueUtilities {
-				// ... (methods and members of VenueUtilities)
+				public:
+				// Utility function to convert a Venue object to a SelectedVenue object
+				inline static SelectedVenue convertToSelectedVenue(const Venue& venue) {
+					// Create a SelectedVenue instance based on Venue data
+					SelectedVenue selectedVenue;
+					selectedVenue.name = venue.name;
+					selectedVenue.email = venue.email;
+					selectedVenue.genre = venue.genre;
+					selectedVenue.state = venue.state;
+					selectedVenue.city = venue.city;
+					selectedVenue.capacity = venue.capacity;
+					return selectedVenue;
+				}
+				
+				// Utility function to get unique genres from a list of venues
+				inline std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues) {
+					std::set<std::string> uniqueGenres;
+					for (const auto& venue : venues) {
+						if (uniqueGenres.find(venue.genre) == uniqueGenres.end()) {
+							uniqueGenres.insert(venue.genre);
+						}
+					}
+					return uniqueGenres;
+				}
+				
+				// Utility function to get unique states from a list of venues
+				inline std::set<std::string> getUniqueStates(const std::vector<Venue>& venues) {
+					std::set<std::string> uniqueStates;
+					for (const auto& venue : venues) {
+						if (uniqueStates.find(venue.state) == uniqueStates.end()) {
+							uniqueStates.insert(venue.state);
+						}
+					}
+					return uniqueStates;
+				}
+				
+				// Utility function to get unique cities from a list of venues
+				inline std::set<std::string> getUniqueCities(const std::vector<Venue>& venues) {
+					std::set<std::string> uniqueCities;
+					for (const auto& venue : venues) {
+						if (uniqueCities.find(venue.city) == uniqueCities.end()) {
+							uniqueCities.insert(venue.city);
+						}
+					}
+					return uniqueCities;
+				}
+				
+				// Utility function to get unique capacities from a list of venues
+				inline std::set<int> getUniqueCapacities(const std::vector<Venue>& venues) {
+					std::set<int> uniqueCapacities;
+					for (const Venue& venue : venues) {
+						uniqueCapacities.insert(venue.capacity);
+					}
+					return uniqueCapacities;
+				}
 			};
 			
+			// Class to handle venue filtering logic
 			class VenueFilter {
-				// ... (methods and members of VenueFilter)
+				private:
+				// Max length for venue selection indices input
+				const std::string::size_type MAX_INPUT_LENGTH = 256;
+				
+				// Delimiter used in CSV files
+				const char CSV_DELIMITER = ','; // Delimiter used in CSV files
+				
+				// Common function to handle venue filtering by options like Genre, State, City
+				std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
+				const std::set<std::string>& uniqueOptions,
+				const std::string& filterType,
+				std::vector<SelectedVenue>& temporaryFilteredVenues);
+				
+				std::vector<SelectedVenue> selectedVenuesForEmail;
+				
+				public:
+				// Function to process user input and select venues based on it
+				void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
+				std::vector<SelectedVenue>& selectedVenuesForEmail,
+				std::istream& input = std::cin,
+				std::ostream& output = std::cout);
+				
+				// Function to display the filtered venues to the user
+				void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
+				
+				
+				// Function to filter venues based on a specific option (Genre, State, etc.)
+				std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
+				const std::string& filterType,
+				const std::set<std::string>& uniqueOptions,
+				std::vector<SelectedVenue>& temporaryFilteredVenues);
+				
+				// Function to filter venues based on capacity
+				std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
+				const std::set<int>& uniqueCapacities,
+				std::vector<SelectedVenue>& temporaryFilteredVenues);
+				
+				size_t getSelectedVenuesCount() const { return selectedVenuesForEmail.size(); }
 			};
 			
 			#endif // FILTERCRITERIA_H
@@ -497,7 +658,7 @@
 				// Implementation to guide the user in constructing an email...
 			}
 
-			void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, const vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
+			void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
 			string &subject, string &message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists) {
 				// Implementation to view and edit emails...
 				
@@ -510,8 +671,8 @@
 			int smtpPort,
 			string& attachmentName,
 			string& attachmentSize,
-			const string& attachmentPath,
-			const vector<SelectedVenue>& selectedVenuesForEmail) {
+			string& attachmentPath,
+			vector<SelectedVenue>& selectedVenuesForEmail) {
 				// Implementation to send an individual email...
 			
 			void EmailManager::createBookingTemplate(CURL* curl,
@@ -522,8 +683,8 @@
 			int smtpPort,
 			string& attachmentName,
 			string& attachmentSize,
-			const string& attachmentPath,
-			const vector<SelectedVenue>& selectedVenuesForEmail,
+			string& attachmentPath,
+			vector<SelectedVenue>& selectedVenuesForEmail,
 			bool& templateExists) {
 				// Implementation to create an email from a booking template...
 				
@@ -539,7 +700,7 @@
 				// Implementation to send an individual email to a custom address...
 				
 			void EmailManager::confirmSendEmail(CURL* curl,
-			const vector<SelectedVenue>& selectedVenuesForEmail,
+			vector<SelectedVenue>& selectedVenuesForEmail,
 			const string& senderEmail,
 			string& subject,
 			string& message,
@@ -621,6 +782,45 @@
 					return sanitized;
 				}
 				
+				inline void clearAllEmailData(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+					subject.clear();
+					message.clear();
+					attachmentName.clear();
+					attachmentSize.clear();
+					attachmentPath.clear();
+				}
+				
+				inline void clearBookingTemplate(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath, bool& templateExists) {
+					subject.clear();
+					message.clear();
+					attachmentName.clear();
+					attachmentSize.clear();
+					attachmentPath.clear();
+					templateExists = false;
+					ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+					std::cout << "Booking template cleared." << std::endl; 
+					ConsoleUtils::resetColor();
+				}
+				
+				inline void clearSelectedVenues(std::vector<SelectedVenue>& selectedVenuesForEmail) {
+					selectedVenuesForEmail.clear();
+					ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+					std::cout << "Selected venues cleared." << std::endl; 
+					ConsoleUtils::resetColor();
+				}
+				
+				inline void clearAttachmentData(std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+					attachmentName.clear();
+					attachmentSize.clear();
+					attachmentPath.clear();
+				}
+				
+				inline void clearSubjectMessageData(std::string &subject, std::string &message) {
+					subject.clear();
+					message.clear();
+				}
+				
+				
 				// Function to display the email settings from the configuration file
 				void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,  
 				const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
@@ -635,7 +835,7 @@
 				void viewEditEmails(CURL* curl, 
 				const std::string& smtpServer,
 				int smtpPort,
-				const std::vector<SelectedVenue>& selectedVenuesForEmail,
+				std::vector<SelectedVenue>& selectedVenuesForEmail,
 				const std::string& senderEmail, 
 				std::string &subject, 
 				std::string &message, 
@@ -654,8 +854,8 @@
 				int smtpPort,
 				std::string& attachmentName,
 				std::string& attachmentSize,
-				const std::string& attachmentPath,
-				const std::vector<SelectedVenue>& selectedVenuesForEmail);
+				std::string& attachmentPath,
+				std::vector<SelectedVenue>& selectedVenuesForEmail);
 				
 				// Function to send a booking template email
 				void createBookingTemplate(CURL* curl,
@@ -666,8 +866,8 @@
 				int smtpPort,
 				std::string& attachmentName,
 				std::string& attachmentSize,
-				const std::string& attachmentPath,
-				const std::vector<SelectedVenue>& selectedVenuesForEmail,
+				std::string& attachmentPath,
+				std::vector<SelectedVenue>& selectedVenuesForEmail,
 				bool& templateExistss);
 				
 				// Function to send to a custom email address
@@ -683,7 +883,7 @@
 				
 				// Function to confirm the email before sending
 				void confirmSendEmail(CURL* curl,
-				const std::vector<SelectedVenue>& selectedVenuesForEmail,
+				std::vector<SelectedVenue>& selectedVenuesForEmail,
 				const std::string& senderEmail,
 				std::string& subject,
 				std::string& message,
@@ -695,7 +895,6 @@
 			};
 			
 			#endif // MAIL_H
-			
 		\end{lstlisting}
 	\end{mdframed}
 	
@@ -707,6 +906,12 @@
 			\item \textbf{Constants}: The class defines constants for the maximum lengths of email messages and subjects, as well as the maximum size for attachments.
 			\item \textbf{getCurrentDateRfc2822()}: Returns the current date in the RFC 2822 format.
 			\item \textbf{sanitizeSubject()}: Sanitizes the subject line of an email.
+			
+			\item \textbf{clearAllEmailData()}: Clears subject, message, attachment name/path/size.
+			\item \textbf{clearBookingTemplate()}: Clears subject, message, attachment name/path/size and sets the templateExists boolean to false.
+			\item \textbf{clearSelectedVenues()}: Clears the selectedVenuesForEmail vector.
+			\item \textbf{clearAttachmentData()}: Clears attachment name/path/size.
+			\item \textbf{clearSubjectMessageData()}: Clears subject and message.			
 			\item \textbf{viewEmailSettings()}: Displays the email settings.
 			\item \textbf{isValidEmail()}: Checks if a given string is a valid email format.
 			\item \textbf{constructEmail()}: Guides the user in constructing an email with options for subject, message, and attachment.
@@ -748,6 +953,78 @@
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		}
 		
+		void ConsoleUtils::setColor(ConsoleUtils::Color color) {
+			// Platform-specific code to set console colors.
+			// Windows:
+			#ifdef _WIN32
+			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			switch(color) {
+				case ConsoleUtils::Color::RED:
+				SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+				break;
+				case ConsoleUtils::Color::GREEN:
+				SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
+				break;
+				case ConsoleUtils::Color::BLUE:
+				SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
+				break;
+				case ConsoleUtils::Color::MAGENTA:
+				SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
+				break;
+				case ConsoleUtils::Color::YELLOW:
+				SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN);
+				break;
+				case ConsoleUtils::Color::CYAN:
+				SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_BLUE);
+				break;
+				case ConsoleUtils::Color::LIGHT_BLUE:
+				SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+				break;
+				default:
+				SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Default to white
+				break;
+			}
+			#else
+			// UNIX-like systems (using ANSI escape codes):
+			switch(color) {
+				case ConsoleUtils::Color::RED:
+				std::cout << "\033[31m";
+				break;
+				case ConsoleUtils::Color::GREEN:
+				std::cout << "\033[32m";
+				break;
+				case ConsoleUtils::Color::BLUE:
+				std::cout << "\033[34m";
+				break;
+				case ConsoleUtils::Color::MAGENTA:
+				std::cout << "\033[35m";
+				break;
+				case ConsoleUtils::Color::YELLOW:
+				std::cout << "\033[33m";
+				break;
+				case ConsoleUtils::Color::CYAN:
+				std::cout << "\033[36m";
+				break;
+				case ConsoleUtils::Color::LIGHT_BLUE:
+				std::cout << "\033[94m";
+				break;
+				default:
+				std::cout << "\033[0m"; // Reset to default
+				break;
+			}
+			#endif
+		}
+		
+		
+		void ConsoleUtils::resetColor() {
+			#ifdef _WIN32
+			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to white
+			#else
+			std::cout << "\033[0m"; // Reset to default for UNIX-like systems
+			#endif
+		}
+
 		void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
 			ifstream file(venuesCsvPath);
 			if (!file.is_open()) {
@@ -802,6 +1079,8 @@
 	\begin{itemize}
 		\item \textbf{Namespace \texttt{confPaths}}: This namespace holds configuration file paths.
 		\item \textbf{ConsoleUtils::trim}: Function to remove leading and trailing whitespace from a given string.
+		\item \textbf{ConsoleUtils::setColor}: Function to set console colours.
+		\item \textbf{ConsoleUtils::resetColor()}: Function to reset console colours back to defaults.
 		\item \textbf{ConsoleUtils::clearInputBuffer}: Function to clear the input buffer.
 		\item \textbf{CsvReader::readCSV}: Function to read venue data from a CSV file.
 		\item \textbf{ConfigManager::ConfigManager}: Default constructor for the ConfigManager class.
@@ -824,38 +1103,77 @@
 		#include <fstream> 
 		#include <limits>
 		#include <vector>
+		
+		// Include headers for JSON processing
 		#include <jsoncpp/json/json.h>
 		
-		class ErrorHandler;
+		// Forward declaration to resolve circular dependency with errorhandler.h
+		class ErrorHandler; // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
 		
+		// Namespace to hold configuration file paths
 		namespace confPaths {
+			// Declare external string variables for file paths
 			extern std::string venuesCsvPath;
 			extern std::string configJsonPath;
 			extern std::string mockVenuesCsvPath;
 			extern std::string mockConfigJsonPath;
 		}
 		
+		// Class for utility functions related to the console
 		class ConsoleUtils {
 			public:
-			static void clearInputBuffer();
+			enum class Color {
+				RED,
+				GREEN,
+				BLUE,
+				MAGENTA,
+				YELLOW,
+				CYAN,
+				LIGHT_BLUE,
+				DEFAULT
+			};
+			
+			// Function to clear the input buffer
+			inline static void clearInputBuffer() {
+				// Clear the input buffer
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
+			}
+			
+			// Method to set console text color
+			static void setColor(Color color);
+			
+			// Method to reset console text color to default
+			static void resetColor();
+			
+			// Method to trim leading and trailing spaces from a string
 			static std::string trim(const std::string& str);
 		};
 		
+		// Class for reading data from a CSV file
 		class CsvReader {
 			public:
+			// Method to read CSV data and populate a vector of Venue objects
 			static void readCSV(std::vector<Venue>& venues, std::string& venuesCsvPath);
 		};
 		
+		// Class for managing configuration settings
 		class ConfigManager {
 			private:
+			// Instance of EncryptionManager for password encryption/decryption
 			EncryptionManager encryptionManager;
 			
 			public:
+			// Default constructor
 			ConfigManager();
+			
+			// Method to load settings from a configuration file
 			bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
 			std::string& senderEmail, std::string& smtpUsername, 
 			std::string& mailPass, int& smtpPort, std::string& smtpServer, 
 			std::string& venuesCsvPath);
+			
+			// Static method to reset the configuration file
 			static void resetConfigFile();
 		};
 		
@@ -958,15 +1276,30 @@
 		
 		#include <array>
 		#include <iostream>
+		
+		// Include libsodium for encryption/decryption functionalities
 		#include <sodium.h>
 		
+		// Declare global encryption key and nonce arrays
 		extern std::array<unsigned char, crypto_secretbox_KEYBYTES> globalEncryptionKey;
 		extern std::array<unsigned char, crypto_secretbox_NONCEBYTES> globalEncryptionNonce;
 		
+		// EncryptionManager class to handle encryption-related functionalities
 		class EncryptionManager {
 			public:
+			// Constructor will initialize encryption key and nonce
 			EncryptionManager();
+			
+			// Utility function to encrypt a password
+			// Parameters: 
+			// decryptedPassword: The original password to encrypt
+			// encryptedPassword: The encrypted password will be stored here
+			// Return: true if encryption is successful, false otherwise
 			static bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword);
+			
+			// Utility function to decrypt a password
+			// Parameter: encryptedPassword: The encrypted password to decrypt
+			// Return: The decrypted password as a string
 			static std::string decryptPassword(const std::string& encryptedPassword);
 		};
 		
@@ -989,6 +1322,8 @@
 	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt, linecolor=accent]
 		\begin{lstlisting}[language=C++]
 			#include "include/curl.h"
+			
+			#include "include/fileutils.h" // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
 			
 			using namespace std;
 			
@@ -1055,43 +1390,82 @@
 			#define CURL_H
 			
 			#include "errorhandler.h"
+			
 			#include <algorithm>
 			#include <cstring>
 			#include <iostream>
 			#include <mutex>
+			
+			// Include headers for email processing
 			#include <curl/curl.h>
 			
+			// Class to manage the cURL handle and associated operations
 			class CurlHandleWrapper {
 				public:
+				// Deleted copy constructor and assignment operator
 				CurlHandleWrapper(const CurlHandleWrapper&) = delete;
 				CurlHandleWrapper& operator=(const CurlHandleWrapper&) = delete;
 				
-				static CurlHandleWrapper& getInstance();
+				// Static method to return an instance of the class
+				static CurlHandleWrapper& getInstance() {
+					static CurlHandleWrapper instance; // Guaranteed to be destroyed, instantiated on first use.
+					return instance;
+				}
+				
+				// Get the cURL handle for use in other operations
 				CURL* get() const;
+				
+				// Initialize the cURL library (should be called at program start)
 				static void init();
+				
+				// Clean up the cURL library (should be called at program end)
 				static void cleanup();
-				inline double getProgress() const;
+				
+				inline double getProgress() const {
+					return progress;
+				}
+				
+				// Callback function to update the progress of ongoing operations
 				int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
+				
+				// Set the email address that is currently being sent
 				void setEmailBeingSent(const std::string& email);
+				
+				// Get the email address that is currently being sent
 				std::string getEmailBeingSent() const;
+				
+				// Clear the email address that was set
 				void clearEmailBeingSent();
+				
+				// Set SSL options for the cURL handle
 				void setSSLOptions(bool useSSL = true, bool verifyPeer = true, bool verifyHost = true);
+				
+				// Callback function for reading the email payload
 				static size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
 				
 				private:
-				CurlHandleWrapper();
-				~CurlHandleWrapper();
+				CurlHandleWrapper();  // Made private to enforce Singleton pattern
+				~CurlHandleWrapper(); // Destructor
+				
+				// The actual cURL handle
 				CURL* curl;
+				
+				// Progress of the current cURL operation
 				double progress{};
+				
+				// Email address of the recipient for the email being sent
 				std::string emailBeingSent;
+				
+				// Mutex for thread safety
 				mutable std::mutex mtx;
 			};
 			
+			// Function to set up a cURL handle with the given options
 			CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
 			const std::string& senderEmail, const std::string& smtpUsername, std::string& mailPassDecrypted, int smtpPort, const std::string& smtpServer);
 			
 			#endif // CURL_H
-		\end{lstlisting}
+			\end{lstlisting}
 	\end{mdframed}
 	
 	\subsection*{Explanation}
@@ -1174,22 +1548,67 @@
 			#define ERRORHANDLER_H
 			
 			#include <curl/curl.h>
+			
 			#include <iostream>
 			#include <mutex>
 			
-			class CsvReader;
+			// Forward declarations due to circular dependency between fileutils.h and errorhandler.h
+			class CsvReader; 
 			class ConfigManager;
+			class ConsoleUtils; 
 			
+			// ErrorHandler class to manage different types of errors
 			class ErrorHandler {
 				private:
-				static std::mutex outputMutex;
+				static std::mutex outputMutex; // Mutex for thread-safe output
 				public:
+				// Enumeration to represent different types of errors that can be encountered
 				enum class ErrorType {
-					// ... (All the error types go here)
+					INVALID_INPUT_ERROR,
+					INVALID_MENU_INPUT_ERROR,
+					INPUT_LENGTH_ERROR,
+					INVALID_CHOICE_ERROR,
+					INVALID_INDEX_ERROR,
+					INVALID_INDEX_FORMAT_ERROR,
+					NO_VENUES_SELECTED_ERROR,
+					VENUE_ALREADY_SELECTED_ERROR,
+					EMAIL_AND_SUBJECT_BLANK_ERROR,
+					EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR,
+					NO_VENUES_SELECTED_FOR_EMAIL_ERROR,
+					EMAIL_ERROR,
+					SUBJECT_LENGTH_ERROR,
+					EMAIL_MESSAGE_LENGTH_ERROR,
+					EMAIL_BLANK_ERROR,
+					SUBJECT_MESSAGE_ERROR,
+					EMAIL_WRITING_ATTEMPTS_ERROR,
+					TEMPLATE_PENDING_ERROR,
+					ATTACHMENT_PATH_ERROR,
+					ATTACHMENT_SIZE_ERROR,
+					SENDER_EMAIL_FORMAT_ERROR,
+					FILESYSTEM_ERROR,
+					CONFIG_OPEN_ERROR,
+					CONFIG_LOAD_ERROR,
+					CONFIG_OPEN_TO_WRITE_ERROR,
+					INVALID_CAPACITY_IN_CSV,
+					INVALID_DATA_IN_CSV,
+					LIBSODIUM_INIT_ERROR,
+					ENCRYPTION_ERROR,
+					DECRYPTION_ERROR,
+					EMAIL_PASSWORD_ENCRYPTION_ERROR,
+					EMAIL_PASSWORD_DECRYPTION_ERROR,
+					EMAIL_PASSWORD_ENCRYPTION_FORMAT_ERROR,
+					LIBCURL_ERROR,
+					SMTP_CONNECTION_ERROR,
+					SMTP_AUTH_ERROR
 				};
 				
+				// Function to handle errors and display appropriate messages based on the type of error
 				void handleErrorAndReturn(ErrorType error);
+				
+				// Overloaded version with extra information
 				void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
+				
+				// Handles cURL errors and returns a boolean to indicate success/failure
 				bool handleCurlError(CURLcode res);
 			};
 			

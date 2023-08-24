@@ -95,15 +95,9 @@ int main() {
             } else if (choice == MenuManager::VIEW_SELECTED_VENUES_OPTION) {
                 menuManager.displaySelectedVenues(selectedVenuesForEmail);
             } else if (choice == MenuManager::CLEAR_SELECTED_VENUES_OPTION) {
-                selectedVenuesForEmail.clear();
-                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-                cout << "Selected venues cleared." << endl; 
-                ConsoleUtils::resetColor();
+                emailManager.clearSelectedVenues(selectedVenuesForEmail);
             } else if (choice == MenuManager::CLEAR_BOOKING_TEMPLATE_OPTION) {
-                message.clear();
-                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-                cout << "Booking template cleared." << endl; 
-                ConsoleUtils::resetColor();
+                emailManager.clearBookingTemplate(subject, message, attachmentName, attachmentSize, attachmentPath, templateExists);
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
             } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
@@ -118,10 +112,8 @@ int main() {
             } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION && !templateExists) {
                 emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION && templateExists) {
-                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-                cerr << "Template pending, go back to add more venues, send the template, or clear the template." << endl;
-                ConsoleUtils::resetColor();
-            
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_PENDING_ERROR);
             } else if (choice == MenuManager::EXIT_OPTION) {
                 if (menuManager.handleExitOption()) {
                     break;

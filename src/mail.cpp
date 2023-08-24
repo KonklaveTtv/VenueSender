@@ -188,25 +188,27 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     }
 }
 
-void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, const vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
+void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
                                   string &subject, string &message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists) {
+
+
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    cout << "-------------------------\n";
+    cout << "----- EMAIL DETAILS -----\n";
+    cout << "-------------------------\n";
+    cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
+    cout << "Subject: " << subject << "\n";
+    cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
+    cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
+    cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
+    cout << "\n" << message << "\n";
+    cout << "-------------------------\n";
+    ConsoleUtils::resetColor();
+
     int attempts = 0;
     bool modified = false;
 
     while (attempts < 3) {
-
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-        cout << "-------------------------\n";
-        cout << "----- EMAIL DETAILS -----\n";
-        cout << "-------------------------\n";
-        cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
-        cout << "Subject: " << subject << "\n";
-        cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
-        cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
-        cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
-        cout << "\n" << message << "\n";
-        cout << "-------------------------\n";
-        ConsoleUtils::resetColor();
 
         ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);        
         cout << "Do you wish to modify this email? (Y/N): ";
@@ -278,8 +280,8 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                                        int smtpPort,
                                        string& attachmentName,
                                        string& attachmentSize,
-                                       const string& attachmentPath,
-                                       const vector<SelectedVenue>& selectedVenuesForEmail) {
+                                       string& attachmentPath,
+                                       vector<SelectedVenue>& selectedVenuesForEmail) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
 
@@ -511,8 +513,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                        int smtpPort,
                                        string& attachmentName,
                                        string& attachmentSize,
-                                       const string& attachmentPath,
-                                       const vector<SelectedVenue>& selectedVenuesForEmail,
+                                       string& attachmentPath,
+                                       vector<SelectedVenue>& selectedVenuesForEmail,
                                        bool& templateExists) {
     // Check if venues are selected
     if (selectedVenuesForEmail.empty()) {
@@ -614,6 +616,66 @@ void EmailManager::createBookingTemplate(CURL* curl,
     cout << message << endl;
     cout << "=========================================\n";
     ConsoleUtils::resetColor();
+
+    // Prompt the user to add an attachment
+    while (true) {
+        ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
+        cout << "Enter the path of the file to attach (or press Enter to skip): ";
+        ConsoleUtils::resetColor();
+        getline(cin, attachmentPath);
+        if (attachmentPath.empty()) {
+            break; // No attachment provided, move on
+        }
+        attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
+        attachmentPath = ConsoleUtils::trim(attachmentPath);
+
+        // Clean the path provided by the user and set the attachment name
+        size_t lastSlash = attachmentPath.find_last_of("/\\\\");
+        if (lastSlash == string::npos) {
+            attachmentName = attachmentPath;
+        } else {
+            attachmentName = attachmentPath.substr(lastSlash + 1);
+        }
+
+        // Calculate and set the size of the attachment
+        try {
+            if (fs::exists(attachmentPath)) {
+                size_t fileSize = fs::file_size(attachmentPath);
+                attachmentSize = to_string(fileSize) + " bytes";
+                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
+                cout << "File Size: " << fileSize << " bytes" << endl;
+
+                // Check the attachment size doesn't exceed 24MB
+                if (fileSize > MAX_ATTACHMENT_SIZE) {
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                    clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
+                    cout << "Do you want to add a different attachment? (Y/N): ";
+                    ConsoleUtils::resetColor();
+                    char choice;
+                    cin >> choice;
+                    ConsoleUtils::clearInputBuffer();
+                    if (choice == 'Y' || choice == 'y') {
+                        continue; // Go back to asking for a new file
+                    } else {
+                        break; // Exit the loop without an attachment
+                    }
+                }
+
+                // Show the attachment name, size and path to the user
+                cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
+                ConsoleUtils::resetColor(); // Resetting color after displaying attachment details
+                break;  // Exit the loop if the file is valid
+            } else {
+                // Error handling for attachment path
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+            }
+        } catch (const filesystem::filesystem_error& e) {
+            // Error handling for filesystem errors
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+        }
+    }
 
     // Ask user if they want to modify or send
     char choice;
@@ -954,7 +1016,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 }
 
 void EmailManager::confirmSendEmail(CURL* curl,
-                      const vector<SelectedVenue>& selectedVenuesForEmail,
+                      vector<SelectedVenue>& selectedVenuesForEmail,
                       const string& senderEmail,
                       string& subject,
                       string& message,

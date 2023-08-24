@@ -52,6 +52,25 @@ public:
         attachmentPath.clear();
     }
 
+    inline void clearBookingTemplate(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath, bool& templateExists) {
+        subject.clear();
+        message.clear();
+        attachmentName.clear();
+        attachmentSize.clear();
+        attachmentPath.clear();
+        templateExists = false;
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+        std::cout << "Booking template cleared." << std::endl; 
+        ConsoleUtils::resetColor();
+    }
+
+    inline void clearSelectedVenues(std::vector<SelectedVenue>& selectedVenuesForEmail) {
+        selectedVenuesForEmail.clear();
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+        std::cout << "Selected venues cleared." << std::endl; 
+        ConsoleUtils::resetColor();
+    }
+
     inline void clearAttachmentData(std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
         attachmentName.clear();
         attachmentSize.clear();
@@ -78,7 +97,7 @@ public:
     void viewEditEmails(CURL* curl, 
                         const std::string& smtpServer,
                         int smtpPort,
-                        const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                        std::vector<SelectedVenue>& selectedVenuesForEmail,
                         const std::string& senderEmail, 
                         std::string &subject, 
                         std::string &message, 
@@ -97,8 +116,8 @@ public:
                              int smtpPort,
                              std::string& attachmentName,
                              std::string& attachmentSize,
-                             const std::string& attachmentPath,
-                             const std::vector<SelectedVenue>& selectedVenuesForEmail);
+                             std::string& attachmentPath,
+                             std::vector<SelectedVenue>& selectedVenuesForEmail);
 
     // Function to send a booking template email
     void createBookingTemplate(CURL* curl,
@@ -109,8 +128,8 @@ public:
                              int smtpPort,
                              std::string& attachmentName,
                              std::string& attachmentSize,
-                             const std::string& attachmentPath,
-                             const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                              std::string& attachmentPath,
+                             std::vector<SelectedVenue>& selectedVenuesForEmail,
                              bool& templateExistss);
 
     // Function to send to a custom email address
@@ -126,7 +145,7 @@ public:
 
     // Function to confirm the email before sending
     void confirmSendEmail(CURL* curl,
-                          const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                          std::vector<SelectedVenue>& selectedVenuesForEmail,
                           const std::string& senderEmail,
                           std::string& subject,
                           std::string& message,

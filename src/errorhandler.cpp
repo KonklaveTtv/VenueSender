@@ -84,6 +84,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::EMAIL_WRITING_ATTEMPTS_ERROR:
             cerr << "Too many unsuccessful attempts. Returning to main menu." << endl;
             break;
+        case ErrorType::TEMPLATE_PENDING_ERROR:
+            cerr << "Template pending, go back to add more venues, send the template, or clear the template." << endl;
+            break;
         case ErrorType::ATTACHMENT_PATH_ERROR:
             cerr << "File does not exist at the specified path." << endl;
             break;
