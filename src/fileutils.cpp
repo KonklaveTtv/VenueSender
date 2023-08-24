@@ -43,6 +43,9 @@ void ConsoleUtils::setColor(ConsoleUtils::Color color) {
         case ConsoleUtils::Color::YELLOW:
             SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN);
             break;
+        case ConsoleUtils::Color::ORANGE:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+            break;
         case ConsoleUtils::Color::CYAN:
             SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_BLUE);
             break;
@@ -54,28 +57,31 @@ void ConsoleUtils::setColor(ConsoleUtils::Color color) {
             break;
     }
 #else
-    // UNIX-like systems (using ANSI escape codes):
+    // UNIX-like systems (using 256-color ANSI escape codes):
     switch(color) {
         case ConsoleUtils::Color::RED:
-            std::cout << "\033[31m";
+            std::cout << "\033[38;5;196m";
             break;
         case ConsoleUtils::Color::GREEN:
-            std::cout << "\033[32m";
+            std::cout << "\033[38;5;46m";
             break;
         case ConsoleUtils::Color::BLUE:
-            std::cout << "\033[34m";
+            std::cout << "\033[38;5;21m";
             break;
         case ConsoleUtils::Color::MAGENTA:
-            std::cout << "\033[35m";
+            std::cout << "\033[38;5;201m";
             break;
         case ConsoleUtils::Color::YELLOW:
-            std::cout << "\033[33m";
+            std::cout << "\033[38;5;226m";
+            break;
+        case ConsoleUtils::Color::ORANGE:
+            std::cout << "\033[38;5;172m";
             break;
         case ConsoleUtils::Color::CYAN:
-            std::cout << "\033[36m";
+            std::cout << "\033[38;5;51m";
             break;
         case ConsoleUtils::Color::LIGHT_BLUE:
-            std::cout << "\033[94m";
+            std::cout << "\033[38;5;75m";
             break;
         default:
             std::cout << "\033[0m"; // Reset to default
@@ -322,7 +328,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
         ConsoleUtils::resetColor(); // Reset color
         configLoadedSuccessfully = true;
     } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded) {
-        ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW); // Yellow for partial success
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Yellow for partial success
         cout << "Email settings loaded from config.json." << endl;
         ConsoleUtils::resetColor(); // Reset color
     } else {

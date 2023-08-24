@@ -33,6 +33,7 @@ public:
         BLUE,
         MAGENTA,
         YELLOW,
+        ORANGE,
         CYAN,
         LIGHT_BLUE,
         DEFAULT

@@ -12,7 +12,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
         return;
     }
 
-    ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     output << "Select venues to add (comma-separated indices): ";
     ConsoleUtils::resetColor();
     string userInput;
@@ -129,7 +129,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
     }
 
 
-    ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     cout << "Enter comma-separated indices of options to select: ";
     ConsoleUtils::resetColor();
     string input;
@@ -206,7 +206,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
     }
     ConsoleUtils::resetColor();
 
-    ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     cout << "Enter comma-separated indices of options to select: ";
     ConsoleUtils::resetColor();
     string input;

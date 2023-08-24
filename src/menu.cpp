@@ -30,7 +30,7 @@ int MenuManager::displayMenuOptions() {
         cout << FINISH_AND_SEND_EMAILS_OPTION << ". Finish & Send Emails" << endl;
         cout << EXIT_OPTION << ". Exit VenueSender" << endl;
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::YELLOW);
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
         cout << "Enter your choice: ";
 #ifndef UNIT_TESTING
