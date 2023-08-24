@@ -199,9 +199,10 @@
 		const int MenuManager::FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuManager::MenuOption::FilterByCapacity);
 		
 		const int MenuManager::CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ClearSelectedVenues);
-		const int MenuManager::VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues);
+		const intconst int MenuManager::CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuManager::MenuOption::ClearBookingTemplate); MenuManager::VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuManager::MenuOption::ViewSelectedVenues);
 		const int MenuManager::SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuManager::MenuOption::ShowEmailSettings);
 		const int MenuManager::VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::ViewEditEmail);
+		const int MenuManager::VENUE_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuManager::MenuOption::VenueBookingTemplate);
 		const int MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION = static_cast<int>(MenuManager::MenuOption::EmailCustomAddress);
 		const int MenuManager::FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuManager::MenuOption::FinishAndSendEmail);
 		const int MenuManager::EXIT_OPTION = static_cast<int>(MenuManager::MenuOption::Exit);
@@ -496,8 +497,9 @@
 				// Implementation to guide the user in constructing an email...
 			}
 
-			void EmailManager::viewEditEmails(const string& senderEmail, string &subject, string &message, string& attachmentName, string& attachmentSize, string& attachmentPath) {
-			// Implementation to view and edit emails...
+			void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, const vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
+			string &subject, string &message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists) {
+				// Implementation to view and edit emails...
 				
 			bool EmailManager::sendIndividualEmail(CURL* curl,
 			const SelectedVenue& selectedVenue,
@@ -511,8 +513,20 @@
 			const string& attachmentPath,
 			const vector<SelectedVenue>& selectedVenuesForEmail) {
 				// Implementation to send an individual email...
-			}
-		
+			
+			void EmailManager::createBookingTemplate(CURL* curl,
+			const string& senderEmail,
+			string& subject,
+			string& message,
+			const string& smtpServer,
+			int smtpPort,
+			string& attachmentName,
+			string& attachmentSize,
+			const string& attachmentPath,
+			const vector<SelectedVenue>& selectedVenuesForEmail,
+			bool& templateExists) {
+				// Implementation to create an email from a booking template...
+				
 			void EmailManager::emailCustomAddress(CURL* curl,
 			const std::string& senderEmail,
 			std::string& subject,
@@ -549,6 +563,7 @@
 		\item \textbf{constructEmail()}: Guides the user in constructing an email, including subject, message, and optional attachment.
 		\item \textbf{viewEditEmails()}: Views the current email (if one has been created) and allows the user to edit the email.
 		\item \textbf{sendIndividualEmail()}: Sends an individual email to a selected venue based on specified configurations and updates the progress of email sending.
+		\item \textbf{createBookingTemplate()}: Allows the user to create an email based off of a pre-designed booking template.
 		\item \textbf{emailCustomAddress()}: Sends an individual email to a custom address based on specified configurations and updates the progress of email sending.
 
 		\item \textbf{confirmSendEmail()}: Allows the user to view the email and confirm whether to send or return to the menu.
@@ -617,7 +632,17 @@
 				void constructEmail(std::string &subject, std::string &message, std::string &attachmentPath, std::string &attachmentName, std::string &attachmentSize, std::istream &in = std::cin);
 				
 				// Function to allow the user to modify the email
-				void viewEditEmails(const std::string& senderEmail, std::string &subject, std::string &message, std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath);
+				void viewEditEmails(CURL* curl, 
+				const std::string& smtpServer,
+				int smtpPort,
+				const std::vector<SelectedVenue>& selectedVenuesForEmail,
+				const std::string& senderEmail, 
+				std::string &subject, 
+				std::string &message, 
+				std::string& attachmentName, 
+				std::string& attachmentSize, 
+				std::string& attachmentPath, 
+				bool& templateExists);
 				
 				// Function to send an individual email to a selected venue
 				bool sendIndividualEmail(CURL* curl,
@@ -631,6 +656,19 @@
 				std::string& attachmentSize,
 				const std::string& attachmentPath,
 				const std::vector<SelectedVenue>& selectedVenuesForEmail);
+				
+				// Function to send a booking template email
+				void createBookingTemplate(CURL* curl,
+				const std::string& senderEmail,
+				std::string& subject,
+				std::string& message,
+				const std::string& smtpServer,
+				int smtpPort,
+				std::string& attachmentName,
+				std::string& attachmentSize,
+				const std::string& attachmentPath,
+				const std::vector<SelectedVenue>& selectedVenuesForEmail,
+				bool& templateExistss);
 				
 				// Function to send to a custom email address
 				void emailCustomAddress(CURL* curl,
