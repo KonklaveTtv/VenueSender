@@ -147,7 +147,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
             if (attachmentPath.empty()) {
                 break;  // Exit the loop if no attachment is provided
             }
-            
+
             // Clean the path provided by the user and set the attachment name
             size_t lastSlash = attachmentPath.find_last_of("/\\\\");
             if (lastSlash == string::npos) {
@@ -389,7 +389,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     if (!isValidEmail(senderEmail)) {
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
-        cerr << "Please set it correctly in your custom.json file." << endl;
         return false;
     }
     
@@ -617,7 +616,6 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
     if (!isValidEmail(senderEmail)) {
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
-        cerr << "Please set it correctly in your custom.json file." << endl;
         return false;
     }
 
@@ -1141,7 +1139,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
         if (!isValidEmail(senderEmail)) {
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
-            cerr << "Please set it correctly in your custom.json file." << endl;
             return;
         }
 

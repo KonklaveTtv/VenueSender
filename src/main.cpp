@@ -23,7 +23,8 @@ int main() {
     vector<SelectedVenue> selectedVenuesForTemplates;
     string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort;
-    bool templateExists, useSSL, verifyPeer, verifyHost, verbose;
+    bool templateExists = false;
+    bool useSSL, verifyPeer, verifyHost, verbose;
 
     // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
@@ -67,73 +68,66 @@ int main() {
     // Initialize map for booking templates
     map<string, pair<string, string>> emailToTemplate;
 
+    // Pass the configuration variables to the MenuManager constructor
+    MenuManager menuManager(useSSL, verifyPeer, verifyHost, senderEmail, smtpPort, smtpServer);
+
+    // Create an EmailManager object
+    EmailManager emailManager;
+
+    // Pass the necessary objects to the navigateMenus function
+    menuManager.navigateMenus(emailManager, 
+                              curl, 
+                              venues,
+                              selectedVenuesForTemplates,
+                              selectedVenuesForEmail,
+                              uniqueGenres,
+                              uniqueStates,
+                              uniqueCities,
+                              uniqueCapacities,
+                              temporaryFilteredVenues,
+                              emailToTemplate,
+                              subject,
+                              message,
+                              attachmentName,
+                              attachmentPath,
+                              attachmentSize,
+                              venueFilter,
+                              useSSL, 
+                              verifyPeer, 
+                              verifyHost, 
+                              verbose, 
+                              templateExists
+                              );
+
     // Main loop for interacting with the user
     while (true) {
-
         MenuManager::mainHeader();
 
-        // Display menu options and get user's choice
-        int choice = menuManager.displayMenuOptions();
-            // Handle different menu options
-            if (choice >= static_cast<int>(MenuManager::MenuOption::FilterByGenre) &&
-                choice <= MenuManager::FILTER_BY_CAPACITY_OPTION) {
-                // Declare a temporary vector to store filtered venues
-                vector<SelectedVenue> temporaryFilteredVenues;
-                // Handle filtering options
-                if (choice == MenuManager::FILTER_BY_GENRE_OPTION) {
-                    // Filter by Genre
-                    temporaryFilteredVenues = venueFilter.filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
-                } else if (choice == MenuManager::FILTER_BY_STATE_OPTION) {
-                    // Filter by State
-                    temporaryFilteredVenues = venueFilter.filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
-                } else if (choice == MenuManager::FILTER_BY_CITY_OPTION) {
-                    // Filter by City
-                    temporaryFilteredVenues = venueFilter.filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
-                } else if (choice == MenuManager::FILTER_BY_CAPACITY_OPTION) {
-                    // Filter by Capacity
-                    temporaryFilteredVenues = venueFilter.filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
-                }
-                // Display venues that have been selected so far
-                venueFilter.displayFilteredVenues(temporaryFilteredVenues);
+        // Display main menu options and get the user's choice
+        int mainChoice = menuManager.displayMenuOptions();
 
-                // Call the new function to process venue selection
-                venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail);
-            } else if (choice == MenuManager::VIEW_SELECTED_VENUES_OPTION) {
-                menuManager.displaySelectedVenues(selectedVenuesForEmail);
-            } else if (choice == MenuManager::CLEAR_SELECTED_VENUES_OPTION) {
-                emailManager.clearSelectedVenues(selectedVenuesForEmail);
-            } else if (choice == MenuManager::CREATE_EMAIL_OPTION) {
-                emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
-            } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
-                emailManager.viewEditEmails(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath, templateExists, emailToTemplate);
-            } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION) {
-                emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-            } else if (choice == MenuManager::SEND_EMAILS_OPTION) {
-                emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-            } else if (choice == MenuManager::CREATE_VENUE_BOOKING_TEMPLATE_OPTION) {
-                emailManager.createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
-            } else if (choice == MenuManager::VIEW_EDIT_BOOKING_TEMPLATES_OPTION) {
-                emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
-            } else if (choice == MenuManager::CLEAR_BOOKING_TEMPLATE_OPTION) {
-                emailManager.clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
-            } else if (choice == MenuManager::SEND_BOOKING_TEMPLATES_OPTION) {
-                emailManager.confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-            } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
+        // Main Menu
+        switch (mainChoice) {
+            case MenuManager::VENUE_FILTERING_OPTION:
+                menuManager.displayVenueFilteringOptions();
+                break;
+            case MenuManager::VENUE_OPTIONS_OPTION:
+                menuManager.displayVenueOptions();
+                break;
+            case MenuManager::EMAIL_OPTIONS_OPTION:
+                menuManager.displayEmailOptions();
+                break;
+            case MenuManager::TEMPLATES_OPTION:
+                menuManager.displayTemplateOptions();
+                break;
+            case MenuManager::CONFIGURATION_OPTION:
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
-            } else if (choice == MenuManager::EXIT_OPTION) {
-                if (menuManager.handleExitOption()) {
-                    break;
-                }
-            } else {                
-                // Handle invalid menu choice
+                break;
+            default:
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
-                cin.get(); // This will wait for a key press
-                }
-            }
-        // Reset configurations and cleanup before exiting
-        configManager.resetConfigFile();  
-        CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
+        }
+    }
 
     return 0;
 }

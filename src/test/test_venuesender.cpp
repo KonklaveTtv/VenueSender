@@ -113,20 +113,10 @@ TEST_CASE("MenuManager::isValidMenuChoice() functionality", "[MenuManager]") {
     REQUIRE(menuManager.isValidMenuChoice(4) == true);
     REQUIRE(menuManager.isValidMenuChoice(5) == true);
     REQUIRE(menuManager.isValidMenuChoice(6) == true);
-    REQUIRE(menuManager.isValidMenuChoice(7) == true);
-    REQUIRE(menuManager.isValidMenuChoice(8) == true);
-    REQUIRE(menuManager.isValidMenuChoice(9) == true);
-    REQUIRE(menuManager.isValidMenuChoice(10) == true);
-    REQUIRE(menuManager.isValidMenuChoice(11) == true);
-    REQUIRE(menuManager.isValidMenuChoice(12) == true);
-    REQUIRE(menuManager.isValidMenuChoice(13) == true);  
-    REQUIRE(menuManager.isValidMenuChoice(14) == true);  
-    REQUIRE(menuManager.isValidMenuChoice(15) == true);  
-    REQUIRE(menuManager.isValidMenuChoice(16) == true);  
 
     REQUIRE(menuManager.isValidMenuChoice(-1) == false);
     REQUIRE(menuManager.isValidMenuChoice(0) == false);
-    REQUIRE(menuManager.isValidMenuChoice(17) == false);
+    REQUIRE(menuManager.isValidMenuChoice(7) == false);
 }
 
 TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
@@ -149,25 +139,15 @@ TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
 
     // Define the expected output string
     string expectedOutput = 
-      //"===========================""\n"
+        "===========================""\n"
         "         Main Menu         ""\n"
         "===========================""\n"
-        "1. Filter by Genre" "\n"
-        "2. Filter by State" "\n"
-        "3. Filter by City" "\n"
-        "4. Filter by Capacity" "\n"
-        "5. View Selected Venues" "\n"
-        "6. Clear Selected Venues" "\n"
-        "7. Create Email" "\n"
-        "8. View & Edit Email" "\n"
-        "9. Email Custom Address" "\n"
-        "10. Send Emails" "\n"
-        "11. Create Venue Booking Template" "\n"
-        "12. View & Edit Booking Template" "\n"
-        "13. Clear Booking Template" "\n"
-        "14. Send Booking Templates" "\n"
-        "15. Show Email Configuration" "\n"
-        "16. Exit VenueSender" "\n"
+        "1. Venue Filtering" "\n"
+        "2. Venue Options" "\n"
+        "3. Email" "\n"
+        "4. Templates" "\n"
+        "5. Configuration" "\n"
+        "6. Exit" "\n"
         "Enter your choice: ";
 
     // Check the captured output and the returned choice

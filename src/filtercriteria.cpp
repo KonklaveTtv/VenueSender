@@ -3,6 +3,11 @@
 // Use the standard namespace
 using namespace std;
 
+// Define the variables
+const std::set<std::string> uniqueOptions;
+const std::string filterType;
+std::vector<SelectedVenue> temporaryFilteredVenues;
+
 // Function to process venue selection based on user input
 void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                            vector<SelectedVenue>& selectedVenuesForEmail,
@@ -86,6 +91,9 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
         }
     }
 
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+    cout << "Venue Added";
+    ConsoleUtils::resetColor();
     // Add a newline to separate the filtered venues from the main menu
     output << endl;
 }

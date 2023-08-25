@@ -9,6 +9,11 @@
 #include <set>
 #include <vector>
 
+// Declare externs here
+extern const std::set<std::string> uniqueOptions;
+extern const std::string filterType;
+extern std::vector<SelectedVenue> temporaryFilteredVenues;
+
 // Structure to hold filter criteria for venues
 struct FilterCriteria {
     std::string genre;
@@ -91,6 +96,7 @@ private:
                                                     std::vector<SelectedVenue>& temporaryFilteredVenues);
     
     std::vector<SelectedVenue> selectedVenuesForEmail;
+    std::vector<SelectedVenue> temporaryFilteredVenues;
 
 public:
     // Function to process user input and select venues based on it
@@ -113,6 +119,8 @@ public:
     std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                                                 const std::set<int>& uniqueCapacities,
                                                 std::vector<SelectedVenue>& temporaryFilteredVenues);
+
+    const std::vector<SelectedVenue>& getFilteredResults() const { return temporaryFilteredVenues; }
 };
 
 #endif // FILTERCRITERIA_H

@@ -4,7 +4,6 @@
 #include "curl.h"
 #include "encryption.h"
 #include "fileutils.h"
-#include "menu.h"
 #include "errorhandler.h"
 #include "structs.h"
 

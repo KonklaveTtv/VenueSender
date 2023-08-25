@@ -98,6 +98,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             break;
         case ErrorType::SENDER_EMAIL_FORMAT_ERROR:
             cerr << "Error: The sender email '" << extraInfo << "' is not the valid format." << endl;
+            cerr << "Please set it correctly in your custom.json file." << endl;
             break;
         case ErrorType::FILESYSTEM_ERROR:
             cerr << "Filesystem error: ";
