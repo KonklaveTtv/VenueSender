@@ -126,7 +126,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     // Prompt the user to add an attachment
     while (true) {
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-        cout << "Enter the path of the file to attach: ";
+        cout << "Enter the path of the file to attach (or press Enter to skip): ";
         ConsoleUtils::resetColor();
         getline(cin, attachmentPath);
         attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
@@ -982,7 +982,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         // Prompt the user to add an attachment
         while (true) {
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-            cout << "Enter the path of the file to attach: ";
+            cout << "Enter the path of the file to attach (or press Enter to skip): ";
             ConsoleUtils::resetColor();
             getline(cin, attachmentPath);
             attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
