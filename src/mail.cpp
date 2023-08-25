@@ -124,72 +124,91 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
     } while (!inputProvided);
 
     // Prompt the user to add an attachment
-    while (true) {
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-        cout << "Enter the path of the file to attach (or press Enter to skip): ";
-        ConsoleUtils::resetColor();
-        getline(cin, attachmentPath);
-        attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
-        attachmentPath = ConsoleUtils::trim(attachmentPath);
+        while (true) {
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            cout << "Do you want to add an attachment? (Y/N): ";
+            ConsoleUtils::resetColor();
+            char addAttachmentChoice;
+            cin >> addAttachmentChoice;
+            ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
-        // Check if the user wants to skip adding an attachment
-        if (attachmentPath.empty()) {
-            break;  // Exit the loop if no attachment is provided
-        }
-        // Clean the path provided by the user and set the attachment name
-        size_t lastSlash = attachmentPath.find_last_of("/\\\\");
-        if (lastSlash == string::npos) {
-            attachmentName = attachmentPath;
-        } else {
-            attachmentName = attachmentPath.substr(lastSlash + 1);
-        }
+        if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+            break;
 
-        // Calculate and set the size of the attachment
-        try {
-            if (filesystem::exists(attachmentPath)) {
-                size_t fileSize = filesystem::file_size(attachmentPath);
-                attachmentSize = to_string(fileSize) + " bytes";
-                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
-                cout << "File Size: " << fileSize << " bytes" << endl;
+        } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            cout << "Enter the path of the file to attach (or press Enter to skip): ";
+            ConsoleUtils::resetColor();
+            getline(cin, attachmentPath);
+            attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
+            attachmentPath = ConsoleUtils::trim(attachmentPath);
 
-                // Check the attachment size doesn't exceed 24MB
-                if (fileSize > MAX_ATTACHMENT_SIZE) {
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
-                    clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
-                    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-                    cout << "Do you want to add a different attachment? (Y/N): ";
-                    ConsoleUtils::resetColor();
-                    char choice;
-                    cin >> choice;
-                    ConsoleUtils::clearInputBuffer();
-                    if (choice == 'Y' || choice == 'y') {
-                        continue; // Go back to asking for a new file
-                    } else {
-                        return; // Exit the loop and function
+            // Check if the user wants to skip adding an attachment
+            if (attachmentPath.empty()) {
+                break;  // Exit the loop if no attachment is provided
+            }
+            
+            // Clean the path provided by the user and set the attachment name
+            size_t lastSlash = attachmentPath.find_last_of("/\\\\");
+            if (lastSlash == string::npos) {
+                attachmentName = attachmentPath;
+            } else {
+                attachmentName = attachmentPath.substr(lastSlash + 1);
+            }
+
+            // Calculate and set the size of the attachment
+            try {
+                if (filesystem::exists(attachmentPath)) {
+                    size_t fileSize = filesystem::file_size(attachmentPath);
+                    attachmentSize = to_string(fileSize) + " bytes";
+                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
+                    cout << "File Size: " << fileSize << " bytes" << endl;
+
+                    // Check the attachment size doesn't exceed 24MB
+                    if (fileSize > MAX_ATTACHMENT_SIZE) {
+                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                        clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+                        cout << "Do you want to add a different attachment? (Y/N): ";
+                        ConsoleUtils::resetColor();
+                        char choice;
+                        cin >> choice;
+                        ConsoleUtils::clearInputBuffer();
+                        if (choice == 'Y' || choice == 'y') {
+                            continue; // Go back to asking for a new file
+                        } else {
+                            return; // Exit the loop and function
+                        }
                     }
+
+                    // Show the attachment name, size and path to the user
+                    cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
+                    ConsoleUtils::resetColor(); // Resetting color after displaying attachment details
+                    break;  // Exit the loop if the file is valid
+                } else {
+                    // Error handling for attachment path
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                    return;  // Exit the function if the path is invalid
+                }
+            } catch (const filesystem::filesystem_error& e) {
+                // Error handling for filesystem errors
+                ErrorHandler errorHandler;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+                return;
                 }
 
-                // Show the attachment name, size and path to the user
-                cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
-                ConsoleUtils::resetColor(); // Resetting color after displaying attachment details
-                break;  // Exit the loop if the file is valid
             } else {
-                // Error handling for attachment path
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
-                return;  // Exit the function if the path is invalid
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+                cout << "Invalid choice. Please enter Y or N." << endl;
+                ConsoleUtils::resetColor();
+                continue;
             }
-        } catch (const filesystem::filesystem_error& e) {
-            // Error handling for filesystem errors
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
-            return;  // Exit the function if a filesystem error occurs
         }
-    }
-    // Display a success message
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-    cout << "Email has been successfully created." << endl;
-    ConsoleUtils::resetColor();
+        // Display a success message
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+        cout << "Email has been successfully created." << endl;
+        ConsoleUtils::resetColor();
 }
 
 void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
@@ -803,8 +822,18 @@ void EmailManager::createBookingTemplate(CURL* curl,
     ConsoleUtils::resetColor();
     }
 
-    // Prompt the user to add an attachment
     while (true) {
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    cout << "Do you want to add an attachment? (Y/N): ";
+    ConsoleUtils::resetColor();
+    char addAttachmentChoice;
+    cin >> addAttachmentChoice;
+    ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
+
+    if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+        break;
+        
+    } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
         cout << "Enter the path of the file to attach (or press Enter to skip): ";
         ConsoleUtils::resetColor();
@@ -815,7 +844,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
         attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
         attachmentPath = ConsoleUtils::trim(attachmentPath);
 
-        // Clean the path provided by the user and set the attachment name
         size_t lastSlash = attachmentPath.find_last_of("/\\\\");
         if (lastSlash == string::npos) {
             attachmentName = attachmentPath;
@@ -823,7 +851,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
             attachmentName = attachmentPath.substr(lastSlash + 1);
         }
 
-        // Calculate and set the size of the attachment
         try {
             if (filesystem::exists(attachmentPath)) {
                 size_t fileSize = filesystem::file_size(attachmentPath);
@@ -831,7 +858,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
                 cout << "File Size: " << fileSize << " bytes" << endl;
                 ConsoleUtils::resetColor();
-                // Check the attachment size doesn't exceed 24MB
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                     clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
@@ -847,23 +873,28 @@ void EmailManager::createBookingTemplate(CURL* curl,
                         break; // Exit the loop without an attachment
                     }
                 }
-
-                // Show the attachment name, size and path to the user
+                
                 ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
                 cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
                 ConsoleUtils::resetColor(); // Resetting color after displaying attachment details
                 break;  // Exit the loop if the file is valid
             } else {
-                // Error handling for attachment path
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
             }
         } catch (const filesystem::filesystem_error& e) {
-            // Error handling for filesystem errors
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
         }
+        
+        } else {
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+            cout << "Invalid choice. Please enter Y or N." << endl;
+            ConsoleUtils::resetColor();
+            continue;
+        }
     }
+
 
     // Ask user if they want to modify or send
     char choice;
@@ -981,69 +1012,81 @@ void EmailManager::emailCustomAddress(CURL* curl,
             break;
         }
 
-        // Prompt the user to add an attachment
         while (true) {
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-            cout << "Enter the path of the file to attach (or press Enter to skip): ";
-            ConsoleUtils::resetColor();
-            getline(cin, attachmentPath);
-            attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
-            attachmentPath = ConsoleUtils::trim(attachmentPath);
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    cout << "Do you want to add an attachment? (Y/N): ";
+    ConsoleUtils::resetColor();
+    char addAttachmentChoice;
+    cin >> addAttachmentChoice;
+    ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
-            if (attachmentPath.empty()) {
-                break;
-            }
+    if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+        break;
 
-            // Clean the path provided by the user and set the attachment name
-            size_t lastSlash = attachmentPath.find_last_of("/\\\\");
-            if (lastSlash == string::npos) {
-                attachmentName = attachmentPath;
-            } else {
-                attachmentName = attachmentPath.substr(lastSlash + 1);
-            }
+    } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+        cout << "Enter the path of the file to attach (or press Enter to skip): ";
+        ConsoleUtils::resetColor();
+        getline(cin, attachmentPath);
+        attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
+        attachmentPath = ConsoleUtils::trim(attachmentPath);
 
-            // Calculate and set the size of the attachment
-            try {
-                if (filesystem::exists(attachmentPath)) {
-                    size_t fileSize = filesystem::file_size(attachmentPath);
-                    attachmentSize = to_string(fileSize) + " bytes";
-                    cout << "File Size: " << fileSize << " bytes" << endl;
+        if (attachmentPath.empty()) {
+            break;
+        }
 
-                    // Check the attachment size doesn't exceed 24MB
-                    if (fileSize > MAX_ATTACHMENT_SIZE) {
-                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
-                        clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
-                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-                        cout << "Do you want to add a different attachment? (Y/N): ";
-                        ConsoleUtils::resetColor();
-                        char choice;
-                        cin >> choice;
-                        ConsoleUtils::clearInputBuffer();
-                        if (choice == 'Y' || choice == 'y') {
-                            continue; // Go back to asking for a new file
-                        } else {
-                            return; // Exit the loop and function
-                        }
-                    }
+        size_t lastSlash = attachmentPath.find_last_of("/\\\\");
+        if (lastSlash == string::npos) {
+            attachmentName = attachmentPath;
+        } else {
+            attachmentName = attachmentPath.substr(lastSlash + 1);
+        }
 
-                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
-                    // Show the attachment name, size and path to the user
-                    cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
+        try {
+            if (filesystem::exists(attachmentPath)) {
+                size_t fileSize = filesystem::file_size(attachmentPath);
+                attachmentSize = to_string(fileSize) + " bytes";
+                cout << "File Size: " << fileSize << " bytes" << endl;
+
+                if (fileSize > MAX_ATTACHMENT_SIZE) {
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                    clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+                    cout << "Do you want to add a different attachment? (Y/N): ";
                     ConsoleUtils::resetColor();
-                    break;  // Exit the loop if the file is valid
-                } else {
-                    // Error handling for attachment path
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
-                    return;  // Exit the function if the path is invalid
+                    char choice;
+                    cin >> choice;
+                    ConsoleUtils::clearInputBuffer();
+                    if (choice == 'Y' || choice == 'y') {
+                        continue; // Go back to asking for a new file
+                    } else {
+                        return; // Exit the loop and function
+                    }
                 }
-            } catch (const filesystem::filesystem_error& e) {
-                // Error handling for filesystem errors
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
-                return;  // Exit the function if a filesystem error occurs
+
+                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+                cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
+                ConsoleUtils::resetColor();
+                break;  // Exit the loop if the file is valid
+            } else {
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                return;
+            }
+        } catch (const filesystem::filesystem_error& e) {
+            ErrorHandler errorHandler;
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+            return;
+        }
+
+        } else {
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+            cout << "Invalid choice. Please enter Y or N." << endl;
+            ConsoleUtils::resetColor();
+            continue;
             }
         }
+
 
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
         cout << "-------------------------\n";
