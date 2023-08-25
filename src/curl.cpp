@@ -66,7 +66,9 @@ CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
 
     if (curl) {
         // Keeping these options as they're unique and not present in `setupCurlHandle`.
-        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+        //curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
+        curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, &CurlHandleWrapper::progressCallback);
+
         curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
     }
