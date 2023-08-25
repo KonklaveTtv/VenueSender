@@ -90,6 +90,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::ATTACHMENT_PATH_ERROR:
             cerr << "File does not exist at the specified path." << endl;
             break;
+        case ErrorType::ATTACHMENT_PATH_EMPTY_ERROR:
+            cerr << "The path you have selected is empty, please choose a valid attachement." << endl;
+            break;
         case ErrorType::ATTACHMENT_SIZE_ERROR:
             cerr << "File exceeds the 24MB limit." << endl;
             break;

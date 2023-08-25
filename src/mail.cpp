@@ -182,6 +182,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
             // Error handling for filesystem errors
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
             return;  // Exit the function if a filesystem error occurs
         }
     }
@@ -860,6 +861,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             // Error handling for filesystem errors
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
         }
     }
 
@@ -1038,6 +1040,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 // Error handling for filesystem errors
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
                 return;  // Exit the function if a filesystem error occurs
             }
         }
