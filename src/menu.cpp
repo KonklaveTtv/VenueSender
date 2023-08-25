@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int MenuManager::displayMenuOptions() {
+int MenuManager::displayMenuOptions() const {
     int choice;
 
     do {

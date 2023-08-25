@@ -4,12 +4,6 @@
 
 #include "../include/main.h"
 
-#include "../include/fileutils.h"
-#include "../include/filtercriteria.h"
-#include "../include/mail.h"
-#include "../include/menu.h"
-#include "../include/structs.h"
-
 #include "catch.hpp"
 
 using namespace std;

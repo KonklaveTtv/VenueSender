@@ -2,7 +2,6 @@
 
 // Use the standard namespace and alias for filesystem
 using namespace std;
-namespace fs = filesystem;
 
 // Define global objects for CURL and error handling
 CurlHandleWrapper& curlHandleWrapper = CurlHandleWrapper::getInstance();
@@ -147,8 +146,8 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
 
         // Calculate and set the size of the attachment
         try {
-            if (fs::exists(attachmentPath)) {
-                size_t fileSize = fs::file_size(attachmentPath);
+            if (filesystem::exists(attachmentPath)) {
+                size_t fileSize = filesystem::file_size(attachmentPath);
                 attachmentSize = to_string(fileSize) + " bytes";
                 ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
                 cout << "File Size: " << fileSize << " bytes" << endl;
@@ -825,8 +824,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
         // Calculate and set the size of the attachment
         try {
-            if (fs::exists(attachmentPath)) {
-                size_t fileSize = fs::file_size(attachmentPath);
+            if (filesystem::exists(attachmentPath)) {
+                size_t fileSize = filesystem::file_size(attachmentPath);
                 attachmentSize = to_string(fileSize) + " bytes";
                 ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
                 cout << "File Size: " << fileSize << " bytes" << endl;
@@ -1003,8 +1002,8 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
             // Calculate and set the size of the attachment
             try {
-                if (fs::exists(attachmentPath)) {
-                    size_t fileSize = fs::file_size(attachmentPath);
+                if (filesystem::exists(attachmentPath)) {
+                    size_t fileSize = filesystem::file_size(attachmentPath);
                     attachmentSize = to_string(fileSize) + " bytes";
                     cout << "File Size: " << fileSize << " bytes" << endl;
 

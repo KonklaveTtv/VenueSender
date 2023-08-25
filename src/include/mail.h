@@ -26,7 +26,7 @@ public:
     const size_t MAX_ATTACHMENT_SIZE = 24 * 1024 * 1024;  // 24 MB in bytes
 
     // Function to get the current date in RFC 2822 format
-    inline std::string getCurrentDateRfc2822() {
+    static inline std::string getCurrentDateRfc2822() {
         char buffer[100];
         time_t now;
         struct tm *tm_now;
@@ -37,14 +37,14 @@ public:
     }
 
     // Function to sanitize the subject line of an email by replacing newline and carriage return characters with spaces
-    inline std::string sanitizeSubject(std::string& subject) {
+    static inline std::string sanitizeSubject(std::string& subject) {
         std::string sanitized = subject;
         replace(sanitized.begin(), sanitized.end(), '\n', ' '); // replace newlines with spaces
         replace(sanitized.begin(), sanitized.end(), '\r', ' '); // replace carriage returns with spaces
         return sanitized;
     }
 
-    inline void clearAllEmailData(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+    static inline void clearAllEmailData(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
         subject.clear();
         message.clear();
         attachmentName.clear();
@@ -52,7 +52,7 @@ public:
         attachmentPath.clear();
     }
 
-    inline void clearBookingTemplate(std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath, bool& templateExists) {
+    static inline void clearBookingTemplate(std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath, bool& templateExists) {
         emailToTemplate.clear();
         attachmentName.clear();
         attachmentSize.clear();
@@ -63,31 +63,31 @@ public:
         ConsoleUtils::resetColor();
     }
 
-    inline void clearSelectedVenues(std::vector<SelectedVenue>& selectedVenuesForEmail) {
+    static inline void clearSelectedVenues(std::vector<SelectedVenue>& selectedVenuesForEmail) {
         selectedVenuesForEmail.clear();
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
         std::cout << "Selected venues cleared." << std::endl; 
         ConsoleUtils::resetColor();
     }
 
-    inline void clearAttachmentData(std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+    static inline void clearAttachmentData(std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
         attachmentName.clear();
         attachmentSize.clear();
         attachmentPath.clear();
     }
 
-    inline void clearSubjectMessageData(std::string &subject, std::string &message) {
+    static inline void clearSubjectMessageData(std::string &subject, std::string &message) {
         subject.clear();
         message.clear();
     }
 
 
     // Function to display the email settings from the configuration file
-    void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,  
+    static void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
                            const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
 
     // Function to validate an email address format
-    bool isValidEmail(const std::string& email);
+    static bool isValidEmail(const std::string& email);
 
     // Function to construct an email, including the subject, message, and attachment details
     void constructEmail(std::string &subject, std::string &message, std::string &attachmentPath, std::string &attachmentName, std::string &attachmentSize, std::istream &in = std::cin);

@@ -16,20 +16,16 @@ extern std::array<unsigned char, crypto_secretbox_NONCEBYTES> globalEncryptionNo
 // EncryptionManager class to handle encryption-related functionalities
 class EncryptionManager {
 public:
-    // Constructor will initialize encryption key and nonce
+    static EncryptionManager& getInstance();
+    EncryptionManager(EncryptionManager const&) = delete;
+    void operator=(EncryptionManager const&) = delete;
+
+    // Declare constructor
     EncryptionManager();
 
-    // Utility function to encrypt a password
-    // Parameters: 
-    // decryptedPassword: The original password to encrypt
-    // encryptedPassword: The encrypted password will be stored here
-    // Return: true if encryption is successful, false otherwise
-    static bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword);
-
-    // Utility function to decrypt a password
-    // Parameter: encryptedPassword: The encrypted password to decrypt
-    // Return: The decrypted password as a string
-    static std::string decryptPassword(const std::string& encryptedPassword);
+    // Your existing methods here
+    bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword);
+    std::string decryptPassword(const std::string& encryptedPassword);
 };
 
 #endif // ENCRYPTION_H

@@ -75,7 +75,7 @@ public:
     ConfigManager();
 
     // Method to load settings from a configuration file
-    bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
+    static bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose,
                             std::string& senderEmail, std::string& smtpUsername, 
                             std::string& mailPass, int& smtpPort, std::string& smtpServer, 
                             std::string& venuesCsvPath);

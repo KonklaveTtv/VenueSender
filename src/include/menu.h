@@ -61,18 +61,18 @@ public:
     }
 
     // Function to validate if the user's choice is a valid menu option
-    inline bool isValidMenuChoice(int choice) const {
+    static inline bool isValidMenuChoice(int choice) {
         return choice >= FILTER_BY_GENRE_OPTION && choice <= EXIT_OPTION;
     }
     
     // Function to display the available menu options to the user
-    int displayMenuOptions();
+    int displayMenuOptions() const;
 
     // Function to display the list of venues selected by the user
-    void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
+    static void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
 
     // Function to handle the exiting/cleanup of the program
-    bool handleExitOption();
+    static bool handleExitOption();
 };
 
 #endif // MENU_H

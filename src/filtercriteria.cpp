@@ -1,7 +1,5 @@
 #include "include/filtercriteria.h"
 
-#include "mail.h" // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
-
 // Use the standard namespace
 using namespace std;
 
@@ -9,7 +7,7 @@ using namespace std;
 void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                            vector<SelectedVenue>& selectedVenuesForEmail,
                            istream& input,
-                           ostream& output) {
+                           ostream& output) const {
     if (temporaryFilteredVenues.empty()) {
         return;
     }

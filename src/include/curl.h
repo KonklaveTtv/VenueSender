@@ -67,9 +67,6 @@ private:
 
     // Email address of the recipient for the email being sent
     std::string emailBeingSent;
-
-    // Mutex for thread safety
-    mutable std::mutex mtx;
 };
 
 // Function to set up a cURL handle with the given options

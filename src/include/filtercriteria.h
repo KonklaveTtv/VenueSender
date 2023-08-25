@@ -97,10 +97,10 @@ public:
     void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                                std::vector<SelectedVenue>& selectedVenuesForEmail,
                                std::istream& input = std::cin,
-                               std::ostream& output = std::cout);
+                               std::ostream& output = std::cout) const;
 
     // Function to display the filtered venues to the user
-    void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
+    static void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
 
 
     // Function to filter venues based on a specific option (Genre, State, etc.)
@@ -113,8 +113,6 @@ public:
     std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
                                                 const std::set<int>& uniqueCapacities,
                                                 std::vector<SelectedVenue>& temporaryFilteredVenues);
-
-    size_t getSelectedVenuesCount() const { return selectedVenuesForEmail.size(); }
 };
 
 #endif // FILTERCRITERIA_H

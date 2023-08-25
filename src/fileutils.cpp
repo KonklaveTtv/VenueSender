@@ -161,6 +161,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
                                        string& senderEmail, string& smtpUsername, 
                                        string& mailPass, int& smtpPort, string& smtpServer, 
                                        string& venuesCsvPath) {
+    EncryptionManager& encryptionManager = EncryptionManager::getInstance();
+
     // Logic to read and load settings from a JSON file
     // Includes conditional compilation for unit testing
     // Handles encryption and decryption of email passwords
@@ -251,7 +253,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
-        if (!EncryptionManager::encryptPassword(mailPass, mailPassEncrypted)) {
+        if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
             return false;
@@ -301,11 +303,8 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Reassign encrypted passwords for decryption and reassignment
     mailPass = config["email_password"].asString();
 
-    // SMTP/Mail Password Decryption Check
-    string mailPassDecrypted;
-
     // Decrypt the encrypted mail password
-    mailPassDecrypted = EncryptionManager::decryptPassword(mailPass);
+    string mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
