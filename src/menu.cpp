@@ -19,15 +19,18 @@ int MenuManager::displayMenuOptions() {
         cout << FILTER_BY_GENRE_OPTION << ". Filter by Genre" << endl;
         cout << FILTER_BY_STATE_OPTION << ". Filter by State" << endl;
         cout << FILTER_BY_CITY_OPTION << ". Filter by City" << endl;
-        cout << FILTER_BY_CAPACITY_OPTION << ". Filter by Capacity" << endl;
-        cout << CLEAR_SELECTED_VENUES_OPTION << ". Clear Selected Venues" << endl;
-        cout << CLEAR_BOOKING_TEMPLATE_OPTION << ". Clear Booking Template" << endl;
+        cout << FILTER_BY_CAPACITY_OPTION << ". Filter by Capacity" << endl;      
         cout << VIEW_SELECTED_VENUES_OPTION << ". View Selected Venues" << endl;
-        cout << SHOW_EMAIL_SETTINGS_OPTION << ". Show Email Settings" << endl;
+        cout << CLEAR_SELECTED_VENUES_OPTION << ". Clear Selected Venues" << endl;
+        cout << CREATE_EMAIL_OPTION << ". Create Email" << endl;
         cout << VIEW_EDIT_EMAILS_OPTION << ". View & Edit Email" << endl;
-        cout << VENUE_BOOKING_TEMPLATE_OPTION << ". Venue Booking Template" << endl;
         cout << EMAIL_CUSTOM_ADDRESS_OPTION << ". Email Custom Address" << endl;
-        cout << FINISH_AND_SEND_EMAILS_OPTION << ". Finish & Send Emails" << endl;
+        cout << SEND_EMAILS_OPTION << ". Send Emails" << endl;        
+        cout << CREATE_VENUE_BOOKING_TEMPLATE_OPTION << ". Create Venue Booking Template" << endl;
+        cout << VIEW_EDIT_BOOKING_TEMPLATES_OPTION << ". View & Edit Booking Template" << endl;
+        cout << CLEAR_BOOKING_TEMPLATE_OPTION << ". Clear Booking Template" << endl;
+        cout << SEND_BOOKING_TEMPLATES_OPTION << ". Send Booking Templates" << endl;        
+        cout << SHOW_EMAIL_SETTINGS_OPTION << ". Show Email Configuration" << endl;        
         cout << EXIT_OPTION << ". Exit VenueSender" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);

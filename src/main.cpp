@@ -20,6 +20,7 @@ VenueUtilities venueUtilities;
 int main() {
     // Initialize necessary variables
     vector<Venue> venues;
+    vector<SelectedVenue> selectedVenuesForTemplates;
     string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort;
     bool templateExists, useSSL, verifyPeer, verifyHost, verbose;
@@ -63,6 +64,9 @@ int main() {
     vector<SelectedVenue> selectedVenuesForEmail;
     vector<SelectedVenue> filteredVenues;
 
+    // Initialize map for booking templates
+    map<string, pair<string, string>> emailToTemplate;
+
     // Main loop for interacting with the user
     while (true) {
 
@@ -98,24 +102,24 @@ int main() {
                 menuManager.displaySelectedVenues(selectedVenuesForEmail);
             } else if (choice == MenuManager::CLEAR_SELECTED_VENUES_OPTION) {
                 emailManager.clearSelectedVenues(selectedVenuesForEmail);
+            } else if (choice == MenuManager::CREATE_EMAIL_OPTION) {
+                emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
+            } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
+                emailManager.viewEditEmails(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath, templateExists, emailToTemplate);
+            } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION) {
+                emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+            } else if (choice == MenuManager::SEND_EMAILS_OPTION) {
+                emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+            } else if (choice == MenuManager::CREATE_VENUE_BOOKING_TEMPLATE_OPTION) {
+                emailManager.createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
+            } else if (choice == MenuManager::VIEW_EDIT_BOOKING_TEMPLATES_OPTION) {
+                emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
             } else if (choice == MenuManager::CLEAR_BOOKING_TEMPLATE_OPTION) {
-                emailManager.clearBookingTemplate(subject, message, attachmentName, attachmentSize, attachmentPath, templateExists);
+                emailManager.clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
+            } else if (choice == MenuManager::SEND_BOOKING_TEMPLATES_OPTION) {
+                emailManager.confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             } else if (choice == MenuManager::SHOW_EMAIL_SETTINGS_OPTION) {
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
-            } else if (choice == MenuManager::VIEW_EDIT_EMAILS_OPTION) {
-                emailManager.viewEditEmails(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath, templateExists);
-            } else if (choice == MenuManager::VENUE_BOOKING_TEMPLATE_OPTION) {
-                emailManager.createBookingTemplate(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
-            } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION && !templateExists) {
-                emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-            } else if (choice == MenuManager::EMAIL_CUSTOM_ADDRESS_OPTION && templateExists) {
-                emailManager.clearAllEmailData(subject, message, attachmentName, attachmentSize, attachmentPath);
-                emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-            } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION && !templateExists) {
-                emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-            } else if (choice == MenuManager::FINISH_AND_SEND_EMAILS_OPTION && templateExists) {
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_PENDING_ERROR);
             } else if (choice == MenuManager::EXIT_OPTION) {
                 if (menuManager.handleExitOption()) {
                     break;

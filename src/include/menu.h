@@ -11,21 +11,23 @@
 // Class to manage menu-related operations
 class MenuManager {
 public:
-
     // Enumeration representing the available options in the main menu
     enum class MenuOption {
         FilterByGenre = 1,
         FilterByState,
         FilterByCity,
         FilterByCapacity,
-        ClearSelectedVenues,
-        ClearBookingTemplate,
         ViewSelectedVenues,
-        ShowEmailSettings,
+        ClearSelectedVenues,
+        CreateEmail,
         ViewEditEmail,
-        VenueBookingTemplate,
         EmailCustomAddress,
-        FinishAndSendEmail,
+        SendEmails,
+        CreateVenueBookingTemplate,
+        ViewEditBookingTemplates,
+        ClearBookingTemplate,
+        sendBookingTemplateEmails,        
+        ShowEmailSettings,
         Exit
     };
 
@@ -36,14 +38,17 @@ public:
     static constexpr int FILTER_BY_CAPACITY_OPTION = static_cast<int>(MenuOption::FilterByCapacity);
 
     // Constants for other menu options
-    static constexpr int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
-    static constexpr int CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuOption::ClearBookingTemplate);
     static constexpr int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ViewSelectedVenues);
-    static constexpr int SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuOption::ShowEmailSettings);
+    static constexpr int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(MenuOption::ClearSelectedVenues);
+    static constexpr int CREATE_EMAIL_OPTION = static_cast<int>(MenuOption::CreateEmail);
     static constexpr int VIEW_EDIT_EMAILS_OPTION = static_cast<int>(MenuOption::ViewEditEmail);
-    static constexpr int VENUE_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuOption::VenueBookingTemplate);
     static constexpr int EMAIL_CUSTOM_ADDRESS_OPTION = static_cast<int>(MenuOption::EmailCustomAddress);
-    static constexpr int FINISH_AND_SEND_EMAILS_OPTION = static_cast<int>(MenuOption::FinishAndSendEmail);
+    static constexpr int SEND_EMAILS_OPTION = static_cast<int>(MenuOption::SendEmails);
+    static constexpr int CREATE_VENUE_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuOption::CreateVenueBookingTemplate);
+    static constexpr int VIEW_EDIT_BOOKING_TEMPLATES_OPTION = static_cast<int>(MenuOption::ViewEditBookingTemplates);
+    static constexpr int CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(MenuOption::ClearBookingTemplate);
+    static constexpr int SEND_BOOKING_TEMPLATES_OPTION = static_cast<int>(MenuOption::sendBookingTemplateEmails);
+    static constexpr int SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(MenuOption::ShowEmailSettings);
     static constexpr int EXIT_OPTION = static_cast<int>(MenuOption::Exit);
 
     // Function to show the main title header of VenueSender
