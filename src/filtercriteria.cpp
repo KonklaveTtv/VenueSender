@@ -104,9 +104,12 @@ void VenueFilter::displayFilteredVenues(const vector<SelectedVenue>& selectedVen
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
         cout << setw(2) << i + 1 << ". Name: " << venue.name << endl;
-        cout << "   Email: " << venue.email << endl;
-        cout << "   City: " << venue.city << endl;
-        cout << "   Capacity: " << venue.capacity << endl;
+        cout << "    Email: " << venue.email << endl;
+        cout << "    Genre: " << venue.genre << endl;
+        cout << "    Country: " << venue.country << endl;
+        cout << "    Capacity: " << venue.capacity << endl;
+        cout << "    State: " << venue.state << endl;
+        cout << "    City: " << venue.city << endl;
         cout << endl;
     }
 }
@@ -118,7 +121,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                                                 vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    
+
     cout << "==========================="<< endl;
     cout << "===== Filter By " << filterType << " =====" << endl;
     cout << "==========================="<< endl;
@@ -154,19 +157,33 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
         }
     }
 
-    // Now you have the validated selectedIndices vector to work with
-    for (size_t selectedIndex : selectedIndices) {
-        if (selectedIndex < filterOptions.size()) {
-            string filterValue = filterOptions[selectedIndex];
-            for (const Venue& venue : venues) {
-                if ((filterType == "Genre" && venue.genre == filterValue) ||
-                    (filterType == "State" && venue.state == filterValue) ||
-                    (filterType == "City" && venue.city == filterValue)) {
-                    SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(venue);
-                    temporaryFilteredVenues.push_back(selectedVenue);
+        for (size_t selectedIndex : selectedIndices) {
+            if (selectedIndex < filterOptions.size()) {
+                string filterValue = filterOptions[selectedIndex];
+
+                for (const Venue& venue : venues) {
+                    string venueValue;
+                    if (filterType == "Genre") {
+                        venueValue = venue.genre;
+                    } else if (filterType == "Countries") {
+                        venueValue = venue.country;
+                    } else if (filterType == "State") {
+                        venueValue = venue.state;
+                    } else if (filterType == "City") {
+                        venueValue = venue.city;
+                    }
+
+
+                    if ((filterType == "Genre" && venue.genre == filterValue) ||
+                        (filterType == "Countries" && venue.country == filterValue) ||
+                        (filterType == "State" && venue.state == filterValue) ||
+                        (filterType == "City" && venue.city == filterValue)) {
+
+                        SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(venue);
+                        temporaryFilteredVenues.push_back(selectedVenue);
+                    }
                 }
-            }
-        } else {
+            } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();

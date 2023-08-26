@@ -78,11 +78,8 @@ public:
         ConsoleUtils::resetColor();
     }
 
-        static inline void clearSelectedVenuesForTemplates(std::vector<SelectedVenue>& selectedVenuesForTemplates) {
+    static inline void clearSelectedVenuesForTemplates(std::vector<SelectedVenue>& selectedVenuesForTemplates) {
         selectedVenuesForTemplates.clear();
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-        std::cout << "Selected venues cleared." << std::endl; 
-        ConsoleUtils::resetColor();
     }
 
     static inline void clearCustomAddressAttachmentData(std::string& customAddressAttachmentName, std::string& customAddressAttachmentSize, std::string& customAddressAttachmentPath) {

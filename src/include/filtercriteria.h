@@ -14,6 +14,8 @@ extern std::vector<SelectedVenue> temporaryFilteredVenues;
 // Structure to hold filter criteria for venues
 struct FilterCriteria {
     std::string genre;
+    std::string country;
+    int capacity;
     std::string state;
     std::string city;
 };
@@ -28,9 +30,10 @@ public:
         selectedVenue.name = venue.name;
         selectedVenue.email = venue.email;
         selectedVenue.genre = venue.genre;
-        selectedVenue.state = venue.state;
-        selectedVenue.city = venue.city;
+        selectedVenue.country = venue.country;
         selectedVenue.capacity = venue.capacity;
+        selectedVenue.state = venue.state;
+        selectedVenue.city = venue.city;        
         return selectedVenue;
     }
 
@@ -43,6 +46,26 @@ public:
             }
         }
         return uniqueGenres;
+    }
+
+    // Utility function to get unique countries from a list of venues
+    inline std::set<std::string> getUniqueCountries(const std::vector<Venue>& venues) {
+        std::set<std::string> uniqueCountries;
+        for (const auto& venue : venues) {
+            if (uniqueCountries.find(venue.country) == uniqueCountries.end()) {
+                uniqueCountries.insert(venue.country);
+            }
+        }
+        return uniqueCountries;
+    }
+
+    // Utility function to get unique capacities from a list of venues
+    inline std::set<int> getUniqueCapacities(const std::vector<Venue>& venues) {
+        std::set<int> uniqueCapacities;
+        for (const Venue& venue : venues) {
+            uniqueCapacities.insert(venue.capacity);
+        }
+        return uniqueCapacities;
     }
 
     // Utility function to get unique states from a list of venues
@@ -66,15 +89,6 @@ public:
         }
         return uniqueCities;
     }
-
-    // Utility function to get unique capacities from a list of venues
-    inline std::set<int> getUniqueCapacities(const std::vector<Venue>& venues) {
-        std::set<int> uniqueCapacities;
-        for (const Venue& venue : venues) {
-            uniqueCapacities.insert(venue.capacity);
-        }
-        return uniqueCapacities;
-    }
 };
 
 // Class to handle venue filtering logic
@@ -92,13 +106,8 @@ private:
     std::set<std::string> uniqueOptions;
     std::string filterType;
 
-    // Common function to handle venue filtering by options like Genre, State, City
-    std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
-                                                    const std::set<std::string>& uniqueOptions,
-                                                    const std::string& filterType,
-                                                    std::vector<SelectedVenue>& temporaryFilteredVenues);
-    
 public:
+
     // Function to process user input and select venues based on it
     static void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                                std::vector<SelectedVenue>& selectedVenuesForEmail,
@@ -109,6 +118,11 @@ public:
     // Function to display the filtered venues to the user
     static void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
 
+    // Common function to handle venue filtering by options like Genre, State, City
+    std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
+                                                    const std::set<std::string>& uniqueOptions,
+                                                    const std::string& filterType,
+                                                    std::vector<SelectedVenue>& temporaryFilteredVenues);
 
     // Function to filter venues based on a specific option (Genre, State, etc.)
     std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
