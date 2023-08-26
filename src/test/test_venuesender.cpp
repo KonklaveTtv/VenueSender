@@ -325,7 +325,6 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
 }
 
 
-
 // -----------------------
 // Test Group: VenueFilter
 // -----------------------
