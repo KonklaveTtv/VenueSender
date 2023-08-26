@@ -468,14 +468,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         return false;
     }
 
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-
     struct curl_slist* recipients = nullptr;
 
     if (selectedVenuesForEmail.size() <= 49) {
@@ -493,26 +485,39 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                 recipients = curl_slist_append(recipients, ("BCC: " + selectedVenuesForEmail[j].email).c_str());
             }
 
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            // Inform user we are connecting to the SMTP server
+            cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+
             // Send the batch of emails
             curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
+            struct curl_slist* headers = nullptr;
+            string dateHeader = "Date: " + getCurrentDateRfc2822();
             string toHeader = "To: " + senderEmail;  // Use senderEmail as the main recipient for BCC batches
             string fromHeader = "From: " + senderEmail;
             string subjectHeader = "Subject: " + subject;
 
-            struct curl_slist* headers = nullptr;
-            string dateHeader = "Date: " + getCurrentDateRfc2822();
             headers = curl_slist_append(headers, dateHeader.c_str());
             headers = curl_slist_append(headers, toHeader.c_str());
             headers = curl_slist_append(headers, fromHeader.c_str());
             headers = curl_slist_append(headers, subjectHeader.c_str());
+
+            // Set headers
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
             curl_mime *mime = nullptr;
 
-            if (!attachmentPath.empty()) {
-                mime = curl_mime_init(curl);
+            mime = curl_mime_init(curl);
 
+            if (!attachmentPath.empty()) {
+
+                // Get attachment size
                 size_t fileSize = filesystem::file_size(attachmentPath);
                 attachmentSize = to_string(fileSize) + " bytes";
 
@@ -531,21 +536,17 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                 curl_mime_type(part, "application/octet-stream");
 
                 curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-            } else {
-                string payload = dateHeader + "\r\n"
-                                 + toHeader + "\r\n"
-                                 + fromHeader + "\r\n"
-                                 + subjectHeader + "\r\n\r\n"
-                                 + message;
-                curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
-                curl_easy_setopt(curl, CURLOPT_READDATA, &payload);
-                curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
             }
 
+            curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
+
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             cout << "Authenticating with SMTP server..." << endl;
+            ConsoleUtils::resetColor();
             cout.flush();
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
+            // Perform the operation
             res = curl_easy_perform(curl);
             if (res == 0) { // Check if email was sent successfully
                 successfulSends++;
@@ -553,7 +554,19 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                 if (totalEmails != 0) {
                     progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
                 }
-                cout << "Progress: " << progressPercentage << "%" << endl;
+            // Check progressPercentage to set color
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(progressPercentage == 100 ? ConsoleUtils::Color::GREEN : ConsoleUtils::Color::ORANGE);
+#endif
+
+            // Display the progress
+            cout << "Progress: " << progressPercentage << "%" << endl;
+
+            // Reset the color to default
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
+
                 cout.flush();
             }
 
@@ -565,6 +578,10 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
             curl_slist_free_all(recipients);  // Free the list after each batch
             curl_slist_free_all(headers);
 
+            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+            cout << "Email sending progress completed." << endl;
+            ConsoleUtils::resetColor();
+            
             if (!errorHandler.handleCurlError(res)) {
                 return false;
             }
@@ -636,13 +653,19 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         if (totalEmails != 0) {
             progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
         }
+// Check progressPercentage to set color
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+    ConsoleUtils::setColor(progressPercentage == 100 ? ConsoleUtils::Color::GREEN : ConsoleUtils::Color::ORANGE);
 #endif
-        cout << "Progress: " << progressPercentage << "%" << endl;
+
+// Display the progress
+cout << "Progress: " << progressPercentage << "%" << endl;
+
+// Reset the color to default
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
+    ConsoleUtils::resetColor();
 #endif
+
         cout.flush();
     }
 
@@ -1355,6 +1378,8 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
              if (!customAddressAttachmentPath.empty()) {
                 // Add the attachment part conditionally
+                size_t fileSize = filesystem::file_size(customAddressAttachmentPath);
+                customAddressAttachmentSize = to_string(fileSize) + " bytes";
                 part = curl_mime_addpart(mime);
                 curl_mime_filedata(part, customAddressAttachmentPath.c_str());
                 curl_mime_filename(part, customAddressAttachmentName.c_str());
