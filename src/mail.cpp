@@ -17,9 +17,9 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    cout << "============================" << endl
-         << "       Email Settings       " << endl
-         << "============================" << endl;
+    cout << "============================"<< endl
+         << "       Email Settings       "<< endl
+         << "============================"<< endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -51,9 +51,9 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    cout << "===========================" << endl;
-    cout << "===== Construct Email =====" << endl;
-    cout << "===========================" << endl;
+    cout << "==========================="<< endl;
+    cout << "===== Construct Email ====="<< endl;
+    cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif       
@@ -1447,9 +1447,9 @@ void EmailManager::confirmSendEmail(CURL* curl,
 
     // Display a summary of all emails to be sent.
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    cout << "===========================" << endl;
+    cout << "==========================="<< endl;
     cout << "===== Email Summary ======" << endl;
-    cout << "===========================" << endl;
+    cout << "==========================="<< endl;
     ConsoleUtils::resetColor();
     ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
     cout << "Number of emails to send: " << selectedVenuesForEmail.size() << endl;
@@ -1493,10 +1493,10 @@ void EmailManager::confirmSendEmail(CURL* curl,
 
     // Display a summary once all emails are sent.
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-    cout << "===========================" << endl;
-    cout << "Email sending completed. " << endl;
+    cout << "==========================="<< endl;
+    cout << "Email sending completed. "<< endl;
     cout << "Sent: " << sendCount << "/" << selectedVenuesForEmail.size() << endl;
-    cout << "===========================" << endl;
+    cout << "==========================="<< endl;
     ConsoleUtils::resetColor();
 }
 
@@ -1527,9 +1527,9 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
 
     // Display a summary of all templates to be sent.
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    cout << "===============================" << endl;
-    cout << "===== Booking Template Summary =====" << endl;
-    cout << "===============================" << endl;
+    cout << "============================"<< endl;
+    cout << "  Booking Template Summary  "<< endl;
+    cout << "============================"<< endl;
     ConsoleUtils::resetColor();
 
     // Display the first template as an example
@@ -1548,7 +1548,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     cout << "Number of templates to send: " << selectedVenuesForTemplates.size() << endl;
     // More details about the templates here...
     ConsoleUtils::resetColor();
-    cout << "===============================" << endl;
+    cout << "==============================="<< endl;
 
     // Confirm with the user that they want to proceed.
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1568,11 +1568,19 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     // Send each template, displaying progress as it goes.
     bool sendStatus = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
 
-    // Display a summary once all templates are sent.
+    // Set the initial color to Orange
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    cout << "==============================="<< endl;
+
+    // Set the color based on sendStatus (Green if completed, Red if failed)
     ConsoleUtils::setColor(sendStatus ? ConsoleUtils::Color::GREEN : ConsoleUtils::Color::RED);
-    cout << "===============================" << endl;
     cout << "Template sending " << (sendStatus ? "completed." : "failed.") << endl;
-    cout << "===============================" << endl;
+
+    // Set the color back to Orange
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    cout << "==============================="<< endl;
+
+    // Reset the color to default
     ConsoleUtils::resetColor();
 }
 

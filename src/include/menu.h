@@ -26,7 +26,7 @@ private:
 
 public:
     enum class MainMenuOption {
-        VenueFiltering = 1,
+        VenueSelection = 1,
         VenueOptions,
         Email,
         Templates,
@@ -34,7 +34,7 @@ public:
         Exit
     };
 
-    enum class VenueFilteringOption {
+    enum class VenueSelectionOption {
         FilterByGenre = 1,
         FilterByState,
         FilterByCity,
@@ -65,11 +65,11 @@ public:
     };
 
     // Constants for Venue Filtering sub-menu options
-    static constexpr int FILTER_BY_GENRE_OPTION = static_cast<int>(VenueFilteringOption::FilterByGenre);
-    static constexpr int FILTER_BY_STATE_OPTION = static_cast<int>(VenueFilteringOption::FilterByState);
-    static constexpr int FILTER_BY_CITY_OPTION = static_cast<int>(VenueFilteringOption::FilterByCity);
-    static constexpr int FILTER_BY_CAPACITY_OPTION = static_cast<int>(VenueFilteringOption::FilterByCapacity);
-    static constexpr int RETURN_TO_MAIN_MENU_FROM_VENUE_FILTERING = static_cast<int>(VenueFilteringOption::ReturnToMainMenu);
+    static constexpr int FILTER_BY_GENRE_OPTION = static_cast<int>(VenueSelectionOption::FilterByGenre);
+    static constexpr int FILTER_BY_STATE_OPTION = static_cast<int>(VenueSelectionOption::FilterByState);
+    static constexpr int FILTER_BY_CITY_OPTION = static_cast<int>(VenueSelectionOption::FilterByCity);
+    static constexpr int FILTER_BY_CAPACITY_OPTION = static_cast<int>(VenueSelectionOption::FilterByCapacity);
+    static constexpr int RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION = static_cast<int>(VenueSelectionOption::ReturnToMainMenu);
 
     // Constants for Venue Options sub-menu options
     static constexpr int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(VenueOptions::ViewSelectedVenues);
@@ -91,7 +91,7 @@ public:
     static constexpr int RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS = static_cast<int>(TemplateOptions::ReturnToMainMenu);
 
     // Constants for Main Menu options
-    static constexpr int VENUE_FILTERING_OPTION = static_cast<int>(MainMenuOption::VenueFiltering);
+    static constexpr int VENUE_SELECTION_OPTION = static_cast<int>(MainMenuOption::VenueSelection);
     static constexpr int VENUE_OPTIONS_OPTION = static_cast<int>(MainMenuOption::VenueOptions);
     static constexpr int EMAIL_OPTIONS_OPTION = static_cast<int>(MainMenuOption::Email);
     static constexpr int TEMPLATES_OPTION = static_cast<int>(MainMenuOption::Templates);
@@ -138,7 +138,7 @@ public:
 
     // Functions to display the menu options to the user
     int displayMenuOptions() const;
-    int displayVenueFilteringOptions() const;
+    int displayVenueSelectionOptions() const;
     int displayVenueOptions() const;
     int displayEmailOptions() const;
     int displayTemplateOptions() const;

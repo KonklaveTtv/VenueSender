@@ -142,7 +142,7 @@ TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
         "===========================""\n"
         "         Main Menu         ""\n"
         "===========================""\n"
-        "1. Venue Filtering" "\n"
+        "1. Venue Selection" "\n"
         "2. Venue Options" "\n"
         "3. Email" "\n"
         "4. Templates" "\n"

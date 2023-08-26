@@ -106,8 +106,8 @@ int main() {
 
         // Main Menu
         switch (mainChoice) {
-            case MenuManager::VENUE_FILTERING_OPTION:
-                menuManager.displayVenueFilteringOptions();
+            case MenuManager::VENUE_SELECTION_OPTION:
+                menuManager.displayVenueSelectionOptions();
                 break;
             case MenuManager::VENUE_OPTIONS_OPTION:
                 menuManager.displayVenueOptions();

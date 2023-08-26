@@ -36,8 +36,8 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
         int mainChoice = displayMenuOptions();
 
         switch (mainChoice) {
-            case VENUE_FILTERING_OPTION: {
-                int subChoice = displayVenueFilteringOptions();
+            case VENUE_SELECTION_OPTION: {
+                int subChoice = displayVenueSelectionOptions();
 
                 switch (subChoice) {
                     case FILTER_BY_GENRE_OPTION:
@@ -64,7 +64,7 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                         venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
-                    case RETURN_TO_MAIN_MENU_FROM_VENUE_FILTERING:
+                    case RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION:
                         // Logic to return to the main menu
                         // No action needed, loop will start from the beginning
                         break;
@@ -151,12 +151,12 @@ int MenuManager::displayMenuOptions() const {
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
 #endif
         cout << "==========================="<< endl;
-        cout << "         Main Menu         " << endl;
+        cout << "         Main Menu         "<< endl;
         cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
-        cout << VENUE_FILTERING_OPTION << ". Venue Filtering" << endl;
+        cout << VENUE_SELECTION_OPTION << ". Venue Selection" << endl;
         cout << VENUE_OPTIONS_OPTION << ". Venue Options" << endl;
         cout << EMAIL_OPTIONS_OPTION << ". Email" << endl;
         cout << TEMPLATES_OPTION << ". Templates" << endl;
@@ -211,7 +211,7 @@ int MenuManager::displayMenuOptions() const {
             }
         }
 
-        if (choice >= VENUE_FILTERING_OPTION && choice <= EXIT_OPTION) {
+        if (choice >= VENUE_SELECTION_OPTION && choice <= EXIT_OPTION) {
             break;
         } else {
             ErrorHandler errorHandler;
@@ -221,14 +221,14 @@ int MenuManager::displayMenuOptions() const {
     return choice;
 }
 
-int MenuManager::displayVenueFilteringOptions() const {
+int MenuManager::displayVenueSelectionOptions() const {
     int choice;
     do {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
 #endif
         cout << "==========================="<< endl;
-        cout << "      Venue Filtering      " << endl;
+        cout << "      Venue Selection      "<< endl;
         cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
@@ -237,7 +237,7 @@ int MenuManager::displayVenueFilteringOptions() const {
         cout << FILTER_BY_STATE_OPTION << ". Filter by State" << endl;
         cout << FILTER_BY_CITY_OPTION << ". Filter by City" << endl;
         cout << FILTER_BY_CAPACITY_OPTION << ". Filter by Capacity" << endl;
-        cout << RETURN_TO_MAIN_MENU_FROM_VENUE_FILTERING << ". Return to Main Menu" << endl;
+        cout << RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION << ". Return to Main Menu" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Blue for headers
 #endif
@@ -246,7 +246,7 @@ int MenuManager::displayVenueFilteringOptions() const {
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
-        if (choice >= FILTER_BY_GENRE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_FILTERING) {
+        if (choice >= FILTER_BY_GENRE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
             break;
         } else {
             ErrorHandler errorHandler;
@@ -263,7 +263,7 @@ int MenuManager::displayVenueOptions() const {
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
 #endif
         cout << "==========================="<< endl;
-        cout << "       Venue Options       " << endl;
+        cout << "       Venue Options       "<< endl;
         cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
@@ -280,7 +280,7 @@ int MenuManager::displayVenueOptions() const {
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
         ConsoleUtils::clearInputBuffer();
-        if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS) {
+        if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
             break;
         } else {
             ErrorHandler errorHandler;
@@ -297,7 +297,7 @@ int MenuManager::displayEmailOptions() const {
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
 #endif
         cout << "==========================="<< endl;
-        cout << "           Email           " << endl;
+        cout << "           Email           "<< endl;
         cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
@@ -333,7 +333,7 @@ int MenuManager::displayTemplateOptions() const {
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
 #endif
       //cout << "==========================="<< endl;
-        cout << "         Templates         " << endl;
+        cout << "         Templates         "<< endl;
         cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
