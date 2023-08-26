@@ -121,14 +121,6 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                                                 vector<SelectedVenue>& temporaryFilteredVenues) {
     vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    cout << "Debug: Entered filterByOptionCommon()" << endl;
-
-    // Debugging to show all venues at the start
-    cout << "Debug: Initial venues list:" << endl;
-    for (const auto& venue : venues) {
-        cout << "  Venue Name: " << venue.name << ", Country: " << venue.country
-             << ", State: " << venue.state << ", City: " << venue.city << endl;
-    }
 
     cout << "==========================="<< endl;
     cout << "===== Filter By " << filterType << " =====" << endl;
@@ -164,18 +156,12 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             cin.get(); // This will wait for a key press            
         }
     }
-    cout << "Debug: Selected indices processed. Count: " << selectedIndices.size() << endl;
-
-        // Now you have the validated selectedIndices vector to work with
-        cout << "Debug: Selected indices processed. Count: " << selectedIndices.size() << endl;
 
         for (size_t selectedIndex : selectedIndices) {
             if (selectedIndex < filterOptions.size()) {
                 string filterValue = filterOptions[selectedIndex];
 
                 for (const Venue& venue : venues) {
-                    cout << "Debug: Current filter value: " << filterValue << endl;
-                    cout << "Debug For: Comparing " << filterType << endl;
                     string venueValue;
                     if (filterType == "Genre") {
                         venueValue = venue.genre;
@@ -192,28 +178,18 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                         (filterType == "Countries" && venue.country == filterValue) ||
                         (filterType == "State" && venue.state == filterValue) ||
                         (filterType == "City" && venue.city == filterValue)) {
-                        cout << "Debug: Match found. Adding to temporaryFilteredVenues." << endl;
 
                         SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(venue);
                         temporaryFilteredVenues.push_back(selectedVenue);
                     }
                 }
             } else {
-            cout << "Debug: Invalid index detected: " << selectedIndex << endl;
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press   
         }
     }
-    // Debugging to show all venues that were added to temporaryFilteredVenues
-    cout << "Debug: Venues added to temporaryFilteredVenues:" << endl;
-    for (const auto& venue : temporaryFilteredVenues) {
-        cout << "  Venue Name: " << venue.name << ", Country: " << venue.country
-             << ", State: " << venue.state << ", City: " << venue.city << endl;
-    }
-
-    cout << "Debug: Exiting filterByOptionCommon()" << endl;
 
     return temporaryFilteredVenues;
 }
