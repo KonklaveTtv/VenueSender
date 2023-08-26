@@ -819,24 +819,41 @@ void EmailManager::createBookingTemplate(CURL* curl,
     // Construct the email template for each venue without sending it
     for (const SelectedVenue& venue : selectedVenuesForEmail) {
         
+        // Declare and initialize mandatory parts of the email
         string subject = "--- Booking Inquiry for " + venue.name + " ---";
-        string templateMessage = 
-        string("Hi!,\n\n") +
-        "I am booking a tour for my " + genre + " band, " + bandName + ", from \n\n" 
-        + hometown + ". " + "The music is in a similar vein as " + similarArtists + ".\n\n"
-        "We're planning to be in the " + venue.city + " area on " + date + " and are\n\n" 
-        " wondering if you might be interested in booking us at " + venue.name + ".\n\n" +
-        "Here are some resources to familiarize you with our work:\n\n" +
-        "- Music: " + musicLink + "\n" +
-        "- Live Performance: " + livePerfVideo + "\n" +
-        "- Music Video: " + musicVideo + "\n\n" +
-        "What people are saying about us:\n" +
-        "\""+ pressQuote + "\"\n\n" +
-        "Please let me know if you have any questions or need additional information.\n\n"
-        "We appreciate your time and consideration!\n\n" +
-        "Best wishes,\n" +
-        name + "\n\n" +
-        "-- Social Links --\n" + socials + "\n";
+        string templateMessage = string("Hi!,\n\n")
+                                + "I am booking a tour for my " + genre + " band, " + bandName + ", from \n\n"
+                                + hometown + ". The music is in a similar vein as " + similarArtists + ".\n\n"
+                                + "We're planning to be in the " + venue.city + " area on " + date + " and are\n\n"
+                                + "wondering if you might be interested in booking us at " + venue.name + ".\n\n"
+                                + "Here are some resources to familiarize you with our work:\n\n";
+
+        // Add optional fields only if they are not empty
+        if (!musicLink.empty()) {
+            templateMessage += "- Music: " + musicLink + "\n";
+        }
+        if (!livePerfVideo.empty()) {
+            templateMessage += "- Live Performance: " + livePerfVideo + "\n";
+        }
+        if (!musicVideo.empty()) {
+            templateMessage += "- Music Video: " + musicVideo + "\n";
+        }
+
+        templateMessage += "\nWhat people are saying about us:\n";
+
+        if (!pressQuote.empty()) {
+            templateMessage += "\"" + pressQuote + "\"\n";
+        }
+
+        templateMessage += string("\nPlease let me know if you have any questions or need additional information.\n\n")
+                           + "We appreciate your time and consideration!\n\n"
+                           + "Best wishes,\n"
+                           + name + "\n\n";
+
+        if (!socials.empty()) {
+            templateMessage += "-- Social Links --\n" + socials + "\n";
+        }
+
         // Map each venue's email to its unique message and subject
         emailToTemplate[venue.email] = make_pair(subject, templateMessage);
     }
