@@ -136,11 +136,6 @@ public:
         ConsoleUtils::resetColor();
     }
 
-    // Function to validate if the user's choice is a valid menu option
-    static inline bool isValidMenuChoice(int choice) {
-        return choice >= FILTER_BY_GENRE_OPTION && choice <= EXIT_OPTION;
-    }
-    
     // Functions to display the menu options to the user
     int displayMenuOptions() const;
     int displayVenueFilteringOptions() const;
@@ -149,7 +144,14 @@ public:
     int displayTemplateOptions() const;
 
     // Function to display the list of venues selected by the user
-    static void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
+    void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
+
+#ifdef UNIT_TESTING
+    // Function to validate if the user's choice is a valid menu option
+    static inline bool isValidMenuChoice(int choice) {
+        return choice >= FILTER_BY_GENRE_OPTION && choice <= EXIT_OPTION;
+    }
+#endif
 };
 
 #endif // MENU_H

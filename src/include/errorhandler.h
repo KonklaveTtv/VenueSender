@@ -59,10 +59,10 @@ public:
     };
 
     // Function to handle errors and display appropriate messages based on the type of error
-    void handleErrorAndReturn(ErrorType error);
+    static void handleErrorAndReturn(ErrorType error);
     
     // Overloaded version with extra information
-    void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
+    static void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
 
     // Handles cURL errors and returns a boolean to indicate success/failure
     bool handleCurlError(CURLcode res);

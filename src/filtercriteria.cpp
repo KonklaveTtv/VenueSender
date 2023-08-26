@@ -3,16 +3,14 @@
 // Use the standard namespace
 using namespace std;
 
-// Define the variables
-const std::set<std::string> uniqueOptions;
-const std::string filterType;
 std::vector<SelectedVenue> temporaryFilteredVenues;
 
 // Function to process venue selection based on user input
 void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
                            vector<SelectedVenue>& selectedVenuesForEmail,
+                           vector<SelectedVenue>& selectedVenuesForTemplates,
                            istream& input,
-                           ostream& output) const {
+                           ostream& output) {
     if (temporaryFilteredVenues.empty()) {
         return;
     }
@@ -28,8 +26,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
         cout << "Press return to continue..." << endl;
-        ConsoleUtils consoleUtils;
-        consoleUtils.clearInputBuffer();
+        ConsoleUtils::clearInputBuffer();
         cin.get(); // This will wait for a key press
         return;
     }
@@ -43,8 +40,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 cout << "Press return to continue..." << endl;
-                ConsoleUtils consoleUtils;
-                consoleUtils.clearInputBuffer();
+                ConsoleUtils::clearInputBuffer();
                 cin.get(); // This will wait for a key press
                 continue;
             }
@@ -60,23 +56,22 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                         break;
                     }
                 }
-
+                
                 if (!isDuplicate) {
                     selectedVenuesForEmail.push_back(selectedVenue);
+                    selectedVenuesForTemplates.push_back(selectedVenue);  // Add to selectedVenuesForTemplates
                 } else {
                     ErrorHandler errorHandler;
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR);
                     cout << "Press return to continue..." << endl;
-                    ConsoleUtils consoleUtils;
-                    consoleUtils.clearInputBuffer();
+                    ConsoleUtils::clearInputBuffer();
                     cin.get(); // This will wait for a key press
                 }
             } else {
                 ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 cout << "Press return to continue..." << endl;
-                ConsoleUtils consoleUtils;
-                consoleUtils.clearInputBuffer();
+                ConsoleUtils::clearInputBuffer();
                 cin.get(); // This will wait for a key press  
                 continue;
             }
@@ -84,8 +79,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
             cout << "Press return to continue..." << endl;
-            ConsoleUtils consoleUtils;
-            consoleUtils.clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press 
             continue;
         }
@@ -144,8 +138,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
     cout << "Enter comma-separated indices of options to select: ";
     ConsoleUtils::resetColor();
     string input;
-    ConsoleUtils consoleUtils;
-    consoleUtils.clearInputBuffer();
+    ConsoleUtils::clearInputBuffer();
     getline(cin, input);
 
     cout << endl; // Add a line of space
@@ -162,8 +155,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
-            ConsoleUtils consoleUtils;
-            consoleUtils.clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press            
         }
     }
@@ -184,8 +176,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
-            ConsoleUtils consoleUtils;
-            consoleUtils.clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press   
         }
     }
@@ -221,8 +212,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
     cout << "Enter comma-separated indices of options to select: ";
     ConsoleUtils::resetColor();
     string input;
-    ConsoleUtils consoleUtils;
-    consoleUtils.clearInputBuffer();
+    ConsoleUtils::clearInputBuffer();
     getline(cin, input);
 
     cout << endl; // Add a line of space
@@ -239,8 +229,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
-            ConsoleUtils consoleUtils;
-            consoleUtils.clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press 
         }
     }
@@ -256,11 +245,9 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
                 }
             }
         } else {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR, std::to_string(selectedIndex));
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR, std::to_string(selectedIndex));
             cout << "Press return to continue..." << endl;
-            ConsoleUtils consoleUtils;
-            consoleUtils.clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press 
         }
     }

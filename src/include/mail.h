@@ -25,7 +25,7 @@ public:
     const size_t MAX_ATTACHMENT_SIZE = 24 * 1024 * 1024;  // 24 MB in bytes
 
     // Function to get the current date in RFC 2822 format
-    inline std::string getCurrentDateRfc2822() {
+    static inline std::string getCurrentDateRfc2822() {
         char buffer[100];
         time_t now;
         struct tm *tm_now;
@@ -36,7 +36,7 @@ public:
     }
 
     // Function to sanitize the subject line of an email by replacing newline and carriage return characters with spaces
-    inline std::string sanitizeSubject(std::string& subject) {
+    static inline std::string sanitizeSubject(std::string& subject) {
         std::string sanitized = subject;
         replace(sanitized.begin(), sanitized.end(), '\n', ' '); // replace newlines with spaces
         replace(sanitized.begin(), sanitized.end(), '\r', ' '); // replace carriage returns with spaces
@@ -73,6 +73,13 @@ public:
 
     static inline void clearSelectedVenues(std::vector<SelectedVenue>& selectedVenuesForEmail) {
         selectedVenuesForEmail.clear();
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+        std::cout << "Selected venues cleared." << std::endl; 
+        ConsoleUtils::resetColor();
+    }
+
+        static inline void clearSelectedVenuesForTemplates(std::vector<SelectedVenue>& selectedVenuesForTemplates) {
+        selectedVenuesForTemplates.clear();
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
         std::cout << "Selected venues cleared." << std::endl; 
         ConsoleUtils::resetColor();

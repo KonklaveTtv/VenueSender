@@ -154,7 +154,7 @@ void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
 }
 
 // Default constructor for ConfigManager
-ConfigManager::ConfigManager() {}
+ConfigManager::ConfigManager() = default;
 
 // Function to load settings from a configuration file
 bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 

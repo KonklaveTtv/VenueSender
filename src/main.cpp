@@ -11,9 +11,7 @@ using namespace std;
 ConfigManager configManager;
 CsvReader csvReader;
 CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
-EmailManager emailManager;
 EncryptionManager encryptionManager;
-MenuManager menuManager;
 VenueFilter venueFilter;
 VenueUtilities venueUtilities;
 

@@ -3,8 +3,7 @@
 // Use the standard namespace and alias for filesystem
 using namespace std;
 
-// Define global objects for CURL and error handling
-CurlHandleWrapper& curlHandleWrapper = CurlHandleWrapper::getInstance();
+// Define global object for error handling
 ErrorHandler errorHandler;
 
 // Global progress counters
@@ -78,7 +77,6 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
     const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
-        ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -226,7 +224,6 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                 }
             } catch (const filesystem::filesystem_error& e) {
                 // Error handling for filesystem errors
-                ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
                 return;
@@ -317,7 +314,6 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
                     constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                     modified = true;
                 } catch (const exception& e) {
-                    ErrorHandler errorHandler;
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
                     clearSubjectMessageData(subject, message);
                     attempts++; // Increment the attempts
@@ -326,17 +322,14 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
             }
 
             if (subject.empty() || message.empty()) {
-                ErrorHandler errorHandler;
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
                 try {
                     constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                 } catch (const exception& e) {
-                    ErrorHandler errorHandler;
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
                     clearSubjectMessageData(subject, message);
                     attempts++; // Increment the attempts
                     if (attempts >= 3) {
-                        ErrorHandler errorHandler;
                         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
                         return; // Break out of the loop after too many attempts
                     }
@@ -971,11 +964,11 @@ void EmailManager::createBookingTemplate(CURL* curl,
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
     cout << "Do you want to add an attachment? (Y/N): ";
+    char addAttachmentChoice;
+    cin >> addAttachmentChoice;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
-    char addAttachmentChoice;
-    cin >> addAttachmentChoice;
     ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
     if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
@@ -1046,7 +1039,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
             }
         } catch (const filesystem::filesystem_error& e) {
-            ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
         }
@@ -1137,12 +1129,15 @@ void EmailManager::emailCustomAddress(CURL* curl,
     // Reset the count
     successfulSends = 0;
 
+    // Clear the subject, message, attachment fields
+    clearAllCustomAddressEmailData(customAddressSubject, customAddressMessage, customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
+
     // Declarations
     string customAddressRecipientEmail;
-
+    string customAddressLine;
+    
     while(true) {
-        string customAddressLine;
-
+    
         // Prompt the user for the custom email address
         do {
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1163,7 +1158,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             cout << "Enter subject for the email (press Enter on a new line to finish): ";
             ConsoleUtils::resetColor();
-            string customAddressLine;
+
             while (getline(cin, customAddressLine)) {
                 if (customAddressLine.empty()) break;
                 customAddressSubject += sanitizeSubject(customAddressLine) + " ";
@@ -1173,7 +1168,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
         } while (customAddressSubject.empty());
 
         if (customAddressSubject.length() > maxSubjectLength) {
-            ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
         #ifndef UNIT_TESTING
             cout << "Press return to go back..." << endl;
@@ -1244,7 +1238,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
-                    clearAttachmentData(customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
+                    clearCustomAddressAttachmentData(customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
                     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
                     cout << "Do you want to add a different attachment? (Y/N): ";
                     ConsoleUtils::resetColor();
@@ -1267,7 +1261,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 return;
             }
         } catch (const filesystem::filesystem_error& e) {
-            ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
             return;
@@ -1525,7 +1518,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     }
 
     // Check if any venues are selected for sending templates
-    if (emailToTemplate.empty()) {
+    if (selectedVenuesForTemplates.empty()) {
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
         cout << "No venues have been selected. Please select venues first before attempting to send the templates." << endl;
         ConsoleUtils::resetColor();

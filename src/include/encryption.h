@@ -24,8 +24,8 @@ public:
     EncryptionManager();
 
     // Your existing methods here
-    bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword);
-    std::string decryptPassword(const std::string& encryptedPassword);
+    static bool encryptPassword(const std::string& decryptedPassword, std::string& encryptedPassword);
+    static std::string decryptPassword(const std::string& encryptedPassword);
 };
 
 #endif // ENCRYPTION_H

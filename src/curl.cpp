@@ -3,17 +3,15 @@
 // Use the standard namespace
 using namespace std;
 
-#include "include/fileutils.h" // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
-
 /* CurlHandleWrapper Class Implementation */
 /*---------------------------------------*/
 
 // Callback function to read data for sending in the request
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
-    string* payload = static_cast<string*>(userp);
+    auto* payload = static_cast<string*>(userp);
     size_t totalsize = size * nmemb;
 
-    if (!payload->empty()) {
+    if (payload->size()) {
         // Calculate the size of data to copy to ptr
         size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
 

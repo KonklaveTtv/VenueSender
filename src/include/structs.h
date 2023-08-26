@@ -10,7 +10,7 @@ struct Venue {
     std::string genre;
     std::string state;
     std::string city;
-    int capacity;
+    int capacity = 0;
 
     // Default constructor to allow for uninitialized Venue objects
     Venue() = default;
@@ -29,7 +29,7 @@ struct SelectedVenue {
     std::string genre;
     std::string state;
     std::string city;
-    int capacity;
+    int capacity = 0;
 
     // Default constructor to allow for uninitialized SelectedVenue objects
     SelectedVenue() = default;

@@ -184,11 +184,11 @@ TEST_CASE("MenuManager::displaySelectedVenues() functionality", "[MenuManager]")
         "Name: Venue1\n"
         "Email: venue1@mock.com\n"
         "City: Daphne\n"
-        "--------------------------\n"
+        "---------------------------\n"
         "Name: Venue2\n"
         "Email: venue2@mock.com\n"
         "City: Provo\n"
-        "--------------------------\n";
+        "---------------------------\n";
 
     // Validate the output
     REQUIRE(mockOutput.str() == expectedOutput);
@@ -334,9 +334,11 @@ TEST_CASE("VenueFilter::processVenueSelection() functionality", "[VenueFilter]")
     vector<SelectedVenue> temporaryFilteredVenues = {
         SelectedVenue{"Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100},
         SelectedVenue{"Venue2", "venue2@mock.com", "rock", "UT", "Provo", 300}
-    };
+    };    
+
     vector<SelectedVenue> selectedVenuesForEmail;
-    
+    vector<SelectedVenue> selectedVenuesForTemplates;
+
     // Set up mock user input and output streams
     istringstream mockInput("1,2"); // user selects both venues
     ostringstream mockOutput;
@@ -344,12 +346,17 @@ TEST_CASE("VenueFilter::processVenueSelection() functionality", "[VenueFilter]")
     VenueFilter venueFilter;
 
     // Call the function
-    venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, mockInput, mockOutput);
+    venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, mockInput, mockOutput);
 
-    // Check results
+    // Check results for emails
     REQUIRE(selectedVenuesForEmail.size() == 2); 
     REQUIRE(selectedVenuesForEmail[0].name == "Venue1");
     REQUIRE(selectedVenuesForEmail[1].name == "Venue2");
+
+    // Check results for templates
+    REQUIRE(selectedVenuesForTemplates.size() == 2); 
+    REQUIRE(selectedVenuesForTemplates[0].name == "Venue1");
+    REQUIRE(selectedVenuesForTemplates[1].name == "Venue2");
 
     // Check output to the user
     REQUIRE(mockOutput.str() == "Select venues to add (comma-separated indices): \n");

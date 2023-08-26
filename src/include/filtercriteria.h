@@ -9,9 +9,6 @@
 #include <set>
 #include <vector>
 
-// Declare externs here
-extern const std::set<std::string> uniqueOptions;
-extern const std::string filterType;
 extern std::vector<SelectedVenue> temporaryFilteredVenues;
 
 // Structure to hold filter criteria for venues
@@ -84,10 +81,16 @@ public:
 class VenueFilter {
 private:
     // Max length for venue selection indices input
-    const std::string::size_type MAX_INPUT_LENGTH = 256;
+    static constexpr std::string::size_type MAX_INPUT_LENGTH = 256;
     
     // Delimiter used in CSV files
-    const char CSV_DELIMITER = ','; // Delimiter used in CSV files
+    static constexpr char CSV_DELIMITER = ','; // Delimiter used in CSV files
+
+    std::vector<SelectedVenue> selectedVenuesForEmail;
+    std::vector<SelectedVenue> temporaryFilteredVenues;
+
+    std::set<std::string> uniqueOptions;
+    std::string filterType;
 
     // Common function to handle venue filtering by options like Genre, State, City
     std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
@@ -95,15 +98,13 @@ private:
                                                     const std::string& filterType,
                                                     std::vector<SelectedVenue>& temporaryFilteredVenues);
     
-    std::vector<SelectedVenue> selectedVenuesForEmail;
-    std::vector<SelectedVenue> temporaryFilteredVenues;
-
 public:
     // Function to process user input and select venues based on it
-    void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
+    static void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                                std::vector<SelectedVenue>& selectedVenuesForEmail,
+                               std::vector<SelectedVenue>& selectedVenuesForTemplates,
                                std::istream& input = std::cin,
-                               std::ostream& output = std::cout) const;
+                               std::ostream& output = std::cout) ;
 
     // Function to display the filtered venues to the user
     static void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);

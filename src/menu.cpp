@@ -6,20 +6,20 @@ using namespace std;
 
 void MenuManager::navigateMenus(EmailManager& emailManager, 
                                 CURL* curl, 
-                                std::vector<Venue>& venues,
-                                std::vector<SelectedVenue>& selectedVenuesForTemplates,
-                                std::vector<SelectedVenue>& selectedVenuesForEmail,
-                                std::set<std::string>& uniqueGenres,
-                                std::set<std::string>& uniqueStates,
-                                std::set<std::string>& uniqueCities,
-                                std::set<int>& uniqueCapacities,
-                                std::vector<SelectedVenue>& temporaryFilteredVenues,
-                                std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
-                                std::string& subject,
-                                std::string& message,
-                                std::string& attachmentName,
-                                std::string& attachmentPath,
-                                std::string& attachmentSize,
+                                vector<Venue>& venues,
+                                vector<SelectedVenue>& selectedVenuesForTemplates,
+                                vector<SelectedVenue>& selectedVenuesForEmail,
+                                set<string>& uniqueGenres,
+                                set<string>& uniqueStates,
+                                set<string>& uniqueCities,
+                                set<int>& uniqueCapacities,
+                                vector<SelectedVenue>& temporaryFilteredVenues,
+                                map<string, pair<string, string>>& emailToTemplate,
+                                string& subject,
+                                string& message,
+                                string& attachmentName,
+                                string& attachmentPath,
+                                string& attachmentSize,
                                 VenueFilter& venueFilter,
                                 bool useSSL, 
                                 bool verifyPeer, 
@@ -43,25 +43,25 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                     case FILTER_BY_GENRE_OPTION:
                         venueFilter.filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
                         venueFilter.displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, cin, cout); // Select venues
+                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
                     case FILTER_BY_STATE_OPTION:
                         venueFilter.filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
                         venueFilter.displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, cin, cout); // Select venues
+                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
                     case FILTER_BY_CITY_OPTION:
                         venueFilter.filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
                         venueFilter.displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, cin, cout); // Select venues
+                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
                     case FILTER_BY_CAPACITY_OPTION:
                         venueFilter.filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
                         venueFilter.displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, cin, cout); // Select venues
+                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_VENUE_FILTERING:
@@ -80,6 +80,7 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                         break;
                     case CLEAR_SELECTED_VENUES_OPTION:
                         emailManager.clearSelectedVenues(selectedVenuesForEmail);
+                        emailManager.clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS:
                         // Logic to return to the main menu
@@ -367,21 +368,32 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Green for venue listings
 #endif
     cout << "==========================="<< endl;
-    cout << "      Selected Venues      " << endl;
+    cout << "      Selected Venues      "<< endl;
     cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-
     if (selectedVenues.empty()) {
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
     } else {
         for (const auto& venue : selectedVenues) {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+#endif
             cout << "Name: " << venue.name << endl;
             cout << "Email: " << venue.email << endl;
             cout << "City: " << venue.city << endl;
-            cout << "--------------------------" << endl;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
+    cout << "---------------------------"<< endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
         }
     }
 }
