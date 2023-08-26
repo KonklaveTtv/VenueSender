@@ -465,23 +465,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         return false;
     }
 
-    struct curl_slist* recipients = nullptr;
-
-    if (selectedVenuesForEmail.size() <= 49) {
-        // Use "To:" for each email
-        for (const auto& venue : selectedVenuesForEmail) {
-            recipients = curl_slist_append(recipients, venue.email.c_str());
-        }
-    } else {
-        // Use "BCC:" for batch sending
-        int batchSize = 49;
-        for (size_t i = 0; i < selectedVenuesForEmail.size(); i += batchSize) {
-            recipients = nullptr;  // Reset the list for each batch
-            size_t end = min(i + batchSize, selectedVenuesForEmail.size());
-            for (size_t j = i; j < end; ++j) {
-                recipients = curl_slist_append(recipients, ("BCC: " + selectedVenuesForEmail[j].email).c_str());
-            }
-
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -491,100 +474,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
             ConsoleUtils::resetColor();
 #endif
 
-            // Send the batch of emails
-            curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
-
-            struct curl_slist* headers = nullptr;
-            string dateHeader = "Date: " + getCurrentDateRfc2822();
-            string toHeader = "To: " + senderEmail;  // Use senderEmail as the main recipient for BCC batches
-            string fromHeader = "From: " + senderEmail;
-            string subjectHeader = "Subject: " + subject;
-
-            headers = curl_slist_append(headers, dateHeader.c_str());
-            headers = curl_slist_append(headers, toHeader.c_str());
-            headers = curl_slist_append(headers, fromHeader.c_str());
-            headers = curl_slist_append(headers, subjectHeader.c_str());
-
-            // Set headers
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-            curl_mime *mime = nullptr;
-
-            mime = curl_mime_init(curl);
-
-            if (!attachmentPath.empty()) {
-
-                // Get attachment size
-                size_t fileSize = filesystem::file_size(attachmentPath);
-                attachmentSize = to_string(fileSize) + " bytes";
-
-                // Add the message part
-                curl_mimepart *part = curl_mime_addpart(mime);
-                curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
-
-                // Add the attachment part
-                part = curl_mime_addpart(mime);
-                curl_mime_filedata(part, attachmentPath.c_str());
-
-                // Retrieve attachment filename
-                curl_mime_filename(part, attachmentName.c_str());
-
-                // Set MIME type for attachment
-                curl_mime_type(part, "application/octet-stream");
-
-                curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-            }
-
-            curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-            cout << "Authenticating with SMTP server..." << endl;
-            ConsoleUtils::resetColor();
-            cout.flush();
-            curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-
-            // Perform the operation
-            res = curl_easy_perform(curl);
-            if (res == 0) { // Check if email was sent successfully
-                successfulSends++;
-                double progressPercentage = 0.0;
-                if (totalEmails != 0) {
-                    progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
-                }
-            // Check progressPercentage to set color
-#ifndef UNIT_TESTING
-                ConsoleUtils::setColor(progressPercentage == 100 ? ConsoleUtils::Color::GREEN : ConsoleUtils::Color::ORANGE);
-#endif
-
-            // Display the progress
-            cout << "Progress: " << progressPercentage << "%" << endl;
-
-            // Reset the color to default
-#ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
-#endif
-
-                cout.flush();
-            }
-
-            // Free the MIME structure
-            if (mime) {
-                curl_mime_free(mime);
-            }
-
-            curl_slist_free_all(recipients);  // Free the list after each batch
-            curl_slist_free_all(headers);
-
-            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-            cout << "Email sending progress completed." << endl;
-            ConsoleUtils::resetColor();
-            
-            if (!ErrorHandler::handleCurlError(res)) {
-                return false;
-            }
-        }
-        return true;  // Return early after sending all batches
-    }
+    struct curl_slist* recipients = nullptr;
 
     // Logic for sending individual emails with "To:"
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
@@ -650,19 +540,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         if (totalEmails != 0) {
             progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
         }
-// Check progressPercentage to set color
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(progressPercentage == 100 ? ConsoleUtils::Color::GREEN : ConsoleUtils::Color::ORANGE);
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-
-// Display the progress
-cout << "Progress: " << progressPercentage << "%" << endl;
-
-// Reset the color to default
+        cout << "Progress: " << progressPercentage << "%" << endl;
 #ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
-
         cout.flush();
     }
 
