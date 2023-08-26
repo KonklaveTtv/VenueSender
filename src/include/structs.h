@@ -2,6 +2,7 @@
 #define STRUCTS_H
 
 #include <iostream>
+#include <sstream>
 
 // Structure to represent a venue
 struct Venue {
@@ -12,6 +13,21 @@ struct Venue {
     int capacity = 0;
     std::string state;
     std::string city;
+
+    // Method to convert the struct content to a string
+    std::string toString() const {
+        std::ostringstream oss;
+        oss << "Venue { "
+            << "Name: " << name << ", "
+            << "Email: " << email << ", "
+            << "Genre: " << genre << ", "
+            << "Country: " << country << ", "
+            << "Capacity: " << capacity << ", "
+            << "State: " << state << ", "
+            << "City: " << city
+            << " }";
+        return oss.str();
+    }
 
     // Default constructor to allow for uninitialized Venue objects
     Venue() = default;
@@ -32,6 +48,21 @@ struct SelectedVenue {
     int capacity = 0;
     std::string state;
     std::string city;    
+
+    // Method to convert the struct content to a string
+    std::string toString() const {
+        std::ostringstream oss;
+        oss << "SelectedVenue { "
+            << "Name: " << name << ", "
+            << "Email: " << email << ", "
+            << "Genre: " << genre << ", "
+            << "Country: " << country << ", "
+            << "Capacity: " << capacity << ", "
+            << "State: " << state << ", "
+            << "City: " << city
+            << " }";
+        return oss.str();
+    }
 
     // Default constructor to allow for uninitialized SelectedVenue objects
     SelectedVenue() = default;

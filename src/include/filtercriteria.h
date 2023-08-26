@@ -106,13 +106,8 @@ private:
     std::set<std::string> uniqueOptions;
     std::string filterType;
 
-    // Common function to handle venue filtering by options like Genre, State, City
-    std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
-                                                    const std::set<std::string>& uniqueOptions,
-                                                    const std::string& filterType,
-                                                    std::vector<SelectedVenue>& temporaryFilteredVenues);
-    
 public:
+
     // Function to process user input and select venues based on it
     static void processVenueSelection(const std::vector<SelectedVenue>& temporaryFilteredVenues,
                                std::vector<SelectedVenue>& selectedVenuesForEmail,
@@ -123,6 +118,11 @@ public:
     // Function to display the filtered venues to the user
     static void displayFilteredVenues(const std::vector<SelectedVenue>& selectedVenuesForDisplay);
 
+    // Common function to handle venue filtering by options like Genre, State, City
+    std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
+                                                    const std::set<std::string>& uniqueOptions,
+                                                    const std::string& filterType,
+                                                    std::vector<SelectedVenue>& temporaryFilteredVenues);
 
     // Function to filter venues based on a specific option (Genre, State, etc.)
     std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
