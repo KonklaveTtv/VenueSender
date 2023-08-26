@@ -50,9 +50,10 @@ int main() {
 
     // Extract unique genres, states, cities, and capacities from the venues data
     set<string> uniqueGenres = venueUtilities.getUniqueGenres(venues);
+    set<string> uniqueCountries = venueUtilities.getUniqueCountries(venues);
+    set<int> uniqueCapacities = venueUtilities.getUniqueCapacities(venues);
     set<string> uniqueStates = venueUtilities.getUniqueStates(venues);
     set<string> uniqueCities = venueUtilities.getUniqueCities(venues);
-    set<int> uniqueCapacities = venueUtilities.getUniqueCapacities(venues);
 
     //Initialize variables for filters and selected venues
     FilterCriteria criteria;
@@ -75,9 +76,10 @@ int main() {
                               selectedVenuesForTemplates,
                               selectedVenuesForEmail,
                               uniqueGenres,
+                              uniqueCountries,
+                              uniqueCapacities,
                               uniqueStates,
                               uniqueCities,
-                              uniqueCapacities,
                               temporaryFilteredVenues,
                               emailToTemplate,
                               subject,

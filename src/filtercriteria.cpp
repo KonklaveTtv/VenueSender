@@ -104,9 +104,12 @@ void VenueFilter::displayFilteredVenues(const vector<SelectedVenue>& selectedVen
     for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
         const auto& venue = selectedVenuesForDisplay[i];
         cout << setw(2) << i + 1 << ". Name: " << venue.name << endl;
-        cout << "   Email: " << venue.email << endl;
-        cout << "   City: " << venue.city << endl;
-        cout << "   Capacity: " << venue.capacity << endl;
+        cout << "    Email: " << venue.email << endl;
+        cout << "    Genre: " << venue.genre << endl;
+        cout << "    Country: " << venue.country << endl;
+        cout << "    Capacity: " << venue.capacity << endl;
+        cout << "    State: " << venue.state << endl;
+        cout << "    City: " << venue.city << endl;
         cout << endl;
     }
 }
@@ -159,7 +162,22 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
         if (selectedIndex < filterOptions.size()) {
             string filterValue = filterOptions[selectedIndex];
             for (const Venue& venue : venues) {
+                // Debugging line to print out variables involved in the comparison
+                string venueValue;
+                if (filterType == "Genre") {
+                    venueValue = venue.genre;
+                } else if (filterType == "Country") {
+                    venueValue = venue.country;
+                } else if (filterType == "State") {
+                    venueValue = venue.state;
+                } else if (filterType == "City") {
+                    venueValue = venue.city;
+                }
+                cout << "Debug: Comparing " << filterType << ". Venue value: '" << venueValue
+                     << "', Filter value: '" << filterValue << "'" << endl;
+
                 if ((filterType == "Genre" && venue.genre == filterValue) ||
+                    (filterType == "Country" && venue.country == filterValue) ||
                     (filterType == "State" && venue.state == filterValue) ||
                     (filterType == "City" && venue.city == filterValue)) {
                     SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(venue);

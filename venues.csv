@@ -1,3 +1,3 @@
-Venue Name,Email,Genre,State,City,Capacity
-Venue1,spencerlievens@gmail.com,all,AL,Daphne,100
-Venue2,konklavettv@gmail.com,rock,UT,Provo,300
+Venue Name,Email,Genre,Country,Capacity,State,City
+Venue1,mock@venue1.com,all,USA,100,AL,Daphne
+Venue2,mock@venue2.com,rock,France,300,UT,Provo
