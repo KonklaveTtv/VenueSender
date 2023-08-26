@@ -25,7 +25,7 @@ public:
     const size_t MAX_ATTACHMENT_SIZE = 24 * 1024 * 1024;  // 24 MB in bytes
 
     // Function to get the current date in RFC 2822 format
-    static inline std::string getCurrentDateRfc2822() {
+    inline std::string getCurrentDateRfc2822() {
         char buffer[100];
         time_t now;
         struct tm *tm_now;
@@ -36,14 +36,14 @@ public:
     }
 
     // Function to sanitize the subject line of an email by replacing newline and carriage return characters with spaces
-    static inline std::string sanitizeSubject(std::string& subject) {
+    inline std::string sanitizeSubject(std::string& subject) {
         std::string sanitized = subject;
         replace(sanitized.begin(), sanitized.end(), '\n', ' '); // replace newlines with spaces
         replace(sanitized.begin(), sanitized.end(), '\r', ' '); // replace carriage returns with spaces
         return sanitized;
     }
 
-    static inline void clearAllEmailData(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+    static inline void clearAllEmailData(std::string& subject, std::string& message, std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath) {
         subject.clear();
         message.clear();
         attachmentName.clear();
@@ -51,7 +51,16 @@ public:
         attachmentPath.clear();
     }
 
-    static inline void clearBookingTemplate(std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath, bool& templateExists) {
+    static inline void clearAllCustomAddressEmailData(std::string& customAddressSubject, std::string& customAddressMessage, std::string& customAddressAttachmentName, std::string& customAddressAttachmentSize, std::string& customAddressAttachmentPath) {
+    customAddressSubject.clear();
+    customAddressMessage.clear();
+    customAddressAttachmentName.clear();
+    customAddressAttachmentSize.clear();
+    customAddressAttachmentPath.clear();
+    }
+
+
+    static inline void clearBookingTemplate(std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate, std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath, bool& templateExists) {
         emailToTemplate.clear();
         attachmentName.clear();
         attachmentSize.clear();
@@ -69,13 +78,19 @@ public:
         ConsoleUtils::resetColor();
     }
 
-    static inline void clearAttachmentData(std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+    static inline void clearCustomAddressAttachmentData(std::string& customAddressAttachmentName, std::string& customAddressAttachmentSize, std::string& customAddressAttachmentPath) {
+        customAddressAttachmentName.clear();
+        customAddressAttachmentSize.clear();
+        customAddressAttachmentPath.clear();
+    }
+
+    static inline void clearAttachmentData(std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath) {
         attachmentName.clear();
         attachmentSize.clear();
         attachmentPath.clear();
     }
 
-    static inline void clearSubjectMessageData(std::string &subject, std::string &message) {
+    static inline void clearSubjectMessageData(std::string& subject, std::string& message) {
         subject.clear();
         message.clear();
     }
@@ -89,7 +104,7 @@ public:
     static bool isValidEmail(const std::string& email);
 
     // Function to construct an email, including the subject, message, and attachment details
-    void constructEmail(std::string &subject, std::string &message, std::string &attachmentPath, std::string &attachmentName, std::string &attachmentSize, std::istream &in = std::cin);
+    void constructEmail(std::string& subject, std::string& message, std::string& attachmentPath, std::string& attachmentName, std::string& attachmentSize, std::istream &in = std::cin);
 
     // Function to allow the user to modify the email
     void viewEditEmails(CURL* curl, 
@@ -97,8 +112,8 @@ public:
                         int smtpPort,
                         std::vector<SelectedVenue>& selectedVenuesForEmail,
                         const std::string& senderEmail, 
-                        std::string &subject, 
-                        std::string &message, 
+                        std::string& subject, 
+                        std::string& message, 
                         std::string& attachmentName, 
                         std::string& attachmentSize, 
                         std::string& attachmentPath, 
@@ -127,7 +142,7 @@ public:
                              std::string& attachmentName,
                              std::string& attachmentSize,
                              std::string& attachmentPath,
-                             std::vector<SelectedVenue>& selectedVenuesForEmail);
+                             const std::vector<SelectedVenue>& selectedVenuesForEmail);
 
     bool sendBookingTemplateEmails(CURL* curl,
                                    const std::string& senderEmail,
@@ -146,20 +161,20 @@ public:
                              int smtpPort,
                              std::string& attachmentName,
                              std::string& attachmentSize,
-                              std::string& attachmentPath,
-                             std::vector<SelectedVenue>& selectedVenuesForEmail,
+                             std::string& attachmentPath,
+                             const std::vector<SelectedVenue>& selectedVenuesForEmail,
                              bool templateExists);
 
     // Function to send to a custom email address
     void emailCustomAddress(CURL* curl,
                              const std::string& senderEmail,
-                             std::string& subject,
-                             std::string& message,
+                             std::string& customAddressSubject,
+                             std::string& customAddressMessage,
                              const std::string& smtpServer,
                              int smtpPort,
-                             std::string& attachmentName,
-                             std::string& attachmentSize,
-                             std::string& attachmentPath);
+                             std::string& customAddressAttachmentName,
+                             std::string& customAddressAttachmentSize,
+                             std::string& customAddressAttachmentPath);
 
     // Function to confirm the email before sending
     void confirmSendEmail(CURL* curl,

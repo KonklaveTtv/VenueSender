@@ -8,21 +8,6 @@ using namespace std;
 /* CurlHandleWrapper Class Implementation */
 /*---------------------------------------*/
 
-// Progress callback to show progress in percentage for email sending
-int CurlHandleWrapper::progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/) {
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-    if (dltotal > 0) {
-        cout << "Callback called: dltotal=" << dltotal << ", dlnow=" << dlnow << endl;
-        progress = (dlnow / dltotal) * 100;
-        if (progress <= 100) {
-            cout << "Email sending progress: " << progress << "% (" << emailBeingSent << ")" << endl;
-            
-        }
-    }
-    ConsoleUtils::resetColor();
-    return 0;
-}
-
 // Callback function to read data for sending in the request
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
     string* payload = static_cast<string*>(userp);
@@ -65,12 +50,8 @@ CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
     }
 
     if (curl) {
-        // Keeping these options as they're unique and not present in `setupCurlHandle`.
-        //curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &CurlHandleWrapper::progressCallback);
-        curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, &CurlHandleWrapper::progressCallback);
-
-        curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+    // Set up location of SSL certs for Linux
+    curl_easy_setopt(curl, CURLOPT_CAINFO, "/etc/ssl/certs/ca-certificates.crt");
     }
 }
 

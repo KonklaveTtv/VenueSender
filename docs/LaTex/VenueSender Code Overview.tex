@@ -151,8 +151,8 @@
 			void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,  
 			const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
 			bool isValidEmail(const std::string& email);
-			void constructEmail(std::string &subject, std::string &message, std::string &attachmentPath, 
-			std::string &attachmentName, std::string &attachmentSize, std::istream &in = std::cin);
+			void constructEmail(std::string& subject, std::string& message, std::string& attachmentPath, 
+			std::string& attachmentName, std::string& attachmentSize, std::istream &in = std::cin);
 			bool sendIndividualEmail(CURL* curl,
 			const SelectedVenue& selectedVenue,
 			const std::string& senderEmail,
@@ -650,13 +650,13 @@
 				// Implementation to check if a provided string is a valid email format...
 			}
 			
-			void EmailManager::constructEmail(string &subject, string &message, string &attachmentName, 
-			string &attachmentSize, string &attachmentPath, istream &in) {
+			void EmailManager::constructEmail(string& subject, string& message, string& attachmentName, 
+			string& attachmentSize, string& attachmentPath, istream &in) {
 				// Implementation to guide the user in constructing an email...
 			}
 
 			void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
-			string &subject, string &message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists) {
+			string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists) {
 				// Implementation to view and edit emails...
 				
 			bool EmailManager::sendIndividualEmail(CURL* curl,
@@ -779,7 +779,7 @@
 					return sanitized;
 				}
 				
-				inline void clearAllEmailData(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+				inline void clearAllEmailData(std::string& subject, std::string& message, std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath) {
 					subject.clear();
 					message.clear();
 					attachmentName.clear();
@@ -787,7 +787,7 @@
 					attachmentPath.clear();
 				}
 				
-				inline void clearBookingTemplate(std::string &subject, std::string &message, std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath, bool& templateExists) {
+				inline void clearBookingTemplate(std::string& subject, std::string& message, std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath, bool& templateExists) {
 					subject.clear();
 					message.clear();
 					attachmentName.clear();
@@ -806,13 +806,13 @@
 					ConsoleUtils::resetColor();
 				}
 				
-				inline void clearAttachmentData(std::string &attachmentName, std::string &attachmentSize, std::string &attachmentPath) {
+				inline void clearAttachmentData(std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath) {
 					attachmentName.clear();
 					attachmentSize.clear();
 					attachmentPath.clear();
 				}
 				
-				inline void clearSubjectMessageData(std::string &subject, std::string &message) {
+				inline void clearSubjectMessageData(std::string& subject, std::string& message) {
 					subject.clear();
 					message.clear();
 				}
@@ -826,7 +826,7 @@
 				bool isValidEmail(const std::string& email);
 				
 				// Function to construct an email, including the subject, message, and attachment details
-				void constructEmail(std::string &subject, std::string &message, std::string &attachmentPath, std::string &attachmentName, std::string &attachmentSize, std::istream &in = std::cin);
+				void constructEmail(std::string& subject, std::string& message, std::string& attachmentPath, std::string& attachmentName, std::string& attachmentSize, std::istream &in = std::cin);
 				
 				// Function to allow the user to modify the email
 				void viewEditEmails(CURL* curl, 
@@ -834,8 +834,8 @@
 				int smtpPort,
 				std::vector<SelectedVenue>& selectedVenuesForEmail,
 				const std::string& senderEmail, 
-				std::string &subject, 
-				std::string &message, 
+				std::string& subject, 
+				std::string& message, 
 				std::string& attachmentName, 
 				std::string& attachmentSize, 
 				std::string& attachmentPath, 

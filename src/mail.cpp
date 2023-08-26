@@ -40,7 +40,7 @@ bool EmailManager::isValidEmail(const string& email) {
 }
 
 // Function to guide the user in constructing an email with a subject, message, and optional attachment
-void EmailManager::constructEmail(string &subject, string &message, string &attachmentName, string &attachmentSize, string &attachmentPath, istream &in) {
+void EmailManager::constructEmail(string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, istream &in) {
     
     clearAllEmailData(subject, message, attachmentName, attachmentSize, attachmentPath);
 
@@ -212,7 +212,7 @@ void EmailManager::constructEmail(string &subject, string &message, string &atta
 }
 
 void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
-                                  string &subject, string &message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists,
+                                  string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists,
                                   map<string, pair<string, string>>& emailToTemplate) {
 
 
@@ -374,7 +374,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                                        string& attachmentName,
                                        string& attachmentSize,
                                        string& attachmentPath,
-                                       vector<SelectedVenue>& selectedVenuesForEmail) {
+                                       const vector<SelectedVenue>& selectedVenuesForEmail) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
 
@@ -397,107 +397,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     ConsoleUtils::resetColor();
 
     struct curl_slist* recipients = nullptr;
-
-    if (selectedVenuesForEmail.size() <= 49) {
-        // Reset the count
-        successfulSends = 0;
-
-        // Use "To:" for each email if 49 or less venues are selected
-        for (const auto& venue : selectedVenuesForEmail) {
-            recipients = curl_slist_append(recipients, venue.email.c_str());
-        }
-    } else {
-        // Use "BCC:" for batch sending
-        int batchSize = 49;
-        for (size_t i = 0; i < selectedVenuesForEmail.size(); i += batchSize) {
-            recipients = nullptr;  // Reset the list for each batch
-            size_t end = min(i + batchSize, selectedVenuesForEmail.size());
-            for (size_t j = i; j < end; ++j) {
-                recipients = curl_slist_append(recipients, ("BCC: " + selectedVenuesForEmail[j].email).c_str());
-            }
-            
-            // Send the batch of emails
-            curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
-            
-            string toHeader = "To: " + senderEmail;  // Use senderEmail as the main recipient for BCC batches
-            string fromHeader = "From: " + senderEmail;
-            string subjectHeader = "Subject: " + subject;
-
-            struct curl_slist* headers = nullptr;
-            string dateHeader = "Date: " + getCurrentDateRfc2822();
-            headers = curl_slist_append(headers, dateHeader.c_str());
-            headers = curl_slist_append(headers, toHeader.c_str());
-            headers = curl_slist_append(headers, fromHeader.c_str());
-            headers = curl_slist_append(headers, subjectHeader.c_str());
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-            curl_mime *mime = nullptr;
-
-            if (!attachmentPath.empty()) {
-                mime = curl_mime_init(curl);
-
-                size_t fileSize = filesystem::file_size(attachmentPath);
-                attachmentSize = to_string(fileSize) + " bytes";
-
-                // Add the message part
-                curl_mimepart *part = curl_mime_addpart(mime);
-                curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
-
-                // Add the attachment part
-                part = curl_mime_addpart(mime);
-                curl_mime_filedata(part, attachmentPath.c_str());
-
-                // Retrieve attachment filename
-                curl_mime_filename(part, attachmentName.c_str());
-
-                // Set MIME type for attachment
-                curl_mime_type(part, "application/octet-stream");
-
-                curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-            } else {
-                string payload = dateHeader + "\r\n"
-                                 + toHeader + "\r\n"
-                                 + fromHeader + "\r\n"
-                                 + subjectHeader + "\r\n\r\n"
-                                 + message;
-                curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
-                curl_easy_setopt(curl, CURLOPT_READDATA, &payload);
-                curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
-            }
-
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-            cout << "Authenticating with SMTP server..." << endl;
-            ConsoleUtils::resetColor();
-            cout.flush();
-            curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-
-            res = curl_easy_perform(curl);
-            if (res == 0) { // Check if email was sent successfully
-                successfulSends++;
-                double progressPercentage = 0.0;
-                if (totalEmails != 0) {
-                    progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
-                }
-                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-                cout << "Progress: " << progressPercentage << "%" << endl;
-                ConsoleUtils::resetColor();
-                cout.flush();
-            }
-
-            // Free the MIME structure
-            if (mime) {
-                curl_mime_free(mime);
-            }
-
-            curl_slist_free_all(recipients);  // Free the list after each batch
-            curl_slist_free_all(headers);
-            
-            if (!errorHandler.handleCurlError(res)) {
-                return false;
-            }
-        }
-        return true;  // Return early after sending all batches
-    }
 
     // Logic for sending individual emails with "To:"
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
@@ -707,7 +606,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                        string& attachmentName,
                                        string& attachmentSize,
                                        string& attachmentPath,
-                                       vector<SelectedVenue>& selectedVenuesForEmail,
+                                       const vector<SelectedVenue>& selectedVenuesForEmail,
                                        bool templateExists) {
     // Check if venues are selected
     if (selectedVenuesForEmail.empty()) {
@@ -931,53 +830,64 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
 void EmailManager::emailCustomAddress(CURL* curl,
                                       const std::string& senderEmail,
-                                      std::string& subject,
-                                      std::string& message,
+                                      std::string& customAddressSubject,
+                                      std::string& customAddressMessage,
                                       const std::string& smtpServer,
                                       int smtpPort,
-                                      std::string& attachmentName,
-                                      std::string& attachmentSize,
-                                      std::string& attachmentPath) {
+                                      std::string& customAddressAttachmentName,
+                                      std::string& customAddressAttachmentSize,
+                                      std::string& customAddressAttachmentPath) {
 
     const string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
     const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
 
-
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
+
+    if (!curl) {
+        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        return;
+    }
 
     // Reset the count
     successfulSends = 0;
 
     // Declarations
-    string recipientEmail;
+    string customAddressRecipientEmail;
 
     while(true) {
-        string recipientEmail, line;
+        string customAddressLine;
 
         // Prompt the user for the custom email address
         do {
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             cout << "Enter the custom email address: ";
             ConsoleUtils::resetColor();
-            cin >> recipientEmail;
+            cin >> customAddressRecipientEmail;
             ConsoleUtils::clearInputBuffer();
 
-            if (isValidEmail(recipientEmail)) {
+            if (isValidEmail(customAddressRecipientEmail)) {
                 break;
             } else {
-                cout << "Invalid email address format. Please enter a valid email address." << endl;
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+                return;
             }
         } while (true);
 
-        // Construct the email directly in this function
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-        cout << "Enter the subject of the email (press Enter on a new line to finish):\n";
-        ConsoleUtils::resetColor();
-        while (getline(cin, line) && !line.empty()) {
-            subject += line + "\n";
-        }
+        do {
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            cout << "Enter subject for the email (press Enter on a new line to finish): ";
+            ConsoleUtils::resetColor();
+            string customAddressLine;
+            while (getline(cin, customAddressLine)) {
+                if (customAddressLine.empty()) break;
+                customAddressSubject += sanitizeSubject(customAddressLine) + " ";
+            }
+            customAddressSubject = ConsoleUtils::trim(customAddressSubject);
 
-        if (subject.length() > maxSubjectLength) {
+        } while (customAddressSubject.empty());
+
+        if (customAddressSubject.length() > maxSubjectLength) {
             ErrorHandler errorHandler;
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
         #ifndef UNIT_TESTING
@@ -986,18 +896,19 @@ void EmailManager::emailCustomAddress(CURL* curl,
             ConsoleUtils::clearInputBuffer();
             cin.get();
         #endif
-            subject.clear();
+            customAddressSubject.clear();
             return;
         }
 
+        // Read multiple lines for the message body of the email
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
         cout << "Enter the message body of the email (press Enter on a new line to finish):\n";
         ConsoleUtils::resetColor();
-        while (getline(cin, line) && !line.empty()) {
-            message += line + "\n";
+        while (getline(cin, customAddressLine) && !customAddressLine.empty()) {
+            customAddressMessage += customAddressLine + "\n";
         }
 
-        if (message.length() + line.length() > maxMessageLength) {
+        if (customAddressMessage.length() + customAddressLine.length() > maxMessageLength) {
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
         #ifndef UNIT_TESTING
             cout << "Press return to go back..." << endl;
@@ -1005,50 +916,50 @@ void EmailManager::emailCustomAddress(CURL* curl,
             ConsoleUtils::clearInputBuffer();
             cin.get();
         #endif
-            int charsToAdd = maxMessageLength - message.length();
-            message += ConsoleUtils::trim(line).substr(0, charsToAdd);
+            int charsToAdd = maxMessageLength - customAddressMessage.length();
+            customAddressMessage += ConsoleUtils::trim(customAddressLine).substr(0, charsToAdd);
             break;
         }
 
         while (true) {
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    cout << "Do you want to add an attachment? (Y/N): ";
-    ConsoleUtils::resetColor();
-    char addAttachmentChoice;
-    cin >> addAttachmentChoice;
-    ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            cout << "Do you want to add an attachment? (Y/N): ";
+            ConsoleUtils::resetColor();
+            char addAttachmentChoice;
+            cin >> addAttachmentChoice;
+            ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
-    if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
-        break;
+            if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+                break;
 
-    } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-        cout << "Enter the path of the file to attach (or press Enter to skip): ";
-        ConsoleUtils::resetColor();
-        getline(cin, attachmentPath);
-        attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
-        attachmentPath = ConsoleUtils::trim(attachmentPath);
+        } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            cout << "Enter the path of the file to attach (or press Enter to skip): ";
+            ConsoleUtils::resetColor();
+            getline(cin, customAddressAttachmentPath);
+            customAddressAttachmentPath.erase(remove(customAddressAttachmentPath.begin(), customAddressAttachmentPath.end(), '\''), customAddressAttachmentPath.end());
+            customAddressAttachmentPath = ConsoleUtils::trim(customAddressAttachmentPath);
 
-        if (attachmentPath.empty()) {
-            break;
-        }
+            if (customAddressAttachmentPath.empty()) {
+                break;
+            }
 
-        size_t lastSlash = attachmentPath.find_last_of("/\\\\");
-        if (lastSlash == string::npos) {
-            attachmentName = attachmentPath;
-        } else {
-            attachmentName = attachmentPath.substr(lastSlash + 1);
-        }
+            size_t lastSlash = customAddressAttachmentPath.find_last_of("/\\\\");
+            if (lastSlash == string::npos) {
+                customAddressAttachmentName = customAddressAttachmentPath;
+            } else {
+                customAddressAttachmentName = customAddressAttachmentPath.substr(lastSlash + 1);
+            }
 
         try {
-            if (filesystem::exists(attachmentPath)) {
-                size_t fileSize = filesystem::file_size(attachmentPath);
-                attachmentSize = to_string(fileSize) + " bytes";
+            if (filesystem::exists(customAddressAttachmentPath)) {
+                size_t fileSize = filesystem::file_size(customAddressAttachmentPath);
+                customAddressAttachmentSize = to_string(fileSize) + " bytes";
                 cout << "File Size: " << fileSize << " bytes" << endl;
 
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
-                    clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
+                    clearAttachmentData(customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
                     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
                     cout << "Do you want to add a different attachment? (Y/N): ";
                     ConsoleUtils::resetColor();
@@ -1063,7 +974,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 }
 
                 ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
-                cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
+                cout << "Attachment: " << customAddressAttachmentName << " (" << customAddressAttachmentSize << ")" << endl;
                 ConsoleUtils::resetColor();
                 break;  // Exit the loop if the file is valid
             } else {
@@ -1091,15 +1002,16 @@ void EmailManager::emailCustomAddress(CURL* curl,
         cout << "----- EMAIL DETAILS -----\n";
         cout << "-------------------------\n";
         cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
-        cout << "Subject: " << subject << "\n";
+        cout << "To: \"Recipient Email\" <" << customAddressRecipientEmail << ">\n";
+        cout << "Subject: " << customAddressSubject << "\n";
         ConsoleUtils::resetColor();
         ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
-        cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
-        cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
-        cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
+        cout << "Attachment: " << (customAddressAttachmentName.empty() ? "None" : customAddressAttachmentName) << "\n";
+        cout << "Size: " << (customAddressAttachmentSize.empty() ? "None" : customAddressAttachmentSize) << "\n";
+        cout << "Path: " << (customAddressAttachmentPath.empty() ? "None" : customAddressAttachmentPath) << "\n";
         ConsoleUtils::resetColor();
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-        cout << "\n" << message << "\n";
+        cout << "\n" << customAddressMessage << "\n";
         cout << "-------------------------\n";
         ConsoleUtils::resetColor();
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1110,7 +1022,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         ConsoleUtils::clearInputBuffer();
 
         if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
-            clearAllEmailData(subject, message, attachmentName, attachmentSize, attachmentPath);
+            clearAllCustomAddressEmailData(customAddressSubject, customAddressMessage, customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
             continue; // Loop back to the start of the function
         } else {
             break; // Exit the loop if the user is satisfied
@@ -1124,77 +1036,54 @@ void EmailManager::emailCustomAddress(CURL* curl,
     cin >> confirmSend;
     ConsoleUtils::clearInputBuffer();
 
-    // Proceed to send emails if confirmed
-    if (confirmSend == 'Y' || confirmSend == 'y') {
+        // Proceed to send emails if confirmed
+        if (confirmSend == 'Y' || confirmSend == 'y') {
 
-        // Prepare a dummy SelectedVenue object to use with sendIndividualEmail function
-        SelectedVenue customVenue;
-        customVenue.email = recipientEmail;
+            if (!curl) {
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+                return;
+            }
 
-        if (!curl) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
-            return;
-        }
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
+            ConsoleUtils::resetColor();
+            
+            struct curl_slist* recipients = nullptr;
+            recipients = curl_slist_append(recipients, customAddressRecipientEmail.c_str());
+            curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
-        if (!isValidEmail(senderEmail)) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
-            return;
-        }
+            // cURL headers
+            struct curl_slist* headers = nullptr;
+            string dateHeader = "Date: " + getCurrentDateRfc2822();
+            string toHeader = "To: " + customAddressRecipientEmail;
+            string fromHeader = "From: " + senderEmail;
+            string subjectHeader = "Subject: " + customAddressSubject;
 
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-        cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
-        ConsoleUtils::resetColor();
+            headers = curl_slist_append(headers, dateHeader.c_str());
+            headers = curl_slist_append(headers, toHeader.c_str());
+            headers = curl_slist_append(headers, fromHeader.c_str());
+            headers = curl_slist_append(headers, subjectHeader.c_str());
 
-        struct curl_slist* recipients = nullptr;
-        recipients = curl_slist_append(recipients, customVenue.email.c_str());
-        curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+            // Set headers
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-        string toHeader = "To: " + customVenue.email;
-        string fromHeader = "From: " + senderEmail;
-        string subjectHeader = "Subject: " + subject;
-
-        struct curl_slist* headers = nullptr;
-        string dateHeader = "Date: " + getCurrentDateRfc2822();
-        headers = curl_slist_append(headers, dateHeader.c_str());
-        headers = curl_slist_append(headers, toHeader.c_str());
-        headers = curl_slist_append(headers, fromHeader.c_str());
-        headers = curl_slist_append(headers, subjectHeader.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-        curl_mime *mime = nullptr;
-
-        if (!attachmentPath.empty()) {
+            curl_mime *mime = nullptr;
+            
             mime = curl_mime_init(curl);
-
-            size_t fileSize = filesystem::file_size(attachmentPath);
-            attachmentSize = to_string(fileSize) + " bytes";
 
             // Add the message part
             curl_mimepart *part = curl_mime_addpart(mime);
-            curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
+            curl_mime_data(part, customAddressMessage.c_str(), CURL_ZERO_TERMINATED);
 
-            // Add the attachment part
-            part = curl_mime_addpart(mime);
-            curl_mime_filedata(part, attachmentPath.c_str());
-
-            // Retrieve attachment filename
-            curl_mime_filename(part, attachmentName.c_str());
-
-            // Set MIME type for attachment
-            curl_mime_type(part, "application/octet-stream");
+             if (!customAddressAttachmentPath.empty()) {
+                // Add the attachment part conditionally
+                part = curl_mime_addpart(mime);
+                curl_mime_filedata(part, customAddressAttachmentPath.c_str());
+                curl_mime_filename(part, customAddressAttachmentName.c_str());
+                curl_mime_type(part, "application/octet-stream");
+            }
 
             curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-        } else {
-            string payload = dateHeader + "\r\n"
-                             + toHeader + "\r\n"
-                             + fromHeader + "\r\n"
-                             + subjectHeader + "\r\n\r\n"
-                             + message;
-            curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
-            curl_easy_setopt(curl, CURLOPT_READDATA, &payload);
-            curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
-            }
 
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             cout << "Authenticating with SMTP server..." << endl;
@@ -1202,20 +1091,21 @@ void EmailManager::emailCustomAddress(CURL* curl,
             cout.flush();
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
-            // Set totalEmails to 1 as we are only sending 1 email
-            totalEmails = 1;
-
+            // Perform the operation
             res = curl_easy_perform(curl);
             if (res == 0) { // Check if email was sent successfully
                 successfulSends = 1;
-                int progressPercentage;
-                if (totalEmails != 0) {
-                    progressPercentage = 100;
-                }
                 ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-                cout << "Progress: " << progressPercentage << "%" << endl;
+                cout << "Email sent successfully." << endl;
                 ConsoleUtils::resetColor();
                 cout.flush();
+            } else {
+                // Handle error
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+                cout << "Email sending failed. Error code: " << res << endl;
+                ConsoleUtils::resetColor();
+                cout.flush();
+                // You can log the error, display more details, or take appropriate actions here
             }
 
             // Free the MIME structure
@@ -1231,24 +1121,23 @@ void EmailManager::emailCustomAddress(CURL* curl,
             ConsoleUtils::resetColor();
 
             // Clear the subject, message, and attachment strings
-            clearAllEmailData(subject, message, attachmentName, attachmentSize, attachmentPath);
+            clearAllCustomAddressEmailData(customAddressSubject, customAddressMessage, customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
             return;
 
-        if (!errorHandler.handleCurlError(res)) {
-            if (res == CURLE_COULDNT_CONNECT) {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
-            } else if (res == CURLE_LOGIN_DENIED) {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
+            if (!errorHandler.handleCurlError(res)) {
+                if (res == CURLE_COULDNT_CONNECT) {
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
+                } else if (res == CURLE_LOGIN_DENIED) {
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
+                }
             }
-        }
-
-    } else {
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);              
-        cout << "Email saved for sending/editing." << endl;
-        ConsoleUtils::resetColor();
-        return;
+        } else {
+            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);              
+            cout << "Email saved for sending/editing." << endl;
+            ConsoleUtils::resetColor();
+            return;
     }
 }
 

@@ -7296,11 +7296,11 @@ namespace Catch {
 namespace Catch {
     namespace Benchmark {
         struct Benchmark {
-            Benchmark(std::string &&name)
+            Benchmark(std::string& &name)
                 : name(std::move(name)) {}
 
             template <class FUN>
-            Benchmark(std::string &&name, FUN &&func)
+            Benchmark(std::string& &name, FUN &&func)
                 : fun(std::move(func)), name(std::move(name)) {}
 
             template <typename Clock>
@@ -9309,7 +9309,7 @@ namespace detail {
     public:
         ExeName() : m_name( std::make_shared<std::string>( "<executable>" ) ) {}
 
-        explicit ExeName( std::string &ref ) : ExeName() {
+        explicit ExeName( std::string& ref ) : ExeName() {
             m_ref = std::make_shared<BoundValueRef<std::string>>( ref );
         }
 
@@ -12971,7 +12971,7 @@ namespace Catch {
         return m_totals.assertions.failed >= static_cast<std::size_t>(m_config->abortAfter());
     }
 
-    void RunContext::runCurrentTest(std::string & redirectedCout, std::string & redirectedCerr) {
+    void RunContext::runCurrentTest(std::string&  redirectedCout, std::string&  redirectedCerr) {
         auto const& testCaseInfo = m_activeTestCase->getTestCaseInfo();
         SectionInfo testCaseSection(testCaseInfo.lineInfo, testCaseInfo.name);
         m_reporter->sectionStarting(testCaseSection);

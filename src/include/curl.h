@@ -37,9 +37,6 @@ public:
         return progress;
     }
 
-    // Callback function to update the progress of ongoing operations
-    int progressCallback(void* /*clientp*/, double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/);
-
     // Set the email address that is currently being sent
     void setEmailBeingSent(const std::string& email);
 
