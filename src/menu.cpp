@@ -161,29 +161,47 @@ int MenuManager::displayMenuOptions() const {
         cout << TEMPLATES_OPTION << ". Templates" << endl;
         cout << CONFIGURATION_OPTION << ". Configuration" << endl;
         cout << EXIT_OPTION << ". Exit" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Blue for headers
+#endif
         cout << "Enter your choice: ";
         cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
         ConsoleUtils::clearInputBuffer();
         // Handle exit right here
         if (choice == EXIT_OPTION) {
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
             cout << "Are you sure you want to exit? (Y/N): ";
-            ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
             char confirmExit;
             cin >> confirmExit;
             ConsoleUtils::clearInputBuffer();
 
             if (confirmExit == 'Y' || confirmExit == 'y') {
-                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Blue for headers
+#endif
                 cout << "Exiting the program." << endl;
-                ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
                 // Reset configurations and cleanup before exiting
                 ConfigManager configManager;
                 configManager.resetConfigFile();  
                 CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
                 exit(0);  // Exit the program
             } else if (confirmExit == 'N' || confirmExit == 'n') {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Blue for headers
+#endif                
                 cout << "Returning to the main menu." << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
                 continue;  // Continue to the next iteration of the loop
             } else {
                 ErrorHandler errorHandler;
@@ -219,8 +237,14 @@ int MenuManager::displayVenueFilteringOptions() const {
         cout << FILTER_BY_CITY_OPTION << ". Filter by City" << endl;
         cout << FILTER_BY_CAPACITY_OPTION << ". Filter by Capacity" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_FILTERING << ". Return to Main Menu" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Blue for headers
+#endif
         cout << "Enter your choice: ";
         cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
         if (choice >= FILTER_BY_GENRE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_FILTERING) {
             break;
         } else {
@@ -246,8 +270,14 @@ int MenuManager::displayVenueOptions() const {
         cout << VIEW_SELECTED_VENUES_OPTION << ". View Selected Venues" << endl;
         cout << CLEAR_SELECTED_VENUES_OPTION << ". Clear Selected Venues" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS << ". Return to Main Menu" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cout << "Enter your choice: ";
         cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
         ConsoleUtils::clearInputBuffer();
         if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS) {
             break;
@@ -276,8 +306,14 @@ int MenuManager::displayEmailOptions() const {
         cout << EMAIL_CUSTOM_ADDRESS_OPTION << ". Email Custom Address" << endl;
         cout << SEND_EMAILS_OPTION << ". Send Emails" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS << ". Return to Main Menu" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cout << "Enter your choice: ";
         cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
         ConsoleUtils::clearInputBuffer();
         if (choice >= CREATE_EMAIL_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS) {
             break;
@@ -306,8 +342,14 @@ int MenuManager::displayTemplateOptions() const {
         cout << CLEAR_BOOKING_TEMPLATE_OPTION << ". Clear Booking Template" << endl;
         cout << SEND_BOOKING_TEMPLATES_OPTION << ". Send Booking Templates" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS << ". Return to Main Menu" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cout << "Enter your choice: ";
         cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
         ConsoleUtils::clearInputBuffer();
         if (choice >= CREATE_VENUE_BOOKING_TEMPLATE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS) {
             break;

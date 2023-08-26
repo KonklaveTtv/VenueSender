@@ -24,6 +24,9 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+#endif
     cout << "SMTP Server: " << smtpServer << endl
          << "SMTP Port: " << smtpPort << endl
          << "Sender Email: " << senderEmail << endl
@@ -31,6 +34,9 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
          << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl
          << "verifyHost: " << (verifyHost ? "true" : "false") << endl
          << "verbose: " << (verbose ? "true" : "false") << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif         
 }
 
 // Function to validate if the provided string is a valid email address format
@@ -43,15 +49,20 @@ bool EmailManager::isValidEmail(const string& email) {
 void EmailManager::constructEmail(string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, istream &in) {
     
     clearAllEmailData(subject, message, attachmentName, attachmentSize, attachmentPath);
-
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     cout << "===========================" << endl;
     cout << "===== Construct Email =====" << endl;
     cout << "===========================" << endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif       
     // Prompt the user to enter the subject and perform checks
     do {
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cout << "Enter subject for the email (press Enter on a new line to finish): ";
         ConsoleUtils::resetColor();
         string line;
@@ -70,10 +81,11 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         ErrorHandler errorHandler;
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
 #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
         cout << "Press return to go back..." << endl;
-        cin.ignore();
         ConsoleUtils::clearInputBuffer();
         cin.get();
+        ConsoleUtils::resetColor();
 #endif
         subject.clear();
         return;
@@ -93,10 +105,11 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
             if (message.length() + line.length() > maxMessageLength) {
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
 #ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
                 cout << "Press return to go back..." << endl;
-                cin.ignore();
                 ConsoleUtils::clearInputBuffer();
                 cin.get();
+                ConsoleUtils::resetColor();
 #endif
                 int charsToAdd = maxMessageLength - message.length();
                 message += ConsoleUtils::trim(line).substr(0, charsToAdd);
@@ -110,10 +123,11 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         } else if (message.empty()) {
             errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_BLANK_ERROR);
 #ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
             cout << "Press return to go back..." << endl;
-            cin.ignore();
             ConsoleUtils::clearInputBuffer();
             cin.get();
+            ConsoleUtils::resetColor();
 #endif
         }
 
@@ -125,9 +139,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 
     // Prompt the user to add an attachment
         while (true) {
+#ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cout << "Do you want to add an attachment? (Y/N): ";
+#ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
+#endif  
             char addAttachmentChoice;
             cin >> addAttachmentChoice;
             ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
@@ -136,10 +154,14 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
             break;
 
         } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+#ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cout << "Enter the path of the file to attach (or press Enter to skip): ";
-            ConsoleUtils::resetColor();
             getline(cin, attachmentPath);
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif  
             attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
             attachmentPath = ConsoleUtils::trim(attachmentPath);
 
@@ -159,18 +181,26 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
             // Calculate and set the size of the attachment
             try {
                 if (filesystem::exists(attachmentPath)) {
+#ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+#endif                   
                     size_t fileSize = filesystem::file_size(attachmentPath);
                     attachmentSize = to_string(fileSize) + " bytes";
-                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
                     cout << "File Size: " << fileSize << " bytes" << endl;
-
+#ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+#endif  
                     // Check the attachment size doesn't exceed 24MB
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
                         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                         clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
+#ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif                  
                         cout << "Do you want to add a different attachment? (Y/N): ";
+#ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
+#endif  
                         char choice;
                         cin >> choice;
                         ConsoleUtils::clearInputBuffer();
@@ -180,10 +210,14 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                             return; // Exit the loop and function
                         }
                     }
-
+#ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+#endif   
                     // Show the attachment name, size and path to the user
                     cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
-                    ConsoleUtils::resetColor(); // Resetting color after displaying attachment details
+#ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+#endif  
                     break;  // Exit the loop if the file is valid
                 } else {
                     // Error handling for attachment path
@@ -199,48 +233,74 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                 }
 
             } else {
+#ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif  
                 cout << "Invalid choice. Please enter Y or N." << endl;
+#ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
+#endif  
                 continue;
             }
         }
         // Display a success message
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif 
         cout << "Email has been successfully created." << endl;
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
+#endif  
 }
 
 void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
                                   string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists,
                                   map<string, pair<string, string>>& emailToTemplate) {
 
-
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     cout << "===========================\n";
     cout << "       EMAIL DETAILS       \n";
     cout << "===========================\n";
     cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
     cout << "Subject: " << subject << "\n";
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+#endif 
     cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
     cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
     cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
     ConsoleUtils::resetColor();
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
     cout << "\n" << message << "\n";
-    cout << "-------------------------\n";
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif 
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
+    cout << "-------------------------\n";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif 
 
     int attempts = 0;
     bool modified = false;
 
     while (attempts < 3) {
 
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);        
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);    
+#endif 
         cout << "Do you wish to modify this email? (Y/N): ";
         ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif 
 
         char modifyEmailChoice;
         cin >> modifyEmailChoice;
@@ -290,9 +350,13 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
             }
 
         } else {
-            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);              
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);           
+#endif   
             cout << "Email saved for sending/editing." << endl;
+#ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
+#endif
             return;
         }
     }
@@ -321,31 +385,46 @@ void EmailManager::viewEditTemplates(CURL* curl,
     string firstSubject = firstElement->second.first;
     string firstMessage = firstElement->second.second;
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     cout << "=============================\n";
     cout << "      TEMPLATE DETAILS       \n";
     cout << "=============================\n";
     cout << "For: " << firstEmail << "\n";
     cout << "Subject: " << firstSubject << "\n";
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+#endif
     cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
     cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
     cout << "Path: " << (attachmentPath.empty() ? "None" : attachmentPath) << "\n";
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     cout << "\n" << firstMessage << "\n";
     cout << "-----------------------------\n";
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     int attempts = 0;
 
     while (attempts < 3) {
 
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cout << "Do you wish to modify this template? (Y/N): ";
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
-
+#endif
         char modifyTemplateChoice;
         cin >> modifyTemplateChoice;
         ConsoleUtils::clearInputBuffer();
@@ -355,9 +434,13 @@ void EmailManager::viewEditTemplates(CURL* curl,
             createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort,
                                   attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
         } else {
+#ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
             cout << "Template saved for sending/editing." << endl;
+#ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
+#endif
             return;
         }
     }
@@ -392,9 +475,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         return false;
     }
 
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     struct curl_slist* recipients = nullptr;
 
@@ -442,10 +529,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     }
 
     curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Authenticating with SMTP server..." << endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
     cout.flush();
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
@@ -459,9 +549,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         if (totalEmails != 0) {
             progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
         }
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
         cout << "Progress: " << progressPercentage << "%" << endl;
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
+#endif
         cout.flush();
     }
 
@@ -472,10 +566,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
     curl_slist_free_all(recipients);
     curl_slist_free_all(headers);
-
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
     cout << "Email sending progress completed." << endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     if (!errorHandler.handleCurlError(res)) {
         if (res == CURLE_COULDNT_CONNECT) {
@@ -512,10 +609,13 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
         return false;
     }
-
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     // Loop through each venue and send the email
     for (const auto& kv : emailToTemplate) {
@@ -577,7 +677,13 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         if (res != CURLE_OK) {
             // Handle errors
             errorHandler.handleCurlError(res);
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
             cerr << "Failed to send email to " << recipientEmail << endl;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
             continue;  // Skip to the next iteration
         }
 
@@ -605,9 +711,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                        bool templateExists) {
     // Check if venues are selected
     if (selectedVenuesForEmail.empty()) {
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
         cerr << "Error: No venues have been selected. Please select venues first before attempting to send the template." << endl;
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
+#endif
         return;  // Exit the function
     }
 
@@ -616,59 +726,103 @@ void EmailManager::createBookingTemplate(CURL* curl,
     // Prompt the user for the required data to fill the placeholders
     string genre, bandName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Genre: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, genre);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Band Name: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, bandName);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Hometown: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, hometown);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Similar Artists: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, similarArtists);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Date: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, date);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Music Link: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, musicLink);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Live Performance Video Link: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, livePerfVideo);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Music Video Link: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, musicVideo);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Press Quote: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, pressQuote);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Your Name: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, name);
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Enter Social Links: ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     getline(cin, socials);
 
     // Construct the email template for each venue without sending it
@@ -703,7 +857,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
     string firstMessage = firstElement->second.second;
 
     // Display the completed template
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     cout << "=========================================\n";
     cout << "Generated Email Template for: " << firstEmail << "\n";
     cout << "=========================================\n";
@@ -711,13 +867,19 @@ void EmailManager::createBookingTemplate(CURL* curl,
     cout << "=========================================\n";
     cout << firstMessage << endl;
     cout << "=========================================\n";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     }
 
     while (true) {
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Do you want to add an attachment? (Y/N): ";
-    ConsoleUtils::resetColor();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
     char addAttachmentChoice;
     cin >> addAttachmentChoice;
     ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
@@ -726,9 +888,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
         break;
         
     } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cout << "Enter the path of the file to attach (or press Enter to skip): ";
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
+#endif
         getline(cin, attachmentPath);
         if (attachmentPath.empty()) {
             break; // No attachment provided, move on
@@ -747,15 +913,23 @@ void EmailManager::createBookingTemplate(CURL* curl,
             if (filesystem::exists(attachmentPath)) {
                 size_t fileSize = filesystem::file_size(attachmentPath);
                 attachmentSize = to_string(fileSize) + " bytes";
+#ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+#endif
                 cout << "File Size: " << fileSize << " bytes" << endl;
+#ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
+#endif
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                     clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
+#ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
                     cout << "Do you want to add a different attachment? (Y/N): ";
+#ifndef UNIT_TESTING
                     ConsoleUtils::resetColor();
+#endif
                     char choice;
                     cin >> choice;
                     ConsoleUtils::clearInputBuffer();
@@ -765,10 +939,14 @@ void EmailManager::createBookingTemplate(CURL* curl,
                         break; // Exit the loop without an attachment
                     }
                 }
-                
+
+#ifndef UNIT_TESTING                
                 ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+#endif
                 cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
-                ConsoleUtils::resetColor(); // Resetting color after displaying attachment details
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
                 break;  // Exit the loop if the file is valid
             } else {
                 errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
@@ -780,9 +958,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
         }
         
         } else {
+#ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
             cout << "Invalid choice. Please enter Y or N." << endl;
+#ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
+#endif
             continue;
         }
     }
@@ -790,34 +972,49 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
     // Ask user if they want to modify or send
     char choice;
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cout << "Do you wish to modify this template? (Y/N): ";
     cin >> choice;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     if (choice == 'Y' || choice == 'y') {
         // Clear the existing template and start over
         clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
         createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
     } else {
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cout << "Do you want to send the template? (Y/N): ";
-        ConsoleUtils::resetColor();
         cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         if (choice == 'Y' || choice == 'y') {
             templateExists = false; // Reset the flag since we're sending the email
 
             // Now, send the email to all venues
             bool sent = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
             if (!sent) {
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
                 cerr << "Failed to send email templates." << endl;
+#endif
             }
             // No need to set templateExists here again, as it's already set to false
         } else {
             // If user chooses not to send, the template and subjects stay in the map
+#ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
             cout << "Template saved for sending/editing." << endl;
+#ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
+#endif
             templateExists = true;
         }
     }
@@ -863,8 +1060,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
             if (isValidEmail(customAddressRecipientEmail)) {
                 break;
             } else {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::RECIPIENT_EMAIL_FORMAT_ERROR);
                 return;
             }
         } while (true);

@@ -96,6 +96,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::ATTACHMENT_SIZE_ERROR:
             cerr << "File exceeds the 24MB limit." << endl;
             break;
+        case ErrorType::RECIPIENT_EMAIL_FORMAT_ERROR:
+            cerr << "The recipient email formatting is not correct" << endl;
+            break;
         case ErrorType::SENDER_EMAIL_FORMAT_ERROR:
             cerr << "Error: The sender email '" << extraInfo << "' is not the valid format." << endl;
             cerr << "Please set it correctly in your custom.json file." << endl;
