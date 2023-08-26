@@ -378,20 +378,20 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
 
-    // Update totalEmails dynamically
-    totalEmails = selectedVenuesForEmail.size();
-
     if (!curl) {
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return false;
     }
+
+    // Update totalEmails dynamically
+    totalEmails = selectedVenuesForEmail.size();
 
     if (!isValidEmail(senderEmail)) {
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
         errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
         return false;
     }
-    
+
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
     cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
     ConsoleUtils::resetColor();
@@ -402,29 +402,33 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
+    // cURL headers
+    struct curl_slist* headers = nullptr;
+    string dateHeader = "Date: " + getCurrentDateRfc2822();
     string toHeader = "To: " + selectedVenue.email;
     string fromHeader = "From: " + senderEmail;
     string subjectHeader = "Subject: " + subject;
 
-    struct curl_slist* headers = nullptr;
-    string dateHeader = "Date: " + getCurrentDateRfc2822();
     headers = curl_slist_append(headers, dateHeader.c_str());
     headers = curl_slist_append(headers, toHeader.c_str());
     headers = curl_slist_append(headers, fromHeader.c_str());
     headers = curl_slist_append(headers, subjectHeader.c_str());
+
+    // Set headers
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     curl_mime *mime = nullptr;
 
+    mime = curl_mime_init(curl);
+
+    // Add the message part
+    curl_mimepart *part = curl_mime_addpart(mime);
+    curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
+
     if (!attachmentPath.empty()) {
-        mime = curl_mime_init(curl);
 
         size_t fileSize = filesystem::file_size(attachmentPath);
         attachmentSize = to_string(fileSize) + " bytes";
-
-        // Add the message part
-        curl_mimepart *part = curl_mime_addpart(mime);
-        curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
 
         // Add the attachment part
         part = curl_mime_addpart(mime);
@@ -435,18 +439,9 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
         // Set MIME type for attachment
         curl_mime_type(part, "application/octet-stream");
-
-        curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-    } else {
-        string payload = dateHeader + "\r\n"
-                         + toHeader + "\r\n"
-                         + fromHeader + "\r\n"
-                         + subjectHeader + "\r\n\r\n"
-                         + message;
-        curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
-        curl_easy_setopt(curl, CURLOPT_READDATA, &payload);
-        curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
     }
+
+    curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
 
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     cout << "Authenticating with SMTP server..." << endl;
