@@ -158,8 +158,8 @@ TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
 TEST_CASE("MenuManager::displaySelectedVenues() functionality", "[MenuManager]") {
     // Create mock data directly in the test
     vector<SelectedVenue> selectedVenues = {
-        SelectedVenue{"Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100},
-        SelectedVenue{"Venue2", "venue2@mock.com", "rock", "UT", "Provo", 300}
+        SelectedVenue{"Venue1", "venue1@mock.com", "USA", "all", 100, "AL", "Daphne"},
+        SelectedVenue{"Venue2", "venue2@mock.com", "France", "rock", 300, "UT", "Provo"}
     };
     
     // Create an ostringstream to capture the output
@@ -332,8 +332,8 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
 TEST_CASE("VenueFilter::processVenueSelection() functionality", "[VenueFilter]") {
     // Set up mock data and expected results
     vector<SelectedVenue> temporaryFilteredVenues = {
-        SelectedVenue{"Venue1", "venue1@mock.com", "all", "AL", "Daphne", 100},
-        SelectedVenue{"Venue2", "venue2@mock.com", "rock", "UT", "Provo", 300}
+        SelectedVenue{"Venue1", "venue1@mock.com", "USA", "all", 100, "AL", "Daphne"},
+        SelectedVenue{"Venue2", "venue2@mock.com", "France", "rock", 300, "UT", "Provo"}
     };    
 
     vector<SelectedVenue> selectedVenuesForEmail;

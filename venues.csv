@@ -1,4 +1,3 @@
-Venue Name,Email,Genre,State,City,Capacity
-Venue1,mock@venue1.com,all,AL,Daphne,100
-Venue2,mock@venue2.com,rock,UT,Provo,300
-Venue3,mock@venue3.com,jazz,AZ,Scottsdale,500
+Venue Name,Email,Genre,Country,Capacity,State,City
+Venue1,venue1@mock.com,all,USA,100,AL,Daphne
+Venue2,venue2@mock.com,rock,France,300,UT,Provo
