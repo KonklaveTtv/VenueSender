@@ -5,7 +5,8 @@
 #include "structs.h"
 
 #include <algorithm>
-#include <fstream> 
+#include <fstream>
+#include <sstream>
 #include <limits>
 #include <vector>
 
