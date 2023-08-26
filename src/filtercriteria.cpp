@@ -179,7 +179,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                     string venueValue;
                     if (filterType == "Genre") {
                         venueValue = venue.genre;
-                    } else if (filterType == "Country") {
+                    } else if (filterType == "Countries") {
                         venueValue = venue.country;
                     } else if (filterType == "State") {
                         venueValue = venue.state;
@@ -189,7 +189,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
 
 
                     if ((filterType == "Genre" && venue.genre == filterValue) ||
-                        (filterType == "Country" && venue.country == filterValue) ||
+                        (filterType == "Countries" && venue.country == filterValue) ||
                         (filterType == "State" && venue.state == filterValue) ||
                         (filterType == "City" && venue.city == filterValue)) {
                         cout << "Debug: Match found. Adding to temporaryFilteredVenues." << endl;
