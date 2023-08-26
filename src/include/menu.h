@@ -140,8 +140,8 @@ public:
     static int displayMenuOptions() ;
     static int displayVenueSelectionOptions() ;
     static int displayVenueOptions() ;
-    int displayEmailOptions() const;
-    int displayTemplateOptions() const;
+    static int displayEmailOptions() ;
+    static int displayTemplateOptions() ;
 
     // Function to display the list of venues selected by the user
     static void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);

@@ -195,7 +195,7 @@ public:
                           std::string& attachmentSize,
                           std::string& attachmentPath);
 
-    void confirmSendBookingTemplates(CURL* curl,
+    static void confirmSendBookingTemplates(CURL* curl,
                                      std::vector<SelectedVenue>& selectedVenuesForTemplates,
                                      const std::string& senderEmail,
                                      std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,

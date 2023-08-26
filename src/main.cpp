@@ -8,7 +8,6 @@ using namespace std;
 #ifndef UNIT_TESTING
 
 // Declare global objects to be used across different parts of the code
-ConfigManager configManager;
 CsvReader csvReader;
 CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
 EncryptionManager encryptionManager;
@@ -32,7 +31,7 @@ int main() {
     }
 
     // Attempt to decrypt the stored password
-    mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
+    mailPassDecrypted = EncryptionManager::decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DECRYPTION_ERROR);
         exit(1);
@@ -47,7 +46,7 @@ int main() {
     }
 
     // Read venues data from CSV file
-    csvReader.readCSV(venues, confPaths::venuesCsvPath);
+    CsvReader::readCSV(venues, confPaths::venuesCsvPath);
 
     // Extract unique genres, states, cities, and capacities from the venues data
     set<string> uniqueGenres = venueUtilities.getUniqueGenres(venues);
@@ -99,24 +98,24 @@ int main() {
         MenuManager::mainHeader();
 
         // Display main menu options and get the user's choice
-        int mainChoice = menuManager.displayMenuOptions();
+        int mainChoice = MenuManager::displayMenuOptions();
 
         // Main Menu
         switch (mainChoice) {
             case MenuManager::VENUE_SELECTION_OPTION:
-                menuManager.displayVenueSelectionOptions();
+                MenuManager::displayVenueSelectionOptions();
                 break;
             case MenuManager::VENUE_OPTIONS_OPTION:
-                menuManager.displayVenueOptions();
+                MenuManager::displayVenueOptions();
                 break;
             case MenuManager::EMAIL_OPTIONS_OPTION:
-                menuManager.displayEmailOptions();
+                MenuManager::displayEmailOptions();
                 break;
             case MenuManager::TEMPLATES_OPTION:
-                menuManager.displayTemplateOptions();
+                MenuManager::displayTemplateOptions();
                 break;
             case MenuManager::CONFIGURATION_OPTION:
-                emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+                EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
                 break;
             default:
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);

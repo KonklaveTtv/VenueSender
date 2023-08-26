@@ -158,7 +158,6 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
                                        string& senderEmail, string& smtpUsername, 
                                        string& mailPass, int& smtpPort, string& smtpServer, 
                                        string& venuesCsvPath) {
-    EncryptionManager& encryptionManager = EncryptionManager::getInstance();
 
     // Logic to read and load settings from a JSON file
     // Includes conditional compilation for unit testing
@@ -227,7 +226,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
-        if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
+        if (!EncryptionManager::encryptPassword(mailPass, mailPassEncrypted)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
             return false;
         }
@@ -247,7 +246,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
-        if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
+        if (!EncryptionManager::encryptPassword(mailPass, mailPassEncrypted)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
             return false;
         }
@@ -276,7 +275,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     string mailPassDecrypted;
 
     // Decrypt the encrypted mail password
-    mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
+    mailPassDecrypted = EncryptionManager::decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
         return false;
@@ -294,7 +293,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     mailPass = config["email_password"].asString();
 
     // Decrypt the encrypted mail password
-    string mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
+    string mailPassDecrypted = EncryptionManager::decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
         return false;

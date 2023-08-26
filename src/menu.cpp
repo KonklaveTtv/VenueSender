@@ -121,7 +121,7 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                         emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                         break;
                     case CLEAR_BOOKING_TEMPLATE_OPTION:
-                        EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
+                        emailManager.clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                         break;
                     case SEND_BOOKING_TEMPLATES_OPTION:
                         emailManager.confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
@@ -285,7 +285,7 @@ int MenuManager::displayVenueOptions() {
     return choice;
 }
 
-int MenuManager::displayEmailOptions() const {
+int MenuManager::displayEmailOptions() {
     int choice;
     do {
 #ifndef UNIT_TESTING
@@ -320,7 +320,7 @@ int MenuManager::displayEmailOptions() const {
     return choice;
 }
 
-int MenuManager::displayTemplateOptions() const {
+int MenuManager::displayTemplateOptions() {
     int choice;
     do {
 #ifndef UNIT_TESTING
