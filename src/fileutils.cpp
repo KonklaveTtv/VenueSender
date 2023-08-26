@@ -113,8 +113,7 @@ void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
     // Handle any errors that may occur
     ifstream file(venuesCsvPath);
     if (!file.is_open()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, venuesCsvPath);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, venuesCsvPath);
         return;
     }
 
@@ -140,13 +139,11 @@ void CsvReader::readCSV(vector<Venue>& venues, string& venuesCsvPath) {
             try {
                 venue.capacity = stoi(rowData[5]);
             } catch (const exception& ex) {
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CAPACITY_IN_CSV, venuesCsvPath);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CAPACITY_IN_CSV, venuesCsvPath);
             }
             venues.push_back(venue);
         } else {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV, venuesCsvPath);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV, venuesCsvPath);
         }
     }
 
@@ -172,8 +169,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     Json::Value config;
     ifstream configFile(confPaths::mockConfigJsonPath);
     if (!configFile.is_open()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
         return false;
     }
 
@@ -196,8 +192,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     Json::Value config;
     ifstream configFile(confPaths::configJsonPath);
     if (!configFile.is_open()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
         return false;
     }
 
@@ -233,8 +228,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
         if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
             return false;
         }
         config["mock_email_password"] = mailPassEncrypted;
@@ -254,8 +248,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Encrypt the mail password if it is not already encrypted and update the config file
     if (!ismailPassEncrypted) {
         if (!encryptionManager.encryptPassword(mailPass, mailPassEncrypted)) {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
             return false;
         }
         config["email_password"] = mailPassEncrypted;
@@ -270,8 +263,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     ofstream configFileOut(confPaths::mockConfigJsonPath);
     if (!configFileOut.is_open()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR);
         return false;
     }
     configFileOut << config;
@@ -286,15 +278,13 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Decrypt the encrypted mail password
     mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ENCRYPTION_ERROR);
         return false;
     }
 #else
     ofstream configFileOut(confPaths::configJsonPath);
     if (!configFileOut.is_open()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR);
         return false;
     }
     configFileOut << config;
@@ -306,8 +296,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Decrypt the encrypted mail password
     string mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
         return false;
     }
 #endif
@@ -338,8 +327,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
         ConsoleUtils::resetColor(); // Reset color
     } else {
         ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Red for error
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
         ConsoleUtils::resetColor(); // Reset color
     }
     return configLoadedSuccessfully;
@@ -365,8 +353,7 @@ void ConfigManager::resetConfigFile() {
     // Read the existing configuration
     ifstream configFile(configPath);
     if (!configFile.is_open()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, configPath);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, configPath);
         return;
     }
     configFile >> config;
@@ -379,8 +366,7 @@ void ConfigManager::resetConfigFile() {
     // Write the modified JSON object back to the appropriate file
     ofstream configFileOut(configPath);
     if (!configFileOut.is_open()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR, configPath);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_TO_WRITE_ERROR, configPath);
         return;
     }
     configFileOut << config;

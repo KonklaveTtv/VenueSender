@@ -137,14 +137,14 @@ public:
     }
 
     // Functions to display the menu options to the user
-    int displayMenuOptions() const;
-    int displayVenueSelectionOptions() const;
-    int displayVenueOptions() const;
+    static int displayMenuOptions() ;
+    static int displayVenueSelectionOptions() ;
+    static int displayVenueOptions() ;
     int displayEmailOptions() const;
     int displayTemplateOptions() const;
 
     // Function to display the list of venues selected by the user
-    void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
+    static void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
 
 #ifdef UNIT_TESTING
     // Function to validate if the user's choice is a valid menu option

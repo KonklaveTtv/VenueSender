@@ -42,26 +42,26 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                 switch (subChoice) {
                     case FILTER_BY_GENRE_OPTION:
                         venueFilter.filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
-                        venueFilter.displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
+                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
+                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
                     case FILTER_BY_STATE_OPTION:
                         venueFilter.filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
-                        venueFilter.displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
+                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
+                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
                     case FILTER_BY_CITY_OPTION:
                         venueFilter.filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
-                        venueFilter.displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
+                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
+                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
                     case FILTER_BY_CAPACITY_OPTION:
                         venueFilter.filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
-                        venueFilter.displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
+                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
+                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
                         temporaryFilteredVenues.clear(); // Clear the temporary filtered list
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION:
@@ -79,8 +79,8 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                         displaySelectedVenues(selectedVenuesForEmail);
                         break;
                     case CLEAR_SELECTED_VENUES_OPTION:
-                        emailManager.clearSelectedVenues(selectedVenuesForEmail);
-                        emailManager.clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
+                        EmailManager::clearSelectedVenues(selectedVenuesForEmail);
+                        EmailManager::clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS:
                         // Logic to return to the main menu
@@ -121,7 +121,7 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                         emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                         break;
                     case CLEAR_BOOKING_TEMPLATE_OPTION:
-                        emailManager.clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
+                        EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                         break;
                     case SEND_BOOKING_TEMPLATES_OPTION:
                         emailManager.confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
@@ -134,17 +134,16 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                 break;
             }
             case CONFIGURATION_OPTION:
-                emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+                EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
                 break;
             default:
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
     }
 }
 
 
-int MenuManager::displayMenuOptions() const {
+int MenuManager::displayMenuOptions() {
     int choice;
     do {
 #ifndef UNIT_TESTING
@@ -192,7 +191,7 @@ int MenuManager::displayMenuOptions() const {
 #endif
                 // Reset configurations and cleanup before exiting
                 ConfigManager configManager;
-                configManager.resetConfigFile();  
+                ConfigManager::resetConfigFile();
                 CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
                 exit(0);  // Exit the program
             } else if (confirmExit == 'N' || confirmExit == 'n') {
@@ -205,8 +204,7 @@ int MenuManager::displayMenuOptions() const {
 #endif
                 continue;  // Continue to the next iteration of the loop
             } else {
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
                 continue;  // Continue to the next iteration of the loop
             }
         }
@@ -214,14 +212,13 @@ int MenuManager::displayMenuOptions() const {
         if (choice >= VENUE_SELECTION_OPTION && choice <= EXIT_OPTION) {
             break;
         } else {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
     } while (true);
     return choice;
 }
 
-int MenuManager::displayVenueSelectionOptions() const {
+int MenuManager::displayVenueSelectionOptions() {
     int choice;
     do {
 #ifndef UNIT_TESTING
@@ -249,14 +246,13 @@ int MenuManager::displayVenueSelectionOptions() const {
         if (choice >= FILTER_BY_GENRE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
             break;
         } else {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
     } while (true);
     return choice;
 }
 
-int MenuManager::displayVenueOptions() const {
+int MenuManager::displayVenueOptions() {
     int choice;
     do {
 #ifndef UNIT_TESTING
@@ -283,8 +279,7 @@ int MenuManager::displayVenueOptions() const {
         if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
             break;
         } else {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
     } while (true);
     return choice;
@@ -319,8 +314,7 @@ int MenuManager::displayEmailOptions() const {
         if (choice >= CREATE_EMAIL_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS) {
             break;
         } else {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
     } while (true);
     return choice;
@@ -355,8 +349,7 @@ int MenuManager::displayTemplateOptions() const {
         if (choice >= CREATE_VENUE_BOOKING_TEMPLATE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS) {
             break;
         } else {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
     } while (true);
     return choice;
@@ -374,8 +367,7 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
     ConsoleUtils::resetColor();
 #endif
     if (selectedVenues.empty()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
     } else {
         for (const auto& venue : selectedVenues) {
 #ifndef UNIT_TESTING

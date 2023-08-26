@@ -17,8 +17,7 @@ EncryptionManager::EncryptionManager() {
     // Initialize libsodium library for encryption
     if (sodium_init() < 0) {
         // Handle initialization error
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBSODIUM_INIT_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBSODIUM_INIT_ERROR);
         exit(EXIT_FAILURE); // Terminate the program
     }
 
@@ -38,8 +37,7 @@ bool EncryptionManager::encryptPassword(const string& decryptedPassword, string&
         if (crypto_secretbox_easy(encryptedBuffer, reinterpret_cast<const unsigned char*>(decryptedPassword.c_str()), decryptedPassword.size(),
                               globalEncryptionNonce.data(), globalEncryptionKey.data()) != 0) {
         // Handle encryption error    
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_ENCRYPTION_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_ENCRYPTION_ERROR);
         return false;
     }
 
@@ -60,8 +58,7 @@ string EncryptionManager::decryptPassword(const string& encryptedPassword) {
         // Check if the encrypted password is long enough to contain both the nonce and MAC
         if (encryptedPassword.size() < crypto_secretbox_MACBYTES + NONCE_LENGTH) {
         // Handle format error
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_ENCRYPTION_FORMAT_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_ENCRYPTION_FORMAT_ERROR);
         exit(EXIT_FAILURE); // Terminate the program
     }
 
@@ -81,8 +78,7 @@ string EncryptionManager::decryptPassword(const string& encryptedPassword) {
                                    reinterpret_cast<const unsigned char*>(nonce.c_str()), 
                                    globalEncryptionKey.data()) != 0) {
         // Handle decryption error
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR);
         exit(EXIT_FAILURE); // Terminate the program if decryption fails
     }
 

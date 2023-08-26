@@ -26,17 +26,15 @@ int main() {
 
     // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
-    if (!configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
+    if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
         exit(1);
     }
 
     // Attempt to decrypt the stored password
     mailPassDecrypted = encryptionManager.decryptPassword(mailPass);
     if (mailPassDecrypted.empty()) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::DECRYPTION_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DECRYPTION_ERROR);
         exit(1);
     }
 
@@ -44,8 +42,7 @@ int main() {
     CurlHandleWrapper::init();
         CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
     if (!curl) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return 1;  // Return error if CURL setup failed
     }
 
@@ -122,8 +119,7 @@ int main() {
                 emailManager.viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
                 break;
             default:
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
     }
 

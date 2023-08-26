@@ -65,7 +65,7 @@ public:
     static void handleErrorAndReturn(ErrorType error, const std::string& extraInfo);
 
     // Handles cURL errors and returns a boolean to indicate success/failure
-    bool handleCurlError(CURLcode res);
+    static bool handleCurlError(CURLcode res);
 };
 
 #endif // ERRORHANDLER_H

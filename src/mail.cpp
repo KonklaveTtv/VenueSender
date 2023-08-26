@@ -3,9 +3,6 @@
 // Use the standard namespace and alias for filesystem
 using namespace std;
 
-// Define global object for error handling
-ErrorHandler errorHandler;
-
 // Global progress counters
 static int successfulSends = 0; // Counter for successful email sends
 int totalEmails;
@@ -77,7 +74,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
     const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
 
     if (subject.length() > maxSubjectLength) {
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
         cout << "Press return to go back..." << endl;
@@ -101,7 +98,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         while (getline(in, line)) {
             if (line.empty()) break;
             if (message.length() + line.length() > maxMessageLength) {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::RED);
                 cout << "Press return to go back..." << endl;
@@ -119,7 +116,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         if (in.eof()) {
             inputProvided = true;
         } else if (message.empty()) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_BLANK_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_BLANK_ERROR);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
             cout << "Press return to go back..." << endl;
@@ -190,7 +187,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 #endif  
                     // Check the attachment size doesn't exceed 24MB
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
-                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                         clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -219,13 +216,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                     break;  // Exit the loop if the file is valid
                 } else {
                     // Error handling for attachment path
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
                     return;  // Exit the function if the path is invalid
                 }
             } catch (const filesystem::filesystem_error& e) {
                 // Error handling for filesystem errors
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
                 return;
                 }
 
@@ -314,7 +311,7 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
                     constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                     modified = true;
                 } catch (const exception& e) {
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
                     clearSubjectMessageData(subject, message);
                     attempts++; // Increment the attempts
                     continue; // Loop back to prompt for email details again
@@ -322,15 +319,15 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
             }
 
             if (subject.empty() || message.empty()) {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
                 try {
                     constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                 } catch (const exception& e) {
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
                     clearSubjectMessageData(subject, message);
                     attempts++; // Increment the attempts
                     if (attempts >= 3) {
-                        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
+                        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
                         return; // Break out of the loop after too many attempts
                     }
                     continue; // Loop back to prompt for email details again
@@ -455,7 +452,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
 
     if (!curl) {
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return false;
     }
 
@@ -463,8 +460,8 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     totalEmails = selectedVenuesForEmail.size();
 
     if (!isValidEmail(senderEmail)) {
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
         return false;
     }
 
@@ -582,7 +579,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
             cout << "Email sending progress completed." << endl;
             ConsoleUtils::resetColor();
             
-            if (!errorHandler.handleCurlError(res)) {
+            if (!ErrorHandler::handleCurlError(res)) {
                 return false;
             }
         }
@@ -684,13 +681,13 @@ cout << "Progress: " << progressPercentage << "%" << endl;
     ConsoleUtils::resetColor();
 #endif
 
-    if (!errorHandler.handleCurlError(res)) {
+    if (!ErrorHandler::handleCurlError(res)) {
         if (res == CURLE_COULDNT_CONNECT) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
         } else if (res == CURLE_LOGIN_DENIED) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
         }
         return false;
     }
@@ -710,13 +707,13 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
 
     if (!curl) {
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return false;
     }
 
     if (!isValidEmail(senderEmail)) {
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
         return false;
     }
 #ifndef UNIT_TESTING
@@ -786,7 +783,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
             // Handle errors
-            errorHandler.handleCurlError(res);
+            ErrorHandler::handleCurlError(res);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
@@ -1031,7 +1028,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 ConsoleUtils::resetColor();
 #endif
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                     clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1059,11 +1056,11 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #endif
                 break;  // Exit the loop if the file is valid
             } else {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
             }
         } catch (const filesystem::filesystem_error& e) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
         }
         
         } else {
@@ -1145,7 +1142,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
 
     if (!curl) {
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return;
     }
 
@@ -1172,7 +1169,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
             if (isValidEmail(customAddressRecipientEmail)) {
                 break;
             } else {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::RECIPIENT_EMAIL_FORMAT_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::RECIPIENT_EMAIL_FORMAT_ERROR);
                 return;
             }
         } while (true);
@@ -1191,7 +1188,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         } while (customAddressSubject.empty());
 
         if (customAddressSubject.length() > maxSubjectLength) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
         #ifndef UNIT_TESTING
             cout << "Press return to go back..." << endl;
             cin.ignore();
@@ -1211,7 +1208,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         }
 
         if (customAddressMessage.length() + customAddressLine.length() > maxMessageLength) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
         #ifndef UNIT_TESTING
             cout << "Press return to go back..." << endl;
             cin.ignore();
@@ -1260,7 +1257,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 cout << "File Size: " << fileSize << " bytes" << endl;
 
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                     clearCustomAddressAttachmentData(customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
                     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
                     cout << "Do you want to add a different attachment? (Y/N): ";
@@ -1280,12 +1277,12 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 ConsoleUtils::resetColor();
                 break;  // Exit the loop if the file is valid
             } else {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
                 return;
             }
         } catch (const filesystem::filesystem_error& e) {
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
             return;
         }
 
@@ -1341,7 +1338,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         if (confirmSend == 'Y' || confirmSend == 'y') {
 
             if (!curl) {
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
                 return;
             }
 
@@ -1427,13 +1424,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
             clearAllCustomAddressEmailData(customAddressSubject, customAddressMessage, customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
             return;
 
-            if (!errorHandler.handleCurlError(res)) {
+            if (!ErrorHandler::handleCurlError(res)) {
                 if (res == CURLE_COULDNT_CONNECT) {
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
                 } else if (res == CURLE_LOGIN_DENIED) {
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
                 }
             }
         } else {

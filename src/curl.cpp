@@ -11,7 +11,7 @@ size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, voi
     auto* payload = static_cast<string*>(userp);
     size_t totalsize = size * nmemb;
 
-    if (payload->size()) {
+    if (!payload->empty()) {
         // Calculate the size of data to copy to ptr
         size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
 
@@ -42,8 +42,7 @@ CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
     // Initialize cURL handle and set basic options
     curl = curl_easy_init();
     if (!curl) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return;
     }
 
@@ -99,8 +98,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     CURL* curl = curlWrapper.get();
     if (!curl) {
         // Handle error
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return nullptr;
     }
     

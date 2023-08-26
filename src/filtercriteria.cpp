@@ -23,8 +23,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
 
     // Validate input length
     if (userInput.length() > MAX_INPUT_LENGTH) {
-        ErrorHandler errorHandler;
-        errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
         cout << "Press return to continue..." << endl;
         ConsoleUtils::clearInputBuffer();
         cin.get(); // This will wait for a key press
@@ -37,8 +36,7 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
         try {
             size_t selectedIndex = stoul(indexStr);
             if (selectedIndex == 0) {
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 cout << "Press return to continue..." << endl;
                 ConsoleUtils::clearInputBuffer();
                 cin.get(); // This will wait for a key press
@@ -61,23 +59,20 @@ void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFi
                     selectedVenuesForEmail.push_back(selectedVenue);
                     selectedVenuesForTemplates.push_back(selectedVenue);  // Add to selectedVenuesForTemplates
                 } else {
-                    ErrorHandler errorHandler;
-                    errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR);
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR);
                     cout << "Press return to continue..." << endl;
                     ConsoleUtils::clearInputBuffer();
                     cin.get(); // This will wait for a key press
                 }
             } else {
-                ErrorHandler errorHandler;
-                errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 cout << "Press return to continue..." << endl;
                 ConsoleUtils::clearInputBuffer();
                 cin.get(); // This will wait for a key press  
                 continue;
             }
         } catch (const invalid_argument& e) {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press 
@@ -152,8 +147,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
             size_t selectedIndex = stoi(indexStr) - 1;
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press            
@@ -173,8 +167,7 @@ vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& ven
                 }
             }
         } else {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press   
@@ -226,8 +219,7 @@ vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
             size_t selectedIndex = stoi(indexStr) - 1;
             selectedIndices.push_back(selectedIndex);
         } catch (const exception& e) {
-            ErrorHandler errorHandler;
-            errorHandler.handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             cout << "Press return to continue..." << endl;
             ConsoleUtils::clearInputBuffer();
             cin.get(); // This will wait for a key press 

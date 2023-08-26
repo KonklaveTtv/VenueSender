@@ -151,7 +151,7 @@ public:
                              std::string& attachmentPath,
                              const std::vector<SelectedVenue>& selectedVenuesForEmail);
 
-    bool sendBookingTemplateEmails(CURL* curl,
+    static bool sendBookingTemplateEmails(CURL* curl,
                                    const std::string& senderEmail,
                                    std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
                                    const std::string& smtpServer,
