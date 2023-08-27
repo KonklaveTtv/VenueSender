@@ -9,12 +9,6 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                                 vector<Venue>& venues,
                                 vector<SelectedVenue>& selectedVenuesForTemplates,
                                 vector<SelectedVenue>& selectedVenuesForEmail,
-                                set<string>& uniqueGenres,
-                                set<string>& uniqueCountries,
-                                set<int>& uniqueCapacities,
-                                set<string>& uniqueStates,
-                                set<string>& uniqueCities,                                
-                                vector<SelectedVenue>& temporaryFilteredVenues,
                                 map<string, pair<string, string>>& emailToTemplate,
                                 string& subject,
                                 string& message,
@@ -41,35 +35,8 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                 int subChoice = displayVenueSelectionOptions();
 
                 switch (subChoice) {
-                    case FILTER_BY_GENRE_OPTION:
-                        venueFilter.filterByOption(venues, "Genre", uniqueGenres, temporaryFilteredVenues);
-                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
-                        temporaryFilteredVenues.clear(); // Clear the temporary filtered list
-                        break;
-                    case FILTER_BY_COUNTRY_OPTION:
-                        venueFilter.filterByOption(venues, "Countries", uniqueCountries, temporaryFilteredVenues);
-                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
-                        temporaryFilteredVenues.clear(); // Clear the temporary filtered list
-                        break;
-                    case FILTER_BY_CAPACITY_OPTION:
-                        venueFilter.filterByCapacity(venues, uniqueCapacities, temporaryFilteredVenues);
-                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
-                        temporaryFilteredVenues.clear(); // Clear the temporary filtered list
-                        break;
-                    case FILTER_BY_STATE_OPTION:
-                        venueFilter.filterByOption(venues, "State", uniqueStates, temporaryFilteredVenues);
-                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
-                        temporaryFilteredVenues.clear(); // Clear the temporary filtered list
-                        break;
-                    case FILTER_BY_CITY_OPTION:
-                        venueFilter.filterByOption(venues, "City", uniqueCities, temporaryFilteredVenues);
-                        VenueFilter::displayFilteredVenues(temporaryFilteredVenues); // Display filtered venues
-                        VenueFilter::processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout); // Select venues
-                        temporaryFilteredVenues.clear(); // Clear the temporary filtered list
+                    case SELECT_VENUES_OPTION:
+                        venueFilter.processVenueSelection(venues, cin, cout);
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION:
                         // Logic to return to the main menu
@@ -237,11 +204,7 @@ int MenuManager::displayVenueSelectionOptions() {
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
-        cout << FILTER_BY_GENRE_OPTION << ". Filter by Genre" << endl;
-        cout << FILTER_BY_COUNTRY_OPTION << ". Filter by Country" << endl;
-        cout << FILTER_BY_CAPACITY_OPTION << ". Filter by Capacity" << endl;
-        cout << FILTER_BY_STATE_OPTION << ". Filter by State" << endl;
-        cout << FILTER_BY_CITY_OPTION << ". Filter by City" << endl;
+        cout << SELECT_VENUES_OPTION << ". Select Venues" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION << ". Return to Main Menu" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Blue for headers
@@ -251,7 +214,7 @@ int MenuManager::displayVenueSelectionOptions() {
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
-        if (choice >= FILTER_BY_GENRE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
+        if (choice >= SELECT_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);

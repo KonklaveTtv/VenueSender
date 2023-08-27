@@ -346,7 +346,7 @@ TEST_CASE("VenueFilter::processVenueSelection() functionality", "[VenueFilter]")
     VenueFilter venueFilter;
 
     // Call the function
-    venueFilter.processVenueSelection(temporaryFilteredVenues, selectedVenuesForEmail, selectedVenuesForTemplates, mockInput, mockOutput);
+    venueFilter.processVenueSelection(temporaryFilteredVenues, temporaryFilteredVenuesBuffer, cin, cout);
 
     // Check results for emails
     REQUIRE(selectedVenuesForEmail.size() == 2); 

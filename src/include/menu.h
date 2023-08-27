@@ -35,11 +35,7 @@ public:
     };
 
     enum class VenueSelectionOption {
-        FilterByGenre = 1,
-        FilterByCountry,
-        FilterByCapacity,
-        FilterByState,
-        FilterByCity,
+        SelectVenues = 1,
         ReturnToMainMenu
     };
 
@@ -66,11 +62,7 @@ public:
     };
 
     // Constants for Venue Filtering sub-menu options
-    static constexpr int FILTER_BY_GENRE_OPTION = static_cast<int>(VenueSelectionOption::FilterByGenre);
-    static constexpr int FILTER_BY_COUNTRY_OPTION = static_cast<int>(VenueSelectionOption::FilterByCountry);
-    static constexpr int FILTER_BY_CAPACITY_OPTION = static_cast<int>(VenueSelectionOption::FilterByCapacity);
-    static constexpr int FILTER_BY_STATE_OPTION = static_cast<int>(VenueSelectionOption::FilterByState);
-    static constexpr int FILTER_BY_CITY_OPTION = static_cast<int>(VenueSelectionOption::FilterByCity);
+    static constexpr int SELECT_VENUES_OPTION = static_cast<int>(VenueSelectionOption::SelectVenues);
     static constexpr int RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION = static_cast<int>(VenueSelectionOption::ReturnToMainMenu);
 
     // Constants for Venue Options sub-menu options
@@ -111,12 +103,6 @@ public:
                        std::vector<Venue>& venues,
                        std::vector<SelectedVenue>& selectedVenuesForTemplates,
                        std::vector<SelectedVenue>& selectedVenuesForEmail,
-                       std::set<std::string>& uniqueGenres,
-                       std::set<std::string>& uniqueCountries,
-                       std::set<int>& uniqueCapacities,
-                       std::set<std::string>& uniqueStates,
-                       std::set<std::string>& uniqueCities,                                              
-                       std::vector<SelectedVenue>& temporaryFilteredVenues,
                        std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
                        std::string& subject,
                        std::string& message,
@@ -152,7 +138,7 @@ public:
 #ifdef UNIT_TESTING
     // Function to validate if the user's choice is a valid menu option
     static inline bool isValidMenuChoice(int choice) {
-        return choice >= FILTER_BY_GENRE_OPTION && choice <= EXIT_OPTION;
+        return choice >= SELECT_VENUES_OPTION && choice <= EXIT_OPTION;
     }
 #endif
 };
