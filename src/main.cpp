@@ -1,56 +1,20 @@
 #include "include/main.h"
 
 // Use relevant namespaces
-using namespace confPaths;
 using namespace std;
+
+// Global objects to be used across different parts of the code
+CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
+VenueUtilities venueUtilities;
+VenueFilter venueFilter;
 
 // Exclude the following code block if UNIT_TESTING is defined
 #ifndef UNIT_TESTING
 
-// Declare global objects to be used across different parts of the code
-CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
-VenueFilter venueFilter;
-VenueUtilities venueUtilities;
-
-void splashscreen(){
-    // Clear the console for the splashscreen
-    ConsoleUtils::clearConsole();
-    
-    // Set color to cyan
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    for (int i = 0; i < 44; ++i) std::cout << '*';
-    std::cout << std::endl;
-
-    ConsoleUtils::resetColor();
-
-    // Display splash text centered
-    std::cout << "                VenueSender                " << std::endl;
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    std::cout << "********************************************" << std::endl;
-    ConsoleUtils::resetColor();
-
-    std::cout << "               Version 1.0.0               " << std::endl;
-
-    // Display copyright and other text in cyan
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    std::cout << "********************************************" << std::endl;
-    ConsoleUtils::resetColor();
-
-    std::cout << "    Copyright (c) 2023, Spencer Lievens.    " << std::endl;
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-
-    // Display bottom border
-    for (int i = 0; i < 44; ++i) std::cout << '*';
-    std::cout << std::endl;
-    ConsoleUtils::resetColor();
-    
-    std::cout << "              Initiailizing...              " << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-}
-
 int main() {
     // Load Splashscreen
-    splashscreen();
+    Init::splashscreen();
+
     // Initialize necessary variables
     vector<Venue> venues;
     vector<SelectedVenue> selectedVenuesForTemplates;
@@ -58,7 +22,7 @@ int main() {
     int smtpPort;
     bool templateExists = false;
     bool useSSL, verifyPeer, verifyHost, verbose;
-
+    
     // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
     if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
@@ -78,7 +42,7 @@ int main() {
         CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
-        return 1;  // Return error if CURL setup failed
+        return 1;
     }
 
     // Read venues data from CSV file
@@ -131,34 +95,9 @@ int main() {
                               templateExists
                               );
 
-    // Main loop for interacting with the user
-    while (true) {
-        MenuManager::mainHeader();
-
-        // Display main menu options and get the user's choice
-        int mainChoice = MenuManager::displayMenuOptions();
-
-        // Main Menu
-        switch (mainChoice) {
-            case MenuManager::VENUE_SELECTION_OPTION:
-                MenuManager::displayVenueSelectionOptions();
-                break;
-            case MenuManager::VENUE_OPTIONS_OPTION:
-                MenuManager::displayVenueOptions();
-                break;
-            case MenuManager::EMAIL_OPTIONS_OPTION:
-                MenuManager::displayEmailOptions();
-                break;
-            case MenuManager::TEMPLATES_OPTION:
-                MenuManager::displayTemplateOptions();
-                break;
-            case MenuManager::CONFIGURATION_OPTION:
-                EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
-                break;
-            default:
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
-        }
-    }
+    // Function load filters and display menu
+    Init initInstance;
+    initInstance.Menu();
 
     return 0;
 }
