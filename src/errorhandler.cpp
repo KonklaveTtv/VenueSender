@@ -151,11 +151,13 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Invalid encrypted password format." << endl;
             break;
         case ErrorType::LIBCURL_ERROR:
+#ifndef UNIT_TESTING
             cerr << "Failed to initialize libcurl." << endl;
             if (!extraInfo.empty()) {
                 cerr << " " << extraInfo;
             }
             cerr << endl;
+#endif
             break;
         case ErrorType::SMTP_CONNECTION_ERROR:
             cerr << "Connection to SMTP server failed." << endl;
