@@ -73,24 +73,9 @@ public:
                                       std::istream& input = std::cin,
                                       std::ostream& output = std::cout);
 
-    // Common function to handle venue filtering by options like Genre, State, City
-    std::vector<SelectedVenue> filterByOptionCommon(const std::vector<Venue>& venues,
-                                                    const std::set<std::string>& uniqueOptions,
-                                                    const std::string& filterType,
-                                                    std::vector<SelectedVenue>& temporaryFilteredVenues);
-
-    // Function to filter venues based on a specific option (Genre, State, etc.)
-    std::vector<SelectedVenue> filterByOption(const std::vector<Venue>& venues,
-                                              const std::string& filterType,
-                                              const std::set<std::string>& uniqueOptions,
-                                              std::vector<SelectedVenue>& temporaryFilteredVenues);
-
-    // Function to filter venues based on capacity
-    std::vector<SelectedVenue> filterByCapacity(const std::vector<Venue>& venues,
-                                                const std::set<int>& uniqueCapacities,
-                                                std::vector<SelectedVenue>& temporaryFilteredVenues);
-
+#ifdef UNIT_TESTING
     const std::vector<SelectedVenue>& getFilteredResults() const { return temporaryFilteredVenues; }
+#endif
 };
 
 #endif // FILTERCRITERIA_H

@@ -60,7 +60,11 @@ int main() {
     vector<SelectedVenue> selectedVenuesForEmail;
     vector<SelectedVenue> filteredVenues;
     vector<SelectedVenue> temporaryFilteredVenues;
-    vector<SelectedVenue> temporaryFilteredVenuesBuffer;
+    vector<SelectedVenue> temporaryCountryBuffer;
+    vector<SelectedVenue> temporaryStateBuffer;
+    vector<SelectedVenue> temporaryCityBuffer;
+    vector<SelectedVenue> temporaryCapacityBuffer;
+    vector<SelectedVenue> temporaryGenreBuffer;
 
     // Initialize map for booking templates
     map<string, pair<string, string>> emailToTemplate;
