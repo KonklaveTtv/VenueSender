@@ -36,7 +36,7 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
 
                 switch (subChoice) {
                     case SELECT_VENUES_OPTION:
-                        venueFilter.processVenueSelection(venues, cin, cout);
+                        venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout);
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION:
                         // Logic to return to the main menu
@@ -247,7 +247,7 @@ int MenuManager::displayVenueOptions() {
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
         ConsoleUtils::clearInputBuffer();
-        if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
+        if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS) {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
@@ -345,8 +345,12 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
             ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
 #endif
             cout << "Name: " << venue.name << endl;
-            cout << "Email: " << venue.email << endl;
+            cout << "Country: " << venue.country << endl;
+            cout << "State: " << venue.state << endl;
             cout << "City: " << venue.city << endl;
+            cout << "Capacity: " << venue.capacity << endl;
+            cout << "Genre: " << venue.genre << endl;
+
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif

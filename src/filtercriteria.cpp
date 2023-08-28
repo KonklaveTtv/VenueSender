@@ -99,8 +99,16 @@ std::variant<std::set<std::string>, std::set<int>> VenueUtilities::getUniqueOpti
     }
 }
 
+// Utility to clear the temporary filtered venue vectors
+void VenueFilter::clearTemporaryFilteredVenuesVectors() {
+    temporaryFilteredVenues.clear();
+    temporaryFilteredVenuesBuffer.clear();
+};
+
 // Function to process venue selection based on user input
 void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
+                                        vector<SelectedVenue>& selectedVenuesForEmail,
+                                        vector<SelectedVenue>& selectedVenuesForTemplates,
                                         istream& input,
                                         ostream& output) {
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
@@ -109,9 +117,19 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
     output << "===========================" << endl;
     ConsoleUtils::resetColor();
 
+    // Clear the temporary filtered venue vectors
+    VenueFilter::clearTemporaryFilteredVenuesVectors();
+
+
     // Step 1: Start with all venues
     for (const auto& venue : venues) {
         temporaryFilteredVenues.push_back(venueUtilities.convertToSelectedVenue(venue));
+    }
+
+    // If temporaryFilteredVenues is empty we return to Main Menu
+    if (temporaryFilteredVenues.empty()) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMPTY_VENUE_LIST_ERROR);
+        return;
     }
 
     // Step 2: Filter by country
@@ -121,10 +139,20 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
     for (const auto& country : uniqueCountries) {
         output << index++ << ". " << country << " ";
     }
+
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     output << "\nPlease select a country index: ";
     size_t selectedIndex;
     input >> selectedIndex;
     input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    ConsoleUtils::resetColor();
+
+    // Validate input length
+    if (std::to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
+        return;
+    }
+
     if (selectedIndex > uniqueCountries.size() || selectedIndex < 1) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
         return;
@@ -171,9 +199,11 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
             }
         }, uniqueOptionsVariant);
 
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
         output << "\nPlease type 'all' to select all, or select " << filterType << " indices (comma-separated): ";
         std::string inputIndices;
         std::getline(input, inputIndices);
+        ConsoleUtils::resetColor();
         std::transform(inputIndices.begin(), inputIndices.end(), inputIndices.begin(), ::tolower);
 
         std::vector<size_t> selectedIndices;
@@ -220,14 +250,23 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
     }
 
     // Step 4: Final Venue Selection
-    output << "--------- Final Venue Selection ---------\n";
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    output << "===========================" << endl;
+    output << "   Final Venue Selection   " << endl;
+    output << "===========================\n";
+    ConsoleUtils::resetColor();
+
     index = 1;
     for (const auto& venue : temporaryFilteredVenues) {
         output << index++ << ". " << venue.name << '\n';
     }
+
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     output << "Please select the final venue indices (comma-separated): ";
     std::string finalIndices;
     std::getline(input, finalIndices);
+    ConsoleUtils::resetColor();
+
     std::istringstream finalIss(finalIndices);
     std::string indexStr;
     std::vector<size_t> finalSelectedIndices;
@@ -249,5 +288,10 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
         selectedVenuesForEmail.push_back(temporaryFilteredVenues[finalIndex - 1]);
         selectedVenuesForTemplates.push_back(temporaryFilteredVenues[finalIndex - 1]);
     }
-}
 
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+    cout << "Venues Added";
+    ConsoleUtils::resetColor();
+    // Add a newline to separate the filtered venues from the main menu
+    output << endl;
+}

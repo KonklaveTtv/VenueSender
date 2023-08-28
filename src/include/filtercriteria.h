@@ -50,6 +50,9 @@ public:
 // Class to handle venue filtering logic
 class VenueFilter {
 private:
+    // Utility to clear the temporary filtered venue vectors
+    void clearTemporaryFilteredVenuesVectors();
+
     // Max length for venue selection indices input
     static constexpr std::string::size_type MAX_INPUT_LENGTH = 256;
     
@@ -70,6 +73,8 @@ public:
 
     // Function to process user input and select venues based on it
     void processVenueSelection(const std::vector<Venue>& venues,
+                                      std::vector<SelectedVenue>& selectedVenuesForEmail,
+                                      std::vector<SelectedVenue>& selectedVenuesForTemplates,
                                       std::istream& input = std::cin,
                                       std::ostream& output = std::cout);
 

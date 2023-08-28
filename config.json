@@ -1,5 +1,5 @@
 {
-	"email_pass_encrypted" : false, // DO NOT CHANGE
+	"email_pass_encrypted" : false,
 	"email_password" : "enter_email_password",
 	"sender_email" : "enter_your_sender_email",
 	"smtp_port" : 587,

@@ -1,13 +1,12 @@
 {
-	"email_pass_encrypted" : false, // DO NOT CHANGE
-	"email_password" : "enter_email_password",
-	"sender_email" : "enter_your_sender_email",
-	"smtp_port" : 587,
-	"smtp_server" : "enter_your_smtp_server",
-	"smtp_username" : "enter_your_smtp_username",
-	"useSSL" : false,
-	"venues_csv_path" : "venues.csv",
-	"verbose" : false,
-	"verifyHost" : false,
-	"verifyPeer" : false
+	"mock_email_pass_encrypted" : false,
+	"mock_email_password" : "mock_email_password",
+	"mock_sender_email" : "mock@example.com",
+	"mock_smtp_port" : 587,
+	"mock_smtp_server" : "mock_smtp_server",
+	"mock_smtp_username" : "mock_smtp_username",
+	"useSSL" : true,
+	"verbose" : true,
+	"verifyHost" : true,
+	"verifyPeer" : true
 }
