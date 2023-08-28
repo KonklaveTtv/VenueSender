@@ -3,263 +3,295 @@
 // Use the standard namespace
 using namespace std;
 
-std::vector<SelectedVenue> temporaryFilteredVenues;
+// Utility function to convert a Venue object to a SelectedVenue object
+SelectedVenue VenueUtilities::convertToSelectedVenue(const Venue& venue) {
+    // Create a SelectedVenue instance based on Venue data
+    SelectedVenue selectedVenue;
+    selectedVenue.name = venue.name;
+    selectedVenue.email = venue.email;
+    selectedVenue.country = venue.country;
+    selectedVenue.state = venue.state;
+    selectedVenue.city = venue.city;   
+    selectedVenue.capacity = venue.capacity;
+    selectedVenue.genre = venue.genre;
+    return selectedVenue;
+}
+
+Venue VenueUtilities::convertToVenue(const SelectedVenue& selectedVenue) {
+    // Create a Venue instance based on SelectedVenue data
+    Venue venue;
+    venue.name = selectedVenue.name;
+    venue.email = selectedVenue.email;
+    venue.country = selectedVenue.country;
+    venue.state = selectedVenue.state;
+    venue.city = selectedVenue.city;   
+    venue.capacity = selectedVenue.capacity;
+    venue.genre = selectedVenue.genre;
+    return venue;
+}
+
+// Utility function to get unique countries from a list of venues
+std::set<std::string> VenueUtilities::getUniqueCountries(const std::vector<Venue>& venues) {
+    std::set<std::string> uniqueCountries;
+    for (const auto& venue : venues) {
+        if (uniqueCountries.find(venue.country) == uniqueCountries.end()) {
+            uniqueCountries.insert(venue.country);
+        }
+    }
+    return uniqueCountries;
+}
+
+// Utility function to get unique states from a list of venues
+std::set<std::string> VenueUtilities::getUniqueStates(const std::vector<Venue>& venues) {
+    std::set<std::string> uniqueStates;
+    for (const auto& venue : venues) {
+        if (uniqueStates.find(venue.state) == uniqueStates.end()) {
+            uniqueStates.insert(venue.state);
+        }
+    }
+    return uniqueStates;
+}
+
+// Utility function to get unique cities from a list of venues
+std::set<std::string> VenueUtilities::getUniqueCities(const std::vector<Venue>& venues) {
+    std::set<std::string> uniqueCities;
+    for (const auto& venue : venues) {
+        if (uniqueCities.find(venue.city) == uniqueCities.end()) {
+            uniqueCities.insert(venue.city);
+        }
+    }
+    return uniqueCities;
+}
+
+// Utility function to get unique capacities from a list of venues
+std::set<int> VenueUtilities::getUniqueCapacities(const std::vector<Venue>& venues) {
+    std::set<int> uniqueCapacities;
+    for (const Venue& venue : venues) {
+        uniqueCapacities.insert(venue.capacity);
+    }
+    return uniqueCapacities;
+}
+
+// Utility function to get unique genres from a list of venues
+std::set<std::string> VenueUtilities::getUniqueGenres(const std::vector<Venue>& venues) {
+    std::set<std::string> uniqueGenres;
+    for (const auto& venue : venues) {
+        if (uniqueGenres.find(venue.genre) == uniqueGenres.end()) {
+            uniqueGenres.insert(venue.genre);
+        }
+    }
+    return uniqueGenres;
+}
+
+// Utility function to get unique options for a given filterType from a list of venues
+std::variant<std::set<std::string>, std::set<int>> VenueUtilities::getUniqueOptions(const std::vector<Venue>& venues, const std::string& filterType) {
+    if (filterType == "state") {
+        return getUniqueStates(venues);
+    } else if (filterType == "city") {
+        return getUniqueCities(venues);
+    } else if (filterType == "capacity") {
+        return getUniqueCapacities(venues);
+    } else if (filterType == "genre") {
+        return getUniqueGenres(venues);
+    } else {
+        // Handle invalid filterType
+        return std::set<std::string>{}; // or some other default value
+    }
+}
+
+// Utility to clear the temporary filtered venue vectors
+void VenueFilter::clearTemporaryFilteredVenuesVectors() {
+    temporaryFilteredVenues.clear();
+    temporaryFilteredVenuesBuffer.clear();
+};
 
 // Function to process venue selection based on user input
-void VenueFilter::processVenueSelection(const vector<SelectedVenue>& temporaryFilteredVenues,
-                           vector<SelectedVenue>& selectedVenuesForEmail,
-                           vector<SelectedVenue>& selectedVenuesForTemplates,
-                           istream& input,
-                           ostream& output) {
+void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
+                                        vector<SelectedVenue>& selectedVenuesForEmail,
+                                        vector<SelectedVenue>& selectedVenuesForTemplates,
+                                        istream& input,
+                                        ostream& output) {
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    output << "===========================" << endl;
+    output << "      Venue Selection      " << endl;
+    output << "===========================" << endl;
+    ConsoleUtils::resetColor();
+
+    // Clear the temporary filtered venue vectors
+    VenueFilter::clearTemporaryFilteredVenuesVectors();
+
+
+    // Step 1: Start with all venues
+    for (const auto& venue : venues) {
+        temporaryFilteredVenues.push_back(venueUtilities.convertToSelectedVenue(venue));
+    }
+
+    // If temporaryFilteredVenues is empty we return to Main Menu
     if (temporaryFilteredVenues.empty()) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMPTY_VENUE_LIST_ERROR);
         return;
+    }
+
+    // Step 2: Filter by country
+    std::set<std::string> uniqueCountries = venueUtilities.getUniqueCountries(venues);
+    output << "Available Countries: ";
+    size_t index = 1;
+    for (const auto& country : uniqueCountries) {
+        output << index++ << ". " << country << " ";
     }
 
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    output << "Select venues to add (comma-separated indices): ";
+    output << "\nPlease select a country index: ";
+    size_t selectedIndex;
+    input >> selectedIndex;
+    input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     ConsoleUtils::resetColor();
-    string userInput;
-    getline(input, userInput);
 
     // Validate input length
-    if (userInput.length() > MAX_INPUT_LENGTH) {
+    if (std::to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
-        cout << "Press return to continue..." << endl;
-        ConsoleUtils::clearInputBuffer();
-        cin.get(); // This will wait for a key press
         return;
     }
 
-    istringstream iss(userInput);
-    string indexStr;
-    while (getline(iss, indexStr, ',')) {
-        try {
-            size_t selectedIndex = stoul(indexStr);
-            if (selectedIndex == 0) {
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
-                cout << "Press return to continue..." << endl;
-                ConsoleUtils::clearInputBuffer();
-                cin.get(); // This will wait for a key press
-                continue;
-            }
-            selectedIndex--; // Decrement index to match 0-based indexing
-            if (selectedIndex < temporaryFilteredVenues.size()) {
-                const SelectedVenue& selectedVenue = temporaryFilteredVenues[selectedIndex];
+    if (selectedIndex > uniqueCountries.size() || selectedIndex < 1) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+        return;
+    }
+    auto it = uniqueCountries.begin();
+    std::advance(it, selectedIndex - 1);
+    std::string selectedCountry = *it;
 
-                // Check if the selected venue is already in the selectedVenuesForEmail vector
-                bool isDuplicate = false;
-                for (const SelectedVenue& existingVenue : selectedVenuesForEmail) {
-                    if (existingVenue.name == selectedVenue.name && existingVenue.email == selectedVenue.email) {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-                
-                if (!isDuplicate) {
-                    selectedVenuesForEmail.push_back(selectedVenue);
-                    selectedVenuesForTemplates.push_back(selectedVenue);  // Add to selectedVenuesForTemplates
-                } else {
-                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR);
-                    cout << "Press return to continue..." << endl;
-                    ConsoleUtils::clearInputBuffer();
-                    cin.get(); // This will wait for a key press
+    temporaryFilteredVenuesBuffer.clear();
+    for (const auto& venue : temporaryFilteredVenues) {
+        if (venue.country == selectedCountry) {
+            temporaryFilteredVenuesBuffer.push_back(venue);
+        }
+    }
+    temporaryFilteredVenues = temporaryFilteredVenuesBuffer;
+    
+    // Step 3: Loop over filter types (state, city, capacity, genre)
+    std::vector<std::string> filterTypes = {"state", "city", "capacity", "genre"};
+    for (const auto& filterType : filterTypes) {
+        temporaryFilteredVenuesBuffer.clear();
+        
+        std::vector<Venue> convertedVenues;
+        for (const auto& selectedVenue : temporaryFilteredVenues) {
+            convertedVenues.push_back(venueUtilities.convertToVenue(selectedVenue));
+        }
+        
+        auto uniqueOptionsVariant = venueUtilities.getUniqueOptions(convertedVenues, filterType);
+        
+        output << "Available " << filterType << "s: " << endl;
+        size_t localIndex = 1;
+        std::vector<int> localCapacityVector;
+
+        std::visit([&](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, std::set<int>>) {
+                localCapacityVector.assign(arg.begin(), arg.end());
+                for (const auto& option : localCapacityVector) {
+                    output << localIndex++ << ". " << option << " ";
                 }
             } else {
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
-                cout << "Press return to continue..." << endl;
-                ConsoleUtils::clearInputBuffer();
-                cin.get(); // This will wait for a key press  
-                continue;
+                for (const auto& option : arg) {
+                    output << localIndex++ << ". " << option << " ";
+                }
             }
-        } catch (const invalid_argument& e) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
-            cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
-            cin.get(); // This will wait for a key press 
-            continue;
+        }, uniqueOptionsVariant);
+
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+        output << "\nPlease type 'all' to select all, or select " << filterType << " indices (comma-separated): ";
+        std::string inputIndices;
+        std::getline(input, inputIndices);
+        ConsoleUtils::resetColor();
+        std::transform(inputIndices.begin(), inputIndices.end(), inputIndices.begin(), ::tolower);
+
+        std::vector<size_t> selectedIndices;
+        std::istringstream iss(inputIndices);
+        std::string indexStr;
+        while (std::getline(iss, indexStr, ',')) {
+            try {
+                size_t selectedIndex = std::stoul(indexStr);
+                if (selectedIndex == 0) {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                    return;
+                }
+                selectedIndex--; 
+                selectedIndices.push_back(selectedIndex);
+            } catch (const std::invalid_argument& e) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                return;
+            }
         }
+
+        for (size_t selectedIndex : selectedIndices) {
+            std::visit([&](auto&& arg) {
+                using T = std::decay_t<decltype(arg)>;
+                auto it = arg.begin();
+                std::advance(it, selectedIndex);
+
+                if constexpr (std::is_same_v<T, std::set<std::string>>) {
+                    for (const auto& venue : temporaryFilteredVenues) {
+                        if (venue.state == *it || venue.city == *it || venue.genre == *it) {
+                            temporaryFilteredVenuesBuffer.push_back(venue);
+                        }
+                    }
+                } else if constexpr (std::is_same_v<T, std::set<int>>) {
+                    for (const auto& venue : temporaryFilteredVenues) {
+                        if (venue.capacity == *it) {
+                            temporaryFilteredVenuesBuffer.push_back(venue);
+                        }
+                    }
+                }
+            }, uniqueOptionsVariant);
+        }
+
+        temporaryFilteredVenues = temporaryFilteredVenuesBuffer;
+    }
+
+    // Step 4: Final Venue Selection
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    output << "===========================" << endl;
+    output << "   Final Venue Selection   " << endl;
+    output << "===========================\n";
+    ConsoleUtils::resetColor();
+
+    index = 1;
+    for (const auto& venue : temporaryFilteredVenues) {
+        output << index++ << ". " << venue.name << '\n';
+    }
+
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    output << "Please select the final venue indices (comma-separated): ";
+    std::string finalIndices;
+    std::getline(input, finalIndices);
+    ConsoleUtils::resetColor();
+
+    std::istringstream finalIss(finalIndices);
+    std::string indexStr;
+    std::vector<size_t> finalSelectedIndices;
+    while (std::getline(finalIss, indexStr, ',')) {
+        try {
+            size_t finalIndex = std::stoul(indexStr);
+            finalSelectedIndices.push_back(finalIndex);
+        } catch (const std::exception& e) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+            return;
+        }
+    }
+
+    for (size_t finalIndex : finalSelectedIndices) {
+        if (finalIndex < 1 || finalIndex > temporaryFilteredVenues.size()) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+            return;
+        }
+        selectedVenuesForEmail.push_back(temporaryFilteredVenues[finalIndex - 1]);
+        selectedVenuesForTemplates.push_back(temporaryFilteredVenues[finalIndex - 1]);
     }
 
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-    cout << "Venue Added";
+    cout << "Venues Added";
     ConsoleUtils::resetColor();
     // Add a newline to separate the filtered venues from the main menu
     output << endl;
-}
-
-// Function to display filtered venues to the user
-void VenueFilter::displayFilteredVenues(const vector<SelectedVenue>& selectedVenuesForDisplay) {
-    if (selectedVenuesForDisplay.empty()) {
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-        cout << "No venues found." << endl;
-        ConsoleUtils::resetColor();
-        return;
-    }
-
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    cout << "==========================="<< endl;
-    cout << "      Filtered Venues      " << endl;
-    cout << "==========================="<< endl;
-    ConsoleUtils::resetColor();
-    for (size_t i = 0; i < selectedVenuesForDisplay.size(); ++i) {
-        const auto& venue = selectedVenuesForDisplay[i];
-        cout << setw(2) << i + 1 << ". Name: " << venue.name << endl;
-        cout << "    Email: " << venue.email << endl;
-        cout << "    Genre: " << venue.genre << endl;
-        cout << "    Country: " << venue.country << endl;
-        cout << "    Capacity: " << venue.capacity << endl;
-        cout << "    State: " << venue.state << endl;
-        cout << "    City: " << venue.city << endl;
-        cout << endl;
-    }
-}
-
-// Common function for filtering venues by Genre, State, or City
-vector<SelectedVenue> VenueFilter::filterByOptionCommon(const vector<Venue>& venues,
-                                                const set<string>& uniqueOptions,
-                                                const string& filterType,
-                                                vector<SelectedVenue>& temporaryFilteredVenues) {
-    vector<string> filterOptions(uniqueOptions.begin(), uniqueOptions.end());
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-
-    cout << "==========================="<< endl;
-    cout << "===== Filter By " << filterType << " =====" << endl;
-    cout << "==========================="<< endl;
-  //cout << "Available Options: " << endl;
-    ConsoleUtils::resetColor();
-    for (size_t i = 0; i < filterOptions.size(); ++i) {
-        cout << i + 1 << ". " << filterOptions[i] << endl;
-    }
-
-
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    cout << "Enter comma-separated indices of options to select: ";
-    ConsoleUtils::resetColor();
-    string input;
-    ConsoleUtils::clearInputBuffer();
-    getline(cin, input);
-
-    cout << endl; // Add a line of space
-
-    // Validate and process the user's input
-    vector<size_t> selectedIndices;
-    istringstream iss(input);
-    string indexStr;
-    while (getline(iss, indexStr, CSV_DELIMITER)) {
-        try {
-            size_t selectedIndex = stoi(indexStr) - 1;
-            selectedIndices.push_back(selectedIndex);
-        } catch (const exception& e) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
-            cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
-            cin.get(); // This will wait for a key press            
-        }
-    }
-
-        for (size_t selectedIndex : selectedIndices) {
-            if (selectedIndex < filterOptions.size()) {
-                string filterValue = filterOptions[selectedIndex];
-
-                for (const Venue& venue : venues) {
-                    string venueValue;
-                    if (filterType == "Genre") {
-                        venueValue = venue.genre;
-                    } else if (filterType == "Countries") {
-                        venueValue = venue.country;
-                    } else if (filterType == "State") {
-                        venueValue = venue.state;
-                    } else if (filterType == "City") {
-                        venueValue = venue.city;
-                    }
-
-
-                    if ((filterType == "Genre" && venue.genre == filterValue) ||
-                        (filterType == "Countries" && venue.country == filterValue) ||
-                        (filterType == "State" && venue.state == filterValue) ||
-                        (filterType == "City" && venue.city == filterValue)) {
-
-                        SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(venue);
-                        temporaryFilteredVenues.push_back(selectedVenue);
-                    }
-                }
-            } else {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
-            cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
-            cin.get(); // This will wait for a key press   
-        }
-    }
-
-    return temporaryFilteredVenues;
-}
-
-// Function to filter venues by Genre, State, or City
-vector<SelectedVenue> VenueFilter::filterByOption(const vector<Venue>& venues,
-                                          const string& filterType,
-                                          const set<string>& uniqueOptions,
-                                          vector<SelectedVenue>& temporaryFilteredVenues) {
-    return filterByOptionCommon(venues, uniqueOptions, filterType, temporaryFilteredVenues);
-}
-
-// Function to filter venues by Capacity
-vector<SelectedVenue> VenueFilter::filterByCapacity(const vector<Venue>& venues,
-                                            const set<int>& uniqueCapacities,
-                                            vector<SelectedVenue>& temporaryFilteredVenues) {
-    vector<int> filterOptions(uniqueCapacities.begin(), uniqueCapacities.end());
-
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    cout << "===== Filter By Capacity =====" << endl;
-
-
-    cout << "Available Options: " << endl;
-    for (size_t i = 0; i < filterOptions.size(); ++i) {
-        cout << i + 1 << ". " << filterOptions[i] << endl;
-    }
-    ConsoleUtils::resetColor();
-
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    cout << "Enter comma-separated indices of options to select: ";
-    ConsoleUtils::resetColor();
-    string input;
-    ConsoleUtils::clearInputBuffer();
-    getline(cin, input);
-
-    cout << endl; // Add a line of space
-
-    // Validate and process the user's input
-    vector<size_t> selectedIndices;
-    istringstream iss(input);
-    string indexStr;
-    while (getline(iss, indexStr, CSV_DELIMITER)) {
-        try {
-            size_t selectedIndex = stoi(indexStr) - 1;
-            selectedIndices.push_back(selectedIndex);
-        } catch (const exception& e) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
-            cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
-            cin.get(); // This will wait for a key press 
-        }
-    }
-
-    // Now you have the validated selectedIndices vector to work with
-    for (size_t selectedIndex : selectedIndices) {
-        if (selectedIndex < filterOptions.size()) {
-            int filterValue = filterOptions[selectedIndex];
-            for (const Venue& venue : venues) {
-                if (venue.capacity == filterValue) {
-                    SelectedVenue selectedVenue = VenueUtilities::convertToSelectedVenue(venue);
-                    temporaryFilteredVenues.push_back(selectedVenue);
-                }
-            }
-        } else {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR, std::to_string(selectedIndex));
-            cout << "Press return to continue..." << endl;
-            ConsoleUtils::clearInputBuffer();
-            cin.get(); // This will wait for a key press 
-        }
-    }
-
-    return temporaryFilteredVenues;
 }

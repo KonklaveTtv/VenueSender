@@ -163,11 +163,11 @@ public:
                 Venue venue;
                 venue.name = rowData[0];
                 venue.email = rowData[1];
-                venue.genre = rowData[2];
-                venue.country = rowData[3];
-                venue.capacity = std::stoi(rowData[4]);
-                venue.state = rowData[5];
-                venue.city = rowData[6];
+                venue.country = rowData[2];
+                venue.state = rowData[3];
+                venue.city = rowData[4];
+                venue.capacity = std::stoi(rowData[5]);
+                venue.genre = rowData[6];
 
                 venues.push_back(venue);
             } else {

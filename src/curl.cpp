@@ -6,6 +6,8 @@ using namespace std;
 /* CurlHandleWrapper Class Implementation */
 /*---------------------------------------*/
 
+
+
 // Callback function to read data for sending in the request
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
     auto* payload = static_cast<string*>(userp);
@@ -122,6 +124,10 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
 
     // Increase timeout for larger attachments
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60L);
+
+    // Set callback function to read data for sending in the request
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
+
 
     // Enable verbose mode for debugging in config.json (if needed)
     curl_easy_setopt(curl, CURLOPT_VERBOSE, verbose ? 1L : 0L);

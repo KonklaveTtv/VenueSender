@@ -51,6 +51,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
             cerr << "Invalid index format." << extraInfo << "Skipping." << endl;
             break;
+        case ErrorType::EMPTY_VENUE_LIST_ERROR:
+            cerr << "No venues could be loaded for filtering" << endl;
+            break;
         case ErrorType::NO_VENUES_SELECTED_ERROR:
             cerr << "No venues selected yet." << endl;
             break;

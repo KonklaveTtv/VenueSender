@@ -59,6 +59,12 @@ int main() {
     FilterCriteria criteria;
     vector<SelectedVenue> selectedVenuesForEmail;
     vector<SelectedVenue> filteredVenues;
+    vector<SelectedVenue> temporaryFilteredVenues;
+    vector<SelectedVenue> temporaryCountryBuffer;
+    vector<SelectedVenue> temporaryStateBuffer;
+    vector<SelectedVenue> temporaryCityBuffer;
+    vector<SelectedVenue> temporaryCapacityBuffer;
+    vector<SelectedVenue> temporaryGenreBuffer;
 
     // Initialize map for booking templates
     map<string, pair<string, string>> emailToTemplate;
@@ -75,12 +81,6 @@ int main() {
                               venues,
                               selectedVenuesForTemplates,
                               selectedVenuesForEmail,
-                              uniqueGenres,
-                              uniqueCountries,
-                              uniqueCapacities,
-                              uniqueStates,
-                              uniqueCities,
-                              temporaryFilteredVenues,
                               emailToTemplate,
                               subject,
                               message,

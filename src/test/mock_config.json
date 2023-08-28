@@ -5,7 +5,6 @@
 	"mock_smtp_port" : 587,
 	"mock_smtp_server" : "mock_smtp_server",
 	"mock_smtp_username" : "mock_smtp_username",
-	"mock_venues_csv_path" : "mock_venues.csv",
 	"useSSL" : true,
 	"verbose" : true,
 	"verifyHost" : true,
