@@ -200,13 +200,19 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Display messages based on loaded settings
     if (smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded && venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded) {
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
-        cout << "Configuration settings loaded from config.json." << endl;
+        cout << "           Configuration Loaded             " << endl;
         ConsoleUtils::resetColor(); // Reset color
         configLoadedSuccessfully = true;
+        // Clear the console for the Main Menu
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        ConsoleUtils::clearConsole();
     } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded) {
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Yellow for partial success
-        cout << "Email settings loaded from config.json." << endl;
+        cout << "           Email Settings Loaded            " << endl;
         ConsoleUtils::resetColor(); // Reset color
+        // Clear the console for the Main Menu
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        ConsoleUtils::clearConsole();
     } else {
         ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Red for error
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
