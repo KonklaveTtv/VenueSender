@@ -22,6 +22,17 @@ string ConsoleUtils::trim(const string& str){
     return (first < last ? string(first, last) : string());
 }
 
+void ConsoleUtils::clearConsole() {
+    // Platform-specific code to clear the console
+    // Windows:
+#ifdef _WIN32
+    system("cls");
+#else 
+    // Mac/Linux:
+    system("clear");
+#endif
+}
+
 // Default constructor for ConfigManager
 ConfigManager::ConfigManager() = default;
 

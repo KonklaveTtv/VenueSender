@@ -103,7 +103,7 @@ std::variant<std::set<std::string>, std::set<int>> VenueUtilities::getUniqueOpti
 void VenueFilter::clearTemporaryFilteredVenuesVectors() {
     temporaryFilteredVenues.clear();
     temporaryFilteredVenuesBuffer.clear();
-};
+}
 
 // Function to process venue selection based on user input
 void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
@@ -209,7 +209,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
         std::vector<size_t> selectedIndices;
         std::istringstream iss(inputIndices);
         std::string indexStr;
-        while (std::getline(iss, indexStr, ',')) {
+        while (std::getline(iss, indexStr, CSV_DELIMITER)) {
             try {
                 size_t selectedIndex = std::stoul(indexStr);
                 if (selectedIndex == 0) {
@@ -270,7 +270,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
     std::istringstream finalIss(finalIndices);
     std::string indexStr;
     std::vector<size_t> finalSelectedIndices;
-    while (std::getline(finalIss, indexStr, ',')) {
+    while (std::getline(finalIss, indexStr, CSV_DELIMITER)) {
         try {
             size_t finalIndex = std::stoul(indexStr);
             finalSelectedIndices.push_back(finalIndex);

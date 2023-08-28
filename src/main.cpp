@@ -8,13 +8,47 @@ using namespace std;
 #ifndef UNIT_TESTING
 
 // Declare global objects to be used across different parts of the code
-CsvReader csvReader;
 CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
-EncryptionManager encryptionManager;
 VenueFilter venueFilter;
 VenueUtilities venueUtilities;
 
+void splashscreen(){
+    // Clear the console for the splashscreen
+    ConsoleUtils::clearConsole();
+    
+    // Set color to cyan
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    for (int i = 0; i < 43; ++i) std::cout << '*';
+    std::cout << std::endl;
+
+    ConsoleUtils::resetColor();
+
+    // Display splash text centered
+    std::cout << "                VenueSender                " << std::endl;
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    std::cout << "*******************************************" << std::endl;
+    ConsoleUtils::resetColor();
+
+    std::cout << "               Version 1.0.0               " << std::endl;
+
+    // Display copyright and other text in cyan
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    std::cout << "*******************************************" << std::endl;
+    ConsoleUtils::resetColor();
+
+    std::cout << "    Copyright (c) 2023, Spencer Lievens.   " << std::endl;
+
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+
+    // Display bottom border
+    for (int i = 0; i < 43; ++i) std::cout << '*';
+    std::cout << std::endl;
+    ConsoleUtils::resetColor();
+}
+
 int main() {
+    // Load Splashscreen
+    splashscreen();
     // Initialize necessary variables
     vector<Venue> venues;
     vector<SelectedVenue> selectedVenuesForTemplates;

@@ -15,7 +15,6 @@ struct FilterCriteria {
     std::string country;
     std::string state;
     std::string city;
-    int capacity;
     std::string genre;
 };
 

@@ -16,7 +16,6 @@ extern std::array<unsigned char, crypto_secretbox_NONCEBYTES> globalEncryptionNo
 // EncryptionManager class to handle encryption-related functionalities
 class EncryptionManager {
 public:
-    static EncryptionManager& getInstance();
     EncryptionManager(EncryptionManager const&) = delete;
     void operator=(EncryptionManager const&) = delete;
 

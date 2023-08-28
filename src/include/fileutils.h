@@ -37,8 +37,7 @@ public:
         ORANGE,
         CYAN,
         LIGHT_BLUE,
-        PURPLE,
-        DEFAULT
+        PURPLE
     };
 
     static void setColor(ConsoleUtils::Color color) {
@@ -134,6 +133,9 @@ public:
 
     // Method to trim leading and trailing spaces from a string
     static std::string trim(const std::string& str);
+
+    // Method to clear the console
+    static void clearConsole();
 };
 
 // Class for reading data from a CSV file
@@ -181,10 +183,6 @@ public:
 
 // Class for managing configuration settings
 class ConfigManager {
-private:
-    // Instance of EncryptionManager for password encryption/decryption
-    EncryptionManager encryptionManager;
-
 public:
     // Default constructor
     ConfigManager();

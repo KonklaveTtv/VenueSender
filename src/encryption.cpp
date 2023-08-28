@@ -7,11 +7,6 @@ using namespace std;
 array<unsigned char, crypto_secretbox_KEYBYTES> globalEncryptionKey;
 array<unsigned char, crypto_secretbox_NONCEBYTES> globalEncryptionNonce;
 
-EncryptionManager& EncryptionManager::getInstance() {
-    static EncryptionManager instance;  // Guaranteed to be destroyed, instantiated on first use
-    return instance;
-}
-
 // Default constructor for EncryptionManager
 EncryptionManager::EncryptionManager() {
     // Initialize libsodium library for encryption
