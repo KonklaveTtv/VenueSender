@@ -60,24 +60,24 @@ Compile the project:
 3. Prepare your config.json file with the necessary SMTP and email settings:
             
             ```
-            {
-            "sender_email" : "enter_your_sender_email",
-            "smtp_port" : 587,
-            "smtp_server" : "enter_your_smtp_server",
-            "smtp_username" : "enter_your_smtp_username",
-            "useSSL" : false,
-            "venues_csv_path" : "venues.csv",
-            "verifyHost" : false,
-            "verifyPeer" : false,
-            "verbose" : false
-            }
+      {
+      "sender_email" : "enter_your_sender_email",
+      "smtp_port" : 587,
+      "smtp_server" : "enter_your_smtp_server",
+      "smtp_username" : "enter_your_smtp_username",
+      "useSSL" : false,
+      "venues_csv_path" : "venues.csv",
+      "verifyHost" : false,
+      "verifyPeer" : false,
+      "verbose" : false
+      }
             ```
 
 4. Prepare a venues.csv file with the list of venues in the following format:
 
       ```
-      Venue1,venue1@mock.com,all,AL,Daphne,100
-      Venue2,venue2@mock.com,rock,UT,Provo,300
+      Venue1,venue1@mock.com,USA,AL,Daphne,100,Mixed
+      Venue2,venue2@mock.com,France,Paris Region,Paris,300,Rock
       ```
 
 
