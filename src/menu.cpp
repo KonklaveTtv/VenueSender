@@ -95,10 +95,10 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                         emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                         break;
                     case CLEAR_BOOKING_TEMPLATE_OPTION:
-                        emailManager.clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
+                        EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                         break;
                     case SEND_BOOKING_TEMPLATES_OPTION:
-                        emailManager.confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                        EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS:
                         // Logic to return to the main menu
@@ -164,7 +164,6 @@ int MenuManager::displayMenuOptions() {
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
                 // Reset configurations and cleanup before exiting
-                ConfigManager configManager;
                 ConfigManager::resetConfigFile();
                 CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
                 exit(0);  // Exit the program

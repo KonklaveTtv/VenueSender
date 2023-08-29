@@ -22,28 +22,28 @@ struct FilterCriteria {
 class VenueUtilities {
 public:
     // Utility function to convert a Venue object to a SelectedVenue object
-    SelectedVenue convertToSelectedVenue(const Venue& venue);
+    static SelectedVenue convertToSelectedVenue(const Venue& venue);
     
     // Utility function to convert a SelectedVenue object to a Venue object
-    Venue convertToVenue(const SelectedVenue& selectedVenue);
+    static Venue convertToVenue(const SelectedVenue& selectedVenue);
 
     // Utility function to get unique countries from a list of venues
-    std::set<std::string> getUniqueCountries(const std::vector<Venue>& venues);
+    static std::set<std::string> getUniqueCountries(const std::vector<Venue>& venues);
 
     // Utility function to get unique states from a list of venues
-    std::set<std::string> getUniqueStates(const std::vector<Venue>& venues);
+    static std::set<std::string> getUniqueStates(const std::vector<Venue>& venues);
 
     // Utility function to get unique cities from a list of venues
-    std::set<std::string> getUniqueCities(const std::vector<Venue>& venues);
+    static std::set<std::string> getUniqueCities(const std::vector<Venue>& venues);
 
     // Utility function to get unique capacities from a list of venues
-    std::set<int> getUniqueCapacities(const std::vector<Venue>& venues);
+    static std::set<int> getUniqueCapacities(const std::vector<Venue>& venues);
 
     // Utility function to get unique genres from a list of venues
-    std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
+    static std::set<std::string> getUniqueGenres(const std::vector<Venue>& venues);
 
     // Utility function to get unique options for a given filterType from a list of venues
-    std::variant<std::set<std::string>, std::set<int>> getUniqueOptions(const std::vector<Venue>& venues, const std::string& filterType);
+    static std::variant<std::set<std::string>, std::set<int>> getUniqueOptions(const std::vector<Venue>& venues, const std::string& filterType);
 };
 
 // Class to handle venue filtering logic

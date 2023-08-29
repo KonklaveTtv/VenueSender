@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <utility>
 
 // Structure to represent a venue
 struct Venue {
@@ -18,9 +19,9 @@ struct Venue {
     Venue() = default;
 
     // Parameterized constructor to initialize all members of the struct
-    Venue(const std::string& name, const std::string& email, const std::string& country,
-          const std::string& state, const std::string& city, int capacity, const std::string& genre)
-        : name(name), email(email), country(country), state(state), city(city), capacity(capacity), genre(genre) {}
+    Venue(std::string  name, std::string  email, std::string  country,
+          std::string  state, std::string  city, int capacity, std::string  genre)
+        : name(std::move(name)), email(std::move(email)), country(std::move(country)), state(std::move(state)), city(std::move(city)), capacity(capacity), genre(std::move(genre)) {}
 };
 
 
@@ -38,8 +39,8 @@ struct SelectedVenue {
     SelectedVenue() = default;
 
     // Parameterized constructor to initialize all members of the struct
-    SelectedVenue(const std::string& name, const std::string& email, const std::string& country,
-                  const std::string& state, const std::string& city, int capacity, const std::string& genre)
-                : name(name), email(email), country(country), state(state), city(city), capacity(capacity), genre(genre) {}
+    SelectedVenue(std::string  name, std::string  email, std::string  country,
+                  std::string  state, std::string  city, int capacity, std::string  genre)
+                : name(std::move(name)), email(std::move(email)), country(std::move(country)), state(std::move(state)), city(std::move(city)), capacity(capacity), genre(std::move(genre)) {}
 };
 #endif // STRUCTS_H

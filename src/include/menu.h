@@ -7,6 +7,7 @@
 #include "structs.h"
 
 #include <iostream>
+#include <utility>
 #include <vector>
 
 // Forward declaration of the EmailManager class
@@ -94,8 +95,8 @@ public:
 
     // Constructor for MenuManager;
     MenuManager() = default;  // Default constructor
-    MenuManager(bool useSSL, bool verifyPeer, bool verifyHost, const std::string& senderEmail, int smtpPort, const std::string& smtpServer)
-        : useSSL(useSSL), verifyPeer(verifyPeer), verifyHost(verifyHost), senderEmail(senderEmail), smtpPort(smtpPort), smtpServer(smtpServer) {}
+    MenuManager(bool useSSL, bool verifyPeer, bool verifyHost, std::string  senderEmail, int smtpPort, std::string  smtpServer)
+        : useSSL(useSSL), verifyPeer(verifyPeer), verifyHost(verifyHost), senderEmail(std::move(senderEmail)), smtpPort(smtpPort), smtpServer(std::move(smtpServer)) {}
 
     // Function to nevigate the menu system
     void navigateMenus(EmailManager& emailManager, 
