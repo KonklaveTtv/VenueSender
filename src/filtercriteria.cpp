@@ -274,6 +274,9 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
     index = 1;
     for (const auto& venue : temporaryFilteredVenues) {
         output << index++ << ". " << venue.name << '\n';
+        output << "State: " << venue.state << '\n';
+        output << "City: " << venue.city << '\n';
+        output << "Capacity: " << venue.capacity << '\n';
     }
 
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
