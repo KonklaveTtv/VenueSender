@@ -142,8 +142,10 @@ int MenuManager::displayMenuOptions() {
         ConsoleUtils::clearInputBuffer();
         // Handle exit right here
         if (choice == EXIT_OPTION) {
-            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-            cout << "Are you sure you want to exit? (Y/N): ";
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+        cout << "Are you sure you want to exit? (Y/N): ";
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif

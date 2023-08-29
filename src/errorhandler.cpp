@@ -12,7 +12,14 @@ std::mutex ErrorHandler::outputMutex;
 bool ErrorHandler::handleCurlError(CURLcode res) {
     // Check if CURL operation was successful
     if (res != CURLE_OK) {
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
         cerr << "CURL Error: " << curl_easy_strerror(res) << endl; // Display CURL error message
+#ifndef UNIT_TESTING
+    // After displaying the error, reset the console text color
+    ConsoleUtils::resetColor();
+#endif
         handleErrorAndReturn(ErrorType::LIBCURL_ERROR); // Handle the error
         return false;
     }
@@ -27,15 +34,11 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
 // Function to handle various types of errors and display appropriate messages
 void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo = "") {
     std::lock_guard<std::mutex> lock(outputMutex); // Lock the mutex
-
-    // Set text color to red for error messages
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-
+#endif
     // Switch statement to handle different types of errors
     switch (error) {
-        case ErrorType::MENU_LOAD_ERROR:
-            cerr << "Menu failed to load, please restart the program." << endl;
-            break;
         case ErrorType::INVALID_INPUT_ERROR:
             cerr << "Invalid input. Skipping." << endl;
             break;
@@ -53,15 +56,6 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             break;
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
             cerr << "Invalid index format." << extraInfo << "Skipping." << endl;
-            break;
-        case ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR:
-            cerr << "Failed to get terminal attributes." << endl;
-            break;
-        case ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR:
-            cerr << "Failed to set terminal attributes." << endl;
-            break;
-        case ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR:
-            cerr << "Failed to restore terminal attributes." << endl;
             break;
         case ErrorType::EMPTY_VENUE_LIST_ERROR:
             cerr << "No venues could be loaded for filtering" << endl;
@@ -121,13 +115,6 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::EMAIL_PASSWORD_MISMATCH_ERROR:
             cerr << "\nEmail passwords do not match. Please try again." << endl;
             break;
-        case ErrorType::FILESYSTEM_ERROR:
-            cerr << "Filesystem error: ";
-            if (!extraInfo.empty()) {
-                cerr << extraInfo;
-            }
-            cerr << endl;
-            break;
         case ErrorType::CONFIG_OPEN_ERROR:
             cerr << "Failed to open " << extraInfo << "." << endl;
             break;
@@ -143,25 +130,80 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_DATA_IN_CSV:
             cerr << "Invalid data in CSV file: " << extraInfo << endl;
             break;
-        case ErrorType::LIBCURL_ERROR:
-#ifndef UNIT_TESTING
-            cerr << "Failed to initialize libcurl." << endl;
-            if (!extraInfo.empty()) {
-                cerr << " " << extraInfo;
-            }
-            cerr << endl;
-#endif
-            break;
         case ErrorType::SMTP_CONNECTION_ERROR:
             cerr << "Connection to SMTP server failed." << endl;
             break;
         case ErrorType::SMTP_AUTH_ERROR:
             cerr << "Authentication with SMTP server failed." << endl;
             break;
+#ifdef UNIT_TESTING
+        default:
+            cerr << "" << endl;
+            break;
+#else
         default:
             cerr << "An unknown error occurred." << endl;
             break;
+#endif
+
     }
+#ifndef UNIT_TESTING
     // After displaying the error, reset the console text color
     ConsoleUtils::resetColor();
+#endif
+}
+
+// Overloaded function to handle errors without extra information
+void ErrorHandler::handleErrorAndThrow(ErrorType error) {
+    handleErrorAndReturn(error, "");
+}
+
+void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo = "") {
+    std::lock_guard<std::mutex> lock(outputMutex); // Lock the mutex
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+    std::string errorMessage;
+    switch(error) {
+        case ErrorType::MENU_LOAD_ERROR:
+            errorMessage = "Menu failed to load, please restart the program.";
+            break;
+        case ErrorType::INVALID_INDEX_FORMAT_ERROR:
+            errorMessage = "Invalid index format. " + extraInfo + " Skipping.";
+            break;
+        case ErrorType::SUBJECT_MESSAGE_ERROR:
+            errorMessage = "An error occurred while entering subject and message.";
+            break;
+        case ErrorType::FILESYSTEM_ERROR:
+            errorMessage = "Filesystem error: " + extraInfo;
+            break;
+        case ErrorType::LIBCURL_ERROR:
+#ifndef UNIT_TESTING
+            errorMessage = "Failed to initialize libcurl.";
+            if (!extraInfo.empty()) {
+                errorMessage += " " + extraInfo;
+            }
+#endif
+            break;
+        case ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR:
+            errorMessage = "Failed to get terminal attributes.";
+            break;
+        case ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR:
+            errorMessage = "Failed to set terminal attributes.";
+            break;
+        case ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR:
+            errorMessage = "Failed to restore terminal attributes.";
+            break;
+        default:
+            errorMessage = "An unknown error occurred.";
+            break;
+    }
+#ifndef UNIT_TESTING
+    // After displaying the error, reset the console text color
+    ConsoleUtils::resetColor();
+#endif
+
+    // Throw the exception
+    std::cerr << errorMessage << std::endl;
+    throw ErrorHandlerException(errorMessage);
 }

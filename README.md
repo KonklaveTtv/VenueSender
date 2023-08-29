@@ -94,10 +94,6 @@ To run the test binary
 
       ./bin/venuesender 
 
-To run the unit tests, either execute:
-
-      ./run_tests.sh
-
 or execute:
 
       ./bin/venuesender_test -s

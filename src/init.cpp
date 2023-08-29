@@ -8,32 +8,46 @@ void Init::splashscreen() {
     ConsoleUtils::clearConsole();
     
     // Set color to cyan
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     for (int i = 0; i < 44; ++i) std::cout << '*';
     std::cout << std::endl;
 
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     // Display splash text centered
     std::cout << "                VenueSender                " << std::endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     std::cout << "********************************************" << std::endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
-
+#endif
     std::cout << "               Version 1.0.0               " << std::endl;
 
     // Display copyright and other text in cyan
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     std::cout << "********************************************" << std::endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
-
+#endif
     std::cout << "    Copyright (c) 2023, Spencer Lievens.    " << std::endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
 
     // Display bottom border
     for (int i = 0; i < 44; ++i) std::cout << '*';
     std::cout << std::endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
     
     std::cout << "              Initiailizing...              " << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(2));

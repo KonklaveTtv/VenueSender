@@ -11,6 +11,11 @@ class CsvReader;
 class ConfigManager;
 class ConsoleUtils; 
 
+class ErrorHandlerException : public std::runtime_error {
+public:
+    ErrorHandlerException(const std::string& message) : std::runtime_error(message) {}
+};
+
 // ErrorHandler class to manage different types of errors
 class ErrorHandler {
 private:
@@ -66,6 +71,13 @@ public:
 
     // Handles cURL errors and returns a boolean to indicate success/failure
     static bool handleCurlError(CURLcode res);
+
+    // Function to handle errors and display appropriate messages based on the type of error
+    static void handleErrorAndThrow(ErrorType error);
+
+    // Overloaded version with extra information
+    static void handleErrorAndThrow(ErrorType error, const std::string& extraInfo);
+
 };
 
 #endif // ERRORHANDLER_H

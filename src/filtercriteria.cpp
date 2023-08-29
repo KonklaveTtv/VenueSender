@@ -111,11 +111,15 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
                                         vector<SelectedVenue>& selectedVenuesForTemplates,
                                         istream& input,
                                         ostream& output) {
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     output << "===========================" << endl;
     output << "      Venue Selection      " << endl;
     output << "===========================" << endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     // Clear the temporary filtered venue vectors
     VenueFilter::clearTemporaryFilteredVenuesVectors();
@@ -139,13 +143,16 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
     for (const auto& country : uniqueCountries) {
         output << index++ << ". " << country << " ";
     }
-
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     output << "\nPlease select a country index: ";
     size_t selectedIndex;
     input >> selectedIndex;
     input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     // Validate input length
     if (std::to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
@@ -199,11 +206,15 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
             }
         }, uniqueOptionsVariant);
 
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         output << "\nSelect a " << filterType << " using (comma-separated) indices: ";
         std::string inputIndices;
         std::getline(input, inputIndices);
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
+#endif
 
         // Convert the input to lowercase for case-insensitive comparison
         std::transform(inputIndices.begin(), inputIndices.end(), inputIndices.begin(), ::tolower);
@@ -265,11 +276,15 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
     }
 
     // Step 4: Final Venue Selection
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     output << "===========================" << endl;
     output << "   Final Venue Selection   " << endl;
     output << "===========================\n";
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
 
     index = 1;
     for (const auto& venue : temporaryFilteredVenues) {
@@ -279,11 +294,15 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
         output << "Capacity: " << venue.capacity << '\n';
     }
 
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     output << "Please select the final venue using (comma-separated) indices or type 'ALL': ";
     std::string finalIndices;
     std::getline(input, finalIndices);
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
     std::transform(finalIndices.begin(), finalIndices.end(), finalIndices.begin(), ::tolower);
 
     if (finalIndices == "all") {
@@ -298,7 +317,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
                 size_t finalIndex = std::stoul(indexStr);
                 finalSelectedIndices.push_back(finalIndex);
             } catch (const std::exception& e) {
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 return;
             }
         }
@@ -312,10 +331,13 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
             selectedVenuesForTemplates.push_back(temporaryFilteredVenues[finalIndex - 1]);
         }
     }
-
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
     cout << "Venues Added";
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
     // Add a newline to separate the filtered venues from the main menu
     output << endl;
 }

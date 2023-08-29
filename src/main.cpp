@@ -34,7 +34,7 @@ int main() {
     CurlHandleWrapper::init();
         CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer);
     if (!curl) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return 1;
     }
 
@@ -89,7 +89,7 @@ int main() {
                                   templateExists
                                   );
     } catch (const exception& e) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MENU_LOAD_ERROR);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::MENU_LOAD_ERROR);
     }
     
     // Function load filters and display menu

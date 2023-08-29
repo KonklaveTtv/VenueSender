@@ -65,16 +65,24 @@ public:
         attachmentSize.clear();
         attachmentPath.clear();
         templateExists = false;
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
         std::cout << "Booking template cleared." << std::endl; 
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
+#endif
     }
 
     static inline void clearSelectedVenues(std::vector<SelectedVenue>& selectedVenuesForEmail) {
         selectedVenuesForEmail.clear();
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
         std::cout << "Selected venues cleared." << std::endl; 
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
+#endif
     }
 
     static inline void clearSelectedVenuesForTemplates(std::vector<SelectedVenue>& selectedVenuesForTemplates) {

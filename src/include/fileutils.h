@@ -32,6 +32,7 @@ namespace confPaths {
 // Class for utility functions related to the console
 class ConsoleUtils {
 public:
+#ifndef UNIT_TESTING
     enum class Color {
         RED,
         GREEN,
@@ -127,6 +128,7 @@ public:
         std::cout << "\033[0m"; // Reset to default for UNIX-like systems
     #endif
     }
+#endif
 
     // Function to clear the input buffer
     inline static void clearInputBuffer() {

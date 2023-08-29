@@ -119,11 +119,15 @@ public:
 
     // Function to show the main title header of VenueSender
     inline static void mainHeader() {
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
+#endif
         std::cout << "===========================\n";
         std::cout << "        VenueSender        \n";
       //std::cout << "===========================\n";
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
+#endif
     }
 
     // Functions to display the menu options to the user

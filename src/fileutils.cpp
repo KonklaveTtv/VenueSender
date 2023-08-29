@@ -35,21 +35,25 @@ void ConsoleUtils::clearConsole() {
 
 // Function to securely enter a password while displaying asterisks
 std::string ConsoleUtils::passwordEntry() {
+#ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
     cout << "============================================"<< endl;
+#ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
+#endif
     cout << "Enter your email password: ";
 
     // Disable terminal echoing and enable manual input capture
     struct termios oldt, newt;
     if (tcgetattr(STDIN_FILENO, &oldt) !=0) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR);
         return "";
     }
     newt = oldt;
     newt.c_lflag &= ~(ECHO | ICANON);
     if (tcsetattr(STDIN_FILENO, TCSANOW, &newt) !=0) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR);
         return "";
     }
 
@@ -112,16 +116,20 @@ std::string ConsoleUtils::passwordEntry() {
         passwordEntry();
     } else {
         // If passwords match give confirmation
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
+#endif
         std::cout << std::endl << "Password matches!" << std::endl;
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset color
+#endif
         std::this_thread::sleep_for(std::chrono::seconds(1));
         ConsoleUtils::clearConsole();
     }
 
     // Restore terminal settings
     if (tcsetattr(STDIN_FILENO, TCSANOW, &oldt) !=0) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR);
     }
 
     std::cout << std::endl;  // Move to the next line after password entry
@@ -211,17 +219,25 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Display messages based on loaded settings
     if (smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded && venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded) {
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
+#endif
         cout << "Configuration from config.json Loaded" << endl;
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset color
+#endif
         configLoadedSuccessfully = true;
         // Clear the console for the Main Menu
         std::this_thread::sleep_for(std::chrono::seconds(1));
         ConsoleUtils::clearConsole();
     } else {
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Red for error
+#endif
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset color
+#endif
     }
     return configLoadedSuccessfully;
 }

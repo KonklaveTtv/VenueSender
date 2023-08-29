@@ -37,6 +37,7 @@ TEST_CASE("ConsoleUtils::trim() functionality", "[ConsoleUtils]") {
     REQUIRE(ConsoleUtils::trim("") == "");
 }
 
+
 // -----------------------
 // Test Group: CsvReader
 // -----------------------
@@ -405,11 +406,8 @@ bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
            lhs.state == rhs.state && lhs.city == rhs.city && lhs.capacity == rhs.capacity;
 }
 
-
 int main( int argc, char* argv[] )
 {   
-    ConfigManager configManager;
-
     // Run all the tests
     int result = Catch::Session().run(argc, argv);
 
