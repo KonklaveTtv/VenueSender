@@ -20,6 +20,7 @@ public:
 	// Function to display the splashscreen
 	static void splashscreen();
 
+	//Function to display the Main Menu to the user
     void Menu();
 };
 

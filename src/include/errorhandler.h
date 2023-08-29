@@ -18,6 +18,7 @@ private:
 public:
     // Enumeration to represent different types of errors that can be encountered
     enum class ErrorType {
+    MENU_LOAD_ERROR,
     INVALID_INPUT_ERROR,
     INVALID_MENU_INPUT_ERROR,
     INPUT_LENGTH_ERROR,

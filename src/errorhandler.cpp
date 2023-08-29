@@ -33,6 +33,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
 
     // Switch statement to handle different types of errors
     switch (error) {
+        case ErrorType::MENU_LOAD_ERROR:
+            cerr << "Menu failed to load, please restart the program." << endl;
+            break;
         case ErrorType::INVALID_INPUT_ERROR:
             cerr << "Invalid input. Skipping." << endl;
             break;

@@ -99,7 +99,7 @@ public:
         : useSSL(useSSL), verifyPeer(verifyPeer), verifyHost(verifyHost), senderEmail(std::move(senderEmail)), smtpPort(smtpPort), smtpServer(std::move(smtpServer)) {}
 
     // Function to nevigate the menu system
-    void navigateMenus(EmailManager& emailManager, 
+    bool navigateMenus(EmailManager& emailManager, 
                        CURL* curl, 
                        std::vector<Venue>& venues,
                        std::vector<SelectedVenue>& selectedVenuesForTemplates,

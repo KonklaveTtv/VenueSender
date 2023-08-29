@@ -38,9 +38,6 @@ int main() {
         return 1;
     }
 
-    // Read venues data from CSV file
-    CsvReader::readCSV(venues, confPaths::venuesCsvPath);
-
     // Extract unique genres, states, cities, and capacities from the venues data
     set<string> uniqueGenres = VenueUtilities::getUniqueGenres(venues);
     set<string> uniqueCountries = VenueUtilities::getUniqueCountries(venues);
@@ -59,6 +56,9 @@ int main() {
     vector<SelectedVenue> temporaryCapacityBuffer;
     vector<SelectedVenue> temporaryGenreBuffer;
 
+    // Read venues data from CSV file
+    CsvReader::readCSV(venues, confPaths::venuesCsvPath);
+
     // Initialize map for booking templates
     map<string, pair<string, string>> emailToTemplate;
 
@@ -69,28 +69,36 @@ int main() {
     EmailManager emailManager;
 
     // Pass the necessary objects to the navigateMenus function
-    menuManager.navigateMenus(emailManager, 
-                              curl, 
-                              venues,
-                              selectedVenuesForTemplates,
-                              selectedVenuesForEmail,
-                              emailToTemplate,
-                              subject,
-                              message,
-                              attachmentName,
-                              attachmentPath,
-                              attachmentSize,
-                              venueFilter,
-                              useSSL, 
-                              verifyPeer, 
-                              verifyHost, 
-                              verbose, 
-                              templateExists
-                              );
-
+    try {
+        menuManager.navigateMenus(emailManager, 
+                                  curl, 
+                                  venues,
+                                  selectedVenuesForTemplates,
+                                  selectedVenuesForEmail,
+                                  emailToTemplate,
+                                  subject,
+                                  message,
+                                  attachmentName,
+                                  attachmentPath,
+                                  attachmentSize,
+                                  venueFilter,
+                                  useSSL, 
+                                  verifyPeer, 
+                                  verifyHost, 
+                                  verbose, 
+                                  templateExists
+                                  );
+    } catch (const exception& e) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MENU_LOAD_ERROR);
+    }
+    
     // Function load filters and display menu
     Init initInstance;
     initInstance.Menu();
+
+    // Clear and Empty the Email Password from memory
+    fill(mailPass.begin(), mailPass.end(), '\0');
+    mailPass.clear();
 
     return 0;
 }

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void MenuManager::navigateMenus(EmailManager& emailManager, 
+bool MenuManager::navigateMenus(EmailManager& emailManager, 
                                 CURL* curl, 
                                 vector<Venue>& venues,
                                 vector<SelectedVenue>& selectedVenuesForTemplates,
@@ -21,10 +21,6 @@ void MenuManager::navigateMenus(EmailManager& emailManager,
                                 bool verifyHost, 
                                 bool verbose, 
                                 bool templateExists) {
-
-    // Pass the configuration variables to the MenuManager constructor
-    //MenuManager menuManager(useSSL, verifyPeer, verifyHost, senderEmail, smtpPort, smtpServer);
-
     while (true) {
         mainHeader();
 
