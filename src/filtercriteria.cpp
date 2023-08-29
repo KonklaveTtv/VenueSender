@@ -200,22 +200,32 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
         }, uniqueOptionsVariant);
 
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-        output << "\nSelect " << filterType << "(s) using (comma-separated) indices or type 'ALL': ";
+        output << "\nSelect a " << filterType << " using (comma-separated) indices: ";
         std::string inputIndices;
         std::getline(input, inputIndices);
         ConsoleUtils::resetColor();
+
+        // Convert the input to lowercase for case-insensitive comparison
         std::transform(inputIndices.begin(), inputIndices.end(), inputIndices.begin(), ::tolower);
 
         if (inputIndices == "all") {
+            // User selected all options, no need to filter
             temporaryFilteredVenuesBuffer = temporaryFilteredVenues;
         } else {
+            // Check if the input contains only digits and commas
+            if (!std::all_of(inputIndices.begin(), inputIndices.end(), [](char c) { return std::isdigit(c) || c == ','; })) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                return;
+            }
+
+            // Parse selected indices
             std::vector<size_t> selectedIndices;
             std::istringstream iss(inputIndices);
             std::string indexStr;
             while (std::getline(iss, indexStr, CSV_DELIMITER)) {
                 try {
                     size_t selectedIndex = std::stoul(indexStr);
-                    if (selectedIndex == 0) {
+                    if (selectedIndex == 0 || selectedIndex > localIndex) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                         return;
                     }
@@ -227,6 +237,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
                 }
             }
 
+            // Filter venues based on selected indices
             for (size_t selectedIndex : selectedIndices) {
                 std::visit([&](auto&& arg) {
                     using T = std::decay_t<decltype(arg)>;
