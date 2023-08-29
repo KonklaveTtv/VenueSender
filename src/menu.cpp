@@ -90,11 +90,11 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     case VIEW_EDIT_BOOKING_TEMPLATES_OPTION:
                         emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                         break;
-                    case CLEAR_BOOKING_TEMPLATE_OPTION:
-                        EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
-                        break;
                     case SEND_BOOKING_TEMPLATES_OPTION:
                         EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                        break;
+                    case CLEAR_BOOKING_TEMPLATE_OPTION:
+                        EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS:
                         // Logic to return to the main menu
@@ -299,8 +299,8 @@ int MenuManager::displayTemplateOptions() {
 #endif
         cout << CREATE_VENUE_BOOKING_TEMPLATE_OPTION << ". Create Venue Booking Template" << endl;
         cout << VIEW_EDIT_BOOKING_TEMPLATES_OPTION << ". View & Edit Booking Template" << endl;
-        cout << CLEAR_BOOKING_TEMPLATE_OPTION << ". Clear Booking Template" << endl;
         cout << SEND_BOOKING_TEMPLATES_OPTION << ". Send Booking Templates" << endl;
+        cout << CLEAR_BOOKING_TEMPLATE_OPTION << ". Clear Booking Template" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS << ". Return to Main Menu" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
