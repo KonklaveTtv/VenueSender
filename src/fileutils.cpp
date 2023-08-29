@@ -35,7 +35,10 @@ void ConsoleUtils::clearConsole() {
 
 // Function to securely enter a password while displaying asterisks
 std::string ConsoleUtils::passwordEntry() {
-    std::cout << "Enter your email password: ";
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    cout << "============================================"<< endl;
+    ConsoleUtils::resetColor();
+    cout << "Enter your email password: ";
 
     // Disable terminal echoing and enable manual input capture
     struct termios oldt, newt;
@@ -74,6 +77,46 @@ std::string ConsoleUtils::passwordEntry() {
         
         // Echo an asterisk
         std::putchar('*');
+    }
+
+    // Let's have the user re-enter their password to confirm it matches
+    std::cout << std::endl << "Confirm your email password: ";
+    std::string confirm;
+    while (true) {
+        ch = getchar();
+        
+        // Enter (newline) is the delimiter
+        if (ch == '\n') {
+            break;
+        }
+        
+        // Handle backspace or delete
+        if (ch == 127 || ch == '\b') {
+            if (!confirm.empty()) {
+                std::cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
+                confirm.pop_back();
+            }
+            continue;
+        }
+        
+        // Add the character to the password
+        confirm += ch;
+        
+        // Echo an asterisk
+        std::putchar('*');
+    }
+
+    // Check if the passwords match
+    if (password != confirm) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MISMATCH_ERROR);
+        passwordEntry();
+    } else {
+        // If passwords match give confirmation
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
+        std::cout << std::endl << "Password matches!" << std::endl;
+        ConsoleUtils::resetColor(); // Reset color
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        ConsoleUtils::clearConsole();
     }
 
     // Restore terminal settings
@@ -169,16 +212,9 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     // Display messages based on loaded settings
     if (smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded && venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded) {
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
-        cout << "           Configuration Loaded             " << endl;
+        cout << "Configuration from config.json Loaded" << endl;
         ConsoleUtils::resetColor(); // Reset color
         configLoadedSuccessfully = true;
-        // Clear the console for the Main Menu
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        ConsoleUtils::clearConsole();
-    } else if (smtpServerLoaded || smtpPortLoaded || mailPassLoaded || senderEmailLoaded) {
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Yellow for partial success
-        cout << "           Email Settings Loaded            " << endl;
-        ConsoleUtils::resetColor(); // Reset color
         // Clear the console for the Main Menu
         std::this_thread::sleep_for(std::chrono::seconds(1));
         ConsoleUtils::clearConsole();
