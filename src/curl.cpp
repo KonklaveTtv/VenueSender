@@ -112,7 +112,8 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
     curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPass.c_str());
 
-    // Clear the mailPass string for security
+    // Clear and Empty the Email Password from memory
+    fill(mailPass.begin(), mailPass.end(), '\0');
     mailPass.clear();
     
     // Set the sender
