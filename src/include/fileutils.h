@@ -9,7 +9,9 @@
 #include <fstream>
 #include <limits>
 #include <sstream>
+#include <termios.h>  
 #include <thread>
+#include <unistd.h>
 #include <vector>
 
 // Include headers for JSON processing
@@ -138,6 +140,9 @@ public:
 
     // Method to clear the console
     static void clearConsole();
+
+    // Method to securely enter a password
+    static std::string passwordEntry();
 };
 
 // Class for reading data from a CSV file

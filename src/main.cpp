@@ -23,8 +23,6 @@ int main() {
     bool templateExists = false;
     bool useSSL, verifyPeer, verifyHost, verbose;
     
-    // Either call for password entry here or within loadConfigSettings()
-
     // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
     if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {

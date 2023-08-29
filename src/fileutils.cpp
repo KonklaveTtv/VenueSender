@@ -33,6 +33,50 @@ void ConsoleUtils::clearConsole() {
 #endif
 }
 
+// Function to securely enter a password while displaying asterisks
+std::string ConsoleUtils::passwordEntry() {
+    std::cout << "Enter your password: ";
+
+    // Disable terminal echoing and enable manual input capture
+    struct termios oldt, newt;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ECHO | ICANON);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    std::string password;
+    char ch;
+    while (true) {
+        ch = getchar();
+        
+        // Enter (newline) is the delimiter
+        if (ch == '\n') {
+            break;
+        }
+        
+        // Backspace to erase characters
+        if (ch == 127 || ch == '\b') {
+            if (!password.empty()) {
+                std::cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
+                password.pop_back();
+            }
+            continue;
+        }
+        
+        // Add the character to the password
+        password += ch;
+        
+        // Echo an asterisk
+        std::cout << '*';
+    }
+
+    // Restore terminal settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+    std::cout << std::endl;  // Move to the next line after password entry
+    return password;
+}
+
 // Default constructor for ConfigManager
 ConfigManager::ConfigManager() = default;
 
@@ -42,11 +86,19 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
                                        string& mailPass, int& smtpPort, string& smtpServer, 
                                        string& venuesCsvPath) {
 
-    // Logic to read and load settings from a JSON file
-    // Includes conditional compilation for unit testing
-    // Validates the loaded settings and returns a boolean flag to indicate success or failure
-#ifdef UNIT_TESTING
 
+#ifdef UNIT_TESTING
+    // Load plain text passwords from mock_config.json
+    mailPass = "mock_email_password";
+#else
+    // Use the password entered by the user
+    mailPass = ConsoleUtils::passwordEntry();
+#endif
+
+// Logic to read and load settings from a JSON file
+// Includes conditional compilation for unit testing
+// Validates the loaded settings and returns a boolean flag to indicate success or failure
+#ifdef UNIT_TESTING
     Json::Value config;
     ifstream configFile(confPaths::mockConfigJsonPath);
     if (!configFile.is_open()) {
@@ -92,14 +144,6 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Enable verbose for cURL
     verbose = config["verbose"].asBool();
-#endif
-
-#ifdef UNIT_TESTING
-    // Load plain text passwords from mock_config.json
-    mailPass = config["mock_email_password"].asString();
-#else
-    // Load plain text passwords from config.json
-    mailPass = config["email_password"].asString();
 #endif
 
     // Define and initialize variables to track loaded settings
