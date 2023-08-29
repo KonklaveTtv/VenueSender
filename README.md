@@ -9,7 +9,7 @@ VenueSender is a command-line tool that helps you send emails/attachments to dif
 To run this project, you need the following installed on your system:
 
 - GCC (GNU Compiler Collection)
-- C++17 compatible compiler
+- C++20 compatible compiler
 - libjsoncpp
 - libcurl
 - Catch2
