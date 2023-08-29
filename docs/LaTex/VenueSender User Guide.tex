@@ -62,238 +62,136 @@
 	
 	\maketitle
 	
-	\section*{Introduction}
-	Welcome to the VenueSender user guide! This tool facilitates managing and sending emails to a list of venues, ensuring efficient and streamlined communications. This guide provides step-by-step instructions to navigate and utilize the program effectively.
-	
-	\section*{Starting the Program}
-	Execute the VenueSender executable. Upon loading, the program initializes configurations and data. Should any setup issues emerge, descriptive error messages guide you through resolution.
-	
-	\section*{Configuration Files}
-	The program relies on specific configuration files to operate correctly:
-	\begin{itemize}
-		\item \texttt{venues.csv}: Contains venue data. Ensure it is located in the root directory.
-		\item \texttt{config.json}: Holds various configurations like SMTP settings and email details. It should also be in the root directory.
-		\item For testing purposes, \texttt{mock\_venues.csv} and \texttt{mock\_config.json} should be located in the \texttt{src/test/} directory.
-	\end{itemize}
-	
-	\section*{Venue Data Format}
-	The \texttt{venues.csv} file should be structured with six columns: name, email, genre, state, city, and capacity. Ensure this format is maintained to prevent reading errors.
-	
-	\section*{Main Menu}
-	After initiation, the main menu presents several options:
-	\begin{itemize}
-		\item Filter by Genre: Select venues based on genre.
-		\item Filter by State: Choose venues from a particular state.
-		\item Filter by City: Filter venues by city.
-		\item Filter by Capacity: Opt for venues based on capacity.
-		\item Clear Selected Venues: Reset your venue selections.
-		\item Clear Booking Template: Clears the current email/template.
-		\item View Selected Venues: Review your chosen venues.
-		\item Show Email Settings: View email configurations.
-		\item View \& Edit Email: Inspect and modify the current email draft.
-		\item Venue Booking Template: Dispatch emails based upon a booking template.
-		\item Email Custom Address: Dispatch an email to a custom address.
-		\item Finish \& Send Emails: Dispatch emails to the selected venues.
-		\item Exit VenueSender: Shut down the program.
-	\end{itemize}
-	
-	\section*{Filtering Venues}
-	VenueSender offers you the flexibility to tailor your audience by filtering venues based on various criteria.
-	
-	\subsection*{Filter by Genre}
-	VenueSender can identify unique genres from the list of venues. To filter:
-	\begin{itemize}
-		\item Available Genres: The program displays a list of genres.
-		\item Selection: Input comma-separated indices corresponding to desired genres.
-	\end{itemize}
-	
-	\subsection*{Filter by State}
-	Choose venues from specific states:
-	\begin{itemize}
-		\item Available States: A list of states is presented.
-		\item Selection: Enter comma-separated indices of your preferred states.
-	\end{itemize}
-	
-	\subsection*{Filter by City}
-	\begin{itemize}
-		\item Available Cities: A list of cities will be displayed.
-		\item Selection: Specify comma-separated indices of cities you're targeting.
-	\end{itemize}
-	
-	\subsection*{Filter by Capacity}
-	For targeting venues based on seating:
-	\begin{itemize}
-		\item Available Capacities: VenueSender showcases various venue capacities.
-		\item Selection: Indicate comma-separated indices that match the capacities you're interested in.
-	\end{itemize}
-	
-	\section*{Reviewing and Resetting Selections}
-	After filtering:
-	\begin{itemize}
-		\item View Selected Venues: Check the venues you've picked.
-		\item Clear Selected Venues: Use this to reconsider or correct any mistaken selections.
-	\end{itemize}
-	
-	\section*{Managing Your Email}
-	\subsection*{Constructing the Email}
-	Upon selecting View \& Edit Email:
-	\begin{itemize}
-		\item Subject: Enter the email subject. Remember, it shouldn't exceed a specified character limit. If it does, an error message will prompt you to shorten it.
-		\item Message: Write the email content. Be wary of the character limit. If exceeded, you'll be alerted to condense your message.
-		\item Attachment: Attach files by providing their paths. Ensure the attachment size doesn't surpass the limit (e.g., 24MB). If the file is too large, you'll be notified to pick a smaller file.
-	\end{itemize}
-	
-	\subsection*{Email Password Encryption}
-	For added security, the program encrypts the email password stored in the configuration file. If the password is not encrypted, the program will automatically encrypt it upon initialization. 
-	
-	\subsection*{Email Settings}
-	Access Show Email Settings to review:
-	\begin{itemize}
-		\item SMTP Server
-		\item SMTP Port
-		\item Sender Email
-		\item SSL Status
-		\item verifyPeer Status
-		\item verifyHost Status
-		\item Verbose Mode
-	\end{itemize}
-	
-	\subsection*{Booking Template Creation}
-	VenueSender provides a unique feature that allows users to craft a templated email that can be sent to multiple venues. The template is constructed based on specific details provided by the user and then tailored to each selected venue.
-	
-	\begin{enumerate}
-		\item Upon initiating the template creation, the program prompts the user for various details like genre, band name, hometown, similar artists, date, music and video links, press quote, user's name, and social links.
-		\item The program then dynamically generates the email template using the provided details and formats it for each selected venue.
-		\item Once the template is constructed, the user can review it, modify it, save it to go back and add more venues, or send it straightaway.
-	\end{enumerate}
+\section{Overview}
 
-\newpage
-	\subsubsection*{Sample Email Template}
-	Here's a glimpse of how the constructed template might look:
+VenueSender is a powerful tool designed to automate the sending of emails and templates to venues. 
+It allows you to filter venues based on various criteria, manage emails, create and send booking templates, 
+and much more. This enhanced user guide will provide a more in-depth explanation, including details on venue 
+selection based on filters.
 
-	\begin{mdframed}[backgroundcolor=background, hidealllines=false, innerleftmargin=15pt, innerrightmargin=5pt, innertopmargin=0pt, innerbottommargin=-5pt, linecolor=accent]
-		\begin{lstlisting}
-			--- Booking Inquiry for [Venue Name] ---
-			
-			Hi!,
-			
-			I am booking a tour for my [Genre] band, [Band Name], from 
-			
-			[Hometown]. The music is in a similar vein as [Similar Artists].
-			
-			We're planning to be in the [City] area on [Date] and are
-			
-			wondering if you might be interested in booking us at [Venue Name].
-			
-			Here are some resources to familiarize you with our work:
-			
-			- Music: [Music Link]
-			- Live Performance: [Live Performance Video Link]
-			- Music Video: [Music Video Link]
-			
-			What people are saying about us:
-			"[Press Quote]"
-			
-			Please let me know if you have any questions or need additional information.
-			
-			We appreciate your time and consideration!
-			
-			Best wishes,
-			[Your Name]
-			
-			-- Social Links --
-			[Social Links]
-		\end{lstlisting}
-	\end{mdframed}
-		
-	Note: The values enclosed in square brackets (e.g., [Genre], [Band Name]) are placeholders and will be replaced with the actual details provided by the user.
-	
-	\subsubsection*{Post-Creation Steps}
-	After creating the template:
-	\begin{itemize}
-		\item The user has the option to modify or send the template.
-		\item If choosing to send, the program dispatches the email to each of the selected venues individually. The status for each email will be displayed.
-		\item If the user decides not to send the template right away, it is saved and can be sent later.
-	\end{itemize}
-	
-	\subsection*{Sending Emails}
-	Finish \& Send Emails initiates the process:
-	\begin{itemize}
-		\item Before dispatching the emails, ensure that venues are selected. The program will remind you to do so if you haven't.
-		\item The program checks the sender's email format. If it's incorrect, an error message instructs you to adjust it in your custom.json file.
-		\item The program then checks if more than 49 venues have been selected. If so, it sends using "Bcc". If less than 49 venues are selected, then it sends an individual email to each.
-		\item Connects to the SMTP server and authenticates.
-		\item Emails are dispatched. For each, you'll receive a status update. Should any sending issues arise, you'll be informed (e.g., connection errors, authentication failures).
-		\item Once all emails are sent, a completion message appears. Press return to continue.
-	\end{itemize}
-	
-	\subsection*{Custom Address Email Sending}
-	For emails addressed to a custom recipient:
-	\begin{itemize}
-		\item The user sets the custom email address to be used.
-		\item The program checks the sender's email format. If it's incorrect, an error message instructs you to adjust it in your custom.json file.
-		\item Connects to the SMTP server and authenticates.
-		\item The email is dispatched and you receive a status update. Should any sending issues arise, you'll be informed (e.g., connection errors, authentication failures).
-		\item Once the email is sent, a completion message appears. Press return to continue.
-	\end{itemize}
-	
-	\section*{Exiting the Program}
-	To leave:
-	\begin{itemize}
-		\item Exit VenueSender: Choose this from the main menu. A confirmation ensures your intent to close the program.
-	\end{itemize}
-	
-	\section*{Troubleshooting \& Error Handling}
-	VenueSender is engineered to offer informative error messages:
-	\begin{itemize}
-		\item If a problem arises, read the displayed message. It typically instructs on rectification steps.
-		\item Restarting the program might help.
-		\item For persistent issues, consult the FAQ or contact the support team.
-	\end{itemize}
+\section{Getting Started}
 
-	\section*{Conclusion}
-	Thanks for choosing VenueSender! We hope this user guide aids in your software navigation. For further assistance or feedback, don't hesitate to reach out. Safe sending!
-\newpage
-	\section*{Understanding Error Messages}
-	VenueSender has built-in error handling to assist users in diagnosing problems. Here are some common errors and their solutions:
-	\begin{itemize}
-		\item \textbf{INVALID\_INPUT\_ERROR}: Invalid input. Skipping.
-		\item \textbf{INVALID\_MENU\_INPUT\_ERROR}: Invalid input, please enter a number. Press return to retry.
-		\item \textbf{INPUT\_LENGTH\_ERROR}: Input too long. Please try again.
-		\item \textbf{INVALID\_CHOICE\_ERROR}: Invalid choice. Press return.
-		\item \textbf{INVALID\_INDEX\_ERROR}: Invalid index for the given context.
-		\item \textbf{INVALID\_INDEX\_FORMAT\_ERROR}: Invalid index format. Skipping.
-		\item \textbf{NO\_VENUES\_SELECTED\_ERROR}: No venues selected yet.
-		\item \textbf{VENUE\_ALREADY\_SELECTED\_ERROR}: Venue already selected. Skipping.
-		\item \textbf{EMAIL\_AND\_SUBJECT\_BLANK\_ERROR}: Subject and Message are required. Please set them.
-		\item \textbf{EMAIL\_AND\_SUBJECT\_WRITE\_ATTEMPTS\_ERROR}: Too many unsuccessful attempts.
-		\item \textbf{NO\_VENUES\_SELECTED\_FOR\_EMAIL\_ERROR}: No venues selected. Please add venues before sending emails.
-		\item \textbf{EMAIL\_ERROR}: An error occurred while processing the email.
-		\item \textbf{SUBJECT\_LENGTH\_ERROR}: Subject cannot be longer than 50 characters in length.
-		\item \textbf{EMAIL\_MESSAGE\_LENGTH\_ERROR}: Message cannot be longer than 2000 characters in length.
-		\item \textbf{EMAIL\_BLANK\_ERROR}: Message cannot be blank.
-		\item \textbf{SUBJECT\_MESSAGE\_ERROR}: An error occurred while entering subject and message.
-		\item \textbf{EMAIL\_WRITING\_ATTEMPTS\_ERROR}: Too many unsuccessful attempts. Returning to main menu.
-		\item \textbf{TEMPLATE\_PENDING\_ERROR}: Template pending, go back to add more venues, send the template, or clear the template.
-		\item \textbf{ATTACHMENT\_PATH\_ERROR}: File does not exist at the specified path.
-		\item \textbf{ATTACHMENT\_SIZE\_ERROR}: File exceeds the 24MB limit.
-		\item \textbf{SENDER\_EMAIL\_FORMAT\_ERROR}: The sender email format is not valid.
-		\item \textbf{FILESYSTEM\_ERROR}: A filesystem error occurred.
-		\item \textbf{CONFIG\_OPEN\_ERROR}: Failed to open the configuration file.
-		\item \textbf{CONFIG\_LOAD\_ERROR}: Failed to load configuration settings.
-		\item \textbf{CONFIG\_OPEN\_TO\_WRITE\_ERROR}: Failed to open the configuration file for writing.
-		\item \textbf{INVALID\_CAPACITY\_IN\_CSV}: Invalid capacity value in the CSV file.
-		\item \textbf{INVALID\_DATA\_IN\_CSV}: Incorrect data structure in the CSV file.
-		\item \textbf{LIBSODIUM\_INIT\_ERROR}: Failed to initialize libsodium.
-		\item \textbf{ENCRYPTION\_ERROR}: Failed to encrypt email password.
-		\item \textbf{DECRYPTION\_ERROR}: Failed to decrypt passwords.
-		\item \textbf{EMAIL\_PASSWORD\_ENCRYPTION\_ERROR}: Failed to encrypt email password.
-		\item \textbf{EMAIL\_PASSWORD\_DECRYPTION\_ERROR}: Email password decryption failed.
-		\item \textbf{EMAIL\_PASSWORD\_ENCRYPTION\_FORMAT\_ERROR}: Invalid encrypted password format.
-		\item \textbf{LIBCURL\_ERROR}: Failed to initialize libcurl.
-		\item \textbf{SMTP\_CONNECTION\_ERROR}: Connection to SMTP server failed.
-		\item \textbf{SMTP\_AUTH\_ERROR}: Authentication with SMTP server failed.
-		\item \textbf{UNKNOWN\_ERROR}: An unknown error occurred.
-	\end{itemize}
-	
+\subsection{Initial Setup}
+
+\begin{enumerate}
+	\item \textbf{Configuration Files}: Make sure \texttt{venues.csv} for the venue data is available and \texttt{config.json} for SMTP settings has the fields set and is available.
+	\item \textbf{Execution}: Run the VenueSender application.
+\end{enumerate}
+
+\subsection{Initialization Checks}
+
+\begin{itemize}
+	\item \textbf{Configuration Loading}: The application will attempt to load settings from \texttt{config.json}. If successful, a message "Configuration Loaded" will appear.
+\end{itemize}
+
+\subsection{Secure Password Entry}
+
+\begin{itemize}
+	\item \textbf{Password Prompt}: You'll be asked to enter your email password securely. As you type, asterisks (*) will appear in place of the characters for added security.
+\end{itemize}
+
+\section{Main Menu}
+
+Once the application is initialized, you are presented with the Main Menu, which provides the following options:
+
+\begin{enumerate}
+	\item \textbf{Venue Selection}: Allows you to filter and select venues.
+	\item \textbf{Venue Options}: View or clear selected venues.
+	\item \textbf{Email Options}: Create, view, edit, and send emails.
+	\item \textbf{Templates}: Create, view, edit, and send email templates.
+	\item \textbf{Configuration}: View email settings.
+	\item \textbf{Exit}: Exit the application.
+\end{enumerate}
+
+\section{Venue Selection}
+
+In this menu, you can:
+
+\begin{enumerate}
+	\item \textbf{Select Venues}: Filter and select venues based on different criteria like country, state, city, capacity, and genre.
+	\item \textbf{Return to Main Menu}: Navigate back to the Main Menu.
+\end{enumerate}
+
+\subsection{Filters}
+
+You can filter venues based on several criteria. This is a step-by-step selection process where you can fine-tune the list of venues. The filters include:
+
+\begin{itemize}
+	\item Country: The program will list all countries present in the venue data. You can select one.
+	\item State: After choosing a country, you can select a state.
+	\item City: Further narrow down by selecting a city.
+	\item Capacity: Choose from venue capacity numbers.
+	\item Genre: Select the genre appropriate for your event.
+\end{itemize}
+
+\textbf{Note}: Use comma-separated indices for multiple selections or type \texttt{ALL} for all options.
+
+\subsection{Final Venue Selection}
+
+\begin{itemize}
+	\item \textbf{Final List}: The application will display a filtered list of venues for your final selection.
+\end{itemize}
+
+\textbf{Note}: Use comma-separated indices for multiple selections or type \texttt{ALL} for all options.
+
+\section{Venue Options}
+
+Here you can:
+
+\begin{enumerate}
+	\item \textbf{View Selected Venues}: List all venues you have currently selected.
+	\item \textbf{Clear Selected Venues}: Remove all venues from the selected list.
+	\item \textbf{Return to Main Menu}: Navigate back to the Main Menu.
+\end{enumerate}
+
+\section{Email Options}
+
+This menu allows you to:
+
+\begin{enumerate}
+	\item \textbf{Create Email}: Construct an email with subject, message, and attachment details.
+	\item \textbf{View \& Edit Emails}: List and edit saved emails.
+	\item \textbf{Email Custom Address}: Send an email to a custom email address.
+	\item \textbf{Send Emails}: Confirm and send the emails to selected venues.
+	\item \textbf{Return to Main Menu}: Navigate back to the Main Menu.
+\end{enumerate}
+
+\section{Templates}
+
+In the Templates menu, you can:
+
+\begin{enumerate}
+	\item \textbf{Create Venue Booking Template}: Create a new booking template for venue booking.
+	\item \textbf{View \& Edit Booking Templates}: Review and edit existing booking templates.
+	\item \textbf{Clear Booking Template}: Remove existing booking templates.
+	\item \textbf{Send Booking Templates}: Confirm and send the booking templates to selected venues.
+	\item \textbf{Return to Main Menu}: Navigate back to the Main Menu.
+\end{enumerate}
+
+\section{Configuration}
+
+\begin{itemize}
+	\item This option allows you to view the current email settings like SSL, Peer Verification, Host Verification, and other SMTP configurations.
+\end{itemize}
+
+\section{Exiting the Program}
+
+\begin{itemize}
+	\item To exit the program, choose the \textbf{Exit} option in the Main Menu. You'll be prompted to confirm your choice. Select 'Y' to confirm and 'N' to cancel.
+\end{itemize}
+
+\section{Error Handling}
+
+\begin{itemize}
+	\item For any issues encountered, the ErrorHandler will display a corresponding error message, helping you troubleshoot effectively.
+\end{itemize}
+
+\section{Conclusion}
+
+VenueSender offers a comprehensive and robust way to manage and automate your venue bookings and interactions. With its user-friendly interface and robust back-end, it makes the whole process hassle-free and efficient.
+
+For any errors encountered during usage, the ErrorHandler module will provide appropriate feedback, allowing you to troubleshoot effectively.
+
+\textbf{Happy Booking!}
+
 \end{document}
