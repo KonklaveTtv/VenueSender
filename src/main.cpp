@@ -30,13 +30,6 @@ int main() {
         exit(1);
     }
 
-    // Attempt to decrypt the stored password
-    mailPassDecrypted = EncryptionManager::decryptPassword(mailPass);
-    if (mailPassDecrypted.empty()) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DECRYPTION_ERROR);
-        exit(1);
-    }
-
     // Set up and initialize CURL
     CurlHandleWrapper::init();
         CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);

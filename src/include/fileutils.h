@@ -1,7 +1,7 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-#include "encryption.h"
+#include "errorhandler.h"
 #include "structs.h"
 
 #include <algorithm>
@@ -194,9 +194,6 @@ public:
                             std::string& senderEmail, std::string& smtpUsername, 
                             std::string& mailPass, int& smtpPort, std::string& smtpServer, 
                             std::string& venuesCsvPath);
-
-    // Static method to reset the configuration file
-    static void resetConfigFile();
 };
 
 #endif // FILEUTILS_H

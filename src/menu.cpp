@@ -163,8 +163,7 @@ int MenuManager::displayMenuOptions() {
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
-                // Reset configurations and cleanup before exiting
-                ConfigManager::resetConfigFile();
+                // Cleanup before exiting
                 CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
                 exit(0);  // Exit the program
             } else if (confirmExit == 'N' || confirmExit == 'n') {

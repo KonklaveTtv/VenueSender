@@ -2,7 +2,6 @@
 #define MAIL_H
 
 #include "curl.h"
-#include "encryption.h"
 #include "fileutils.h"
 #include "errorhandler.h"
 #include "structs.h"

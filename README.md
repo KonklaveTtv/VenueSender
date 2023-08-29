@@ -12,13 +12,12 @@ To run this project, you need the following installed on your system:
 - C++17 compatible compiler
 - libjsoncpp
 - libcurl
-- libsodium
 - Catch2
 
 ### Dependencies
 
       sudo apt-get update
-      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libsodium-dev
+      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev
 
 Install this dependency if you wish to run unit tests:
 
@@ -62,8 +61,6 @@ Compile the project:
             
             ```
             {
-            "email_pass_encrypted" : false, // DO NOT CHANGE
-            "email_password" : "enter_email_password",
             "sender_email" : "enter_your_sender_email",
             "smtp_port" : 587,
             "smtp_server" : "enter_your_smtp_server",

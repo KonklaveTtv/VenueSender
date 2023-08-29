@@ -29,7 +29,7 @@ TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
 
 # Libraries
-LIBS = -lcurl -ljsoncpp -lsodium
+LIBS = -lcurl -ljsoncpp
 
 # Compile rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
