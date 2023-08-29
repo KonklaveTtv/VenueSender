@@ -1,7 +1,7 @@
 {
 	"email_pass_encrypted" : false,
 	"email_password" : "enter_email_password",
-	"sender_email" : "shithead",
+	"sender_email" : "enter_sender_email",
 	"smtp_port" : 587,
 	"smtp_server" : "enter_your_smtp_server",
 	"smtp_username" : "enter_your_smtp_username",

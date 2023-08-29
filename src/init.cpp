@@ -3,8 +3,6 @@
 using namespace confPaths;
 using namespace std;
 
-MenuManager menuManager;
-
 void Init::splashscreen() {
     // Clear the console for the splashscreen
     ConsoleUtils::clearConsole();

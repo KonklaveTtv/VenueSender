@@ -49,11 +49,11 @@ int main() {
     CsvReader::readCSV(venues, confPaths::venuesCsvPath);
 
     // Extract unique genres, states, cities, and capacities from the venues data
-    set<string> uniqueGenres = venueUtilities.getUniqueGenres(venues);
-    set<string> uniqueCountries = venueUtilities.getUniqueCountries(venues);
-    set<int> uniqueCapacities = venueUtilities.getUniqueCapacities(venues);
-    set<string> uniqueStates = venueUtilities.getUniqueStates(venues);
-    set<string> uniqueCities = venueUtilities.getUniqueCities(venues);
+    set<string> uniqueGenres = VenueUtilities::getUniqueGenres(venues);
+    set<string> uniqueCountries = VenueUtilities::getUniqueCountries(venues);
+    set<int> uniqueCapacities = VenueUtilities::getUniqueCapacities(venues);
+    set<string> uniqueStates = VenueUtilities::getUniqueStates(venues);
+    set<string> uniqueCities = VenueUtilities::getUniqueCities(venues);
 
     //Initialize variables for filters and selected venues
     FilterCriteria criteria;
