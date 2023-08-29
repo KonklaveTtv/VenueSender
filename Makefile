@@ -2,7 +2,7 @@
 
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -L/usr/lib
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -L/usr/lib
 INCLUDES = -Isrc/include -Isrc
 
 # Directories

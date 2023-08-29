@@ -18,11 +18,13 @@ int main() {
     // Initialize necessary variables
     vector<Venue> venues;
     vector<SelectedVenue> selectedVenuesForTemplates;
-    string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, mailPassDecrypted, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
+    string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort;
     bool templateExists = false;
     bool useSSL, verifyPeer, verifyHost, verbose;
     
+    // Either call for password entry here or within loadConfigSettings()
+
     // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
     if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
@@ -32,7 +34,7 @@ int main() {
 
     // Set up and initialize CURL
     CurlHandleWrapper::init();
-        CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPassDecrypted, smtpPort, smtpServer);
+        CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer);
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return 1;

@@ -94,7 +94,7 @@ void CurlHandleWrapper::clearEmailBeingSent() {
 
 // Function to set up a cURL handle with various settings
 CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose, 
-                      const string& senderEmail, const string& smtpUsername, string& mailPassDecrypted, int smtpPort, const string& smtpServer) {
+                      const string& senderEmail, const string& smtpUsername, string& mailPass, int smtpPort, const string& smtpServer) {
 
     // Initialize the curlWrapper
     CURL* curl = curlWrapper.get();
@@ -110,11 +110,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
 
     // SMTP authentication
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
-    curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPassDecrypted.c_str());
-
-    // Let's clear the memory for the mailPassDecrypted here after CURLOPT_PASSWORD is set
-    fill(mailPassDecrypted.begin(), mailPassDecrypted.end(), '\0');
-    mailPassDecrypted.clear();
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPass.c_str());
 
     // Set the sender
     curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
