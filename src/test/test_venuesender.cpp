@@ -400,27 +400,6 @@ TEST_CASE("VenueUtilities::convertToSelectedVenue() functionality", "[VenueUtili
     REQUIRE(selectedVenue.genre == "Mixed");
 }
 
-
-// -----------------------
-// Test Group: EncryptionManager
-// -----------------------
-
-TEST_CASE("EncryptionManager::encryptPassword()decryptPassword() functionality", "[EncryptionManager][decryption]") {
-    // Initialize encryption parameters
-    EncryptionManager encryptionManager;
-
-    string mailPassword = "enter_email_password";
-
-    string encryptedmailPass;
-    REQUIRE(encryptionManager.encryptPassword(mailPassword, encryptedmailPass) == true);
-
-    string mailPassDecrypted;
-    string decryptedmailPass = encryptionManager.decryptPassword(encryptedmailPass);
-    REQUIRE(decryptedmailPass == mailPassword);
-
-    REQUIRE(mailPassword == decryptedmailPass);
-}
-
 bool operator==(const SelectedVenue& lhs, const SelectedVenue& rhs) {
     return lhs.name == rhs.name && lhs.email == rhs.email && lhs.genre == rhs.genre &&
            lhs.state == rhs.state && lhs.city == rhs.city && lhs.capacity == rhs.capacity;
@@ -433,9 +412,6 @@ int main( int argc, char* argv[] )
 
     // Run all the tests
     int result = Catch::Session().run(argc, argv);
-
-    // Clean up the mock config file after all tests have been run
-    configManager.resetConfigFile();
 
     // Return the test results
     return result;

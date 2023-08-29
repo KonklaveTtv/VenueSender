@@ -128,28 +128,6 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_DATA_IN_CSV:
             cerr << "Invalid data in CSV file: " << extraInfo << endl;
             break;
-        case ErrorType::LIBSODIUM_INIT_ERROR:
-            cerr << "Failed to initialize libsodium.";
-            if (!extraInfo.empty()) {
-                cerr << " " << extraInfo;
-            }
-            cerr << endl;
-            break;        
-        case ErrorType::ENCRYPTION_ERROR:
-            cerr << "Failed to encrypt email password for saving in config.json." << endl;
-            break;
-        case ErrorType::DECRYPTION_ERROR:
-            cerr << "Failed to decrypt passwords. Ensure they are correctly encrypted in config.json." << endl;
-            break;
-        case ErrorType::EMAIL_PASSWORD_ENCRYPTION_ERROR:
-            cerr << "Failed to encrypt password." << endl;
-            break;
-        case ErrorType::EMAIL_PASSWORD_DECRYPTION_ERROR:
-            cerr << "Email password decryption failed." << endl;
-            break;
-        case ErrorType::EMAIL_PASSWORD_ENCRYPTION_FORMAT_ERROR:
-            cerr << "Invalid encrypted password format." << endl;
-            break;
         case ErrorType::LIBCURL_ERROR:
 #ifndef UNIT_TESTING
             cerr << "Failed to initialize libcurl." << endl;

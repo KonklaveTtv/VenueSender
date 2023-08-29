@@ -1,5 +1,4 @@
 {
-	"mock_email_pass_encrypted" : false,
 	"mock_email_password" : "mock_email_password",
 	"mock_sender_email" : "mock@example.com",
 	"mock_smtp_port" : 587,

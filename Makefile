@@ -2,7 +2,7 @@
 
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -L/usr/lib
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -L/usr/lib
 INCLUDES = -Isrc/include -Isrc
 
 # Directories
@@ -29,7 +29,7 @@ TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
 
 # Libraries
-LIBS = -lcurl -ljsoncpp -lsodium
+LIBS = -lcurl -ljsoncpp
 
 # Compile rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
