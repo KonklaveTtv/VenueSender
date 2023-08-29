@@ -557,13 +557,24 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
     curl_slist_free_all(recipients);
     curl_slist_free_all(headers);
+
+    if (res == 0) {
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-    cout << "Email sending progress completed." << endl;
+        cout << "Email sending progress completed." << endl;
 #ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
+    } else {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+        cout << "Email sending progress failed." << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+    }
 
     if (!ErrorHandler::handleCurlError(res)) {
         if (res == CURLE_COULDNT_CONNECT) {
@@ -1317,10 +1328,23 @@ void EmailManager::emailCustomAddress(CURL* curl,
             curl_slist_free_all(recipients);
             curl_slist_free_all(headers);
 
-            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-            cout << "Email sending progress completed." << endl;
-            ConsoleUtils::resetColor();
-
+            if (res == 0) {
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+                cout << "Email sending progress completed." << endl;
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
+            } else {
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+                cout << "Email sending progress failed." << endl;
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
+            }
             // Clear the subject, message, and attachment strings
             clearAllCustomAddressEmailData(customAddressSubject, customAddressMessage, customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
             return;
