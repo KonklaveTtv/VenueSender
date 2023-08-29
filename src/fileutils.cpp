@@ -35,14 +35,20 @@ void ConsoleUtils::clearConsole() {
 
 // Function to securely enter a password while displaying asterisks
 std::string ConsoleUtils::passwordEntry() {
-    std::cout << "Enter your password: ";
+    std::cout << "Enter your email password: ";
 
     // Disable terminal echoing and enable manual input capture
     struct termios oldt, newt;
-    tcgetattr(STDIN_FILENO, &oldt);
+    if (tcgetattr(STDIN_FILENO, &oldt) !=0) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR);
+        return "";
+    }
     newt = oldt;
     newt.c_lflag &= ~(ECHO | ICANON);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &newt) !=0) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR);
+        return "";
+    }
 
     std::string password;
     char ch;
@@ -54,7 +60,7 @@ std::string ConsoleUtils::passwordEntry() {
             break;
         }
         
-        // Backspace to erase characters
+        // Handle backspace or delete
         if (ch == 127 || ch == '\b') {
             if (!password.empty()) {
                 std::cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
@@ -67,11 +73,13 @@ std::string ConsoleUtils::passwordEntry() {
         password += ch;
         
         // Echo an asterisk
-        std::cout << '*';
+        std::putchar('*');
     }
 
     // Restore terminal settings
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &oldt) !=0) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR);
+    }
 
     std::cout << std::endl;  // Move to the next line after password entry
     return password;

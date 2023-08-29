@@ -51,6 +51,15 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
             cerr << "Invalid index format." << extraInfo << "Skipping." << endl;
             break;
+        case ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR:
+            cerr << "Failed to get terminal attributes." << endl;
+            break;
+        case ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR:
+            cerr << "Failed to set terminal attributes." << endl;
+            break;
+        case ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR:
+            cerr << "Failed to restore terminal attributes." << endl;
+            break;
         case ErrorType::EMPTY_VENUE_LIST_ERROR:
             cerr << "No venues could be loaded for filtering" << endl;
             break;
