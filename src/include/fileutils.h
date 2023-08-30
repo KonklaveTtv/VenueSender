@@ -140,6 +140,9 @@ public:
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
     }
 
+    // Function to check a file exists at a given path
+    static bool fileExists(const std::string& filename);
+
     // Method to trim leading and trailing spaces from a string
     static std::string trim(const std::string& str);
 

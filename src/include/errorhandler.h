@@ -65,7 +65,8 @@ public:
     SMTP_SERVER_LENGTH_ERROR,
     SMTP_PORT_FORMAT_ERROR,
     SMTP_CONNECTION_ERROR,
-    SMTP_AUTH_ERROR
+    SMTP_AUTH_ERROR,
+    SSL_CERT_PATH_ERROR
     };
 
     // Function to handle errors and display appropriate messages based on the type of error

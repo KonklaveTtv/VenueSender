@@ -17,7 +17,7 @@ int main() {
     // Initialize necessary variables
     vector<Venue> venues;
     vector<SelectedVenue> selectedVenuesForTemplates;
-    string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
+    string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort;
     bool templateExists = false;
     bool initColor = true;
@@ -32,7 +32,7 @@ int main() {
 
     // Set up and initialize CURL
     CurlHandleWrapper::init();
-        CURL* curl = setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer);
+        CURL* curl = setupCurlHandle(curlWrapper, useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer);
     if (!curl) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return 1;
@@ -76,6 +76,7 @@ int main() {
                                   selectedVenuesForTemplates,
                                   selectedVenuesForEmail,
                                   emailToTemplate,
+                                  sslCertPath,
                                   subject,
                                   message,
                                   attachmentName,

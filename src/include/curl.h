@@ -54,7 +54,7 @@ private:
 };
 
 // Function to set up a cURL handle with the given options
-CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
+CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const std::string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
                                         const std::string& senderEmail, const std::string& smtpUsername, std::string& mailPass, int smtpPort, const std::string& smtpServer);
 
 #endif // CURL_H

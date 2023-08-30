@@ -10,13 +10,14 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                                 vector<SelectedVenue>& selectedVenuesForTemplates,
                                 vector<SelectedVenue>& selectedVenuesForEmail,
                                 map<string, pair<string, string>>& emailToTemplate,
+                                string& sslCertPath,
                                 string& subject,
                                 string& message,
                                 string& attachmentName,
                                 string& attachmentPath,
                                 string& attachmentSize,
                                 VenueFilter& venueFilter,
-                                bool useSSL, 
+                                bool useSSL,
                                 bool verifyPeer, 
                                 bool verifyHost, 
                                 bool verbose, 
@@ -122,10 +123,10 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayConfigurationOptions();
                     switch (subChoice) {
                         case SHOW_EMAIL_SETTINGS_OPTION:
-                            EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+                            EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
                             continue;
                         case EDIT_EMAIL_SETTINGS_OPTION:
-                            MenuManager::editConfigurationSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, initColor);
+                            MenuManager::editConfigurationSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, initColor);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS:
                             // Logic to return to the main menu
@@ -186,7 +187,7 @@ int MenuManager::displayMenuOptions() {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Blue for headers
 #endif
-                cout << "EXITING VENUESENDER" << endl;
+                cout << "Exiting VenueSender" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
@@ -385,7 +386,7 @@ int MenuManager::displayConfigurationOptions() {
 }
 
 // Function to override the settings set by config.json
-bool MenuManager::editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
+bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, bool& verifyPeer, bool& verifyHost, bool& verbose, 
                                             string& senderEmail, string& smtpUsername, 
                                             string& mailPass, int& smtpPort, string& smtpServer,
                                             bool& initColor) {
@@ -409,6 +410,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool
         ConsoleUtils::resetColor();
 #endif
 
+    // Edit Peer verification setting
     while (true) {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -431,6 +433,51 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
         }
     }
+
+    // Edit SSL Cert Path
+    while (true) {
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "SSL Cert Path (if unsure press enter on a new line): ";
+        string sslCertPathInput;
+        getline(cin, sslCertPathInput);
+        ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+
+        // Remove quotes and trim spaces
+        sslCertPathInput.erase(remove(sslCertPathInput.begin(), sslCertPathInput.end(), '\''), sslCertPathInput.end());
+        sslCertPathInput = ConsoleUtils::trim(sslCertPathInput);
+
+        // Whitespace check (full whitespace)
+        if (all_of(sslCertPathInput.begin(), sslCertPathInput.end(), ::isspace)) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CERT_PATH_ERROR);
+            continue;
+        }
+
+        // ANSI escape code check
+        if (sslCertPathInput.find("\033") != string::npos) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            continue;
+        }
+
+        if (!sslCertPathInput.empty()) {
+            // Check if the path exists
+            if (!ConsoleUtils::fileExists(sslCertPathInput)) { // check sslCertPathInput
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CERT_PATH_ERROR);
+                continue;
+            } else {
+                sslCertPath = sslCertPathInput;  // then update sslCertPath
+                break;
+            }
+        } else {
+            // If the user left it blank, don't update the SSL cert path
+            break;
+        }
+    }
+
 
     // Edit Peer verification setting
     while (true) {
@@ -652,7 +699,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool
     // Edit Mail password
     mailPass = ConsoleUtils::passwordEntry(initColor);  // Assuming the passwordEntry function is available within the same class or public
 
-    EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+    EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
 
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
@@ -664,7 +711,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-    cout << "SETTINGS UPDATED" << endl;
+    cout << "Settings Updated" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif

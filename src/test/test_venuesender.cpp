@@ -244,7 +244,7 @@ TEST_CASE("EmailManager::viewEmailSettings functionality", "[EmailManager]") {
 
     EmailManager emailManager;
 
-    emailManager.viewEmailSettings(true, true, true, true, "mock@example.com", 587, "mock_smtp_server");
+    emailManager.viewEmailSettings(true, "/etc/ssl/certs/ca-certificates.crt", true, true, true, "mock@example.com", 587, "mock_smtp_server");
 
     cout.rdbuf(oldCoutStreamBuf);
 
@@ -256,6 +256,7 @@ TEST_CASE("EmailManager::viewEmailSettings functionality", "[EmailManager]") {
     "SMTP Port: 587\n"
     "Sender Email: mock@example.com\n"
     "SSL: true\n"
+    "SSL Cert Path: /etc/ssl/certs/ca-certificates.crt\n"
     "verifyPeer: true\n"
     "verifyHost: true\n"
     "verbose: true\n";

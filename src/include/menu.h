@@ -119,6 +119,7 @@ public:
                        std::vector<SelectedVenue>& selectedVenuesForTemplates,
                        std::vector<SelectedVenue>& selectedVenuesForEmail,
                        std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
+                       std::string& sslCertPath,
                        std::string& subject,
                        std::string& message,
                        std::string& attachmentName,
@@ -153,7 +154,7 @@ public:
     static int displayTemplateOptions();
     static int displayConfigurationOptions();
 
-    static bool editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
+    static bool editConfigurationSettings(bool& useSSL, std::string& sslCertPath, bool& verifyPeer, bool& verifyHost, bool& verbose, 
                                           std::string& senderEmail, std::string& smtpUsername, 
                                           std::string& mailPass, int& smtpPort, std::string& smtpServer, bool& initColor);
 

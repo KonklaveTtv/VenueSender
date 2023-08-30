@@ -12,7 +12,7 @@ int totalCustomEmails;
 int totalTemplateEmails;
 
 // Function to display current email settings
-void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
+void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
                                      const string& senderEmail, int smtpPort, const string& smtpServer) {
     // Display the email settings in a structured format
 #ifndef UNIT_TESTING
@@ -30,8 +30,11 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     cout << "SMTP Server: " << smtpServer << endl
          << "SMTP Port: " << smtpPort << endl
          << "Sender Email: " << senderEmail << endl
-         << "SSL: " << (useSSL ? "true" : "false") << endl
-         << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl
+         << "SSL: " << (useSSL ? "true" : "false") << endl;
+    if (!sslCertPath.empty()) {
+    cout << "SSL Cert Path: " << sslCertPath << endl;
+    }
+    cout << "verifyPeer: " << (verifyPeer ? "true" : "false") << endl
          << "verifyHost: " << (verifyHost ? "true" : "false") << endl
          << "verbose: " << (verbose ? "true" : "false") << endl;
 #ifndef UNIT_TESTING

@@ -45,11 +45,6 @@ CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return;
     }
-
-    if (curl) {
-    // Set up location of SSL certs for Linux
-    curl_easy_setopt(curl, CURLOPT_CAINFO, "/etc/ssl/certs/ca-certificates.crt");
-    }
 }
 
 // Destructor for CurlHandleWrapper class
@@ -76,7 +71,7 @@ void CurlHandleWrapper::cleanup() {
 }
 
 // Function to set up a cURL handle with various settings
-CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPeer, bool verifyHost, bool verbose, 
+CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose, 
                       const string& senderEmail, const string& smtpUsername, string& mailPass, int smtpPort, const string& smtpServer) {
 
     // Initialize the curlWrapper
@@ -86,7 +81,15 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, bool verifyPe
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return nullptr;
     }
-    
+
+    // Set SSL certificate path
+    if (!sslCertPath.empty()) {
+        curl_easy_setopt(curl, CURLOPT_CAINFO, sslCertPath.c_str());
+    } else {
+        // Set up native location of SSL certificates
+        curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+    }
+
     // SMTP server configuration
     string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());

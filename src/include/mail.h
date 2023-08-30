@@ -114,7 +114,7 @@ public:
 
 
     // Function to display the email settings from the configuration file
-    static void viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
+    static void viewEmailSettings(bool useSSL, const std::string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
                            const std::string& senderEmail, int smtpPort, const std::string& smtpServer);
 
     // Function to validate an email address format

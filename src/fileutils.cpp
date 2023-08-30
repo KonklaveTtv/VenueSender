@@ -29,6 +29,12 @@ string mockVenuesCsvPath = "src/test/mock_venues.csv";
 string mockConfigJsonPath = "src/test/mock_config.json";
 }
 
+// Function to check a file exists at a given path
+bool ConsoleUtils::fileExists(const std::string& filename) {
+    std::ifstream file(filename);
+    return file.good();
+}
+
 // Function to trim leading and trailing spaces from a string
 string ConsoleUtils::trim(const string& str){
     // Trimming function
@@ -150,8 +156,17 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
             continue;
         }
 
-        std::cout << std::endl << "Confirm your email password: ";
-
+        if (initColor) {
+           std::cout << std::endl << "Confirm your email password: ";
+        } else {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
+#endif
+            std::cout << std::endl << "Confirm your email password: ";
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor(); // Reset color
+#endif
+        }
         confirm.clear();
         while (true) {
             ch = getchar();

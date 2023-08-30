@@ -151,6 +151,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::SMTP_AUTH_ERROR:
             cerr << "Authentication with SMTP server failed." << endl;
             break;
+        case ErrorType::SSL_CERT_PATH_ERROR:
+            cerr << "SSL certificate path is not valid." << endl;
+            break;
 #ifdef UNIT_TESTING
         default:
             cerr << "" << endl;
