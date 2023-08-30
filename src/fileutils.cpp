@@ -2,6 +2,22 @@
 
 #include "errorhandler.h" // Include here due to circular dependency between fileutils.h and errorhandler.h
 
+// For Linux (X11)
+#ifdef __linux__
+#include <X11/XKBlib.h>
+#endif
+
+// For macOS
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#include <IOKit/hidsystem/ev_keymap.h>
+#endif
+
+// For Windows
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 // Use the standard namespace
 using namespace std;
 
@@ -33,6 +49,35 @@ void ConsoleUtils::clearConsole() {
 #endif
 }
 
+bool ConsoleUtils::isCapsLockOn() {
+#ifdef __linux__
+    Display *d = XOpenDisplay((char*)0);
+    unsigned n;
+    if (d) {
+        XkbGetIndicatorState(d, XkbUseCoreKbd, &n);
+        XCloseDisplay(d);
+        return (n & 0x01) == 1;
+    }
+    return false;
+#elif defined(__APPLE__)
+    io_service_t keyService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
+    if (keyService) {
+        CFTypeRef state = IORegistryEntryCreateCFProperty(keyService, CFSTR(kIOHIDKeyboardCapsLockState), kCFAllocatorDefault, 0);
+        if (state) {
+            bool isOn = CFBooleanGetValue((CFBooleanRef)state);
+            CFRelease(state);
+            IOObjectRelease(keyService);
+            return isOn;
+        }
+    }
+    return false;
+#elif defined(_WIN32)
+    return (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+#else
+    return false; // Fallback for other platforms
+#endif
+}
+
 std::string ConsoleUtils::passwordEntry(bool& initColor) {
     std::string password;
     std::string confirm;
@@ -52,14 +97,18 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
     }
 
     while (true) {
+        // Check for Caps Lock
+        if (isCapsLockOn()) {
+            std::cout << "Warning: Caps Lock is on!" << std::endl;
+        }
 
         if (initColor) {
-            cout << "Enter your email password: ";
+            std::cout << "Enter your email password: ";
         } else {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
 #endif
-            cout << "Enter your email password: ";
+            std::cout << "Enter your email password: ";
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset color
 #endif
@@ -84,34 +133,24 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
                 continue;
             }
 
+            // Check for password length
+            if (password.length() >= MAX_PASSWORD_LENGTH) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MAX_LENGTH_ERROR);
+                break;
+            }
+
             // Add the character to the password
             password += ch;
-
-            if (initColor == true) { 
-                // Echo an asterisk
-                std::putchar('*');
-            } else {
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
-#endif
-                std::putchar('*');
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor(); // Reset color
-#endif
-            }
+            std::putchar('*');
         }
 
-        if (initColor == true) { 
-        std::cout << std::endl << "Confirm your email password: ";
-        } else {
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
-#endif
-        std::cout << std::endl << "Confirm your email password: ";
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor(); // Reset color
-#endif
+        // Check for minimum password length
+        if (password.length() < MIN_PASSWORD_LENGTH) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MIN_LENGTH_ERROR);
+            continue;
         }
+
+        std::cout << std::endl << "Confirm your email password: ";
 
         confirm.clear();
         while (true) {
@@ -131,21 +170,15 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
                 continue;
             }
 
+            // Check for password length
+            if (confirm.length() >= MAX_PASSWORD_LENGTH) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MAX_LENGTH_ERROR);
+                break;
+            }
+
             // Add the character to the password
             confirm += ch;
-
-            if (initColor == true) { 
-                // Echo an asterisk
-                std::putchar('*');
-            } else {
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
-#endif
-                std::putchar('*');
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor(); // Reset color
-#endif
-            }
+            std::putchar('*');
         }
 
         if (password == confirm) {
@@ -175,7 +208,6 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
     std::cout << std::endl;  // Move to the next line after password entry
     return password;
 }
-
 
 // Default constructor for ConfigManager
 ConfigManager::ConfigManager() = default;

@@ -112,6 +112,12 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Error: The sender email '" << extraInfo << "' is not the valid format." << endl;
             cerr << "Please set it correctly in your custom.json file." << endl;
             break;
+        case ErrorType::EMAIL_PASSWORD_MIN_LENGTH_ERROR:
+            cerr << "Error: The email password is too short." << endl;
+            break;
+        case ErrorType::EMAIL_PASSWORD_MAX_LENGTH_ERROR:
+            cerr << "Error: The email password is too long." << endl;
+            break;
         case ErrorType::EMAIL_PASSWORD_MISMATCH_ERROR:
             cerr << "\nEmail passwords do not match. Please try again." << endl;
             break;

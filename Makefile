@@ -1,5 +1,8 @@
 # Makefile for venuesender project
 
+# Detect the OS type
+UNAME_S := $(shell uname -s)
+
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -L/usr/lib
@@ -28,8 +31,23 @@ DEBUG_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(DEBUGOBJDIR)/%.o, $(SRCS))
 TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
 
-# Libraries
+# Libraries common to all platforms
 LIBS = -lcurl -ljsoncpp
+
+# Add X11 library if on Linux
+ifeq ($(UNAME_S),Linux)
+    LIBS += -lX11
+endif
+
+# Add platform-specific libraries for macOS
+ifeq ($(UNAME_S),Darwin)
+    # macOS specific libraries can be added here if needed
+endif
+
+# Add platform-specific libraries for Windows
+ifeq ($(UNAME_S),Windows_NT)
+    # Windows specific libraries can be added here if needed
+endif
 
 # Compile rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp

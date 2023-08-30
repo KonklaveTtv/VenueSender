@@ -32,6 +32,9 @@ namespace confPaths {
 // Class for utility functions related to the console
 class ConsoleUtils {
 public:
+    static inline const int MIN_PASSWORD_LENGTH = 1;
+    static inline const int MAX_PASSWORD_LENGTH = 100;
+
 #ifndef UNIT_TESTING
     enum class Color {
         RED,
@@ -142,6 +145,9 @@ public:
 
     // Method to clear the console
     static void clearConsole();
+
+    // Method to capture caps lock state
+    static bool isCapsLockOn();
 
     // Method to securely enter a password
     static std::string passwordEntry(bool& initColor);
