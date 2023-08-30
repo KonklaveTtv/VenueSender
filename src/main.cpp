@@ -20,11 +20,12 @@ int main() {
     string configVenuesCsvPath, smtpServer, smtpUsername, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort;
     bool templateExists = false;
+    bool initColor = true;
     bool useSSL, verifyPeer, verifyHost, verbose;
     
     // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
-    if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy)) {
+    if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy, initColor)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
         exit(1);
     }
@@ -85,7 +86,8 @@ int main() {
                                   verifyPeer, 
                                   verifyHost, 
                                   verbose, 
-                                  templateExists
+                                  templateExists,
+                                  initColor
                                   );
     } catch (const exception& e) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::MENU_LOAD_ERROR);

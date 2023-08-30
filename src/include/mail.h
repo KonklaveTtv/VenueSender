@@ -20,6 +20,12 @@ public:
     // Maximum length for email subject
     static inline const int MAX_SUBJECT_LENGTH = 50;
 
+    // Maximum length for smtp server name
+    static inline const int MIN_SMTP_SERVER_LENGTH = 1;
+
+    // Maximum length for smtp server name
+    static inline const int MAX_SMTP_SERVER_LENGTH = 256;
+
     // Maximum attachment size (24 MB)
     const size_t MAX_ATTACHMENT_SIZE = 24 * 1024 * 1024;  // 24 MB in bytes
 

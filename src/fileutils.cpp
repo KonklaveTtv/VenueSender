@@ -33,7 +33,7 @@ void ConsoleUtils::clearConsole() {
 #endif
 }
 
-std::string ConsoleUtils::passwordEntry() {
+std::string ConsoleUtils::passwordEntry(bool& initColor) {
     std::string password;
     std::string confirm;
 
@@ -53,7 +53,17 @@ std::string ConsoleUtils::passwordEntry() {
 
     while (true) {
 
-        cout << "Enter your email password: ";
+        if (initColor == true) { 
+            cout << "Enter your email password: ";
+        } else {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
+#endif
+            cout << "Enter your email password: ";
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor(); // Reset color
+#endif
+        }
 
         password.clear();
         char ch;
@@ -143,15 +153,17 @@ ConfigManager::ConfigManager() = default;
 bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
                                        string& senderEmail, string& smtpUsername, 
                                        string& mailPass, int& smtpPort, string& smtpServer, 
-                                       string& venuesCsvPath) {
+                                       string& venuesCsvPath, bool& initColor) {
 
 
 #ifdef UNIT_TESTING
     // Load plain text passwords from mock_config.json
     mailPass = "mock_email_password";
+    initColor = true;
 #else
     // Use the password entered by the user
-    mailPass = ConsoleUtils::passwordEntry();
+    mailPass = ConsoleUtils::passwordEntry(initColor);
+    initColor = false;
 #endif
 
 // Logic to read and load settings from a JSON file

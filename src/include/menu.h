@@ -4,6 +4,7 @@
 #include "errorhandler.h"
 #include "fileutils.h"
 #include "filtercriteria.h"
+//#include "mail.h"
 #include "structs.h"
 
 #include <iostream>
@@ -128,7 +129,8 @@ public:
                        bool verifyPeer, 
                        bool verifyHost, 
                        bool verbose, 
-                       bool templateExists);
+                       bool templateExists,
+                       bool initColor);
 
     // Function to show the main title header of VenueSender
     inline static void mainHeader() {
@@ -150,6 +152,10 @@ public:
     static int displayEmailOptions();
     static int displayTemplateOptions();
     static int displayConfigurationOptions();
+
+    static bool editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
+                                          std::string& senderEmail, std::string& smtpUsername, 
+                                          std::string& mailPass, int& smtpPort, std::string& smtpServer, bool& initColor);
 
     // Function to display the list of venues selected by the user
     static void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
