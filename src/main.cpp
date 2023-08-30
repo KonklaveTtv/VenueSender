@@ -5,7 +5,6 @@ using namespace std;
 
 // Global objects to be used across different parts of the code
 CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
-VenueUtilities venueUtilities;
 VenueFilter venueFilter;
 
 // Exclude the following code block if UNIT_TESTING is defined
