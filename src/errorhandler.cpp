@@ -130,6 +130,15 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_DATA_IN_CSV:
             cerr << "Invalid data in CSV file: " << extraInfo << endl;
             break;
+        case ErrorType::SMTP_USERNAME_LENGTH_ERROR:
+            cerr << "Invalid SMTP Username length" << extraInfo << endl;
+            break;
+        case ErrorType::SMTP_SERVER_LENGTH_ERROR:
+            cerr << "Invalid SMTP Server length." << extraInfo << endl;
+            break;
+        case ErrorType::SMTP_PORT_FORMAT_ERROR:
+            cerr << "SMTP Port is not formatted correctly" << endl;
+            break;
         case ErrorType::SMTP_CONNECTION_ERROR:
             cerr << "Connection to SMTP server failed." << endl;
             break;

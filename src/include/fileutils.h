@@ -144,7 +144,7 @@ public:
     static void clearConsole();
 
     // Method to securely enter a password
-    static std::string passwordEntry();
+    static std::string passwordEntry(bool& initColor);
 };
 
 // Class for reading data from a CSV file
@@ -200,7 +200,7 @@ public:
     static bool loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose,
                             std::string& senderEmail, std::string& smtpUsername, 
                             std::string& mailPass, int& smtpPort, std::string& smtpServer, 
-                            std::string& venuesCsvPath);
+                            std::string& venuesCsvPath, bool& initColor);
 };
 
 #endif // FILEUTILS_H

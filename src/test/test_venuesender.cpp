@@ -71,6 +71,7 @@ TEST_CASE("CsvReader::readCSV() functionality", "[CsvReader]") {
 }
 
 TEST_CASE("ConfigManager::loadConfigSettings() functionality", "[ConfigManager]") {
+    bool initColor;
     bool useSSL;
     bool verifyPeer;
     bool verifyHost;
@@ -86,7 +87,7 @@ TEST_CASE("ConfigManager::loadConfigSettings() functionality", "[ConfigManager]"
 
     std::string testVenuesPathCopy = "src/test/mock_venues.csv";
     bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, 
-                                     smtpUsername, mailPass, smtpPort, smtpServer, testVenuesPathCopy);
+                                     smtpUsername, mailPass, smtpPort, smtpServer, testVenuesPathCopy, initColor);
     
     REQUIRE(result == true);
     REQUIRE(useSSL == true);

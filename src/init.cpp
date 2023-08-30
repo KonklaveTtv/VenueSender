@@ -51,6 +51,13 @@ void Init::splashscreen() {
     
     std::cout << "              Initiailizing...              " << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(2));
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
+        cout << "============================================" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
 }
 
 void Init::Menu() {
@@ -76,7 +83,7 @@ void Init::Menu() {
                 MenuManager::displayTemplateOptions();
                 break;
             case MenuManager::CONFIGURATION_OPTION:
-                EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+                MenuManager::displayConfigurationOptions();
                 break;
             default:
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);

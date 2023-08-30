@@ -20,7 +20,8 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                                 bool verifyPeer, 
                                 bool verifyHost, 
                                 bool verbose, 
-                                bool templateExists) {
+                                bool templateExists,
+                                bool initColor) {
     while (true) {
         mainHeader();
 
@@ -103,15 +104,28 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                 }
                 break;
             }
-            case CONFIGURATION_OPTION:
-                EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+            case CONFIGURATION_OPTION: {
+                int subChoice = displayConfigurationOptions();
+                switch (subChoice) {
+                    case SHOW_EMAIL_SETTINGS_OPTION:
+                        EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+                        break;
+                    case EDIT_EMAIL_SETTINGS_OPTION:
+                        MenuManager::editConfigurationSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, initColor);
+                        break;
+                    case RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS:
+                        // Logic to return to the main menu
+                        // No action needed, loop will start from the beginning
+                        break;
+                }
                 break;
+            }                        
+
             default:
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
     }
 }
-
 
 int MenuManager::displayMenuOptions() {
     int choice;
@@ -322,10 +336,321 @@ int MenuManager::displayTemplateOptions() {
     return choice;
 }
 
+int MenuManager::displayConfigurationOptions() {
+    int choice;
+    do {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
+#endif
+        cout << "==========================="<< endl;
+        cout << "       Configuration       "<< endl;
+        cout << "==========================="<< endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
+        cout << SHOW_EMAIL_SETTINGS_OPTION << ". Show Email Settings" << endl;
+        cout << EDIT_EMAIL_SETTINGS_OPTION << ". Edit Email Settings" << endl;
+        cout << RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS << ". Return to Main Menu" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "Enter your choice: ";
+        cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
+        ConsoleUtils::clearInputBuffer();
+        if (choice >= SHOW_EMAIL_SETTINGS_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS) {
+            break;
+        } else {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+        }
+    } while (true);
+    return choice;
+}
+
+// Function to override the settings set by config.json
+bool MenuManager::editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool& verifyHost, bool& verbose, 
+                                            string& senderEmail, string& smtpUsername, 
+                                            string& mailPass, int& smtpPort, string& smtpServer,
+                                            bool& initColor) {
+
+
+
+    // Temporary variables to hold the new settings
+    string tempStr;
+    int tempInt;
+    char tempChar;
+
+    // Prompt the user to enter new settings
+
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
+    cout << "===========================" << endl;
+    cout << "Edit Configuration Settings" << endl;
+    cout << "===========================" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+
+    while (true) {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "Use SSL? (y/n): ";
+        cin >> tempChar;
+        ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        if (tempChar == 'y' || tempChar == 'Y') {
+            useSSL = true;
+            smtpPort = 465; // Automatically set the SMTP port based on SSL selection
+            break;
+        } else if (tempChar == 'n' || tempChar == 'N') {
+            useSSL = false;
+            smtpPort = 587;
+            break;
+        } else {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+        }
+    }
+
+    // Edit Peer verification setting
+    while (true) {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "Verify Peer? (y/n): ";
+        cin >> tempChar;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        
+        ConsoleUtils::clearInputBuffer();
+
+        if (tempChar == 'y' || tempChar == 'Y') {
+            verifyPeer = true;
+            break;
+        } else if (tempChar == 'n' || tempChar == 'N') {
+            verifyPeer = false;
+            break;
+        } else {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+        }
+    }
+
+    // Edit Host verification setting
+    while (true) {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "Verify Host? (y/n): ";
+        cin >> tempChar;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        
+        ConsoleUtils::clearInputBuffer();
+        
+        if (tempChar == 'y' || tempChar == 'Y') {
+            verifyHost = true;
+            break;
+        } else if (tempChar == 'n' || tempChar == 'N') {
+            verifyHost = false;
+            break;
+        } else {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+        }
+    }
+
+    // Edit verbose setting
+    while (true) {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "Verbose? (y/n): ";
+        cin >> tempChar;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        
+        ConsoleUtils::clearInputBuffer();
+        
+        if (tempChar == 'y' || tempChar == 'Y') {
+            verbose = true;
+            break;
+        } else if (tempChar == 'n' || tempChar == 'N') {
+            verbose = false;
+            break;
+        } else {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+        }
+    }
+
+    // Edit sender email
+    while (true) {
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "Sender Email: ";
+        cin >> tempStr;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+
+        ConsoleUtils::clearInputBuffer();
+        if (!EmailManager::isValidEmail(tempStr)) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+            continue;  // Loop back to ask for a valid email
+        } else {
+            senderEmail = tempStr;
+            break;  // Break the loop if a valid email is entered
+        }
+    }
+
+
+    // Edit SMTP Username
+    while (true) {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "SMTP Username (this is usually your email address): ";
+        cin >> tempStr;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        ConsoleUtils::clearInputBuffer();
+
+        // Check for whitespace and control characters
+        if (tempStr.find_first_of(" \t\n\r\f\v") != string::npos) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            continue;
+        }
+
+        if (!EmailManager::isValidEmail(tempStr)) {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "Your SMTP Username is not an email, is this correct? (y/n): ";
+            cin >> tempChar;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+            ConsoleUtils::clearInputBuffer();
+
+            if (tempChar == 'y' || tempChar == 'Y') {
+                smtpUsername = tempStr;
+                break;
+            } else if (tempChar == 'n' || tempChar == 'N') {
+                continue;
+            } else {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            }
+        } else {
+            smtpUsername = tempStr;
+            break;
+        }
+    }
+
+    // Edit SMTP Server
+    while (true) {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "SMTP Server: ";
+        cin >> tempStr;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        ConsoleUtils::clearInputBuffer();
+
+        // Length check
+        if (tempStr.length() < EmailManager::MIN_SMTP_SERVER_LENGTH || tempStr.length() > EmailManager::MAX_SMTP_SERVER_LENGTH) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_SERVER_LENGTH_ERROR, " Invalid length.");
+            continue;
+        }
+
+        // Whitespace check
+        if (tempStr.find_first_of(" \t\n\r\f\v") != string::npos) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            continue;
+        }
+
+        // ANSI escape code check
+        if (tempStr.find("\033") != string::npos) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            continue;
+        }
+
+        smtpServer = tempStr;
+        break;
+    }
+
+    // Edit SMTP port
+    while (true) {
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "SMTP Port (leave blank if unsure): ";
+        string portInput;
+        getline(cin, portInput);  // Using getline to capture the full line, which allows empty input
+    #ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+    #endif
+        ConsoleUtils::clearInputBuffer();
+
+        // Whitespace check (full whitespace)
+        if (std::count(portInput.begin(), portInput.end(), ' ') > 1 &&
+            all_of(portInput.begin(), portInput.end(), ::isspace)) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
+            continue;
+        }
+
+        // ANSI escape code check
+        if (portInput.find("\033") != string::npos) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            continue;
+        }
+
+        if (!portInput.empty()) {
+            try {
+                tempInt = stoi(portInput);  // Convert the string to an integer
+                if (tempInt <= 0) {  // Check if the port number is positive
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
+                    continue;
+                }
+                smtpPort = tempInt;
+                break;
+            } catch (const std::invalid_argument&) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
+                continue;
+            }
+        } else {
+            // If the user left it blank, don't update the SMTP port
+            break;
+        }
+    }
+
+    // Edit Mail password
+    mailPass = ConsoleUtils::passwordEntry(initColor);  // Assuming the passwordEntry function is available within the same class or public
+
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif  
+    cout << "Settings have been updated." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+    return true;
+}
+
 void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
     // Display header
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Green for venue listings
+    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
     cout << "==========================="<< endl;
     cout << "      Selected Venues      "<< endl;
