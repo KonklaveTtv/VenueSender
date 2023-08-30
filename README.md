@@ -98,6 +98,10 @@ or execute:
 
       ./bin/venuesender_test -s
 
+or run the bash script which will output the full test results to test_results.txt:
+
+      ./run_tests.sh
+
 ### Contributing
 
 Contributions to this project are welcome. Please open an issue to discuss proposed changes or create a pull request with your contribution.
