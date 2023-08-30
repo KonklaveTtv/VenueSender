@@ -25,7 +25,7 @@ Install this dependency if you wish to run unit tests:
 
 ### Installation (without tests)
 
-1. Clone the repository:
+Clone the repository:
 
       git clone https://github.com/konklavettv/venuesender.git
 
@@ -41,7 +41,7 @@ Compile the project:
 
 ### Installation (with tests)
 
-2. Clone the repository:
+Clone the repository:
 
       git clone https://github.com/konklavettv/venuesender.git
 
@@ -57,9 +57,9 @@ Compile the project:
 
 ### Usage
 
-3. Prepare your config.json file with the necessary SMTP and email settings:
-            
-            ```
+Prepare your config.json file with the necessary SMTP and email settings:
+
+      ```
       {
       "sender_email" : "enter_your_sender_email",
       "smtp_port" : 587,
@@ -73,15 +73,14 @@ Compile the project:
       }
             ```
 
-4. Prepare a venues.csv file with the list of venues in the following format:
+Prepare a venues.csv file with the list of venues in the following format:
 
       ```
       Venue1,venue1@mock.com,USA,AL,Daphne,100,Mixed
       Venue2,venue2@mock.com,France,Paris Region,Paris,300,Rock
       ```
 
-
-5. Run VenueSender:
+Run VenueSender:
 
       ./venuesender
 
