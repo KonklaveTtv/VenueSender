@@ -1,0 +1,65 @@
+name: VenueSender GitHub Workflow Build & Test
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install libcurl4-openssl-dev libjsoncpp-dev libx11-dev
+
+    - name: Create necessary directories
+      run: mkdir -p obj obj/debug obj/test obj/test_for_test bin bin/debug
+
+    - name: Compile object files for the main application
+      run: |
+        for file in $(find src -name "*.cpp" ! -path "src/test/*"); do
+          g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -c $file -o obj/$(basename $file .cpp).o
+        done
+
+    - name: Compile debug object files for the main application
+      run: |
+        for file in $(find src -name "*.cpp" ! -path "src/test/*"); do
+          g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -g -c $file -o obj/debug/$(basename $file .cpp).o
+        done
+
+    - name: Compile object files for the test suite
+      run: |
+        for file in $(find src/test -name "*.cpp"); do
+          g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -DUNIT_TESTING -g -Isrc/include -Isrc -c $file -o obj/test/$(basename $file .cpp).o
+        done
+
+    - name: Compile object files from src for the test suite with -DUNIT_TESTING
+      run: |
+        for file in $(find src -name "*.cpp" ! -path "src/test/*"); do
+          g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -DUNIT_TESTING -g -Isrc/include -Isrc -c $file -o obj/test_for_test/$(basename $file .cpp).o
+        done
+
+    - name: Link the main executable
+      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender obj/*.o -lcurl -ljsoncpp -lX11
+
+    - name: Link the debug executable
+      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/debug/venuesender_debug obj/debug/*.o -lcurl -ljsoncpp -lX11
+
+    - name: Link the test executable
+      run: |
+        g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender_test obj/test/*.o obj/test_for_test/*.o -lcurl -ljsoncpp -lX11
+    - name: Run tests
+      run: ./bin/venuesender_test
+
+    - name: Clean up
+      run: rm -rf obj obj/debug obj/test obj/test_for_test bin bin/debug test_output.txt
+
