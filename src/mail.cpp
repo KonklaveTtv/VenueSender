@@ -800,7 +800,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
         }
 
     // Prompt the user for the required data to fill the placeholders
-    string genre, bandName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
+    string genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
 
     #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -815,11 +815,21 @@ void EmailManager::createBookingTemplate(CURL* curl,
     #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     #endif
-        cout << "Enter Band Name (press Enter on a new line to finish): ";
+        cout << "What Are You? (Band, DJ, Singer) (press Enter on a new line to finish): ";
     #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
     #endif
-        getline(cin, bandName);
+        getline(cin, performanceType);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Performance Name (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, performanceName);
         ConsoleUtils::clearInputBuffer();
 
     #ifndef UNIT_TESTING
@@ -914,11 +924,11 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
         // Construct the email template for each venue without sending it
         for (const SelectedVenue& venue : selectedVenuesForEmail) {
-            
+
             // Declare and initialize mandatory parts of the email
             string subject = "--- Booking Inquiry for " + venue.name + " ---";
             string templateMessage = string("Hi!,\n\n")
-                                    + "I am booking a tour for my " + genre + " band, " + bandName + ", from \n\n"
+                                    + "I am booking a tour for " + performanceName + "a " + genre + performanceType +  ", from \n\n"
                                     + hometown + ". The music is in a similar vein as " + similarArtists + ".\n\n"
                                     + "We're planning to be in the " + venue.city + " area on " + date + " and are\n\n"
                                     + "wondering if you might be interested in booking us at " + venue.name + ".\n\n"
