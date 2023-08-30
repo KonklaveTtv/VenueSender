@@ -129,7 +129,7 @@ public:
                         std::string& attachmentSize, 
                         std::string& attachmentPath, 
                         bool& templateExists,
-                        std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate);
+                        std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate) const;
 
     void viewEditTemplates(CURL* curl,
                            const std::string& smtpServer,
@@ -140,7 +140,7 @@ public:
                            std::string& attachmentName,
                            std::string& attachmentSize,
                            std::string& attachmentPath,
-                           bool& templateExists);
+                           bool& templateExists) const;
 
     // Function to send an individual email to a selected venue
     static bool sendIndividualEmail(CURL* curl,
@@ -174,7 +174,7 @@ public:
                              std::string& attachmentSize,
                              std::string& attachmentPath,
                              const std::vector<SelectedVenue>& selectedVenuesForEmail,
-                             bool templateExists);
+                             bool templateExists) const;
 
     // Function to send to a custom email address
     void emailCustomAddress(CURL* curl,
@@ -188,7 +188,7 @@ public:
                              std::string& customAddressAttachmentPath) const;
 
     // Function to confirm the email before sending
-    void confirmSendEmail(CURL* curl,
+    static void confirmSendEmail(CURL* curl,
                           std::vector<SelectedVenue>& selectedVenuesForEmail,
                           const std::string& senderEmail,
                           std::string& subject,

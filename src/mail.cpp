@@ -261,7 +261,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 
 void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
                                   string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists,
-                                  map<string, pair<string, string>>& emailToTemplate) {
+                                  map<string, pair<string, string>>& emailToTemplate) const {
 
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
@@ -374,7 +374,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                                      string& attachmentName,
                                      string& attachmentSize,
                                      string& attachmentPath,
-                                     bool& templateExists) {
+                                     bool& templateExists) const {
 
     if (emailToTemplate.empty()) {
 #ifndef UNIT_TESTING
@@ -723,7 +723,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                        string& attachmentSize,
                                        string& attachmentPath,
                                        const vector<SelectedVenue>& selectedVenuesForEmail,
-                                       bool templateExists) {
+                                       bool templateExists) const {
     char choice;
     bool modifyTemplate = true;
     
