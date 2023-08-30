@@ -115,7 +115,7 @@ public:
     static bool isValidEmail(const std::string& email);
 
     // Function to construct an email, including the subject, message, and attachment details
-    void constructEmail(std::string& subject, std::string& message, std::string& attachmentPath, std::string& attachmentName, std::string& attachmentSize, std::istream &in = std::cin);
+    void constructEmail(std::string& subject, std::string& message, std::string& attachmentPath, std::string& attachmentName, std::string& attachmentSize, std::istream &in = std::cin) const;
 
     // Function to allow the user to modify the email
     void viewEditEmails(CURL* curl, 
@@ -143,7 +143,7 @@ public:
                            bool& templateExists);
 
     // Function to send an individual email to a selected venue
-    bool sendIndividualEmail(CURL* curl,
+    static bool sendIndividualEmail(CURL* curl,
                              const SelectedVenue& selectedVenue,
                              const std::string& senderEmail,
                              std::string& subject,
@@ -185,7 +185,7 @@ public:
                              int smtpPort,
                              std::string& customAddressAttachmentName,
                              std::string& customAddressAttachmentSize,
-                             std::string& customAddressAttachmentPath);
+                             std::string& customAddressAttachmentPath) const;
 
     // Function to confirm the email before sending
     void confirmSendEmail(CURL* curl,

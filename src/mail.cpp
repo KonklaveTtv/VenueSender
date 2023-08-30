@@ -42,7 +42,7 @@ bool EmailManager::isValidEmail(const string& email) {
 }
 
 // Function to guide the user in constructing an email with a subject, message, and optional attachment
-void EmailManager::constructEmail(string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, istream &in) {
+void EmailManager::constructEmail(string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, istream &in) const {
     
     clearAllEmailData(subject, message, attachmentName, attachmentSize, attachmentPath);
 #ifndef UNIT_TESTING
@@ -1059,7 +1059,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                                       int smtpPort,
                                       std::string& customAddressAttachmentName,
                                       std::string& customAddressAttachmentSize,
-                                      std::string& customAddressAttachmentPath) {
+                                      std::string& customAddressAttachmentPath) const {
 
     const string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
     const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;

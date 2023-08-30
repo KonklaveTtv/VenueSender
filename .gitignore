@@ -3,6 +3,8 @@
 /src/test/mock_config.json
 /venues.csv
 
+
 # Folders
 /bin/
 /obj/
+/.idea/

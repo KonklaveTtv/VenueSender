@@ -46,6 +46,7 @@ std::string ConsoleUtils::passwordEntry() {
 
     // Disable terminal echoing and enable manual input capture
     struct termios oldt, newt;
+    memset(&oldt, 0, sizeof(oldt));
     if (tcgetattr(STDIN_FILENO, &oldt) !=0) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR);
         return "";

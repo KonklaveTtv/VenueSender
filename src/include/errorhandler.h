@@ -13,7 +13,7 @@ class ConsoleUtils;
 
 class ErrorHandlerException : public std::runtime_error {
 public:
-    ErrorHandlerException(const std::string& message) : std::runtime_error(message) {}
+    explicit ErrorHandlerException(const std::string& message) : std::runtime_error(message) {}
 };
 
 // ErrorHandler class to manage different types of errors
