@@ -33,19 +33,6 @@ public:
     // Clean up the cURL library (should be called at program end)
     static void cleanup();
 
-    inline double getProgress() const {
-        return progress;
-    }
-
-    // Set the email address that is currently being sent
-    void setEmailBeingSent(const std::string& email);
-
-    // Get the email address that is currently being sent
-    std::string getEmailBeingSent() const;
-
-    // Clear the email address that was set
-    void clearEmailBeingSent();
-
     // Set SSL options for the cURL handle
     void setSSLOptions(bool useSSL = true, bool verifyPeer = true, bool verifyHost = true);
 

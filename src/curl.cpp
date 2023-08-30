@@ -6,8 +6,6 @@ using namespace std;
 /* CurlHandleWrapper Class Implementation */
 /*---------------------------------------*/
 
-
-
 // Callback function to read data for sending in the request
 size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
     auto* payload = static_cast<string*>(userp);
@@ -75,21 +73,6 @@ void CurlHandleWrapper::init() {
 // Global cURL cleanup
 void CurlHandleWrapper::cleanup() {
     curl_global_cleanup();
-}
-
-// Setter for emailBeingSent
-void CurlHandleWrapper::setEmailBeingSent(const string& email) {
-    emailBeingSent = email;
-}
-
-// Getter for emailBeingSent
-string CurlHandleWrapper::getEmailBeingSent() const {
-    return emailBeingSent;
-}
-
-// Function to clear the email being sent
-void CurlHandleWrapper::clearEmailBeingSent() {
-    emailBeingSent.clear();
 }
 
 // Function to set up a cURL handle with various settings
