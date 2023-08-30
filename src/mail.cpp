@@ -945,7 +945,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 templateMessage += "- Music Video: " + musicVideo + "\n";
             }
 
-            templateMessage += "\nWhat people are saying about us:\n";
+            templateMessage += "\nWhat people are saying about " + performanceName + "\n";
 
             if (!pressQuote.empty()) {
                 templateMessage += "\"" + pressQuote + "\"\n";
