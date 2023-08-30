@@ -5,7 +5,9 @@ using namespace std;
 
 // Global progress counters
 static int successfulSends = 0; // Counter for successful email sends
+static int successfulTemplateSends = 0; // Counter for successful template sends
 int totalEmails;
+int totalTemplateEmails;
 
 // Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose,
@@ -642,29 +644,35 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         recipients = curl_slist_append(recipients, recipientEmail.c_str());
         curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
+
+        struct curl_slist* headers = nullptr;
+        string dateHeader = "Date: " + getCurrentDateRfc2822();
         string toHeader = "To: " + recipientEmail;
         string fromHeader = "From: " + senderEmail;
         string subjectHeader = "Subject: " + subject;
 
-        struct curl_slist* headers = nullptr;
-        string dateHeader = "Date: " + getCurrentDateRfc2822();
         headers = curl_slist_append(headers, dateHeader.c_str());
         headers = curl_slist_append(headers, toHeader.c_str());
         headers = curl_slist_append(headers, fromHeader.c_str());
         headers = curl_slist_append(headers, subjectHeader.c_str());
+        
+        // Set headers
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
         // Setting up MIME and other options
         curl_mime *mime = nullptr;
+
+        mime = curl_mime_init(curl);
+
+        // Add the message part
+        curl_mimepart *part = curl_mime_addpart(mime);
+        curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
+
         if (!attachmentPath.empty()) {
-            mime = curl_mime_init(curl);
+            
 
             size_t fileSize = filesystem::file_size(attachmentPath);
             attachmentSize = to_string(fileSize) + " bytes";
-
-            // Add the message part
-            curl_mimepart *part = curl_mime_addpart(mime);
-            curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
 
             // Add the attachment part
             part = curl_mime_addpart(mime);
@@ -676,23 +684,40 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
             // Set MIME type for attachment
             curl_mime_type(part, "application/octet-stream");
 
-            curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-        } else {
-            string payload = dateHeader + "\r\n"
-                             + toHeader + "\r\n"
-                             + fromHeader + "\r\n"
-                             + subjectHeader + "\r\n\r\n"
-                             + message;
-            curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
-            curl_easy_setopt(curl, CURLOPT_READDATA, &payload);
-            curl_easy_setopt(curl, CURLOPT_INFILESIZE, static_cast<long>(payload.length()));
         }
+        curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
+
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Authenticating with SMTP server..." << endl;
+    #ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+    #endif
+        cout.flush();
+        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+
+        // Update totalEmails dynamically
+        totalTemplateEmails = emailToTemplate.size();
 
         res = curl_easy_perform(curl);
-        if (res != CURLE_OK) {
-            // Handle errors
-            ErrorHandler::handleCurlError(res);
+        if (res == 0) { // Check if email was sent successfully
+            successfulTemplateSends++;
+            double progressPercentage = 0.0;
+            if (totalTemplateEmails != 0) {
+                progressPercentage = (static_cast<double>(successfulTemplateSends) / totalTemplateEmails) * 100;
+            }
 #ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Progress: " << progressPercentage << "%" << endl;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+            cout.flush();
+        } else {
+            #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
             cerr << "Failed to send email to " << recipientEmail << endl;
@@ -709,6 +734,35 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 
         curl_slist_free_all(recipients);
         curl_slist_free_all(headers);
+    }
+
+    if (res == 0) {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+        cout << "Email sending progress completed." << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+    } else {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+        cout << "Email sending progress failed." << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+    }
+    
+    if (!ErrorHandler::handleCurlError(res)) {
+        if (res == CURLE_COULDNT_CONNECT) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
+        } else if (res == CURLE_LOGIN_DENIED) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
+        }
+        return false;
     }
 
     return true;

@@ -57,8 +57,8 @@ public:
     enum class TemplateOptions {
         CreateVenueBookingTemplate = 1,
         ViewEditBookingTemplates,
-        ClearBookingTemplate,
         SendBookingTemplates,
+        ClearBookingTemplate,
         ReturnToMainMenu
     };
 
@@ -81,8 +81,8 @@ public:
     // Constants for Templates sub-menu options
     static constexpr int CREATE_VENUE_BOOKING_TEMPLATE_OPTION = static_cast<int>(TemplateOptions::CreateVenueBookingTemplate);
     static constexpr int VIEW_EDIT_BOOKING_TEMPLATES_OPTION = static_cast<int>(TemplateOptions::ViewEditBookingTemplates);
-    static constexpr int CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(TemplateOptions::ClearBookingTemplate);
     static constexpr int SEND_BOOKING_TEMPLATES_OPTION = static_cast<int>(TemplateOptions::SendBookingTemplates);
+    static constexpr int CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(TemplateOptions::ClearBookingTemplate);
     static constexpr int RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS = static_cast<int>(TemplateOptions::ReturnToMainMenu);
 
     // Constants for Main Menu options
