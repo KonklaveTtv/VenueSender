@@ -1088,7 +1088,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
             modifyTemplate = false;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif      // Ask the user if they want to send the template
+#endif      
+            // Ask the user if they want to send the template
             cout << "Do you want to send the template? (Y/N): ";
             cin >> choice;
 #ifndef UNIT_TESTING
