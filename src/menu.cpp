@@ -72,7 +72,7 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                         emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
                         break;
                     case SEND_EMAILS_OPTION:
-                        emailManager.confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                        EmailManager::confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
                         break;
                     case RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS:
                         // Logic to return to the main menu
