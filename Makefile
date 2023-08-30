@@ -41,12 +41,12 @@ endif
 
 # Add platform-specific libraries for macOS
 ifeq ($(UNAME_S),Darwin)
-    # macOS specific libraries can be added here if needed
+    LIBS += -framework Cocoa
 endif
 
 # Add platform-specific libraries for Windows
 ifeq ($(UNAME_S),Windows_NT)
-    # Windows specific libraries can be added here if needed
+    LIBS += -luser32 -lgdi32
 endif
 
 # Compile rules
