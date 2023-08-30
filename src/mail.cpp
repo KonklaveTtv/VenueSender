@@ -724,329 +724,342 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                        string& attachmentPath,
                                        const vector<SelectedVenue>& selectedVenuesForEmail,
                                        bool templateExists) {
-    // Check if venues are selected
-    if (selectedVenuesForEmail.empty()) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-        cerr << "Error: No venues have been selected. Please select venues first before attempting to send the template." << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-        return;  // Exit the function
-    }
-
-    ConsoleUtils::clearInputBuffer();
+    char choice;
+    bool modifyTemplate = true;
+    
+    while (modifyTemplate) {
+        // Check if venues are selected
+        if (selectedVenuesForEmail.empty()) {
+    #ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+    #endif
+            cerr << "Error: No venues have been selected. Please select venues first before attempting to send the template." << endl;
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+            return;  // Exit the function
+        }
 
     // Prompt the user for the required data to fill the placeholders
     string genre, bandName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
 
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Genre: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, genre);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Band Name: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, bandName);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Hometown: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, hometown);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Similar Artists: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, similarArtists);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Date: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, date);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Music Link: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, musicLink);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Live Performance Video Link: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, livePerfVideo);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Music Video Link: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, musicVideo);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Press Quote: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, pressQuote);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Your Name: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, name);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Enter Social Links: ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    getline(cin, socials);
-
-    // Construct the email template for each venue without sending it
-    for (const SelectedVenue& venue : selectedVenuesForEmail) {
-        
-        // Declare and initialize mandatory parts of the email
-        string subject = "--- Booking Inquiry for " + venue.name + " ---";
-        string templateMessage = string("Hi!,\n\n")
-                                + "I am booking a tour for my " + genre + " band, " + bandName + ", from \n\n"
-                                + hometown + ". The music is in a similar vein as " + similarArtists + ".\n\n"
-                                + "We're planning to be in the " + venue.city + " area on " + date + " and are\n\n"
-                                + "wondering if you might be interested in booking us at " + venue.name + ".\n\n"
-                                + "Here are some resources to familiarize you with our work:\n\n";
-
-        // Add optional fields only if they are not empty
-        if (!musicLink.empty()) {
-            templateMessage += "- Music: " + musicLink + "\n";
-        }
-        if (!livePerfVideo.empty()) {
-            templateMessage += "- Live Performance: " + livePerfVideo + "\n";
-        }
-        if (!musicVideo.empty()) {
-            templateMessage += "- Music Video: " + musicVideo + "\n";
-        }
-
-        templateMessage += "\nWhat people are saying about us:\n";
-
-        if (!pressQuote.empty()) {
-            templateMessage += "\"" + pressQuote + "\"\n";
-        }
-
-        templateMessage += string("\nPlease let me know if you have any questions or need additional information.\n\n")
-                           + "We appreciate your time and consideration!\n\n"
-                           + "Best wishes,\n"
-                           + name + "\n\n";
-
-        if (!socials.empty()) {
-            templateMessage += "-- Social Links --\n" + socials + "\n";
-        }
-
-        // Map each venue's email to its unique message and subject
-        emailToTemplate[venue.email] = make_pair(subject, templateMessage);
-    }
-
-    if (!emailToTemplate.empty()) {
-    auto firstElement = emailToTemplate.begin();
-    string firstEmail = firstElement->first;
-    string firstSubject = firstElement->second.first;
-    string firstMessage = firstElement->second.second;
-
-    // Display the completed template
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "=========================================\n";
-    cout << "Generated Email Template for: " << firstEmail << "\n";
-    cout << "=========================================\n";
-    cout << "Subject: " << firstSubject << "\n";
-    cout << "=========================================\n";
-    cout << firstMessage << endl;
-    cout << "=========================================\n";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    }
-
-    while (true) {
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Do you want to add an attachment? (Y/N): ";
-    char addAttachmentChoice;
-    cin >> addAttachmentChoice;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-    ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
-
-    if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
-        break;
-        
-    } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
-#ifndef UNIT_TESTING
+    #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Enter the path of the file to attach (or press Enter to skip): ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-        getline(cin, attachmentPath);
-        if (attachmentPath.empty()) {
-            break; // No attachment provided, move on
+    #endif
+        cout << "Enter Genre (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, genre);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Band Name (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, bandName);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Hometown (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, hometown);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Similar Artists (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, similarArtists);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Date (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, date);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Music Link (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, musicLink);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Live Performance Video Link (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, livePerfVideo);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Music Video Link (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, musicVideo);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Press Quote (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, pressQuote);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Your Name (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, name);
+        ConsoleUtils::clearInputBuffer();
+
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Enter Social Links (press Enter on a new line to finish): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        getline(cin, socials);
+        ConsoleUtils::clearInputBuffer();
+
+        // Construct the email template for each venue without sending it
+        for (const SelectedVenue& venue : selectedVenuesForEmail) {
+            
+            // Declare and initialize mandatory parts of the email
+            string subject = "--- Booking Inquiry for " + venue.name + " ---";
+            string templateMessage = string("Hi!,\n\n")
+                                    + "I am booking a tour for my " + genre + " band, " + bandName + ", from \n\n"
+                                    + hometown + ". The music is in a similar vein as " + similarArtists + ".\n\n"
+                                    + "We're planning to be in the " + venue.city + " area on " + date + " and are\n\n"
+                                    + "wondering if you might be interested in booking us at " + venue.name + ".\n\n"
+                                    + "Here are some resources to familiarize you with our work:\n\n";
+
+            // Add optional fields only if they are not empty
+            if (!musicLink.empty()) {
+                templateMessage += "- Music: " + musicLink + "\n";
+            }
+            if (!livePerfVideo.empty()) {
+                templateMessage += "- Live Performance: " + livePerfVideo + "\n";
+            }
+            if (!musicVideo.empty()) {
+                templateMessage += "- Music Video: " + musicVideo + "\n";
+            }
+
+            templateMessage += "\nWhat people are saying about us:\n";
+
+            if (!pressQuote.empty()) {
+                templateMessage += "\"" + pressQuote + "\"\n";
+            }
+
+            templateMessage += string("\nPlease let me know if you have any questions or need additional information.\n\n")
+                               + "We appreciate your time and consideration!\n\n"
+                               + "Best wishes,\n"
+                               + name + "\n\n";
+
+            if (!socials.empty()) {
+                templateMessage += "-- Social Links --\n" + socials + "\n";
+            }
+
+            // Map each venue's email to its unique message and subject
+            emailToTemplate[venue.email] = make_pair(subject, templateMessage);
         }
-        attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
-        attachmentPath = ConsoleUtils::trim(attachmentPath);
 
-        size_t lastSlash = attachmentPath.find_last_of("/\\\\");
-        if (lastSlash == string::npos) {
-            attachmentName = attachmentPath;
-        } else {
-            attachmentName = attachmentPath.substr(lastSlash + 1);
+        if (!emailToTemplate.empty()) {
+        auto firstElement = emailToTemplate.begin();
+        string firstEmail = firstElement->first;
+        string firstSubject = firstElement->second.first;
+        string firstMessage = firstElement->second.second;
+
+        // Display the completed template
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    #endif
+        cout << "=========================================\n";
+        cout << "Generated Email Template for: " << firstEmail << "\n";
+        cout << "=========================================\n";
+        cout << "Subject: " << firstSubject << "\n";
+        cout << "=========================================\n";
+        cout << firstMessage << endl;
+        cout << "=========================================\n";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
         }
 
-        try {
-            if (filesystem::exists(attachmentPath)) {
-                size_t fileSize = filesystem::file_size(attachmentPath);
-                attachmentSize = to_string(fileSize) + " bytes";
-#ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
-#endif
-                cout << "File Size: " << fileSize << " bytes" << endl;
-#ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
-#endif
-                if (fileSize > MAX_ATTACHMENT_SIZE) {
-                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
-                    clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
-#ifndef UNIT_TESTING
-                    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-                    cout << "Do you want to add a different attachment? (Y/N): ";
-#ifndef UNIT_TESTING
-                    ConsoleUtils::resetColor();
-#endif
-                    char choice;
-                    cin >> choice;
-                    ConsoleUtils::clearInputBuffer();
-                    if (choice == 'Y' || choice == 'y') {
-                        continue; // Go back to asking for a new file
-                    } else {
-                        break; // Exit the loop without an attachment
-                    }
-                }
+        while (true) {
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Do you want to add an attachment? (Y/N): ";
+        char addAttachmentChoice;
+        cin >> addAttachmentChoice;
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+        ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
-#ifndef UNIT_TESTING                
-                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
-#endif
-                cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
-#ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
-#endif
-                break;  // Exit the loop if the file is valid
+        if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+            break;
+            
+        } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+    #ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+            cout << "Enter the path of the file to attach (or press Enter to skip): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+            getline(cin, attachmentPath);
+            ConsoleUtils::clearInputBuffer();
+            if (attachmentPath.empty()) {
+                break; // No attachment provided, move on
+            }
+            attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
+            attachmentPath = ConsoleUtils::trim(attachmentPath);
+
+            size_t lastSlash = attachmentPath.find_last_of("/\\\\");
+            if (lastSlash == string::npos) {
+                attachmentName = attachmentPath;
             } else {
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                attachmentName = attachmentPath.substr(lastSlash + 1);
             }
-        } catch (const filesystem::filesystem_error& e) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+
+            try {
+                if (filesystem::exists(attachmentPath)) {
+                    size_t fileSize = filesystem::file_size(attachmentPath);
+                    attachmentSize = to_string(fileSize) + " bytes";
+    #ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+    #endif
+                    cout << "File Size: " << fileSize << " bytes" << endl;
+    #ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+    #endif
+                    if (fileSize > MAX_ATTACHMENT_SIZE) {
+                        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                        clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
+    #ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+                        cout << "Do you want to add a different attachment? (Y/N): ";
+    #ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+    #endif
+                        char choice;
+                        cin >> choice;
+                        ConsoleUtils::clearInputBuffer();
+                        if (choice == 'Y' || choice == 'y') {
+                            continue; // Go back to asking for a new file
+                        } else {
+                            break; // Exit the loop without an attachment
+                        }
+                    }
+
+    #ifndef UNIT_TESTING                
+                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+    #endif
+                    cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
+    #ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+    #endif
+                    break;  // Exit the loop if the file is valid
+                } else {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                }
+            } catch (const filesystem::filesystem_error& e) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+            }
+            
+            } else {
+    #ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+    #endif
+                cout << "Invalid choice. Please enter Y or N." << endl;
+    #ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+    #endif
+                continue;
+            }
         }
-        
-        } else {
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-            cout << "Invalid choice. Please enter Y or N." << endl;
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-#endif
-            continue;
-        }
-    }
 
-
-    // Ask user if they want to modify or send
-    char choice;
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "Do you wish to modify this template? (Y/N): ";
-    cin >> choice;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-
-    if (choice == 'Y' || choice == 'y') {
-        // Clear the existing template and start over
-        clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
-        createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
-    } else {
+        // Ask user if they want to modify or send
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-        cout << "Do you want to send the template? (Y/N): ";
+        cout << "Do you wish to modify this template? (Y/N): ";
         cin >> choice;
+        ConsoleUtils::clearInputBuffer();
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
-        if (choice == 'Y' || choice == 'y') {
-            templateExists = false; // Reset the flag since we're sending the email
 
-            // Now, send the email to all venues
-            bool sent = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-            if (!sent) {
-#ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-                cerr << "Failed to send email templates." << endl;
-#endif
-            }
-            // No need to set templateExists here again, as it's already set to false
+        if (choice == 'Y' || choice == 'y') {
+            // Clear the existing template and start over
+            clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
         } else {
-            // If user chooses not to send, the template and subjects stay in the map
+            modifyTemplate = false;
 #ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-            cout << "Template saved for sending/editing." << endl;
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif      // Ask the user if they want to send the template
+            cout << "Do you want to send the template? (Y/N): ";
+            cin >> choice;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
-            templateExists = true;
+            if (choice == 'Y' || choice == 'y') {
+                templateExists = false; // Reset the flag since we're sending the email
+
+                // Now, send the email to all venues
+                bool sent = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                if (!sent) {
+#ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+                    cerr << "Failed to send email templates." << endl;
+#endif
+                }
+            } else {
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+                cout << "Template saved for sending/editing." << endl;
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
+                // If user chooses not to send, the template and subjects stay in the map
+                templateExists = true;
+            }
         }
     }
 }
