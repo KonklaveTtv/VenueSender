@@ -5,8 +5,10 @@ using namespace std;
 
 // Global progress counters
 static int successfulSends = 0; // Counter for successful email sends
+static int successfulCustomSends = 0; // Counter for successful custom email sends
 static int successfulTemplateSends = 0; // Counter for successful template sends
 int totalEmails;
+int totalCustomEmails;
 int totalTemplateEmails;
 
 // Function to display current email settings
@@ -1431,17 +1433,23 @@ void EmailManager::emailCustomAddress(CURL* curl,
             cout.flush();
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
+            totalCustomEmails = 1;
+
             // Perform the operation
             res = curl_easy_perform(curl);
             if (res == 0) { // Check if email was sent successfully
-                successfulSends = 1;
-#ifndef UNIT_TESTING
+                successfulCustomSends = 1;
+                double progressPercentage = 0.0;
+                if (totalCustomEmails != 0) {
+                    progressPercentage = (static_cast<double>(successfulCustomSends) / totalCustomEmails) * 100;
+                }
+        #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-                cout << "Email sent successfully." << endl;
-#ifndef UNIT_TESTING
+        #endif
+                cout << "Progress: " << progressPercentage << "%" << endl;
+        #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
-#endif
+        #endif
                 cout.flush();
             } else {
                 // Handle error
