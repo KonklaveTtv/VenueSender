@@ -53,7 +53,7 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
 
     while (true) {
 
-        if (initColor == true) { 
+        if (initColor) {
             cout << "Enter your email password: ";
         } else {
 #ifndef UNIT_TESTING

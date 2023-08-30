@@ -21,7 +21,7 @@ public:
 	static void splashscreen();
 
 	//Function to display the Main Menu to the user
-    void Menu();
+    static void Menu();
 };
 
 #endif // INIT_H
