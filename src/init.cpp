@@ -37,7 +37,7 @@ void Init::splashscreen() {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-    std::cout << "    Copyright (c) 2023, Spencer Lievens.    " << std::endl;
+    std::cout << "     Copyright (c)2023, Spencer Lievens     " << std::endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif

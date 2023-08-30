@@ -25,7 +25,7 @@ void EmailManager::viewEmailSettings(bool useSSL, bool verifyPeer, bool verifyHo
     ConsoleUtils::resetColor();
 #endif
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
     cout << "SMTP Server: " << smtpServer << endl
          << "SMTP Port: " << smtpPort << endl
@@ -222,7 +222,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                         }
                     }
 #ifndef UNIT_TESTING
-                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif   
                     // Show the attachment name, size and path to the user
                     cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
@@ -279,7 +279,7 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
     ConsoleUtils::resetColor();
 #endif 
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif 
     cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
     cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
@@ -406,7 +406,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
     cout << "Subject: " << firstSubject << "\n";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
-    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
     cout << "Attachment: " << (attachmentName.empty() ? "None" : attachmentName) << "\n";
     cout << "Size: " << (attachmentSize.empty() ? "None" : attachmentSize) << "\n";
@@ -1043,7 +1043,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     }
 
     #ifndef UNIT_TESTING                
-                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
     #endif
                     cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
     #ifndef UNIT_TESTING
@@ -1290,7 +1290,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                     }
                 }
 #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+                ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                 cout << "Attachment: " << customAddressAttachmentName << " (" << customAddressAttachmentSize << ")" << endl;
 #ifndef UNIT_TESTING
@@ -1330,7 +1330,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         cout << "Subject: " << customAddressSubject << "\n";
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
-        ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+        ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
         cout << "Attachment: " << (customAddressAttachmentName.empty() ? "None" : customAddressAttachmentName) << "\n";
         cout << "Size: " << (customAddressAttachmentSize.empty() ? "None" : customAddressAttachmentSize) << "\n";
@@ -1558,7 +1558,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
     cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
-    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
+    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE); // Setting color for attachment details
 #endif
     cout << "Number of emails to send: " << selectedVenuesForEmail.size() << endl;
     cout << "Subject: " << subject << endl;
@@ -1692,7 +1692,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
 #endif
 
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA); // Setting color for attachment details
+    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE); // Setting color for attachment details
 #endif
     cout << "Number of templates to send: " << selectedVenuesForTemplates.size() << endl;
     // More details about the templates here...

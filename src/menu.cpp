@@ -186,7 +186,7 @@ int MenuManager::displayMenuOptions() {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Blue for headers
 #endif
-                cout << "Exiting the program." << endl;
+                cout << "EXITING VENUESENDER" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
@@ -197,7 +197,7 @@ int MenuManager::displayMenuOptions() {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Blue for headers
 #endif                
-                cout << "Returning to the main menu." << endl;
+                cout << "Returning to the Main Menu" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
@@ -609,7 +609,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool
     #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     #endif
-        cout << "SMTP Port (leave blank if unsure): ";
+        cout << "SMTP Port (if unsure press enter on a new line): ";
         string portInput;
         getline(cin, portInput);  // Using getline to capture the full line, which allows empty input
     #ifndef UNIT_TESTING
@@ -652,10 +652,19 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, bool& verifyPeer, bool
     // Edit Mail password
     mailPass = ConsoleUtils::passwordEntry(initColor);  // Assuming the passwordEntry function is available within the same class or public
 
+    EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
+#endif
+    cout << "--------------------------" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif  
-    cout << "Settings have been updated." << endl;
+#endif
+    cout << "SETTINGS UPDATED" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -678,7 +687,7 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
     } else {
         for (const auto& venue : selectedVenues) {
 #ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+            ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
             cout << "Name: " << venue.name << endl;
             cout << "Country: " << venue.country << endl;

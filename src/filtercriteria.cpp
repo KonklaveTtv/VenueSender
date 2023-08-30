@@ -334,7 +334,9 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-    cout << "Venues Added";
+    cout << "************" << endl;
+    cout << "Venues Added" << endl;
+    cout << "************" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif

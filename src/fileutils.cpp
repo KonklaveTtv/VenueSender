@@ -87,11 +87,32 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
             // Add the character to the password
             password += ch;
 
-            // Echo an asterisk
-            std::putchar('*');
+            if (initColor == true) { 
+                // Echo an asterisk
+                std::putchar('*');
+            } else {
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
+#endif
+                std::putchar('*');
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor(); // Reset color
+#endif
+            }
         }
 
+        if (initColor == true) { 
         std::cout << std::endl << "Confirm your email password: ";
+        } else {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
+#endif
+        std::cout << std::endl << "Confirm your email password: ";
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor(); // Reset color
+#endif
+        }
+
         confirm.clear();
         while (true) {
             ch = getchar();
@@ -113,8 +134,18 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
             // Add the character to the password
             confirm += ch;
 
-            // Echo an asterisk
-            std::putchar('*');
+            if (initColor == true) { 
+                // Echo an asterisk
+                std::putchar('*');
+            } else {
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
+#endif
+                std::putchar('*');
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor(); // Reset color
+#endif
+            }
         }
 
         if (password == confirm) {
