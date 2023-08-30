@@ -52,13 +52,7 @@ std::string ConsoleUtils::passwordEntry() {
     }
 
     while (true) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-        cout << "============================================" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+
         cout << "Enter your email password: ";
 
         password.clear();

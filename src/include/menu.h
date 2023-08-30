@@ -21,6 +21,8 @@ private:
     bool verifyHost;
     bool verbose;
     std::string senderEmail;
+    std::string mailPass;
+    std::string smtpUsername;
     int smtpPort;
     std::string smtpServer;
 
@@ -62,6 +64,12 @@ public:
         ReturnToMainMenu
     };
 
+    enum class ConfigurationOptions {
+        ShowEmailSettings = 1,
+        EditEmailSettings,
+        ReturnToMainMenu
+    };
+
     // Constants for Venue Filtering sub-menu options
     static constexpr int SELECT_VENUES_OPTION = static_cast<int>(VenueSelectionOption::SelectVenues);
     static constexpr int RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION = static_cast<int>(VenueSelectionOption::ReturnToMainMenu);
@@ -85,6 +93,11 @@ public:
     static constexpr int CLEAR_BOOKING_TEMPLATE_OPTION = static_cast<int>(TemplateOptions::ClearBookingTemplate);
     static constexpr int RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS = static_cast<int>(TemplateOptions::ReturnToMainMenu);
 
+    // Constants for Configuration sub-menu options
+    static constexpr int SHOW_EMAIL_SETTINGS_OPTION = static_cast<int>(ConfigurationOptions::ShowEmailSettings);
+    static constexpr int EDIT_EMAIL_SETTINGS_OPTION = static_cast<int>(ConfigurationOptions::EditEmailSettings);
+    static constexpr int RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS = static_cast<int>(ConfigurationOptions::ReturnToMainMenu);
+
     // Constants for Main Menu options
     static constexpr int VENUE_SELECTION_OPTION = static_cast<int>(MainMenuOption::VenueSelection);
     static constexpr int VENUE_OPTIONS_OPTION = static_cast<int>(MainMenuOption::VenueOptions);
@@ -95,8 +108,8 @@ public:
 
     // Constructor for MenuManager;
     MenuManager() = default;  // Default constructor
-    MenuManager(bool useSSL, bool verifyPeer, bool verifyHost, std::string  senderEmail, int smtpPort, std::string  smtpServer)
-        : useSSL(useSSL), verifyPeer(verifyPeer), verifyHost(verifyHost), senderEmail(std::move(senderEmail)), smtpPort(smtpPort), smtpServer(std::move(smtpServer)) {}
+    MenuManager(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose, std::string senderEmail, std::string mailPass, std::string smtpUsername, int smtpPort, std::string smtpServer)
+        : useSSL(useSSL), verifyPeer(verifyPeer), verifyHost(verifyHost), verbose(verbose), senderEmail(std::move(senderEmail)), mailPass(std::move(mailPass)), smtpUsername(std::move(smtpUsername)), smtpPort(smtpPort), smtpServer(std::move(smtpServer)) {}
 
     // Function to nevigate the menu system
     bool navigateMenus(EmailManager& emailManager, 
@@ -131,11 +144,12 @@ public:
     }
 
     // Functions to display the menu options to the user
-    static int displayMenuOptions() ;
-    static int displayVenueSelectionOptions() ;
-    static int displayVenueOptions() ;
-    static int displayEmailOptions() ;
-    static int displayTemplateOptions() ;
+    static int displayMenuOptions();
+    static int displayVenueSelectionOptions();
+    static int displayVenueOptions();
+    static int displayEmailOptions();
+    static int displayTemplateOptions();
+    static int displayConfigurationOptions();
 
     // Function to display the list of venues selected by the user
     static void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);

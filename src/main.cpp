@@ -62,7 +62,7 @@ int main() {
     map<string, pair<string, string>> emailToTemplate;
 
     // Pass the configuration variables to the MenuManager constructor
-    MenuManager menuManager(useSSL, verifyPeer, verifyHost, senderEmail, smtpPort, smtpServer);
+    MenuManager menuManager(useSSL, verifyPeer, verifyHost, verbose, senderEmail, mailPass, smtpUsername, smtpPort, smtpServer);
 
     // Create an EmailManager object
     EmailManager emailManager;

@@ -103,9 +103,23 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                 }
                 break;
             }
-            case CONFIGURATION_OPTION:
-                EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+            case CONFIGURATION_OPTION: {
+                int subChoice = displayConfigurationOptions();
+                switch (subChoice) {
+                    case SHOW_EMAIL_SETTINGS_OPTION:
+                        EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+                        break;
+                    case EDIT_EMAIL_SETTINGS_OPTION:
+                        //ConfigManager::editConfigurationSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer);
+                        break;
+                    case RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS:
+                        // Logic to return to the main menu
+                        // No action needed, loop will start from the beginning
+                        break;
+                }
                 break;
+            }                        
+
             default:
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
@@ -314,6 +328,39 @@ int MenuManager::displayTemplateOptions() {
 #endif
         ConsoleUtils::clearInputBuffer();
         if (choice >= CREATE_VENUE_BOOKING_TEMPLATE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS) {
+            break;
+        } else {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+        }
+    } while (true);
+    return choice;
+}
+
+int MenuManager::displayConfigurationOptions() {
+    int choice;
+    do {
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
+#endif
+        cout << "==========================="<< endl;
+        cout << "       Configuration       "<< endl;
+        cout << "==========================="<< endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
+        cout << SHOW_EMAIL_SETTINGS_OPTION << ". Show Email Settings" << endl;
+        cout << EDIT_EMAIL_SETTINGS_OPTION << ". Edit Email Settings" << endl;
+        cout << RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS << ". Return to Main Menu" << endl;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+        cout << "Enter your choice: ";
+        cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
+        ConsoleUtils::clearInputBuffer();
+        if (choice >= SHOW_EMAIL_SETTINGS_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS) {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
