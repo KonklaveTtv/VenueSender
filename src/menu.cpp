@@ -29,98 +29,113 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
 
         switch (mainChoice) {
             case VENUE_SELECTION_OPTION: {
-                int subChoice = displayVenueSelectionOptions();
+                while (true) {
+                    int subChoice = displayVenueSelectionOptions();
 
-                switch (subChoice) {
-                    case SELECT_VENUES_OPTION:
-                        venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout);
-                        break;
-                    case RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION:
-                        // Logic to return to the main menu
-                        // No action needed, loop will start from the beginning
-                        break;
+                    switch (subChoice) {
+                        case SELECT_VENUES_OPTION:
+                            venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout);
+                            continue;
+                        case RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION:
+                            // Logic to return to the main menu
+                            // No action needed, loop will start from the beginning
+                            break;
+                    }
+                    break;
                 }
-
                 break;
             }
             case VENUE_OPTIONS_OPTION: {
-                int subChoice = displayVenueOptions();
-                switch (subChoice) {
-                    case VIEW_SELECTED_VENUES_OPTION:
-                        displaySelectedVenues(selectedVenuesForEmail);
-                        break;
-                    case CLEAR_SELECTED_VENUES_OPTION:
-                        EmailManager::clearSelectedVenues(selectedVenuesForEmail);
-                        EmailManager::clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
-                        break;
-                    case RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS:
-                        // Logic to return to the main menu
-                        // No action needed, loop will start from the beginning
-                        break;
+                while (true) {
+                    int subChoice = displayVenueOptions();
+                    
+                    switch (subChoice) {
+                        case VIEW_SELECTED_VENUES_OPTION:
+                            displaySelectedVenues(selectedVenuesForEmail);
+                            continue;
+                        case CLEAR_SELECTED_VENUES_OPTION:
+                            EmailManager::clearSelectedVenues(selectedVenuesForEmail);
+                            EmailManager::clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
+                            continue;
+                        case RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS:
+                            // Logic to return to the main menu
+                            // No action needed, loop will start from the beginning
+                            break;
+                    }
+
+                    break;
                 }
                 break;
             }
             case EMAIL_OPTIONS_OPTION: {
-                int subChoice = displayEmailOptions();
-                switch (subChoice) {
-                    case CREATE_EMAIL_OPTION:
-                        emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
-                        break;
-                    case VIEW_EDIT_EMAILS_OPTION:
-                        emailManager.viewEditEmails(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath, templateExists, emailToTemplate);
-                        break;
-                    case EMAIL_CUSTOM_ADDRESS_OPTION:
-                        emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-                        break;
-                    case SEND_EMAILS_OPTION:
-                        EmailManager::confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-                        break;
-                    case RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS:
-                        // Logic to return to the main menu
-                        // No action needed, loop will start from the beginning
-                        break;
+                while (true) {
+                    int subChoice = displayEmailOptions();
+                    switch (subChoice) {
+                        case CREATE_EMAIL_OPTION:
+                            emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
+                            continue;
+                        case VIEW_EDIT_EMAILS_OPTION:
+                            emailManager.viewEditEmails(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath, templateExists, emailToTemplate);
+                            continue;
+                        case EMAIL_CUSTOM_ADDRESS_OPTION:
+                            emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                            continue;
+                        case SEND_EMAILS_OPTION:
+                            EmailManager::confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                            continue;
+                        case RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS:
+                            // Logic to return to the main menu
+                            // No action needed, loop will start from the beginning
+                            break;
+                    }
+                    break;
                 }
                 break;
             }
             case TEMPLATES_OPTION: {
-                int subChoice = displayTemplateOptions();
-                switch (subChoice) {
-                    case CREATE_VENUE_BOOKING_TEMPLATE_OPTION:
-                        emailManager.createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
-                        break;
-                    case VIEW_EDIT_BOOKING_TEMPLATES_OPTION:
-                        emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
-                        break;
-                    case SEND_BOOKING_TEMPLATES_OPTION:
-                        EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
-                        break;
-                    case CLEAR_BOOKING_TEMPLATE_OPTION:
-                        EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
-                        break;
-                    case RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS:
-                        // Logic to return to the main menu
-                        // No action needed, loop will start from the beginning
-                        break;
+                while (true) {
+                    int subChoice = displayTemplateOptions();
+                    switch (subChoice) {
+                        case CREATE_VENUE_BOOKING_TEMPLATE_OPTION:
+                            emailManager.createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
+                            continue;
+                        case VIEW_EDIT_BOOKING_TEMPLATES_OPTION:
+                            emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            continue;
+                        case SEND_BOOKING_TEMPLATES_OPTION:
+                            EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                            continue;
+                        case CLEAR_BOOKING_TEMPLATE_OPTION:
+                            EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            continue;
+                        case RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS:
+                            // Logic to return to the main menu
+                            // No action needed, loop will start from the beginning
+                            break;
+                    }
+                    break;
                 }
                 break;
             }
             case CONFIGURATION_OPTION: {
-                int subChoice = displayConfigurationOptions();
-                switch (subChoice) {
-                    case SHOW_EMAIL_SETTINGS_OPTION:
-                        EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
-                        break;
-                    case EDIT_EMAIL_SETTINGS_OPTION:
-                        MenuManager::editConfigurationSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, initColor);
-                        break;
-                    case RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS:
-                        // Logic to return to the main menu
-                        // No action needed, loop will start from the beginning
-                        break;
+                while (true) {
+                    int subChoice = displayConfigurationOptions();
+                    switch (subChoice) {
+                        case SHOW_EMAIL_SETTINGS_OPTION:
+                            EmailManager::viewEmailSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+                            continue;
+                        case EDIT_EMAIL_SETTINGS_OPTION:
+                            MenuManager::editConfigurationSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, initColor);
+                            continue;
+                        case RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS:
+                            // Logic to return to the main menu
+                            // No action needed, loop will start from the beginning
+                            break;
+                    }
+                    break;
                 }
                 break;
-            }                        
-
+            }
             default:
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
         }
