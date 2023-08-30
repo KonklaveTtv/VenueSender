@@ -57,7 +57,7 @@ void ConsoleUtils::clearConsole() {
 
 bool ConsoleUtils::isCapsLockOn() {
 #ifdef __linux__
-    Display *d = XOpenDisplay((char*)0);
+    Display *d = XOpenDisplay((char*)nullptr);
     unsigned n;
     if (d) {
         XkbGetIndicatorState(d, XkbUseCoreKbd, &n);
