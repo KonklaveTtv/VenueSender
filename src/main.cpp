@@ -95,8 +95,7 @@ int main() {
     }
     
     // Function load filters and display menu
-    Init initInstance;
-    initInstance.Menu();
+    Init::Menu();
 
     // Clear and Empty the Email Password from memory
     fill(mailPass.begin(), mailPass.end(), '\0');

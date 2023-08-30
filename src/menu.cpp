@@ -452,7 +452,8 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         sslCertPathInput = ConsoleUtils::trim(sslCertPathInput);
 
         // Whitespace check (full whitespace)
-        if (all_of(sslCertPathInput.begin(), sslCertPathInput.end(), ::isspace)) {
+        if (std::count(sslCertPathInput.begin(), sslCertPathInput.end(), ' ') > 1 &&
+            all_of(sslCertPathInput.begin(), sslCertPathInput.end(), ::isspace)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CERT_PATH_ERROR);
             continue;
         }
