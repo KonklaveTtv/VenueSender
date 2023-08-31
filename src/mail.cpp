@@ -928,14 +928,14 @@ void EmailManager::createBookingTemplate(CURL* curl,
             // Declare and initialize mandatory parts of the email
             string subject = "--- Booking Inquiry for " + venue.name + " ---";
             string templateMessage = string("Hi!,\n\n")
-                                    + "I am booking a tour for " + performanceName + "a " + genre + performanceType +  ", from \n\n"
-                                    + hometown + ". The music is in a similar vein as " + similarArtists + ".\n\n"
+                                    + "I am booking a tour for " + performanceName + " a " + genre + " " + performanceType +  ", from \n\n"
+                                    + hometown + ". The music is similar to " + similarArtists + ".\n\n"
                                     + "We're planning to be in the " + venue.city + " area on " + date + " and are\n\n"
-                                    + "wondering if you might be interested in booking us at " + venue.name + ".\n\n"
-                                    + "Here are some resources to familiarize you with our work:\n\n";
+                                    + "wondering if you might be interested in booking us at " + venue.name + ".\n\n";
 
             // Add optional fields only if they are not empty
             if (!musicLink.empty()) {
+                templateMessage += "Here are some resources to familiarize you with our work:\n";
                 templateMessage += "- Music: " + musicLink + "\n";
             }
             if (!livePerfVideo.empty()) {
@@ -945,9 +945,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 templateMessage += "- Music Video: " + musicVideo + "\n";
             }
 
-            templateMessage += "\nWhat people are saying about " + performanceName + "\n";
-
             if (!pressQuote.empty()) {
+                templateMessage += "\nWhat people are saying about " + performanceName + "\n";
                 templateMessage += "\"" + pressQuote + "\"\n";
             }
 
