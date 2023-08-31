@@ -27,7 +27,7 @@ string venuesCsvPath = "venues.csv";
 string configJsonPath = "config.json";
 string mockVenuesCsvPath = "src/test/mock_venues.csv";
 string mockConfigJsonPath = "src/test/mock_config.json";
-string encryptedDatabasePath = "src/db/encrypted_database.h";
+string sqliteDatabasePath = "src/db/venues.db";
 }
 
 void ConsoleUtils::clearConsole() {
@@ -322,7 +322,9 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 bool ConsoleUtils::fileExists(const std::string& filename) {
     std::ifstream file(filename.c_str());
     if (!file) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, filename);
+        if (filename != confPaths::venuesCsvPath) { // Add this line to prevent error for venues.csv
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, filename);
+        }
         return false;
     }
     return file.good();
