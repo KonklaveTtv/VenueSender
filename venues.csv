@@ -1,3 +1,3 @@
-Venue Name,Email,Country,State,City,Capacity,Genre
+name,email,country,state,city,capacity,genre
 Venue1,venue1@mock.com,USA,AL,Daphne,100,Mixed
 Venue2,venue2@mock.com,France,Paris Region,Paris,300,Rock

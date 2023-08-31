@@ -11,14 +11,15 @@ To run this project, you need the following installed on your system:
 - GCC (GNU Compiler Collection)
 - C++20 compatible compiler
 - libjsoncpp
-- libcurl
+- libcurl4
 - libx11
+- libsqlite3
 - Catch2
 
 ### Dependencies
 
       sudo apt-get update
-      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libx11-dev
+      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libx11-dev libssl-dev libsqlite3-dev
 
 Install this dependency if you wish to run unit tests:
 

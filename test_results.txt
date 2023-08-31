@@ -1,0 +1,442 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+venuesender_test is a Catch v2.13.8 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+ConsoleUtils::trim() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:32
+...............................................................................
+
+src/test/test_venuesender.cpp:33: PASSED:
+  REQUIRE( ConsoleUtils::trim("   leading spaces") == "leading spaces" )
+with expansion:
+  "leading spaces" == "leading spaces"
+
+src/test/test_venuesender.cpp:34: PASSED:
+  REQUIRE( ConsoleUtils::trim("trailing spaces   ") == "trailing spaces" )
+with expansion:
+  "trailing spaces" == "trailing spaces"
+
+src/test/test_venuesender.cpp:35: PASSED:
+  REQUIRE( ConsoleUtils::trim("   both   ") == "both" )
+with expansion:
+  "both" == "both"
+
+src/test/test_venuesender.cpp:36: PASSED:
+  REQUIRE( ConsoleUtils::trim("none") == "none" )
+with expansion:
+  "none" == "none"
+
+src/test/test_venuesender.cpp:37: PASSED:
+  REQUIRE( ConsoleUtils::trim("") == "" )
+with expansion:
+  "" == ""
+
+-------------------------------------------------------------------------------
+readFromCsv function parses CSV data correctly
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:45
+...............................................................................
+
+src/test/test_venuesender.cpp:57: FAILED:
+  REQUIRE( venues.size() == 2 )
+with expansion:
+  1 == 2
+
+Configuration from config.json Loaded
+[H[2J[3J-------------------------------------------------------------------------------
+ConfigManager::loadConfigSettings() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:80
+...............................................................................
+
+src/test/test_venuesender.cpp:99: PASSED:
+  REQUIRE( result == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:100: PASSED:
+  REQUIRE( useSSL == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:101: PASSED:
+  REQUIRE( verifyHost == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:102: PASSED:
+  REQUIRE( verifyPeer == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:103: PASSED:
+  REQUIRE( verbose == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:104: PASSED:
+  REQUIRE( senderEmail == "mock@example.com" )
+with expansion:
+  "mock@example.com" == "mock@example.com"
+
+src/test/test_venuesender.cpp:105: PASSED:
+  REQUIRE( smtpUsername == "mock_smtp_username" )
+with expansion:
+  "mock_smtp_username"
+  ==
+  "mock_smtp_username"
+
+src/test/test_venuesender.cpp:106: PASSED:
+  REQUIRE( smtpPort == 587 )
+with expansion:
+  587 (0x24b) == 587 (0x24b)
+
+src/test/test_venuesender.cpp:107: PASSED:
+  REQUIRE( smtpServer == "mock_smtp_server" )
+with expansion:
+  "mock_smtp_server" == "mock_smtp_server"
+
+src/test/test_venuesender.cpp:108: PASSED:
+  REQUIRE( testVenuesPathCopy == "src/test/mock_venues.csv" )
+with expansion:
+  "src/test/mock_venues.csv"
+  ==
+  "src/test/mock_venues.csv"
+
+-------------------------------------------------------------------------------
+MenuManager::isValidMenuChoice() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:116
+...............................................................................
+
+src/test/test_venuesender.cpp:120: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(1) == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:121: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(2) == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:122: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(3) == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:123: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(4) == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:124: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(5) == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:125: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(6) == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:127: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(-1) == false )
+with expansion:
+  false == false
+
+src/test/test_venuesender.cpp:128: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(0) == false )
+with expansion:
+  false == false
+
+src/test/test_venuesender.cpp:129: PASSED:
+  REQUIRE( menuManager.isValidMenuChoice(7) == false )
+with expansion:
+  false == false
+
+-------------------------------------------------------------------------------
+MenuManager::displayMenuOptions() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:132
+...............................................................................
+
+src/test/test_venuesender.cpp:164: PASSED:
+  REQUIRE( output.str() == expectedOutput )
+with expansion:
+  "===========================
+           Main Menu         
+  ===========================
+  1. Venue Selection
+  2. Venue Options
+  3. Email
+  4. Templates
+  5. Configuration
+  6. Exit
+  Enter your choice: "
+  ==
+  "===========================
+           Main Menu         
+  ===========================
+  1. Venue Selection
+  2. Venue Options
+  3. Email
+  4. Templates
+  5. Configuration
+  6. Exit
+  Enter your choice: "
+
+src/test/test_venuesender.cpp:165: PASSED:
+  REQUIRE( choice == 5 )
+with expansion:
+  5 == 5
+
+-------------------------------------------------------------------------------
+MenuManager::displaySelectedVenues() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:168
+...............................................................................
+
+src/test/test_venuesender.cpp:210: PASSED:
+  REQUIRE( mockOutput.str() == expectedOutput )
+with expansion:
+  "===========================
+        Selected Venues      
+  ===========================
+  Name: Venue1
+  Country: USA
+  State: AL
+  City: Daphne
+  Capacity: 100
+  Genre: Mixed
+  ---------------------------
+  Name: Venue2
+  Country: France
+  State: Paris Region
+  City: Paris
+  Capacity: 300
+  Genre: Rock
+  ---------------------------
+  "
+  ==
+  "===========================
+        Selected Venues      
+  ===========================
+  Name: Venue1
+  Country: USA
+  State: AL
+  City: Daphne
+  Capacity: 100
+  Genre: Mixed
+  ---------------------------
+  Name: Venue2
+  Country: France
+  State: Paris Region
+  City: Paris
+  Capacity: 300
+  Genre: Rock
+  ---------------------------
+  "
+
+-------------------------------------------------------------------------------
+EmailManager::getCurrentDateRfc2822() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:221
+...............................................................................
+
+src/test/test_venuesender.cpp:232: PASSED:
+  REQUIRE( std::regex_match(result, dateFormat) )
+with expansion:
+  true
+
+-------------------------------------------------------------------------------
+EmailManager::sanitizeSubject() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:235
+...............................................................................
+
+src/test/test_venuesender.cpp:244: PASSED:
+  REQUIRE( subject == "Hello World\nTest" )
+with expansion:
+  "Hello World
+  Test"
+  ==
+  "Hello World
+  Test"
+
+-------------------------------------------------------------------------------
+EmailManager::viewEmailSettings functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:247
+...............................................................................
+
+src/test/test_venuesender.cpp:271: PASSED:
+  REQUIRE( oss.str() == expectedOutput )
+with expansion:
+  "============================
+         Email Settings       
+  ============================
+  SMTP Server: mock_smtp_server
+  SMTP Port: 587
+  Sender Email: mock@example.com
+  SSL: true
+  SSL Cert Path: /etc/ssl/certs/ca-certificates.crt
+  verifyPeer: true
+  verifyHost: true
+  verbose: true
+  "
+  ==
+  "============================
+         Email Settings       
+  ============================
+  SMTP Server: mock_smtp_server
+  SMTP Port: 587
+  Sender Email: mock@example.com
+  SSL: true
+  SSL Cert Path: /etc/ssl/certs/ca-certificates.crt
+  verifyPeer: true
+  verifyHost: true
+  verbose: true
+  "
+
+-------------------------------------------------------------------------------
+EmailManager::isValidEmailTest() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:274
+...............................................................................
+
+src/test/test_venuesender.cpp:284: PASSED:
+  REQUIRE( isValid1 == true )
+with expansion:
+  true == true
+
+src/test/test_venuesender.cpp:285: PASSED:
+  REQUIRE( isValid2 == false )
+with expansion:
+  false == false
+
+-------------------------------------------------------------------------------
+EmailManager::sendIndividualEmail() functionality
+  Sending email with valid parameters
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:310
+...............................................................................
+
+src/test/test_venuesender.cpp:314: PASSED:
+  REQUIRE( result == false )
+with expansion:
+  false == false
+
+-------------------------------------------------------------------------------
+EmailManager::sendIndividualEmail() functionality
+  Sending email with invalid email
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:317
+...............................................................................
+
+src/test/test_venuesender.cpp:323: PASSED:
+  REQUIRE( result == false )
+with expansion:
+  false == false
+
+-------------------------------------------------------------------------------
+EmailManager::sendIndividualEmail() functionality
+  Sending email in batches
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:326
+...............................................................................
+
+src/test/test_venuesender.cpp:340: PASSED:
+  REQUIRE( result == false )
+with expansion:
+  false == false
+
+************
+Venues Added
+************
+-------------------------------------------------------------------------------
+VenueFilter::processVenueSelection() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:349
+...............................................................................
+
+src/test/test_venuesender.cpp:369: PASSED:
+  REQUIRE( selectedVenuesForEmail.size() == 1 )
+with expansion:
+  1 == 1
+
+src/test/test_venuesender.cpp:370: PASSED:
+  REQUIRE( selectedVenuesForEmail[0].name == "Venue2" )
+with expansion:
+  "Venue2" == "Venue2"
+
+src/test/test_venuesender.cpp:373: PASSED:
+  REQUIRE( selectedVenuesForTemplates.size() == 1 )
+with expansion:
+  1 == 1
+
+src/test/test_venuesender.cpp:374: PASSED:
+  REQUIRE( selectedVenuesForTemplates[0].name == "Venue2" )
+with expansion:
+  "Venue2" == "Venue2"
+
+src/test/test_venuesender.cpp:380: PASSED:
+  REQUIRE( mockOutput.str().substr(0, expectedOutputStart.size()) == expectedOutputStart )
+with expansion:
+  "===========================
+        Venue Selection      
+  ===========================
+  "
+  ==
+  "===========================
+        Venue Selection      
+  ===========================
+  "
+
+-------------------------------------------------------------------------------
+VenueUtilities::convertToSelectedVenue() functionality
+-------------------------------------------------------------------------------
+src/test/test_venuesender.cpp:388
+...............................................................................
+
+src/test/test_venuesender.cpp:404: PASSED:
+  REQUIRE( selectedVenue.name == "Venue1" )
+with expansion:
+  "Venue1" == "Venue1"
+
+src/test/test_venuesender.cpp:405: PASSED:
+  REQUIRE( selectedVenue.email == "venue1@mock.com" )
+with expansion:
+  "venue1@mock.com" == "venue1@mock.com"
+
+src/test/test_venuesender.cpp:406: PASSED:
+  REQUIRE( selectedVenue.country == "USA" )
+with expansion:
+  "USA" == "USA"
+
+src/test/test_venuesender.cpp:407: PASSED:
+  REQUIRE( selectedVenue.state == "AL" )
+with expansion:
+  "AL" == "AL"
+
+src/test/test_venuesender.cpp:408: PASSED:
+  REQUIRE( selectedVenue.city == "Daphne" )
+with expansion:
+  "Daphne" == "Daphne"
+
+src/test/test_venuesender.cpp:409: PASSED:
+  REQUIRE( selectedVenue.capacity == 100 )
+with expansion:
+  100 == 100
+
+src/test/test_venuesender.cpp:410: PASSED:
+  REQUIRE( selectedVenue.genre == "Mixed" )
+with expansion:
+  "Mixed" == "Mixed"
+
+===============================================================================
+test cases: 13 | 12 passed | 1 failed
+assertions: 48 | 47 passed | 1 failed
+

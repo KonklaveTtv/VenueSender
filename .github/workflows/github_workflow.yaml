@@ -19,7 +19,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: sudo apt-get install libcurl4-openssl-dev libjsoncpp-dev libx11-dev
+      run: sudo apt-get install libcurl4-openssl-dev libjsoncpp-dev libx11-dev libssl-dev libsqlite3-dev
 
     - name: Create necessary directories
       run: mkdir -p obj obj/debug obj/test obj/test_for_test bin bin/debug
@@ -49,14 +49,14 @@ jobs:
         done
 
     - name: Link the main executable
-      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender obj/*.o -lcurl -ljsoncpp -lX11
+      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender obj/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3
 
     - name: Link the debug executable
-      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/debug/venuesender_debug obj/debug/*.o -lcurl -ljsoncpp -lX11
+      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/debug/venuesender_debug obj/debug/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3
 
     - name: Link the test executable
       run: |
-        g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender_test obj/test/*.o obj/test_for_test/*.o -lcurl -ljsoncpp -lX11
+        g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender_test obj/test/*.o obj/test_for_test/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3
     - name: Run tests
       run: ./bin/venuesender_test
 

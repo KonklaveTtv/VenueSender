@@ -27,21 +27,7 @@ string venuesCsvPath = "venues.csv";
 string configJsonPath = "config.json";
 string mockVenuesCsvPath = "src/test/mock_venues.csv";
 string mockConfigJsonPath = "src/test/mock_config.json";
-}
-
-// Function to check a file exists at a given path
-bool ConsoleUtils::fileExists(const std::string& filename) {
-    std::ifstream file(filename);
-    return file.good();
-}
-
-// Function to trim leading and trailing spaces from a string
-string ConsoleUtils::trim(const string& str){
-    // Trimming function
-    const auto notSpace = [](int ch) {return !isspace(ch); };
-    auto first = find_if(str.begin(), str.end(), notSpace);
-    auto last = find_if(str.rbegin(), str.rend(), notSpace).base();
-    return (first < last ? string(first, last) : string());
+string encryptedDatabasePath = "src/db/encrypted_database.h";
 }
 
 void ConsoleUtils::clearConsole() {
@@ -330,4 +316,23 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 #endif
     }
     return configLoadedSuccessfully;
+}
+
+// Function to check a file exists at a given path
+bool ConsoleUtils::fileExists(const std::string& filename) {
+    std::ifstream file(filename.c_str());
+    if (!file) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, filename);
+        return false;
+    }
+    return file.good();
+}
+
+// Function to trim leading and trailing spaces from a string
+string ConsoleUtils::trim(const string& str){
+    // Trimming function
+    const auto notSpace = [](int ch) {return !isspace(ch); };
+    auto first = find_if(str.begin(), str.end(), notSpace);
+    auto last = find_if(str.rbegin(), str.rend(), notSpace).base();
+    return (first < last ? string(first, last) : string());
 }

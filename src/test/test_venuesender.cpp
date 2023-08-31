@@ -42,17 +42,20 @@ TEST_CASE("ConsoleUtils::trim() functionality", "[ConsoleUtils]") {
 // Test Group: CsvReader
 // -----------------------
 
-TEST_CASE("CsvReader::readCSV() functionality", "[CsvReader]") {
-    // Set up mock data for readCSV function
-    vector<Venue> venues;
-    string venuesCsvPath = confPaths::mockVenuesCsvPath;
+TEST_CASE("VenueDatabaseReader::readFromCsv() functionality", "[VenueDatabaseReader]") {
+    std::string csvData =
+        "Venue1,venue1@mock.com,USA,AL,Daphne,100,Mixed\n"
+        "Venue2,venue2@mock.com,France,Paris Region,Paris,300,Rock\n";
 
-    // Call the readCSV function
-    CsvReader::readCSV(venues, venuesCsvPath);
+    std::istringstream csvStream(csvData);
+    std::vector<Venue> venues;
 
-    // Compare the result with expected values
+    VenueDatabaseReader::readFromCsv(venues, csvStream);
+
+    // Check the size of the venues vector and compare with expected values
     REQUIRE(venues.size() == 2);
 
+    // Check the data of the first venue
     REQUIRE(venues[0].name == "Venue1");
     REQUIRE(venues[0].email == "venue1@mock.com");
     REQUIRE(venues[0].country == "USA");
@@ -61,6 +64,7 @@ TEST_CASE("CsvReader::readCSV() functionality", "[CsvReader]") {
     REQUIRE(venues[0].capacity == 100);
     REQUIRE(venues[0].genre == "Mixed");
 
+    // Check the data of the second venue
     REQUIRE(venues[1].name == "Venue2");
     REQUIRE(venues[1].email == "venue2@mock.com");
     REQUIRE(venues[1].country == "France");
