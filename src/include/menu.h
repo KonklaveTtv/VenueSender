@@ -1,6 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include "curl.h"
 #include "errorhandler.h"
 #include "fileutils.h"
 #include "filtercriteria.h"
@@ -18,6 +19,7 @@ class EmailManager;
 class MenuManager {
 private:
     bool useSSL;
+    std::string sslCertPath;
     bool verifyPeer;
     bool verifyHost;
     bool verbose;
@@ -131,7 +133,8 @@ public:
                        bool verifyHost, 
                        bool verbose, 
                        bool templateExists,
-                       bool initColor);
+                       bool initColor,
+                       CurlHandleWrapper& curlWrapper);
 
     // Function to show the main title header of VenueSender
     inline static void mainHeader() {
@@ -154,9 +157,21 @@ public:
     static int displayTemplateOptions();
     static int displayConfigurationOptions();
 
+    void setupCurlHandle(CurlHandleWrapper& curlWrapper,
+                         bool useSSL,
+                         bool verifyPeer,
+                         bool verifyHost,
+                         const std::string& sslCertPath,
+                         const std::string& smtpUsername,
+                         const std::string& mailPass,
+                         const std::string& senderEmail,
+                         int smtpPort,
+                         const std::string& smtpServer,
+                         bool verbose);
+
     static bool editConfigurationSettings(bool& useSSL, std::string& sslCertPath, bool& verifyPeer, bool& verifyHost, bool& verbose, 
                                           std::string& senderEmail, std::string& smtpUsername, 
-                                          std::string& mailPass, int& smtpPort, std::string& smtpServer, bool& initColor);
+                                          std::string& mailPass, int& smtpPort, std::string& smtpServer, bool& initColor, CurlHandleWrapper& curlWrapper);
 
     // Function to display the list of venues selected by the user
     static void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);

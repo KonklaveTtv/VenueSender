@@ -88,7 +88,8 @@ int main() {
                                   verifyHost, 
                                   verbose, 
                                   templateExists,
-                                  initColor
+                                  initColor,
+                                  curlWrapper
                                   );
     } catch (const exception& e) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::MENU_LOAD_ERROR);

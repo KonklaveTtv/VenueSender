@@ -12,7 +12,7 @@ To run this project, you need the following installed on your system:
 - C++20 compatible compiler
 - libjsoncpp
 - libcurl
-- libX11
+- libx11
 - Catch2
 
 ### Dependencies

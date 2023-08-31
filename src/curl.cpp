@@ -98,10 +98,6 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const string&
     curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
     curl_easy_setopt(curl, CURLOPT_PASSWORD, mailPass.c_str());
 
-    // Clear and Empty the Email Password from memory
-    fill(mailPass.begin(), mailPass.end(), '\0');
-    mailPass.clear();
-    
     // Set the sender
     curl_easy_setopt(curl, CURLOPT_MAIL_FROM, senderEmail.c_str());
 
@@ -114,9 +110,12 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const string&
     // Set callback function to read data for sending in the request
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
 
-
     // Enable verbose mode for debugging in config.json (if needed)
     curl_easy_setopt(curl, CURLOPT_VERBOSE, verbose ? 1L : 0L);
+
+    // Clear and Empty the Email Password from memory
+    fill(mailPass.begin(), mailPass.end(), '\0');
+    mailPass.clear();
 
     return curl;
 }
