@@ -32,7 +32,7 @@ TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
 
 # Libraries common to all platforms
-LIBS = -lcurl -ljsoncpp
+LIBS = -lcurl -ljsoncpp -lssl -lcrypto -lsqlite3
 
 # Add X11 library if on Linux
 ifeq ($(UNAME_S),Linux)

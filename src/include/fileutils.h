@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cstdlib>
 #include <fstream>
 #include <limits>
 #include <sstream>
@@ -14,11 +15,16 @@
 #include <unistd.h>
 #include <vector>
 
+// Include headers for SQLite
+#include <sqlite3.h>
+
 // Include headers for JSON processing
 #include <jsoncpp/json/json.h>
 
-// Forward declaration to resolve circular dependency with errorhandler.h
-class ErrorHandler; // Forward declaration due to circular dependency between fileutils.h and errorhandler.h
+static const std::string base64_chars = 
+             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+             "abcdefghijklmnopqrstuvwxyz"
+             "0123456789+/";
 
 // Namespace to hold configuration file paths
 namespace confPaths {
@@ -27,6 +33,7 @@ namespace confPaths {
     extern std::string configJsonPath;
     extern std::string mockVenuesCsvPath;
     extern std::string mockConfigJsonPath;
+    extern std::string sqliteDatabasePath;
 }
 
 // Class for utility functions related to the console
@@ -79,7 +86,6 @@ public:
                 SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
                 break;
             case ConsoleUtils::Color::PURPLE:
-                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
                 SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE);
                 break;
             default:
@@ -156,21 +162,74 @@ public:
     static std::string passwordEntry(bool& initColor);
 };
 
-// Class for reading data from a CSV file
-class CsvReader {
+// Class for reading data from a CSV file or encrypted database
+class VenueDatabaseReader {
 public:
+    // Constructor to initialize encryptedDatabase
+    VenueDatabaseReader() {};
+    // Destructor
+    ~VenueDatabaseReader() {};
+
+    // Function to initialize SQLite and read data from CSV or encrypted database
+    bool initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
+        bool success = false;
+
+        // Check if the venues.csv file exists
+        bool venuesCsvExists = ConsoleUtils::fileExists(confPaths::venuesCsvPath);
+
+        // Try to read from CSV first
+        std::ifstream csvFile(venuesCsvPath);
+        if (csvFile.is_open()) {
+            readFromCsv(venues, csvFile);
+            csvFile.close();
+            success = true;
+        }
+
+        // Fallback to SQLite if reading from CSV fails
+        if (!success) {
+            // Check if the database file exists
+            if (ConsoleUtils::fileExists(confPaths::sqliteDatabasePath)) {
+                try {
+                    sqlite3* db = nullptr;
+                    int rc = sqlite3_open(confPaths::sqliteDatabasePath.c_str(), &db);
+                    if (rc) {
+                        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR, sqlite3_errmsg(db));
+                        return false;
+                    }
+                    readFromSQLite(venues, db);
+                    sqlite3_close(db);
+                    success = true;
+                } catch (const ErrorHandlerException& e) {
+                    std::cerr << "Error: " << e.what() << std::endl;
+                    success = false;
+                }
+            } else if (!venuesCsvExists) {
+                // Only throw an error if both venues.csv and the SQLite database are missing
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, confPaths::sqliteDatabasePath);
+            }
+        }
+
+        return success;
+    }
+
     // Function to read venue data from a CSV file
-    static void readCSV(std::vector<Venue>& venues, std::string& venuesCsvPath) {
-        std::ifstream file(venuesCsvPath);
-        if (!file.is_open()) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, confPaths::venuesCsvPath);
+    static void readFromCsv(std::vector<Venue>& venues, std::istream& stream) {
+        // Check if the venues.csv file exists
+        bool venuesCsvExists = ConsoleUtils::fileExists(confPaths::venuesCsvPath);
+
+        if (!stream) {
+            if (venuesCsvExists) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, confPaths::venuesCsvPath);
+            }
             return;
         }
 
         std::string line;
-        getline(file, line); // Skip the header line
+    #ifndef UNIT_TESTING
+        getline(stream, line);  // Skip the header line
+    #endif
 
-        while (getline(file, line)) {
+        while (getline(stream, line)) {
             std::istringstream ss(line);
             std::string data;
             std::vector<std::string> rowData;
@@ -188,14 +247,57 @@ public:
                 venue.city = rowData[4];
                 venue.capacity = std::stoi(rowData[5]);
                 venue.genre = rowData[6];
-
                 venues.push_back(venue);
-            } else {
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV, venuesCsvPath);
+            } else if (venuesCsvExists) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV_ERROR, confPaths::venuesCsvPath);
             }
         }
+    }
+            
 
-        file.close();
+    // Function to read venue data from an SQLite database
+    void readFromSQLite(std::vector<Venue>& venues, sqlite3* db) {
+        int rc;
+        bool shouldCloseDb = false;
+
+        if (db == nullptr) {
+            rc = sqlite3_open(":memory:", &db);
+            if (rc) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR, "In-memory database");
+                return;
+            }
+            shouldCloseDb = true;
+        }
+
+        const char* query = "SELECT name, email, country, state, city, capacity, genre FROM [venues]";
+        sqlite3_stmt* stmt;
+        rc = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
+
+        if (rc != SQLITE_OK) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_QUERY_ERROR, sqlite3_errmsg(db));
+            if (shouldCloseDb) {
+                sqlite3_close(db);
+            }
+            return;
+        }
+
+        while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+            Venue venue;
+            venue.name = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
+            venue.email = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+            venue.country = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+            venue.state = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+            venue.city = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
+            venue.capacity = sqlite3_column_int(stmt, 5);
+            venue.genre = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6)));
+
+            venues.push_back(venue);
+        }
+
+        sqlite3_finalize(stmt);
+        if (shouldCloseDb) {
+            sqlite3_close(db);
+        }
     }
 };
 

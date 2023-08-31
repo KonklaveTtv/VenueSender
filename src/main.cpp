@@ -22,7 +22,7 @@ int main() {
     bool templateExists = false;
     bool initColor = true;
     bool useSSL, verifyPeer, verifyHost, verbose;
-    
+
     // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
     if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy, initColor)) {
@@ -56,9 +56,14 @@ int main() {
     vector<SelectedVenue> temporaryCapacityBuffer;
     vector<SelectedVenue> temporaryGenreBuffer;
 
-    // Read venues data from CSV file
-    CsvReader::readCSV(venues, confPaths::venuesCsvPath);
+    // Create a VenueDatabaseReader object
+    VenueDatabaseReader dbReader;
 
+    if (!dbReader.initializeDatabaseAndReadVenueData(venues, confPaths::venuesCsvPath)) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR);
+        exit(1);
+    }
+    
     // Initialize map for booking templates
     map<string, pair<string, string>> emailToTemplate;
 
