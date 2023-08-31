@@ -926,7 +926,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
         for (const SelectedVenue& venue : selectedVenuesForEmail) {
 
             // Declare and initialize mandatory parts of the email
-            string subject = "--- Booking Inquiry for " + venue.name + " ---";
+            string subject = "Booking Inquiry for " + venue.name;
             string templateMessage = string("Hi!,\n\n")
                                     + "I am booking a tour for " + performanceName + " a " + genre + " " + performanceType +  ", from \n\n"
                                     + hometown + ". The music is similar to " + similarArtists + ".\n\n"
