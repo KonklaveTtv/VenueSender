@@ -14,6 +14,12 @@
 // Class responsible for managing email-related operations
 class EmailManager {
 public:
+    // SSL/TLS SMTP Port
+    static inline const int SSL_TLS_SMTP_PORT = 465;
+
+    // Default SMTP Port
+    static inline const int DEFAULT_SMTP_PORT = 465;
+
     // Maximum length for email message body
     static inline const int MAX_MESSAGE_LENGTH = 2000;
 
@@ -25,6 +31,12 @@ public:
 
     // Maximum length for smtp server name
     static inline const int MAX_SMTP_SERVER_LENGTH = 256;
+
+    // Reset the email send counter
+    static inline const int RESET_SEND_COUNT_TO_ZERO = 0;
+
+    // Total number of emails being sent via emailCustomAddress()
+    static inline const int CUSTOM_EMAIL_TO_SEND_COUNT = 1; // Only ever sends 1 email
 
     // Maximum attachment size (24 MB)
     const size_t MAX_ATTACHMENT_SIZE = 24 * 1024 * 1024;  // 24 MB in bytes

@@ -7,6 +7,8 @@ using namespace std;
 static int successfulSends = 0; // Counter for successful email sends
 static int successfulCustomSends = 0; // Counter for successful custom email sends
 static int successfulTemplateSends = 0; // Counter for successful template sends
+
+// Global definitions for email limits
 int totalEmails;
 int totalCustomEmails;
 int totalTemplateEmails;
@@ -303,7 +305,7 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
     ConsoleUtils::resetColor();
 #endif 
 
-    int attempts = 0;
+    int attempts = RESET_SEND_COUNT_TO_ZERO;
     bool modified = false;
 
     while (attempts < 3) {
@@ -424,7 +426,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
     ConsoleUtils::resetColor();
 #endif
 
-    int attempts = 0;
+    int attempts = RESET_SEND_COUNT_TO_ZERO;
 
     while (attempts < 3) {
 
@@ -1154,7 +1156,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
     }
 
     // Reset the count
-    successfulSends = 0;
+    successfulSends = RESET_SEND_COUNT_TO_ZERO;
 
     // Clear the subject, message, attachment fields
     clearAllCustomAddressEmailData(customAddressSubject, customAddressMessage, customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
@@ -1446,14 +1448,14 @@ void EmailManager::emailCustomAddress(CURL* curl,
             cout.flush();
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
-            totalCustomEmails = 1;
+            totalCustomEmails = CUSTOM_EMAIL_TO_SEND_COUNT;
 
             // Perform the operation
             res = curl_easy_perform(curl);
             if (res == 0) { // Check if email was sent successfully
-                successfulCustomSends = 1;
+                successfulCustomSends = CUSTOM_EMAIL_TO_SEND_COUNT;
                 double progressPercentage = 0.0;
-                if (totalCustomEmails != 0) {
+                if (totalCustomEmails != 0 || totalCustomEmails == 1) {
                     progressPercentage = (static_cast<double>(successfulCustomSends) / totalCustomEmails) * 100;
                 }
         #ifndef UNIT_TESTING
@@ -1607,7 +1609,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
     }
 
     // Send each email, displaying progress as it goes.
-    int sendCount = 0;
+    int sendCount = RESET_SEND_COUNT_TO_ZERO;
     for (const auto& venue : selectedVenuesForEmail) {
         if (sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail)) {
             sendCount++;

@@ -425,11 +425,11 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 #endif
         if (tempSmtpChar == 'y' || tempSmtpChar == 'Y') {
             useSSL = true;
-            smtpPort = 465; // Automatically set the SMTP port based on SSL selection
+            smtpPort = EmailManager::SSL_TLS_SMTP_PORT; // Automatically set the SMTP port based on SSL selection
             break;
         } else if (tempSmtpChar == 'n' || tempSmtpChar == 'N') {
             useSSL = false;
-            smtpPort = 587;
+            smtpPort = EmailManager::DEFAULT_SMTP_PORT;
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);

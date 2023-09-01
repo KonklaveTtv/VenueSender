@@ -52,7 +52,7 @@ private:
     // Utility to clear the temporary filtered venue vectors
     void clearTemporaryFilteredVenuesVectors();
 
-    // Max length for venue selection indices input
+    // Indices starting number
     static constexpr std::string::size_type INDICES_START_AT_ONE = 1;
 
     // Max length for venue selection indices input
