@@ -15,6 +15,9 @@
 #include <unistd.h>
 #include <vector>
 
+// Include headers for AES decryption
+#include <openssl/evp.h>
+
 // Include headers for SQLite
 #include <sqlite3.h>
 
@@ -28,7 +31,7 @@ namespace confPaths {
     extern std::string configJsonPath;
     extern std::string mockVenuesCsvPath;
     extern std::string mockConfigJsonPath;
-    extern std::string sqliteDatabasePath;
+    extern std::string sqliteEncryptedDatabasePath;
 }
 
 // Class for utility functions related to the console
@@ -164,6 +167,8 @@ public:
     VenueDatabaseReader() {};
     // Destructor
     ~VenueDatabaseReader() {};
+
+    bool decryptSQLiteDatabase(const std::string& encryptedFilePath, std::vector<unsigned char>& decryptedData);
 
     // Function to initialize SQLite and read data from CSV or encrypted database
     bool initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath);
