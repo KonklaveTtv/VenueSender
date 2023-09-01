@@ -18,7 +18,7 @@ public:
     static inline const int SSL_TLS_SMTP_PORT = 465;
 
     // Default SMTP Port
-    static inline const int DEFAULT_SMTP_PORT = 465;
+    static inline const int DEFAULT_SMTP_PORT = 587;
 
     // Maximum length for email message body
     static inline const int MAX_MESSAGE_LENGTH = 2000;
