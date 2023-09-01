@@ -53,10 +53,16 @@ private:
     void clearTemporaryFilteredVenuesVectors();
 
     // Max length for venue selection indices input
+    static constexpr std::string::size_type INDICES_START_AT_ONE = 1;
+
+    // Max length for venue selection indices input
     static constexpr std::string::size_type MAX_INPUT_LENGTH = 256;
-    
+   
     // Delimiter used in CSV files
     static constexpr char CSV_DELIMITER = ','; // Delimiter used in CSV files
+
+    // Max countries to display to prevent displaying the sqlite index names
+    static constexpr std::string::size_type MAX_COUNTRIES_TO_DISPLAY = 2;
 
     VenueUtilities venueUtilities;
 

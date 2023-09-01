@@ -136,17 +136,24 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
         return;
     }
 
-    // Step 2: Filter by country
-    std::set<std::string> uniqueCountries = venueUtilities.getUniqueCountries(venues);
-    output << "Available Countries: ";
-    size_t index = 1;
-    for (const auto& country : uniqueCountries) {
-        output << index++ << ". " << country << " ";
+// Step 2: Filter by country
+std::set<std::string> uniqueCountries = venueUtilities.getUniqueCountries(venues);
+output << "Available Countries: ";
+
+// Limit the number of countries to show (for example, only show the first 5)
+size_t index = INDICES_START_AT_ONE;
+size_t maxCountriesToShow = MAX_COUNTRIES_TO_DISPLAY; // Set the desired maximum number of countries to show
+for (const auto& country : uniqueCountries) {
+    if (index > maxCountriesToShow) {
+        break; // Stop displaying countries after reaching the limit
     }
+    output << index++ << ". " << country << " ";
+}
+
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-    output << "\nPlease select a country index: ";
+output << "\nPlease select a country index: ";
     size_t selectedIndex;
     input >> selectedIndex;
     input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -160,7 +167,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
         return;
     }
 
-    if (selectedIndex > uniqueCountries.size() || selectedIndex < 1) {
+    if (selectedIndex > uniqueCountries.size() || selectedIndex < 1 || selectedIndex > maxCountriesToShow) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
         return;
     }
@@ -189,7 +196,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
         auto uniqueOptionsVariant = venueUtilities.getUniqueOptions(convertedVenues, filterType);
 
         output << "Available " << filterType << "s: " << endl;
-        size_t localIndex = 1;
+        size_t localIndex = INDICES_START_AT_ONE;
         std::vector<int> localCapacityVector;
 
         std::visit([&](auto&& arg) {
@@ -286,7 +293,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
     ConsoleUtils::resetColor();
 #endif
 
-    index = 1;
+    index = INDICES_START_AT_ONE;
     for (const auto& venue : temporaryFilteredVenues) {
         output << index++ << ". " << venue.name << '\n';
         output << "State: " << venue.state << '\n';

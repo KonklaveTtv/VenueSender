@@ -136,6 +136,12 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_DATA_IN_CSV_ERROR:
             cerr << "Invalid data in CSV file: " << extraInfo << endl;
             break;
+        case ErrorType::REGISTRATION_FINAL_KEY_DERIVATION_ERROR:
+            cerr << "Failed to derive the final key to unlock the database: " << extraInfo << endl;
+            break;
+        case ErrorType::REGISTRATION_FINAL_IV_DERIVATION_ERROR:
+            cerr << "Failed to derive the final IV to unlock the database: " << extraInfo << endl;
+            break;
         case ErrorType::DATABASE_OPEN_ERROR:
             cerr << "Database failed to open: " << extraInfo << endl;
             break;
