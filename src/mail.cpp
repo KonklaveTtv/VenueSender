@@ -364,8 +364,9 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
         } else {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);           
-#endif   
-            cout << "Email saved for sending/editing." << endl;
+#endif      
+            cout << "===========================" << endl;
+            cout << "        Email saved        " << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
@@ -449,7 +450,8 @@ void EmailManager::viewEditTemplates(CURL* curl,
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-            cout << "Template saved for sending/editing." << endl;
+            cout << "===========================" << endl;
+            cout << "      Template Saved       " << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
@@ -584,7 +586,8 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-        cout << "Email sending progress completed." << endl;
+        cout << "===========================" << endl; 
+        cout << "        Emails Sent        " << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -592,7 +595,8 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "Email sending progress failed." << endl;
+        cout << "===========================" << endl;
+        cout << "    Email Sending Failed   " << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -747,7 +751,8 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-        cout << "Email sending progress completed." << endl;
+        cout << "===========================" << endl; 
+        cout << "        Emails Sent        " << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -755,7 +760,8 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "Email sending progress failed." << endl;
+        cout << "===========================" << endl;
+        cout << "    Email Sending Failed   " << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -1117,14 +1123,16 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 if (!sent) {
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-                    cerr << "Failed to send email templates." << endl;
+                    cerr << "===========================" << endl;
+                    cerr << "  Template Sending Failed  " << endl;
 #endif
                 }
             } else {
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-                cout << "Template saved for sending/editing." << endl;
+                cout << "===========================" << endl;
+                cout << "      Template Saved       " << endl;
 #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
 #endif
@@ -1489,19 +1497,21 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
             if (res == 0) {
 #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-                cout << "Email sending progress completed." << endl;
+        cout << "===========================" << endl; 
+        cout << "        Emails Sent        " << endl;
 #ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
-            } else {
+    } else {
 #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-                cout << "Email sending progress failed." << endl;
+        cout << "===========================" << endl;
+        cout << "    Email Sending Failed   " << endl;
 #ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
             }
             // Clear the subject, message, and attachment strings
@@ -1521,7 +1531,8 @@ void EmailManager::emailCustomAddress(CURL* curl,
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif           
-            cout << "Email saved for sending/editing." << endl;
+            cout << "===========================" << endl;
+            cout << "        Email Saved        " << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
@@ -1544,7 +1555,8 @@ void EmailManager::confirmSendEmail(CURL* curl,
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "Email not created yet." << endl;
+        cout << "===========================" << endl;
+        cout << "     Email Not Created     " << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -1556,7 +1568,8 @@ void EmailManager::confirmSendEmail(CURL* curl,
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "No venues have been selected. Please select venues first before attempting to send the email." << endl;
+        cout << "===========================" << endl;
+        cout << "    Venues Not Selected    " << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -1567,8 +1580,8 @@ void EmailManager::confirmSendEmail(CURL* curl,
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    cout << "==========================="<< endl;
-    cout << "===== Email Summary ======" << endl;
+    cout << "===========================" << endl;
+    cout << "       Email Summary       " << endl;
     cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
@@ -1637,8 +1650,8 @@ void EmailManager::confirmSendEmail(CURL* curl,
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
     cout << "==========================="<< endl;
-    cout << "Email sending completed. "<< endl;
-    cout << "Sent: " << sendCount << "/" << selectedVenuesForEmail.size() << endl;
+    cout << "  Email Sending Completed  "<< endl;
+    cout << " Sent: " << sendCount << "/"<< selectedVenuesForEmail.size() << endl;
     cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
