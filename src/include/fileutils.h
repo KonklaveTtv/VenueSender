@@ -25,9 +25,13 @@
 // Include headers for JSON processing
 #include <jsoncpp/json/json.h>
 
-extern const unsigned char AES_KEY[];
+extern const unsigned char DATABASE_AES_KEY[];
 
-extern const unsigned char AES_IV[];
+extern const unsigned char DATABASE_AES_IV[];
+
+extern const unsigned char REGISTRATION_AES_KEY[];
+
+extern const unsigned char REGISTRATION_AES_IV[];
 
 // Namespace to hold configuration file paths
 namespace confPaths {

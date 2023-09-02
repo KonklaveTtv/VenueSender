@@ -21,16 +21,28 @@
 // Use the standard namespace
 using namespace std;
 
-const unsigned char AES_KEY[] = {
+const unsigned char DATABASE_AES_KEY[] = {
     0x85, 0x02, 0xb3, 0x28, 0x80, 0xad, 0x47, 0x27,
     0xe6, 0xdd, 0xeb, 0x43, 0x13, 0x52, 0x0f, 0x30,
     0x0d, 0x44, 0xbb, 0xbe, 0xfb, 0xce, 0x98, 0xef,
     0x61, 0xf4, 0x19, 0x76, 0x8a, 0x00, 0x95, 0xd5
 };
 
-const unsigned char AES_IV[] = {
+const unsigned char DATABASE_AES_IV[] = {
     0x81, 0x8b, 0x67, 0x1c, 0xf2, 0xa7, 0x5c, 0x38,
     0x96, 0x08, 0xe2, 0x1c, 0xda, 0x7a, 0xaf, 0x84
+};
+
+const unsigned char REGISTRATION_AES_KEY[] = {
+    0x19, 0x97, 0x54, 0x4a, 0x2e, 0x23, 0xfa, 0xa3, 
+    0x0f, 0x1b, 0x29, 0xe0, 0xb9, 0x12, 0xaf, 0x1c, 
+    0x83, 0xfc, 0x86, 0x16, 0xc8, 0xc6, 0x3a, 0xb3, 
+    0xd9, 0x68, 0x56, 0xdf, 0x94, 0xed, 0xd9, 0x44
+};
+
+const unsigned char REGISTRATION_AES_IV[] = {
+    0xff, 0x76, 0xd7, 0xe3, 0x68, 0xb5, 0x7f, 0x8c, 
+    0x58, 0x26, 0x5a, 0x5e, 0x04, 0x6a, 0xc9, 0x12
 };
 
 // Namespace to hold configuration file paths
@@ -379,7 +391,7 @@ bool VenueDatabaseReader::decryptRegistrationKey(const std::string& registration
 
     // Decrypt the data
     int decryptedLen = 0;
-    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, AES_KEY, AES_IV) != 1 ||
+    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, REGISTRATION_AES_KEY, REGISTRATION_AES_IV) != 1 ||
         EVP_DecryptUpdate(ctx, decryptedRegistrationKeyData.data(), &decryptedLen, encryptedRegistrationKeyData.data(), encryptedRegistrationKeyData.size()) != 1) {
         // Handle error
         return false;
@@ -424,7 +436,7 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
 
     // Decrypt the data
     int decryptedLen = 0;
-    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, AES_KEY, AES_IV) != 1 ||
+    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, DATABASE_AES_KEY, DATABASE_AES_IV) != 1 ||
         EVP_DecryptUpdate(ctx, decryptedData.data(), &decryptedLen, encryptedData.data(), encryptedData.size()) != 1) {
         // Handle error
         return false;
