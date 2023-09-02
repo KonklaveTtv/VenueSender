@@ -174,19 +174,13 @@ public:
 class VenueDatabaseReader {
 public:
     // Constructor to initialize encryptedDatabase
-    VenueDatabaseReader() {};
+    VenueDatabaseReader() = default;
     // Destructor
-    ~VenueDatabaseReader() {};
-
-    bool decryptData(const std::vector<unsigned char>& encryptedData, std::vector<unsigned char>& decryptedData);
-
-    bool validateRegistrationKey(const std::vector<unsigned char>& decryptedData);
-
-    bool readAndDecryptRegistrationKey(const unsigned char* key, const unsigned char* iv, std::string& decryptedKey);
+    ~VenueDatabaseReader() = default;
 
     bool decryptSQLiteDatabase(const std::string& encryptedFilePath, std::vector<unsigned char>& decryptedData);
 
-    bool decryptRegistrationKey(const std::string& registrationKeyPath, std::vector<unsigned char>& decryptedRegistrationKeyData);
+    static bool decryptRegistrationKey(const std::string& registrationKeyPath, std::vector<unsigned char>& decryptedRegistrationKeyData);
 
     // Function to initialize SQLite and read data from CSV or encrypted database
     bool initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath);
@@ -195,7 +189,7 @@ public:
     static void readFromCsv(std::vector<Venue>& venues, std::istream& stream);
              
     // Function to read venue data from an SQLite database
-    void readFromSQLite(std::vector<Venue>& venues, sqlite3* db);
+    static void readFromSQLite(std::vector<Venue>& venues, sqlite3* db);
 };
 
 // Class for managing configuration settings

@@ -491,7 +491,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>&
         }
 
         // Allocate a separate buffer and copy the decrypted data into it
-        unsigned char* sqliteBuffer = (unsigned char*) malloc(decryptedData.size());
+        auto* sqliteBuffer = (unsigned char*) malloc(decryptedData.size());
         if (sqliteBuffer == nullptr) {
             std::cerr << "Failed to allocate memory for SQLite buffer.\n";
             return false;

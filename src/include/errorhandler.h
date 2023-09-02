@@ -7,7 +7,6 @@
 #include <mutex>
 
 // Forward declarations due to circular dependency between fileutils.h and errorhandler.h
-class CsvReader; 
 class ConfigManager;
 class ConsoleUtils; 
 

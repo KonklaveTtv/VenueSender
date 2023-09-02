@@ -157,7 +157,7 @@ public:
     static int displayTemplateOptions();
     static int displayConfigurationOptions();
 
-    void setupCurlHandle(CurlHandleWrapper& curlWrapper,
+    static void setupCurlHandle(CurlHandleWrapper& curlWrapper,
                          bool useSSL,
                          bool verifyPeer,
                          bool verifyHost,
