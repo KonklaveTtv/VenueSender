@@ -19,7 +19,7 @@ To run this project, you need the following installed on your system:
 ### Dependencies
 
       sudo apt-get update
-      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libx11-dev libssl-dev libsqlite3-dev
+      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libx11-dev libssl-dev libsqlite3-dev libboost-all-dev
 
 Install this dependency if you wish to run unit tests:
 

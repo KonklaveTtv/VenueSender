@@ -45,6 +45,9 @@ const unsigned char REGISTRATION_AES_IV[] = {
     0x58, 0x26, 0x5a, 0x5e, 0x04, 0x6a, 0xc9, 0x12
 };
 
+using Sqlite3Ptr = std::unique_ptr<sqlite3, Sqlite3Deleter>;
+using Sqlite3StmtPtr = std::unique_ptr<sqlite3_stmt, Sqlite3StmtDeleter>;
+
 // Namespace to hold configuration file paths
 namespace confPaths {
 string venuesCsvPath = "venues.csv";
@@ -66,8 +69,12 @@ void ConsoleUtils::clearConsole() {
 #endif
 }
 
+bool ConsoleUtils::caseSensitiveStringCompare(const std::string& str1, const std::string& str2) {
+    return boost::algorithm::equals(str1, str2);
+}
+
 bool ConsoleUtils::isCapsLockOn() {
-#ifdef __linux__
+#if BOOST_OS_LINUX
     Display *d = XOpenDisplay((char*)nullptr);
     unsigned n;
     if (d) {
@@ -76,7 +83,7 @@ bool ConsoleUtils::isCapsLockOn() {
         return (n & 0x01) == 1;
     }
     return false;
-#elif defined(__APPLE__)
+#elif BOOST_OS_MACOS
     io_service_t keyService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
     if (keyService) {
         CFTypeRef state = IORegistryEntryCreateCFProperty(keyService, CFSTR(kIOHIDKeyboardCapsLockState), kCFAllocatorDefault, 0);
@@ -88,7 +95,7 @@ bool ConsoleUtils::isCapsLockOn() {
         }
     }
     return false;
-#elif defined(_WIN32)
+#elif BOOST_OS_WINDOWS
     return (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
 #else
     return false; // Fallback for other platforms
@@ -116,7 +123,13 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
     while (true) {
         // Check for Caps Lock
         if (isCapsLockOn()) {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
             std::cout << "Warning: Caps Lock is on!" << std::endl;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor(); // Reset color
+#endif
         }
 
         if (initColor) {
@@ -167,6 +180,16 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
             continue;
         }
 
+        if (isCapsLockOn()) {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            std::cout << "Warning: Caps Lock is on!" << std::endl;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor(); // Reset color
+#endif
+        }
+
         if (initColor) {
            std::cout << std::endl << "Confirm your email password: ";
         } else {
@@ -207,7 +230,7 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
             std::putchar('*');
         }
 
-        if (password == confirm) {
+        if (ConsoleUtils::caseSensitiveStringCompare(password, confirm)) {
             // Passwords match, exit the loop
             break;
         } else {
@@ -243,7 +266,24 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
                                        string& senderEmail, string& smtpUsername, 
                                        string& mailPass, int& smtpPort, string& smtpServer, 
                                        string& venuesCsvPath, bool& initColor) {
+#ifdef UNIT_TESTING
+    bool isUnitTest = true;
+#else
+    bool isUnitTest = false;
+#endif
 
+
+    namespace pt = boost::property_tree;
+    pt::ptree config;
+
+    std::string configPath = isUnitTest ? confPaths::mockConfigJsonPath : confPaths::configJsonPath;
+
+    if (!boost::filesystem::exists(configPath)) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
+        return false;
+    }
+
+    pt::read_json(configPath, config);
 
 #ifdef UNIT_TESTING
     // Load plain text passwords from mock_config.json
@@ -255,113 +295,65 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     initColor = false;
 #endif
 
-// Logic to read and load settings from a JSON file
-// Includes conditional compilation for unit testing
-// Validates the loaded settings and returns a boolean flag to indicate success or failure
-#ifdef UNIT_TESTING
-    Json::Value config;
-    ifstream configFile(confPaths::mockConfigJsonPath);
-    if (!configFile.is_open()) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
+    // Load settings from the parsed JSON
+    try {
+        senderEmail = config.get<std::string>(isUnitTest ? "mock_sender_email" : "sender_email");
+        smtpPort = config.get<int>(isUnitTest ? "mock_smtp_port" : "smtp_port");
+        smtpServer = config.get<std::string>(isUnitTest ? "mock_smtp_server" : "smtp_server");
+        smtpUsername = config.get<std::string>(isUnitTest ? "mock_smtp_username" : "smtp_username");
+        venuesCsvPath = config.get<std::string>("venues_csv_path");
+
+        useSSL = config.get<bool>("useSSL");
+        verifyPeer = config.get<bool>("verifyPeer");
+        verifyHost = config.get<bool>("verifyHost");
+        verbose = config.get<bool>("verbose");
+    } catch (pt::ptree_error& e) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
         return false;
     }
 
-    configFile >> config;
+    // Validation
+    bool configLoadedSuccessfully = !(senderEmail.empty() || smtpServer.empty() || smtpUsername.empty() ||
+                                      mailPass.empty() || smtpPort <= 0);
 
-    // Load smtp user settings
-    senderEmail = config["mock_sender_email"].asString();
-    smtpPort = config["mock_smtp_port"].asInt();
-    smtpServer = config["mock_smtp_server"].asString();
-    smtpUsername = config["mock_smtp_username"].asString();
-
-    // Load SSL settings
-    useSSL = config["useSSL"].asBool();
-    verifyPeer = config["verifyPeer"].asBool();
-    verifyHost = config["verifyHost"].asBool();
-
-    // Enable verbose for cURL
-    verbose = config["verbose"].asBool();
-#else
-    Json::Value config;
-    ifstream configFile(confPaths::configJsonPath);
-    if (!configFile.is_open()) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
-        return false;
-    }
-
-    configFile >> config;
-
-    // Load smtp user settings
-    senderEmail = config["sender_email"].asString();
-    smtpPort = config["smtp_port"].asInt();
-    smtpServer = config["smtp_server"].asString();
-    smtpUsername = config["smtp_username"].asString();
-
-    // Load SSL settings
-    useSSL = config["useSSL"].asBool();
-    verifyPeer = config["verifyPeer"].asBool();
-    verifyHost = config["verifyHost"].asBool();
-
-    // Enable verbose for cURL
-    verbose = config["verbose"].asBool();
-#endif
-
-    // Define and initialize variables to track loaded settings
-    bool smtpServerLoaded = !smtpServer.empty();
-    bool smtpPortLoaded = smtpPort > 0;
-    bool smtpUsernameLoaded = !smtpUsername.empty();
-    bool venuesCsvPathLoaded = !venuesCsvPath.empty();
-    bool mailPassLoaded = !mailPass.empty();
-    bool senderEmailLoaded = !senderEmail.empty();
-
-    // Check if the configuration settings are loaded successfully
-    bool configLoadedSuccessfully = smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded &&
-                                    venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded;
-
-    // Display messages based on loaded settings
-    if (smtpServerLoaded && smtpPortLoaded && smtpUsernameLoaded && venuesCsvPathLoaded && mailPassLoaded && senderEmailLoaded) {
+    if (configLoadedSuccessfully) {
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-        cout << "Configuration from config.json Loaded" << endl;
+        std::cout << "Configuration from config.json Loaded" << std::endl;
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset color
+        ConsoleUtils::resetColor();
 #endif
-        configLoadedSuccessfully = true;
-        // Clear the console for the Main Menu
         std::this_thread::sleep_for(std::chrono::seconds(1));
         ConsoleUtils::clearConsole();
     } else {
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Red for error
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset color
+        ConsoleUtils::resetColor();
 #endif
     }
+
     return configLoadedSuccessfully;
 }
 
 // Function to check a file exists at a given path
 bool ConsoleUtils::fileExists(const std::string& filename) {
-    std::ifstream file(filename.c_str());
-    if (!file) {
+    boost::filesystem::path filePath(filename);
+    if (!boost::filesystem::exists(filePath)) {
         if (filename != confPaths::venuesCsvPath) { // Add this line to prevent error for venues.csv
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, filename);
         }
         return false;
     }
-    return file.good();
+    return true;
 }
 
 // Function to trim leading and trailing spaces from a string
 string ConsoleUtils::trim(const string& str){
-    // Trimming function
-    const auto notSpace = [](int ch) {return !isspace(ch); };
-    auto first = find_if(str.begin(), str.end(), notSpace);
-    auto last = find_if(str.rbegin(), str.rend(), notSpace).base();
-    return (first < last ? string(first, last) : string());
+    return boost::algorithm::trim_copy(str);
 }
 
 // Function to decrypt SQLite database using AES-256-CBC and store it in memory
@@ -374,17 +366,17 @@ bool VenueDatabaseReader::decryptRegistrationKey(const std::string& registration
         return false;
     }
 
-    // Open the encrypted SQLite file
-    std::ifstream encryptedRegistrationKeyFile(registrationKeyPath, std::ios::binary);
-    if (!encryptedRegistrationKeyFile.is_open()) {
+    // Check if the file exists using Boost Filesystem
+    if (!boost::filesystem::exists(registrationKeyPath)) {
         // Handle error
         return false;
     }
 
+    // Map the encrypted SQLite file into memory using Boost Iostreams
+    boost::iostreams::mapped_file_source file(registrationKeyPath);
+
     // Read encrypted data into a buffer
-    std::vector<unsigned char> encryptedRegistrationKeyData((std::istreambuf_iterator<char>(encryptedRegistrationKeyFile)),
-                                              std::istreambuf_iterator<char>());
-    encryptedRegistrationKeyFile.close();
+    std::vector<unsigned char> encryptedRegistrationKeyData(file.begin(), file.end());
 
     // Prepare buffer to store decrypted data
     decryptedRegistrationKeyData.resize(encryptedRegistrationKeyData.size());
@@ -414,22 +406,19 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
     // Initialize OpenSSL
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
-        // Handle error
         std::cerr << "Failed to initialize OpenSSL context.\n";
         return false;
     }
 
-    // Open the encrypted SQLite file
-    std::ifstream encryptedFile(encryptedFilePath, std::ios::binary);
-    if (!encryptedFile.is_open()) {
-        // Handle error
+    // Map the encrypted SQLite file into memory
+    boost::iostreams::mapped_file_source mappedFile;
+    mappedFile.open(encryptedFilePath);
+    if (!mappedFile.is_open()) {
         return false;
     }
 
     // Read encrypted data into a buffer
-    std::vector<unsigned char> encryptedData((std::istreambuf_iterator<char>(encryptedFile)),
-                                              std::istreambuf_iterator<char>());
-    encryptedFile.close();
+    std::vector<unsigned char> encryptedData(mappedFile.begin(), mappedFile.end());
 
     // Prepare buffer to store decrypted data
     decryptedData.resize(encryptedData.size());
@@ -438,13 +427,11 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
     int decryptedLen = 0;
     if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, DATABASE_AES_KEY, DATABASE_AES_IV) != 1 ||
         EVP_DecryptUpdate(ctx, decryptedData.data(), &decryptedLen, encryptedData.data(), encryptedData.size()) != 1) {
-        // Handle error
         return false;
     }
 
     int finalLen = 0;
     if (EVP_DecryptFinal_ex(ctx, decryptedData.data() + decryptedLen, &finalLen) != 1) {
-        // Handle error
         return false;
     }
 
@@ -452,6 +439,43 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
     EVP_CIPHER_CTX_free(ctx);
 
     return true;
+}
+
+// Function to read venue data from a CSV file
+void VenueDatabaseReader::readFromCsv(std::vector<Venue>& venues, std::istream& stream) {
+    // Check if the venues.csv file exists
+    bool venuesCsvExists = ConsoleUtils::fileExists(confPaths::venuesCsvPath);
+
+    if (!stream) {
+        if (venuesCsvExists) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, confPaths::venuesCsvPath);
+        }
+        return;
+    }
+
+    std::string line;
+#ifndef UNIT_TESTING
+    getline(stream, line);  // Skip the header line
+#endif
+
+    while (getline(stream, line)) {
+        boost::tokenizer<boost::escaped_list_separator<char>> tok(line);
+        std::vector<std::string> rowData(tok.begin(), tok.end());
+
+        if (rowData.size() == 7) {
+            Venue venue;
+            venue.name = rowData[0];
+            venue.email = rowData[1];
+            venue.country = rowData[2];
+            venue.state = rowData[3];
+            venue.city = rowData[4];
+            venue.capacity = std::stoi(rowData[5]);
+            venue.genre = rowData[6];
+            venues.push_back(venue);
+        } else if (venuesCsvExists) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV_ERROR, confPaths::venuesCsvPath);
+        }
+    }
 }
 
 // Function to initialize SQLite and read data from CSV or encrypted database
@@ -466,10 +490,14 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>&
     }
 
     // Try to read from CSV first
-    std::ifstream csvFile(venuesCsvPath);
-    if (csvFile.is_open()) {
-        readFromCsv(venues, csvFile);
-        csvFile.close();
+    boost::iostreams::mapped_file_source csvMappedFile;
+    csvMappedFile.open(venuesCsvPath);
+    if (csvMappedFile.is_open()) {
+        // Create a string from the iterators and then a stringstream
+        std::string csvData(csvMappedFile.begin(), csvMappedFile.end());
+        std::istringstream csvStream(csvData);
+        readFromCsv(venues, csvStream);
+        csvMappedFile.close();
         success = true;
     }
 
@@ -490,19 +518,14 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>&
             return false;
         }
 
-        // Allocate a separate buffer and copy the decrypted data into it
-        auto* sqliteBuffer = (unsigned char*) malloc(decryptedData.size());
-        if (sqliteBuffer == nullptr) {
-            std::cerr << "Failed to allocate memory for SQLite buffer.\n";
-            return false;
-        }
-        std::copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer);
+        // Use boost::scoped_array for memory management
+        boost::scoped_array<unsigned char> sqliteBuffer(new unsigned char[decryptedData.size()]);
+        std::copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer.get());
 
         // Load the copied data into the in-memory SQLite database
-        if (sqlite3_deserialize(db, "main", sqliteBuffer, decryptedData.size(), decryptedData.size(),
+        if (sqlite3_deserialize(db, "main", sqliteBuffer.get(), decryptedData.size(), decryptedData.size(),
                                 SQLITE_DESERIALIZE_RESIZEABLE | SQLITE_DESERIALIZE_FREEONCLOSE) != SQLITE_OK) {
             std::cerr << "Failed to load decrypted data into SQLite database: " << sqlite3_errmsg(db) << "\n";
-            free(sqliteBuffer);  // Free the buffer if the operation fails
             return false;
         }
 
@@ -515,90 +538,39 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>&
     return success;
 }
 
-// Function to read venue data from a CSV file
- void VenueDatabaseReader::readFromCsv(std::vector<Venue>& venues, std::istream& stream) {
-    // Check if the venues.csv file exists
-    bool venuesCsvExists = ConsoleUtils::fileExists(confPaths::venuesCsvPath);
-
-    if (!stream) {
-        if (venuesCsvExists) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, confPaths::venuesCsvPath);
-        }
-        return;
-    }
-
-    std::string line;
-#ifndef UNIT_TESTING
-    getline(stream, line);  // Skip the header line
-#endif
-
-    while (getline(stream, line)) {
-        std::istringstream ss(line);
-        std::string data;
-        std::vector<std::string> rowData;
-
-        while (getline(ss, data, ',')) {
-            rowData.push_back(ConsoleUtils::trim(data));
-        }
-
-        if (rowData.size() == 7) {
-            Venue venue;
-            venue.name = rowData[0];
-            venue.email = rowData[1];
-            venue.country = rowData[2];
-            venue.state = rowData[3];
-            venue.city = rowData[4];
-            venue.capacity = std::stoi(rowData[5]);
-            venue.genre = rowData[6];
-            venues.push_back(venue);
-        } else if (venuesCsvExists) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV_ERROR, confPaths::venuesCsvPath);
-        }
-    }
-}
-
 // Function to read venue data from an SQLite database
 void VenueDatabaseReader::readFromSQLite(std::vector<Venue>& venues, sqlite3* db) {
-    int rc;
-    bool shouldCloseDb = false;
+    Sqlite3Ptr dbPtr(nullptr, Sqlite3Deleter());
 
     if (db == nullptr) {
-        rc = sqlite3_open(":memory:", &db);
-        if (rc) {
+        sqlite3* tempDb;
+        if (sqlite3_open(":memory:", &tempDb) != SQLITE_OK) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR, "In-memory database");
             return;
         }
-        shouldCloseDb = true;
+        dbPtr.reset(tempDb);
     }
 
     const char* query = "SELECT name, email, country, state, city, capacity, genre FROM \"venues\"";
-
-    sqlite3_stmt* stmt;
-    rc = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
+    sqlite3_stmt* tempStmt;
+    if (sqlite3_prepare_v2(db, query, -1, &tempStmt, nullptr) != SQLITE_OK) {
         std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
-        if (shouldCloseDb) {
-            sqlite3_close(db);
-        }
         return;
     }
+    Sqlite3StmtPtr stmtPtr(tempStmt, Sqlite3StmtDeleter());
 
-
-    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+    while (sqlite3_step(stmtPtr.get()) == SQLITE_ROW) {
         Venue venue;
-        venue.name = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
-        venue.email = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-        venue.country = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
-        venue.state = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
-        venue.city = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
-        venue.capacity = sqlite3_column_int(stmt, 5);
-        venue.genre = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6)));
+        venue.name = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 0)));
+        venue.email = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 1)));
+        venue.country = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 2)));
+        venue.state = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 3)));
+        venue.city = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 4)));
+        venue.capacity = sqlite3_column_int(stmtPtr.get(), 5);
+        venue.genre = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 6)));
 
         venues.push_back(venue);
     }
 
-    sqlite3_finalize(stmt);
-    if (shouldCloseDb) {
-        sqlite3_close(db);
-    }
+    // Resources are automatically released when the unique_ptr's go out of scope.
 }
