@@ -5,7 +5,7 @@ UNAME_S := $(shell uname -s)
 
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -L/usr/lib
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -I/path/to/boost/include -L/usr/lib -L/usr/local/lib
 INCLUDES = -Isrc/include -Isrc
 
 # Directories
@@ -32,7 +32,7 @@ TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
 
 # Libraries common to all platforms
-LIBS = -lcurl -ljsoncpp -lssl -lcrypto -lsqlite3
+LIBS = -lcurl -ljsoncpp -lssl -lcrypto -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams
 
 # Add X11 library if on Linux
 ifeq ($(UNAME_S),Linux)

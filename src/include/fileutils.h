@@ -9,11 +9,24 @@
 #include <cstdlib>
 #include <fstream>
 #include <limits>
+#include <memory>
 #include <sstream>
 #include <termios.h>  
 #include <thread>
 #include <unistd.h>
 #include <vector>
+
+// Boost Libraries
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/optional.hpp>
+#include <boost/predef.h>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/scoped_array.hpp>
+#include <boost/tokenizer.hpp>
 
 // Include headers for AES decryption
 #include <openssl/evp.h>
@@ -32,6 +45,19 @@ extern const unsigned char DATABASE_AES_IV[];
 extern const unsigned char REGISTRATION_AES_KEY[];
 
 extern const unsigned char REGISTRATION_AES_IV[];
+
+// Custom deleters for sqlite3 and sqlite3_stmt
+struct Sqlite3Deleter {
+    void operator()(sqlite3* db) const {
+        sqlite3_close(db);
+    }
+};
+
+struct Sqlite3StmtDeleter {
+    void operator()(sqlite3_stmt* stmt) const {
+        sqlite3_finalize(stmt);
+    }
+};
 
 // Namespace to hold configuration file paths
 namespace confPaths {
@@ -162,6 +188,9 @@ public:
 
     // Method to clear the console
     static void clearConsole();
+
+    // Method to check case-sensitivity of a string
+    static bool caseSensitiveStringCompare(const std::string& str1, const std::string& str2);
 
     // Method to capture caps lock state
     static bool isCapsLockOn();
