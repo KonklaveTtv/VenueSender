@@ -21,6 +21,18 @@
 // Use the standard namespace
 using namespace std;
 
+const unsigned char AES_KEY[] = {
+    0x85, 0x02, 0xb3, 0x28, 0x80, 0xad, 0x47, 0x27,
+    0xe6, 0xdd, 0xeb, 0x43, 0x13, 0x52, 0x0f, 0x30,
+    0x0d, 0x44, 0xbb, 0xbe, 0xfb, 0xce, 0x98, 0xef,
+    0x61, 0xf4, 0x19, 0x76, 0x8a, 0x00, 0x95, 0xd5
+};
+
+const unsigned char AES_IV[] = {
+    0x81, 0x8b, 0x67, 0x1c, 0xf2, 0xa7, 0x5c, 0x38,
+    0x96, 0x08, 0xe2, 0x1c, 0xda, 0x7a, 0xaf, 0x84
+};
+
 // Namespace to hold configuration file paths
 namespace confPaths {
 string venuesCsvPath = "venues.csv";
@@ -28,6 +40,7 @@ string configJsonPath = "config.json";
 string mockVenuesCsvPath = "src/test/mock_venues.csv";
 string mockConfigJsonPath = "src/test/mock_config.json";
 string sqliteEncryptedDatabasePath = "src/db/venues.db";
+string registrationKeyPath = "registration_key.txt";
 }
 
 void ConsoleUtils::clearConsole() {
@@ -340,7 +353,7 @@ string ConsoleUtils::trim(const string& str){
 }
 
 // Function to decrypt SQLite database using AES-256-CBC and store it in memory
-bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFilePath, std::vector<unsigned char>& decryptedData) {
+bool VenueDatabaseReader::decryptRegistrationKey(const std::string& registrationKeyPath, std::vector<unsigned char>& decryptedRegistrationKeyData) {
     // Initialize OpenSSL
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
@@ -349,17 +362,50 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
         return false;
     }
 
-    unsigned char key[] = {
-        0x85, 0x02, 0xb3, 0x28, 0x80, 0xad, 0x47, 0x27,
-        0xe6, 0xdd, 0xeb, 0x43, 0x13, 0x52, 0x0f, 0x30,
-        0x0d, 0x44, 0xbb, 0xbe, 0xfb, 0xce, 0x98, 0xef,
-        0x61, 0xf4, 0x19, 0x76, 0x8a, 0x00, 0x95, 0xd5
-    };
+    // Open the encrypted SQLite file
+    std::ifstream encryptedRegistrationKeyFile(registrationKeyPath, std::ios::binary);
+    if (!encryptedRegistrationKeyFile.is_open()) {
+        // Handle error
+        return false;
+    }
 
-    unsigned char iv[] = {
-        0x81, 0x8b, 0x67, 0x1c, 0xf2, 0xa7, 0x5c, 0x38,
-        0x96, 0x08, 0xe2, 0x1c, 0xda, 0x7a, 0xaf, 0x84
-    };
+    // Read encrypted data into a buffer
+    std::vector<unsigned char> encryptedRegistrationKeyData((std::istreambuf_iterator<char>(encryptedRegistrationKeyFile)),
+                                              std::istreambuf_iterator<char>());
+    encryptedRegistrationKeyFile.close();
+
+    // Prepare buffer to store decrypted data
+    decryptedRegistrationKeyData.resize(encryptedRegistrationKeyData.size());
+
+    // Decrypt the data
+    int decryptedLen = 0;
+    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, AES_KEY, AES_IV) != 1 ||
+        EVP_DecryptUpdate(ctx, decryptedRegistrationKeyData.data(), &decryptedLen, encryptedRegistrationKeyData.data(), encryptedRegistrationKeyData.size()) != 1) {
+        // Handle error
+        return false;
+    }
+
+    int finalLen = 0;
+    if (EVP_DecryptFinal_ex(ctx, decryptedRegistrationKeyData.data() + decryptedLen, &finalLen) != 1) {
+        // Handle error
+        return false;
+    }
+
+    decryptedRegistrationKeyData.resize(decryptedLen + finalLen);
+    EVP_CIPHER_CTX_free(ctx);
+
+    return true;
+}
+
+// Function to decrypt SQLite database using AES-256-CBC and store it in memory
+bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFilePath, std::vector<unsigned char>& decryptedData) {
+    // Initialize OpenSSL
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if (ctx == nullptr) {
+        // Handle error
+        std::cerr << "Failed to initialize OpenSSL context.\n";
+        return false;
+    }
 
     // Open the encrypted SQLite file
     std::ifstream encryptedFile(encryptedFilePath, std::ios::binary);
@@ -378,7 +424,7 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
 
     // Decrypt the data
     int decryptedLen = 0;
-    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, key, iv) != 1 ||
+    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, AES_KEY, AES_IV) != 1 ||
         EVP_DecryptUpdate(ctx, decryptedData.data(), &decryptedLen, encryptedData.data(), encryptedData.size()) != 1) {
         // Handle error
         return false;
@@ -399,6 +445,13 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
 // Function to initialize SQLite and read data from CSV or encrypted database
 bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
     bool success = false;
+
+    std::vector<unsigned char> decryptedRegistrationKeyData;
+    bool decryptionSuccess = decryptRegistrationKey(confPaths::registrationKeyPath, decryptedRegistrationKeyData);
+    if (!decryptionSuccess) {
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::REGISTRATION_KEY_INVALID_ERROR);
+        return false;
+    }
 
     // Try to read from CSV first
     std::ifstream csvFile(venuesCsvPath);

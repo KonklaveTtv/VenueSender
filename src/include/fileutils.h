@@ -17,12 +17,17 @@
 
 // Include headers for AES decryption
 #include <openssl/evp.h>
+#include <openssl/sha.h>
 
 // Include headers for SQLite
 #include <sqlite3.h>
 
 // Include headers for JSON processing
 #include <jsoncpp/json/json.h>
+
+extern const unsigned char AES_KEY[];
+
+extern const unsigned char AES_IV[];
 
 // Namespace to hold configuration file paths
 namespace confPaths {
@@ -32,6 +37,7 @@ namespace confPaths {
     extern std::string mockVenuesCsvPath;
     extern std::string mockConfigJsonPath;
     extern std::string sqliteEncryptedDatabasePath;
+    extern std::string registrationKeyPath;
 }
 
 // Class for utility functions related to the console
@@ -168,7 +174,15 @@ public:
     // Destructor
     ~VenueDatabaseReader() {};
 
+    bool decryptData(const std::vector<unsigned char>& encryptedData, std::vector<unsigned char>& decryptedData);
+
+    bool validateRegistrationKey(const std::vector<unsigned char>& decryptedData);
+
+    bool readAndDecryptRegistrationKey(const unsigned char* key, const unsigned char* iv, std::string& decryptedKey);
+
     bool decryptSQLiteDatabase(const std::string& encryptedFilePath, std::vector<unsigned char>& decryptedData);
+
+    bool decryptRegistrationKey(const std::string& registrationKeyPath, std::vector<unsigned char>& decryptedRegistrationKeyData);
 
     // Function to initialize SQLite and read data from CSV or encrypted database
     bool initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath);
@@ -192,5 +206,4 @@ public:
                             std::string& mailPass, int& smtpPort, std::string& smtpServer, 
                             std::string& venuesCsvPath, bool& initColor);
 };
-
 #endif // FILEUTILS_H

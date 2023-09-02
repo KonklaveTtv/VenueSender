@@ -136,6 +136,12 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_DATA_IN_CSV_ERROR:
             cerr << "Invalid data in CSV file: " << extraInfo << endl;
             break;
+        case ErrorType::REGISTRATION_KEY_MISSING_ERROR:
+            cerr << "The registration key is missing: " << extraInfo << endl;
+            break;
+        case ErrorType::REGISTRATION_KEY_INVALID_ERROR:
+            cerr << "The registration key is invalid: " << extraInfo << endl;
+            break;
         case ErrorType::REGISTRATION_FINAL_KEY_DERIVATION_ERROR:
             cerr << "Failed to derive the final key to unlock the database: " << extraInfo << endl;
             break;
