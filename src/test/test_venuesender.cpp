@@ -75,7 +75,7 @@ TEST_CASE("VenueDatabaseReader::readFromCsv() functionality", "[VenueDatabaseRea
 }
 
 TEST_CASE("ConfigManager::loadConfigSettings() functionality", "[ConfigManager]") {
-    bool initColor;
+    // Create variables to store the loaded settings
     bool useSSL;
     bool verifyPeer;
     bool verifyHost;
@@ -85,15 +85,22 @@ TEST_CASE("ConfigManager::loadConfigSettings() functionality", "[ConfigManager]"
     string mailPass;
     int smtpPort;
     string smtpServer;
-    string venuesCsvPath;
+    string venuesPathCopy = confPaths::mockConfigJsonPath;
+    string venuesCsvPath = confPaths::mockVenuesCsvPath;
+    bool initColor;
 
+    // Create a ConfigManager instance
     ConfigManager configManager;
 
-    std::string testVenuesPathCopy = "src/test/mock_venues.csv";
-    bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, 
-                                     smtpUsername, mailPass, smtpPort, smtpServer, testVenuesPathCopy, initColor);
-    
+    // Call the loadConfigSettings function
+    bool result = configManager.loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy, initColor);
+
+    // Check if the function call was successful
     REQUIRE(result == true);
+
+    // Now you can add more REQUIRE statements to check the loaded values
+
+
     REQUIRE(useSSL == true);
     REQUIRE(verifyHost == true);
     REQUIRE(verifyPeer == true);
@@ -102,7 +109,7 @@ TEST_CASE("ConfigManager::loadConfigSettings() functionality", "[ConfigManager]"
     REQUIRE(smtpUsername == "mock_smtp_username");
     REQUIRE(smtpPort == 587);
     REQUIRE(smtpServer == "mock_smtp_server");
-    REQUIRE(testVenuesPathCopy == "src/test/mock_venues.csv");
+    REQUIRE(venuesCsvPath == "src/test/mock_venues.csv"); // Replace with the expected path
 }
 
 
