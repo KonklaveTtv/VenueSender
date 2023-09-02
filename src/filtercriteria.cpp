@@ -116,7 +116,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
 #endif
     output << "===========================" << endl;
     output << "      Venue Selection      " << endl;
-    output << "========================== " << endl;
+    output << "===========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
