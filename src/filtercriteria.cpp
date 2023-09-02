@@ -116,7 +116,7 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
 #endif
     output << "===========================" << endl;
     output << "      Venue Selection      " << endl;
-    output << "===========================" << endl;
+    output << "========================== " << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -341,12 +341,9 @@ output << "\nPlease select a country index: ";
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-    cout << "************" << endl;
-    cout << "Venues Added" << endl;
-    cout << "************" << endl;
+    cout << "===========================" << endl;
+    cout << "        Venues Added       " << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-    // Add a newline to separate the filtered venues from the main menu
-    output << endl;
 }
