@@ -336,6 +336,12 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
     transform(finalIndices.begin(), finalIndices.end(), finalIndices.begin(), ::tolower);
 
+    if (finalIndices.empty()) {
+        input.ignore(numeric_limits<streamsize>::max(), '\n');
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+        return;
+    }
+        
     if (finalIndices == "all") {
         selectedVenuesForEmail = temporaryFilteredVenues;
         selectedVenuesForTemplates = temporaryFilteredVenues;
