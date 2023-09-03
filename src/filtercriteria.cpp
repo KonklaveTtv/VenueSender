@@ -138,7 +138,7 @@ void VenueFilter::processVenueSelection(const vector<Venue>& venues,
 
     // Step 2: Filter by country
     set<string> uniqueCountries = venueUtilities.getUniqueCountries(venues);
-    output << "Available Countries: ";
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::AVAILABLE_COUNTRIES_MESSAGE);
 
     // Limit the number of countries to show (for example, only show the first 5)
     size_t index = INDICES_START_AT_ONE;
@@ -153,7 +153,7 @@ void VenueFilter::processVenueSelection(const vector<Venue>& venues,
 #ifndef UNIT_TESTING
 ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-    output << "\nPlease select a country index: ";
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SELECT_COUNTRY_MESSAGE);
     size_t selectedIndex;
     input >> selectedIndex;
     input.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -328,7 +328,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-    output << "Please select the final venue using (comma-separated) indices or type 'ALL': ";
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::FINAL_VENUE_SELECTION_MESSAGE);
     string finalIndices;
     getline(input, finalIndices);
 #ifndef UNIT_TESTING

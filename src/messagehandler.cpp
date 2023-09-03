@@ -21,6 +21,18 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         case MessageType::INITIALIZATION_MESSAGE:
             cout << "              Initiailizing...              " << endl;
             break;
+
+        // Venue Filtering Messages
+        case MessageType::AVAILABLE_COUNTRIES_MESSAGE:
+            cout << "Available Countries: ";
+        break;
+        case MessageType::SELECT_COUNTRY_MESSAGE:
+            cout << "\nPlease select a country index: ";
+        break;
+        case MessageType::FINAL_VENUE_SELECTION_MESSAGE:
+            cout << "Please select the final venue using (comma-separated) indices or type 'ALL': ";
+        break;
+
     // end of white messages
     
 

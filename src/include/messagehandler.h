@@ -18,6 +18,11 @@ public:
 	    	SPLASH_TITLE_VERSION_MESSAGE,
 	    	COPYRIGHT_INFO_MESSAGE,
 	        INITIALIZATION_MESSAGE,
+
+	        // Venue Filtering
+	        AVAILABLE_COUNTRIES_MESSAGE,
+	        SELECT_COUNTRY_MESSAGE,
+	        FINAL_VENUE_SELECTION_MESSAGE,
         
 
     	// Green

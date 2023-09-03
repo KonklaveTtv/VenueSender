@@ -2,6 +2,7 @@
 #define FILTERCRITERIA_H
 
 #include "fileutils.h"
+#include "messagehandler.h"
 #include "structs.h"
 
 #include <iomanip>
