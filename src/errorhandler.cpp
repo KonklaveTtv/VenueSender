@@ -173,6 +173,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             break;
 
         // System/Database errors
+        case ErrorType::OPENSSL_INITIALIZATION_ERROR:
+            cerr << "Failed to initialize OpenSSL context.\n" << endl;
+            break;
         case ErrorType::REGISTRATION_KEY_MISSING_ERROR:
             cerr << "The registration key is missing: " << extraInfo << endl;
             break;
@@ -195,16 +198,28 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Failed to open " << extraInfo << " for writing." << endl;
             break;
         case ErrorType::INVALID_CAPACITY_IN_CSV_ERROR:
-            cerr << boost::format("Invalid capacity in CSV file: %1%\n") % extraInfo;
+            cerr << boost::format("Invalid capacity in CSV file: %1%\n") % extraInfo << endl;
             break;
         case ErrorType::INVALID_DATA_IN_CSV_ERROR:
-            cerr << boost::format("Invalid data in CSV file: %1%\n") % extraInfo;
+            cerr << boost::format("Invalid data in CSV file: %1%\n") % extraInfo << endl; 
+            break;
+        case ErrorType::SQLITE_DATABASE_DECRYPTION_ERROR:
+            cerr << "Failed to decrypt SQLite database.\n" << endl;
+            break;
+        case ErrorType::SQLITE_MEMORY_ALLOCATION_ERROR:
+            cerr << "Failed to open in-memory SQLite database: " << extraInfo << "\n" << endl;
+            break;
+        case ErrorType::SQLITE_DECRYPTED_DATABASE_LOAD_ERROR:
+            cerr << "Failed to load decrypted data into SQLite database: " << extraInfo << "\n" << endl;
             break;
         case ErrorType::DATABASE_OPEN_ERROR:
             cerr << "Database failed to open: " << extraInfo << endl;
             break;
         case ErrorType::DATABASE_QUERY_ERROR: 
             cerr << "Database failed to read venue data from database: " << extraInfo << endl;
+            break;
+        case ErrorType::SQLITE_STATEMENT_ERROR:
+            cerr << "Failed to prepare statement: " << extraInfo << endl;
             break;
 #ifdef UNIT_TESTING
         default:

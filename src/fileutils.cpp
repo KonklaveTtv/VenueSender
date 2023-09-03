@@ -383,8 +383,7 @@ bool VenueDatabaseReader::decryptRegistrationKey(const string& registrationKeyPa
     // Initialize OpenSSL
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
-        // Handle error
-        cerr << "Failed to initialize OpenSSL context.\n";
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::OPENSSL_INITIALIZATION_ERROR);
         return false;
     }
 
@@ -428,7 +427,7 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const string& encryptedFilePath,
     // Initialize OpenSSL
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
-        cerr << "Failed to initialize OpenSSL context.\n";
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::OPENSSL_INITIALIZATION_ERROR);
         return false;
     }
 
@@ -529,14 +528,14 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         vector<unsigned char> decryptedData;
         bool decryptionSuccess = decryptSQLiteDatabase(confPaths::sqliteEncryptedDatabasePath, decryptedData);
         if (!decryptionSuccess) {
-            cerr << "Failed to decrypt SQLite database.\n";
+            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DATABASE_DECRYPTION_ERROR);
             return false;
         }
 
         // Initialize an in-memory SQLite database from the decrypted data
         sqlite3* db = nullptr;
         if (sqlite3_open(":memory:", &db) != SQLITE_OK) {
-            cerr << "Failed to open in-memory SQLite database: " << sqlite3_errmsg(db) << "\n";
+            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_MEMORY_ALLOCATION_ERROR);
             return false;
         }
 
@@ -547,7 +546,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         // Load the copied data into the in-memory SQLite database
         if (sqlite3_deserialize(db, "main", sqliteBuffer.get(), decryptedData.size(), decryptedData.size(),
                                 SQLITE_DESERIALIZE_RESIZEABLE | SQLITE_DESERIALIZE_FREEONCLOSE) != SQLITE_OK) {
-            cerr << "Failed to load decrypted data into SQLite database: " << sqlite3_errmsg(db) << "\n";
+            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DECRYPTED_DATABASE_LOAD_ERROR);
             return false;
         }
 
@@ -576,7 +575,7 @@ void VenueDatabaseReader::readFromSQLite(vector<Venue>& venues, sqlite3* db) {
     const char* query = "SELECT name, email, country, state, city, capacity, genre FROM \"venues\"";
     sqlite3_stmt* tempStmt;
     if (sqlite3_prepare_v2(db, query, -1, &tempStmt, nullptr) != SQLITE_OK) {
-        cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << endl;
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SQLITE_STATEMENT_ERROR);
         return;
     }
     Sqlite3StmtPtr stmtPtr(tempStmt, Sqlite3StmtDeleter());
