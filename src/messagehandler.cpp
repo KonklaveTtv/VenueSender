@@ -7,6 +7,10 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 
     // Switch statement to handle different types of messages
     switch (message) {
+
+    // White Messages
+        
+        // Splashscreen Messages
         case MessageType::SPLASH_TITLE_VERSION_MESSAGE:
             cout << "                VenueSender                " << "\n" << endl;
             cout << "                  v0.0.1a                  " << endl;
@@ -17,7 +21,12 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         case MessageType::INITIALIZATION_MESSAGE:
             cout << "              Initiailizing...              " << endl;
             break;
+    // end of white messages
+    
 
+    // Green Messages
+    
+        //Email Config Messages
         case MessageType::SETTINGS_UPDATED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
@@ -26,30 +35,38 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
+
+        // Email Messages
+        case MessageType::EMAIL_CREATION_SUCCESS_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Enter the path of the file to attach (or press Enter to skip): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Do you want to send the template? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+    // end of green messages
+
+
+    // Orange Messages
+
+        // Menu Messages
         case MessageType::ENTER_CHOICE_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
             cout << "Enter your choice: ";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-            break;
-        case MessageType::EXIT_CONFIRMATION_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-            cout << "Are you sure you want to exit? (Y/N): ";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-            break;
-        case MessageType::EXITING_VENUESENDER_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Exiting VenueSender" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -63,6 +80,18 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif
             break;
+        case MessageType::EXITING_VENUESENDER_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Exiting VenueSender" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
+
+
+        // Email Config Messages
         case MessageType::USE_SSL_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -153,6 +182,112 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif
             break;
+
+        // Email Messages
+        case MessageType::ENTER_SUBJECT_FOR_EMAIL_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Enter subject for the email (press Enter on a new line to finish): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;
+        case MessageType::ENTER_MESSAGE_FOR_EMAIL_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Enter the message for the email (press Enter on a new line to finish):\n";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Do you want to add an attachment? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::ADD_ATTACHMENT_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Enter the path of the file to attach (or press Enter to skip): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Do you want to add a different attachment? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+    // end of orange messages
+
+
+    // Red Messages
+
+        // Menu Messages
+        case MessageType::PRESS_RETURN_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "Press return to go back..." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
+        case MessageType::EXIT_CONFIRMATION_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "Are you sure you want to exit? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
+        
+
+        // Email Messages
+        case MessageType::ATTACHMENT_INVALID_CHOICE_ERROR:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "Invalid choice. Please enter Y or N." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
+        case MessageType::MODIFY_EMAIL_CONFIRMATION_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+
+        cout << "Do you wish to modify this email? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif               
+            break;        
+
+        // Template Messages
+        case MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+
+        cout << "Do you wish to modify this template? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif               
+            break;
+    // end of red messages
     }
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
