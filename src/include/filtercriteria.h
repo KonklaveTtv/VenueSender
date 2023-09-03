@@ -82,10 +82,10 @@ public:
 
     // Function to process user input and select venues based on it
     void processVenueSelection(const std::vector<Venue>& venues,
-                                      std::vector<SelectedVenue>& selectedVenuesForEmail,
-                                      std::vector<SelectedVenue>& selectedVenuesForTemplates,
-                                      std::istream& input = std::cin,
-                                      std::ostream& output = std::cout);
+                               std::vector<SelectedVenue>& selectedVenuesForEmail,
+                               std::vector<SelectedVenue>& selectedVenuesForTemplates,
+                               std::istream& input = std::cin,
+                               std::ostream& output = std::cout);
 
 #ifdef UNIT_TESTING
     const std::vector<SelectedVenue>& getFilteredResults() const { return temporaryFilteredVenues; }

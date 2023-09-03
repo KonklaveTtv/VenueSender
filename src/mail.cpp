@@ -709,15 +709,15 @@ void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& l
 }
 
 void EmailManager::createBookingTemplate(CURL* curl,
-                                       const string& senderEmail,
-                                       map<string, pair<string, string>>& emailToTemplate,
-                                       const string& smtpServer,
-                                       int smtpPort,
-                                       string& attachmentName,
-                                       string& attachmentSize,
-                                       string& attachmentPath,
-                                       const vector<SelectedVenue>& selectedVenuesForEmail,
-                                       bool templateExists) const {
+                                         const string& senderEmail,
+                                         map<string, pair<string, string>>& emailToTemplate,
+                                         const string& smtpServer,
+                                         int smtpPort,
+                                         string& attachmentName,
+                                         string& attachmentSize,
+                                         string& attachmentPath,
+                                         const vector<SelectedVenue>& selectedVenuesForEmail,
+                                         bool templateExists) const {
 
     // String declarations for the booking template
     string genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
@@ -1322,15 +1322,15 @@ void EmailManager::emailCustomAddress(CURL* curl,
 }
 
 void EmailManager::confirmSendEmail(CURL* curl,
-                      vector<SelectedVenue>& selectedVenuesForEmail,
-                      const string& senderEmail,
-                      string& subject,
-                      string& message,
-                      const string& smtpServer,
-                      int smtpPort,
-                      string& attachmentName,
-                      string& attachmentSize,
-                      string& attachmentPath) {
+                                    vector<SelectedVenue>& selectedVenuesForEmail,
+                                    const string& senderEmail,
+                                    string& subject,
+                                    string& message,
+                                    const string& smtpServer,
+                                    int smtpPort,
+                                    string& attachmentName,
+                                    string& attachmentSize,
+                                    string& attachmentPath) {
 
     if (subject.empty() && message.empty()) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_NOT_CREATED_MESSAGE);

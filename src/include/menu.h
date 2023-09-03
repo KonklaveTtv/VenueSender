@@ -112,7 +112,7 @@ public:
     // Constructor for MenuManager;
     MenuManager() = default;  // Default constructor
     MenuManager(bool useSSL, bool verifyPeer, bool verifyHost, bool verbose, std::string senderEmail, std::string mailPass, std::string smtpUsername, int smtpPort, std::string smtpServer)
-        : useSSL(useSSL), verifyPeer(verifyPeer), verifyHost(verifyHost), verbose(verbose), senderEmail(std::move(senderEmail)), mailPass(std::move(mailPass)), smtpUsername(std::move(smtpUsername)), smtpPort(smtpPort), smtpServer(std::move(smtpServer)) {}
+                : useSSL(useSSL), verifyPeer(verifyPeer), verifyHost(verifyHost), verbose(verbose), senderEmail(std::move(senderEmail)), mailPass(std::move(mailPass)), smtpUsername(std::move(smtpUsername)), smtpPort(smtpPort), smtpServer(std::move(smtpServer)) {}
 
     // Function to nevigate the menu system
     bool navigateMenus(EmailManager& emailManager, 
@@ -158,16 +158,16 @@ public:
     static int displayConfigurationOptions();
 
     static void setupCurlHandle(CurlHandleWrapper& curlWrapper,
-                         bool useSSL,
-                         bool verifyPeer,
-                         bool verifyHost,
-                         const std::string& sslCertPath,
-                         const std::string& smtpUsername,
-                         const std::string& mailPass,
-                         const std::string& senderEmail,
-                         int smtpPort,
-                         const std::string& smtpServer,
-                         bool verbose);
+                                bool useSSL,
+                                bool verifyPeer,
+                                bool verifyHost,
+                                const std::string& sslCertPath,
+                                const std::string& smtpUsername,
+                                const std::string& mailPass,
+                                const std::string& senderEmail,
+                                int smtpPort,
+                                const std::string& smtpServer,
+                                bool verbose);
 
     static bool editConfigurationSettings(bool& useSSL, std::string& sslCertPath, bool& verifyPeer, bool& verifyHost, bool& verbose, 
                                           std::string& senderEmail, std::string& smtpUsername, 

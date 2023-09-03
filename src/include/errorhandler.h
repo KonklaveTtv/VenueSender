@@ -79,7 +79,7 @@ public:
     INVALID_URL_ERROR,
     LIBCURL_ERROR,
 
-    // System errors
+    // System Errors
     OPENSSL_INITIALIZATION_ERROR,
     FILESYSTEM_ERROR,
     TERMINAL_GET_ATTRIBUTES_ERROR,

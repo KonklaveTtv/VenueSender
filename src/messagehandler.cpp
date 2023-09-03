@@ -411,7 +411,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-
         cout << "Do you wish to modify this email? (Y/N): ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
@@ -451,7 +450,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-
         cout << "No booking templates have been created yet." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
@@ -461,7 +459,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-
         cout << "Do you wish to modify this template? (Y/N): ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
@@ -471,7 +468,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-
         cout << "This field is mandatory. Please provide a value." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
@@ -481,7 +477,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-
         cout << "You've left this field empty. Was this intentional? (y/n): ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
@@ -491,15 +486,32 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-
         cout << "Template sending aborted by user." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
             break;
+
     // end of red messages
-    }
+
+  
+        // Default Message
+#ifdef UNIT_TESTING
+        default:
+            cerr << "" << endl;
+            break;
+#else
+
+        default:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cerr << "Success." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
+            break;
+
+#endif // UNIT_TESTING
+    }
 }

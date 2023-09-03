@@ -74,11 +74,11 @@ public:
     }
 
     static inline void clearAllCustomAddressEmailData(std::string& customAddressSubject, std::string& customAddressMessage, std::string& customAddressAttachmentName, std::string& customAddressAttachmentSize, std::string& customAddressAttachmentPath) {
-    customAddressSubject.clear();
-    customAddressMessage.clear();
-    customAddressAttachmentName.clear();
-    customAddressAttachmentSize.clear();
-    customAddressAttachmentPath.clear();
+        customAddressSubject.clear();
+        customAddressMessage.clear();
+        customAddressAttachmentName.clear();
+        customAddressAttachmentSize.clear();
+        customAddressAttachmentPath.clear();
     }
 
 
@@ -169,40 +169,40 @@ public:
 
     // Function to send an individual email to a selected venue
     static bool sendIndividualEmail(CURL* curl,
-                             const SelectedVenue& selectedVenue,
-                             const std::string& senderEmail,
-                             std::string& subject,
-                             std::string& message,
-                             const std::string& smtpServer,
-                             int smtpPort,
-                             std::string& attachmentName,
-                             std::string& attachmentSize,
-                             std::string& attachmentPath,
-                             const std::vector<SelectedVenue>& selectedVenuesForEmail);
+                                    const SelectedVenue& selectedVenue,
+                                    const std::string& senderEmail,
+                                    std::string& subject,
+                                    std::string& message,
+                                    const std::string& smtpServer,
+                                    int smtpPort,
+                                    std::string& attachmentName,
+                                    std::string& attachmentSize,
+                                    std::string& attachmentPath,
+                                    const std::vector<SelectedVenue>& selectedVenuesForEmail);
 
     static bool sendBookingTemplateEmails(CURL* curl,
-                                   const std::string& senderEmail,
-                                   std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
-                                   const std::string& smtpServer,
-                                   int smtpPort,
-                                   std::string& attachmentName,
-                                   std::string& attachmentSize,
-                                   std::string& attachmentPath);
+                                          const std::string& senderEmail,
+                                          std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
+                                          const std::string& smtpServer,
+                                          int smtpPort,
+                                          std::string& attachmentName,
+                                          std::string& attachmentSize,
+                                          std::string& attachmentPath);
 
     // Function to append the string for the booking template
     void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) const;
 
     // Function to send a booking template email
     void createBookingTemplate(CURL* curl,
-                             const std::string& senderEmail,
-                             std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
-                             const std::string& smtpServer,
-                             int smtpPort,
-                             std::string& attachmentName,
-                             std::string& attachmentSize,
-                             std::string& attachmentPath,
-                             const std::vector<SelectedVenue>& selectedVenuesForEmail,
-                             bool templateExists) const;
+                               const std::string& senderEmail,
+                               std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
+                               const std::string& smtpServer,
+                               int smtpPort,
+                               std::string& attachmentName,
+                               std::string& attachmentSize,
+                               std::string& attachmentPath,
+                               const std::vector<SelectedVenue>& selectedVenuesForEmail,
+                               bool templateExists) const;
 
     // Function to send to a custom email address
     void emailCustomAddress(CURL* curl,
@@ -217,25 +217,25 @@ public:
 
     // Function to confirm the email before sending
     static void confirmSendEmail(CURL* curl,
-                          std::vector<SelectedVenue>& selectedVenuesForEmail,
-                          const std::string& senderEmail,
-                          std::string& subject,
-                          std::string& message,
-                          const std::string& smtpServer,
-                          int smtpPort,
-                          std::string& attachmentName,
-                          std::string& attachmentSize,
-                          std::string& attachmentPath);
+                                 std::vector<SelectedVenue>& selectedVenuesForEmail,
+                                 const std::string& senderEmail,
+                                 std::string& subject,
+                                 std::string& message,
+                                 const std::string& smtpServer,
+                                 int smtpPort,
+                                 std::string& attachmentName,
+                                 std::string& attachmentSize,
+                                 std::string& attachmentPath);
 
     static void confirmSendBookingTemplates(CURL* curl,
-                                     std::vector<SelectedVenue>& selectedVenuesForTemplates,
-                                     const std::string& senderEmail,
-                                     std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
-                                     const std::string& smtpServer,
-                                     int smtpPort,
-                                     std::string& attachmentName,
-                                     std::string& attachmentSize,
-                                     std::string& attachmentPath);
+                                            std::vector<SelectedVenue>& selectedVenuesForTemplates,
+                                            const std::string& senderEmail,
+                                            std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
+                                            const std::string& smtpServer,
+                                            int smtpPort,
+                                            std::string& attachmentName,
+                                            std::string& attachmentSize,
+                                            std::string& attachmentPath);
 };
 
 #endif // MAIL_H

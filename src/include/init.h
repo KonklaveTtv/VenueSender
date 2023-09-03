@@ -18,6 +18,7 @@ private:
     bool useSSL, verifyPeer, verifyHost, verbose;
 public:
 
+	// Length of asterisks for border
 	// ********************************************
 	static constexpr int BORDER_LENGTH = 44;
 
