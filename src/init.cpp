@@ -42,7 +42,7 @@ void Init::splashscreen() {
     ConsoleUtils::resetColor();
 #endif
     
-    cout << "              Initiailizing...              " << endl;
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::INITIALIZATION_MESSAGE);
     this_thread::sleep_for(chrono::seconds(1));
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);

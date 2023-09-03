@@ -15,7 +15,8 @@ public:
     	// White
     	SPLASH_TITLE_VERSION_MESSAGE,
     	COPYRIGHT_INFO_MESSAGE,
-
+        INITIALIZATION_MESSAGE,
+        
     	// Green
         SETTINGS_UPDATED_MESSAGE,
 

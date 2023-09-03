@@ -14,7 +14,9 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         case MessageType::COPYRIGHT_INFO_MESSAGE:
             cout << "    Copyright (c) 2023 | Spencer Lievens    " << endl;
             break;
-
+        case MessageType::INITIALIZATION_MESSAGE:
+            cout << "              Initiailizing...              " << endl;
+            break;
 
         case MessageType::SETTINGS_UPDATED_MESSAGE:
 #ifndef UNIT_TESTING
@@ -29,7 +31,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-            cout << "Please enter your choice: ";
+            cout << "Enter your choice: ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
