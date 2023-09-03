@@ -7,6 +7,15 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 
     // Switch statement to handle different types of messages
     switch (message) {
+        case MessageType::SPLASH_TITLE_VERSION_MESSAGE:
+            cout << "                VenueSender                " << "\n" << endl;
+            cout << "                  v0.0.1a                  " << endl;
+            break;
+        case MessageType::COPYRIGHT_INFO_MESSAGE:
+            cout << "    Copyright (c) 2023 | Spencer Lievens    " << endl;
+            break;
+
+
         case MessageType::SETTINGS_UPDATED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);

@@ -155,7 +155,7 @@ int MenuManager::displayMenuOptions() {
         cout << EXIT_OPTION << ". Exit" << endl;
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
-        //ConsoleUtils::clearInputBuffer();
+        ConsoleUtils::clearInputBuffer();
 
         // Handle exit right here
         if (choice == EXIT_OPTION) {
@@ -204,6 +204,7 @@ int MenuManager::displayVenueSelectionOptions() {
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
+        ConsoleUtils::clearInputBuffer();
 
         if (choice >= SELECT_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
             break;
@@ -232,6 +233,7 @@ int MenuManager::displayVenueOptions() {
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
+        ConsoleUtils::clearInputBuffer();
 
         if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS) {
             break;
@@ -262,6 +264,7 @@ int MenuManager::displayEmailOptions() {
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
+        ConsoleUtils::clearInputBuffer();
 
         if (choice >= CREATE_EMAIL_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS) {
             break;
@@ -292,6 +295,7 @@ int MenuManager::displayTemplateOptions() {
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
+        ConsoleUtils::clearInputBuffer();
 
         if (choice >= CREATE_VENUE_BOOKING_TEMPLATE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS) {
             break;
@@ -320,6 +324,7 @@ int MenuManager::displayConfigurationOptions() {
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
+        ConsoleUtils::clearInputBuffer();
 
         if (choice >= SHOW_EMAIL_SETTINGS_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS) {
             break;
@@ -360,7 +365,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::USE_SSL_CONFIG_MESSAGE);
         cin >> tempSmtpChar;
-
+        ConsoleUtils::clearInputBuffer();
         if (tempSmtpChar == 'y' || tempSmtpChar == 'Y') {
             useSSL = true;
             smtpPort = EmailManager::SSL_TLS_SMTP_PORT; // Automatically set the SMTP port based on SSL selection
@@ -380,6 +385,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SSL_CERTIFICATE_PATH_CONFIG_MESSAGE);
         string sslCertPathInput;
         getline(cin, sslCertPathInput);
+        ConsoleUtils::clearInputBuffer();
 
 
         // Remove quotes and trim spaces
@@ -420,6 +426,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::VERIFY_PEER_CONFIG_MESSAGE);
         cin >> verifyPeerTempChar;
+        ConsoleUtils::clearInputBuffer();
 
         if (verifyPeerTempChar == 'y' || verifyPeerTempChar == 'Y') {
             verifyPeer = true;
@@ -437,6 +444,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::VERIFY_HOST_CONFIG_MESSAGE);
         cin >> verifyHostTempChar;
+        ConsoleUtils::clearInputBuffer();
 
         if (verifyHostTempChar == 'y' || verifyHostTempChar == 'Y') {
             verifyHost = true;
@@ -454,6 +462,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::VERBOSE_CONFIG_MESSAGE);
         cin >> verboseTempChar;
+        ConsoleUtils::clearInputBuffer();
         
         if (verboseTempChar == 'y' || verboseTempChar == 'Y') {
             verbose = true;
@@ -470,6 +479,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
     while (true) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SENDER_EMAIL_CONFIG_MESSAGE);
         cin >> senderEmailTempStr;
+        ConsoleUtils::clearInputBuffer();
 
         if (!EmailManager::isValidEmail(senderEmailTempStr)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
@@ -487,6 +497,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_USERNAME_CONFIG_MESSAGE);
         cin >> smtpUsernameTempStr;
+        ConsoleUtils::clearInputBuffer();
 
         // Check for whitespace and control characters
         if (smtpUsernameTempStr.find_first_of(" \t\n\r\f\v") != string::npos) {
@@ -516,6 +527,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
     while (true) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_SERVER_CONFIG_MESSAGE);
         cin >> smtpServerTempStr;
+        ConsoleUtils::clearInputBuffer();
 
         // Length check
         if (smtpServerTempStr.length() < EmailManager::MIN_SMTP_SERVER_LENGTH || smtpServerTempStr.length() > EmailManager::MAX_SMTP_SERVER_LENGTH) {
@@ -544,6 +556,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_PORT_CONFIG_MESSAGE);
         string portInput;
         getline(cin, portInput);  // Using getline to capture the full line, which allows empty input
+        ConsoleUtils::clearInputBuffer();
 
         // Whitespace check (full whitespace)
         if (count(portInput.begin(), portInput.end(), ' ') > 1 &&
@@ -581,7 +594,9 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 while (true) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_PASSWORD_CONFIG_MESSAGE);
         cin >> tempSmtpChar;
-
+        std::cin.clear();
+        ConsoleUtils::clearInputBuffer();
+        
         if (tempSmtpChar == 'y' || tempSmtpChar == 'Y') {
             // Edit SMTP Password
             initColor = false;

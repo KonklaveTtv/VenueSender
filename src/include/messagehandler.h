@@ -12,12 +12,15 @@ public:
 	// Enumeration to represent different types of message that can be encountered
     enum class MessageType {
 
+    	// White
+    	SPLASH_TITLE_VERSION_MESSAGE,
+    	COPYRIGHT_INFO_MESSAGE,
+
     	// Green
         SETTINGS_UPDATED_MESSAGE,
 
     	// Orange
     	ENTER_CHOICE_MESSAGE,
-    	EXIT_CONFIRMATION_MESSAGE,
     	EXITING_VENUESENDER_MESSAGE,
     	RETURN_TO_MAIN_MENU_MESSAGE,
 		USE_SSL_CONFIG_MESSAGE,
@@ -29,7 +32,10 @@ public:
         SMTP_USERNAME_CONFIG_MESSAGE,
         SMTP_SERVER_CONFIG_MESSAGE,
         SMTP_PORT_CONFIG_MESSAGE,
-        SMTP_PASSWORD_CONFIG_MESSAGE
+        SMTP_PASSWORD_CONFIG_MESSAGE,
+
+        // Red
+    	EXIT_CONFIRMATION_MESSAGE
 
     };
 

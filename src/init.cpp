@@ -19,25 +19,18 @@ void Init::splashscreen() {
 #endif
 
     // Display splash text centered
-    cout << "                VenueSender                " << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "********************************************" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-    cout << "               Version 0.0.1a               " << endl;
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SPLASH_TITLE_VERSION_MESSAGE);
 
     // Display copyright and other text in cyan
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    cout << "********************************************" << endl;
+    for (int i = 0; i < BORDER_LENGTH; ++i) cout << '*';
+    cout << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-    cout << "    Copyright (c) 2023 | Spencer Lievens    " << endl;
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::COPYRIGHT_INFO_MESSAGE);
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
@@ -54,7 +47,8 @@ void Init::splashscreen() {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-        cout << "============================================" << endl;
+    for (int i = 0; i < BORDER_LENGTH; ++i) cout << '=';
+    cout << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
