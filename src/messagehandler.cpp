@@ -21,6 +21,12 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         case MessageType::INITIALIZATION_MESSAGE:
             cout << "              Initiailizing...              " << endl;
             break;
+        case MessageType::INIT_ENTER_PASSWORD_MESSAGE:
+            cout << "Enter your email password: ";
+            break;
+        case MessageType::INIT_CONFIRM_PASSWORD_MESSAGE:
+            cout << endl << "Confirm your email password: ";
+            break;
 
         // Venue Filtering Messages
         case MessageType::AVAILABLE_COUNTRIES_MESSAGE:
@@ -37,8 +43,28 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     
 
     // Green Messages
-    
+        
+        // System Message
+        case MessageType::CONFIG_JSON_LOADED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Configuration from config.json Loaded" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;        
+        
         //Email Config Messages
+        case MessageType::PASSWORD_MATCHES_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << endl << "Password matches!" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;
         case MessageType::SETTINGS_UPDATED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
@@ -224,6 +250,24 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif
             break;
+        case MessageType::EMAIL_CONFIG_ENTER_PASSWORD_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Enter your email password: ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
+        case MessageType::EMAIL_CONFIG_CONFIRM_PASSWORD_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << endl << "Confirm your email password: ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
         case MessageType::SMTP_PASSWORD_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -304,6 +348,15 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     // Red Messages
 
         // Menu Messages
+        case MessageType::CAPS_LOCK_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "Warning: Caps Lock is on!" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
         case MessageType::VENUES_NOT_SELECTED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);

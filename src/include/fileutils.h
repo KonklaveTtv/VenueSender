@@ -2,6 +2,7 @@
 #define FILEUTILS_H
 
 #include "errorhandler.h"
+#include "messagehandler.h"
 #include "structs.h"
 
 #include <algorithm>

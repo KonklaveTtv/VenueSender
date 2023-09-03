@@ -18,6 +18,8 @@ public:
 	    	SPLASH_TITLE_VERSION_MESSAGE,
 	    	COPYRIGHT_INFO_MESSAGE,
 	        INITIALIZATION_MESSAGE,
+	        INIT_ENTER_PASSWORD_MESSAGE,
+	        INIT_CONFIRM_PASSWORD_MESSAGE,
 
 	        // Venue Filtering
 	        AVAILABLE_COUNTRIES_MESSAGE,
@@ -26,8 +28,12 @@ public:
         
 
     	// Green
-    
-    		// Email Config
+    		
+	        // System Messages
+	        CONFIG_JSON_LOADED_MESSAGE,
+
+       		// Email Config
+	        PASSWORD_MATCHES_MESSAGE,
 	        SETTINGS_UPDATED_MESSAGE,
 
 	        // Email
@@ -58,6 +64,8 @@ public:
 	        SMTP_USERNAME_CONFIG_MESSAGE,
 	        SMTP_SERVER_CONFIG_MESSAGE,
 	        SMTP_PORT_CONFIG_MESSAGE,
+	        EMAIL_CONFIG_ENTER_PASSWORD_MESSAGE,
+	        EMAIL_CONFIG_CONFIRM_PASSWORD_MESSAGE,
 	        SMTP_PASSWORD_CONFIG_MESSAGE,
 
 	        // Email
@@ -73,6 +81,7 @@ public:
         // Red
 
 	        // Menu
+	        CAPS_LOCK_MESSAGE,
 	        VENUES_NOT_SELECTED_MESSAGE,
 	    	PRESS_RETURN_MESSAGE,
 	    	EXIT_CONFIRMATION_MESSAGE,

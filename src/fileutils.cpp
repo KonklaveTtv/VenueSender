@@ -123,25 +123,13 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     while (true) {
         // Check for Caps Lock
         if (isCapsLockOn()) {
-    #ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-    #endif
-            cout << "Warning: Caps Lock is on!" << endl;
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor(); // Reset color
-    #endif
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CAPS_LOCK_MESSAGE);
         }
 
         if (initColor) {
-            cout << "Enter your email password: ";
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::INIT_ENTER_PASSWORD_MESSAGE);
         } else {
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
-#endif
-            cout << "Enter your email password: ";
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor(); // Reset color
-#endif
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_PASSWORD_CONFIG_MESSAGE);
         }
 
         password.clear();
@@ -191,12 +179,12 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         }
 
         if (initColor) {
-           cout << endl << "Confirm your email password: ";
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::INIT_CONFIRM_PASSWORD_MESSAGE);
         } else {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
 #endif
-            cout << endl << "Confirm your email password: ";
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_CONFIG_CONFIRM_PASSWORD_MESSAGE);
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset color
 #endif
@@ -250,13 +238,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     }
 
     // If passwords match give confirmation
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
-#endif
-    cout << endl << "Password matches!" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor(); // Reset color
-#endif
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PASSWORD_MATCHES_MESSAGE);
     this_thread::sleep_for(chrono::seconds(1));
     ConsoleUtils::clearConsole();
 
@@ -329,23 +311,12 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
                                       mailPass.empty() || smtpPort <= 0);
 
     if (configLoadedSuccessfully) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-        cout << "Configuration from config.json Loaded" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIG_JSON_LOADED_MESSAGE);
         this_thread::sleep_for(chrono::seconds(1));
         ConsoleUtils::clearConsole();
     } else {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+
     }
 
     return configLoadedSuccessfully;
