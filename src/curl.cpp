@@ -104,7 +104,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const string&
     // Set SSL options using the CurlHandleWrapper method
     curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
 
-    // Increase timeout for larger attachments
+    // Time is currently set to 60 seconds
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60L);
 
     // Set callback function to read data for sending in the request

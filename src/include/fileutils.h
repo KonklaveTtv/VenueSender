@@ -76,6 +76,9 @@ public:
     static inline const int MIN_PASSWORD_LENGTH = 1;
     static inline const int MAX_PASSWORD_LENGTH = 100;
 
+    static constexpr int ASCII_BACKSPACE = 8;
+    static constexpr int ASCII_DELETE = 127;
+    
 #ifndef UNIT_TESTING
     enum class Color {
         RED,
@@ -202,6 +205,25 @@ public:
 // Class for reading data from a CSV file or encrypted database
 class VenueDatabaseReader {
 public:
+    // Constants for CSV file reading
+    static constexpr int CSV_TOTAL_ROW_COUNT = 7;
+    static constexpr int CSV_NAME_ROW_NUMBER = 0;
+    static constexpr int CSV_EMAIL_ROW_NUMBER = 1;
+    static constexpr int CSV_COUNTRY_ROW_NUMBER = 2;
+    static constexpr int CSV_STATE_ROW_NUMBER = 3;
+    static constexpr int CSV_CITY_ROW_NUMBER = 4;
+    static constexpr int CSV_CAPACITY_ROW_NUMBER = 5;
+    static constexpr int CSV_GENRE_ROW_NUMBER = 6;
+
+    // Constants for SQLite database reading
+    static constexpr int SQLITE_NAME_ROW_NUMBER = 0;
+    static constexpr int SQLITE_EMAIL_ROW_NUMBER = 1;
+    static constexpr int SQLITE_COUNTRY_ROW_NUMBER = 2;
+    static constexpr int SQLITE_STATE_ROW_NUMBER = 3;
+    static constexpr int SQLITE_CITY_ROW_NUMBER = 4;
+    static constexpr int SQLITE_CAPACITY_ROW_NUMBER = 5;
+    static constexpr int SQLITE_GENRE_ROW_NUMBER = 6;
+
     // Constructor to initialize encryptedDatabase
     VenueDatabaseReader() = default;
     // Destructor

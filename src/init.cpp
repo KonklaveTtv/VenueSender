@@ -11,7 +11,7 @@ void Init::splashscreen() {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    for (int i = 0; i < 44; ++i) cout << '*';
+    for (int i = 0; i < BORDER_LENGTH; ++i) cout << '*';
     cout << endl;
 
 #ifndef UNIT_TESTING
@@ -37,13 +37,13 @@ void Init::splashscreen() {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-    cout << "     Copyright (c)2023, Spencer Lievens     " << endl;
+    cout << "    Copyright (c) 2023 | Spencer Lievens    " << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
 
     // Display bottom border
-    for (int i = 0; i < 44; ++i) cout << '*';
+    for (int i = 0; i < BORDER_LENGTH; ++i) cout << '*';
     cout << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();

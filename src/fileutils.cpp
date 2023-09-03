@@ -155,7 +155,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             }
 
             // Handle backspace or delete
-            if (ch == 127 || ch == '\b') {
+            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE || ch == '\b') {
                 if (!password.empty()) {
                     cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
                     password.pop_back();
@@ -221,7 +221,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             }
 
             // Handle backspace or delete
-            if (ch == 127 || ch == '\b') {
+            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE || ch == '\b') {
                 if (!confirm.empty()) {
                     cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
                     confirm.pop_back();
@@ -483,15 +483,15 @@ void VenueDatabaseReader::readFromCsv(vector<Venue>& venues, istream& stream) {
         boost::tokenizer<boost::escaped_list_separator<char>> tok(line);
         vector<string> rowData(tok.begin(), tok.end());
 
-        if (rowData.size() == 7) {
+        if (rowData.size() == CSV_TOTAL_ROW_COUNT) {
             Venue venue;
-            venue.name = rowData[0];
-            venue.email = rowData[1];
-            venue.country = rowData[2];
-            venue.state = rowData[3];
-            venue.city = rowData[4];
-            venue.capacity = stoi(rowData[5]);
-            venue.genre = rowData[6];
+            venue.name = rowData[CSV_NAME_ROW_NUMBER];
+            venue.email = rowData[CSV_EMAIL_ROW_NUMBER];
+            venue.country = rowData[CSV_COUNTRY_ROW_NUMBER];
+            venue.state = rowData[CSV_STATE_ROW_NUMBER];
+            venue.city = rowData[CSV_CITY_ROW_NUMBER];
+            venue.capacity = stoi(rowData[CSV_CAPACITY_ROW_NUMBER]);
+            venue.genre = rowData[CSV_GENRE_ROW_NUMBER];
             venues.push_back(venue);
         } else if (venuesCsvExists) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV_ERROR, confPaths::venuesCsvPath);
@@ -582,13 +582,13 @@ void VenueDatabaseReader::readFromSQLite(vector<Venue>& venues, sqlite3* db) {
 
     while (sqlite3_step(stmtPtr.get()) == SQLITE_ROW) {
         Venue venue;
-        venue.name = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 0)));
-        venue.email = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 1)));
-        venue.country = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 2)));
-        venue.state = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 3)));
-        venue.city = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 4)));
-        venue.capacity = sqlite3_column_int(stmtPtr.get(), 5);
-        venue.genre = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 6)));
+        venue.name = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_NAME_ROW_NUMBER)));
+        venue.email = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_EMAIL_ROW_NUMBER)));
+        venue.country = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_COUNTRY_ROW_NUMBER)));
+        venue.state = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_STATE_ROW_NUMBER)));
+        venue.city = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_CITY_ROW_NUMBER)));
+        venue.capacity = sqlite3_column_int(stmtPtr.get(), SQLITE_CAPACITY_ROW_NUMBER);
+        venue.genre = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_GENRE_ROW_NUMBER)));
 
         venues.push_back(venue);
     }

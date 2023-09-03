@@ -17,6 +17,10 @@ private:
     int smtpPort;
     bool useSSL, verifyPeer, verifyHost, verbose;
 public:
+
+	// ********************************************
+	static constexpr int BORDER_LENGTH = 44;
+
 	// Function to display the splashscreen
 	static void splashscreen();
 
