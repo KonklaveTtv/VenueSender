@@ -123,13 +123,13 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     while (true) {
         // Check for Caps Lock
         if (isCapsLockOn()) {
-#ifndef UNIT_TESTING
+    #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
+    #endif
             cout << "Warning: Caps Lock is on!" << endl;
-#ifndef UNIT_TESTING
+    #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset color
-#endif
+    #endif
         }
 
         if (initColor) {
@@ -188,16 +188,6 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         if (password.length() < MIN_PASSWORD_LENGTH) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MIN_LENGTH_ERROR);
             continue;
-        }
-
-        if (isCapsLockOn()) {
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-            cout << "Warning: Caps Lock is on!" << endl;
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor(); // Reset color
-#endif
         }
 
         if (initColor) {

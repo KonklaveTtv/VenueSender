@@ -47,11 +47,50 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif      
         break;
+        case MessageType::CONFIRM_SEND_EMAIL_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Do you wish to send this email? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::CONFIRM_SEND_EMAILS_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Do you wish to send this emails? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::EMAILS_SENT_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "===========================" << endl; 
+            cout << "        Emails Sent        " << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+
+        // Template Messages
         case MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
             cout << "Do you want to send the template? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::CONFIRM_SEND_TEMPLATES_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Do you wish to send these templates? (Y/N): ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif      
@@ -229,12 +268,40 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif      
         break;
+        case MessageType::SMTP_AUTH_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Authenticating with SMTP server..." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::ENTER_CUSTOM_ADDRESS_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Enter the custom email address: ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
     // end of orange messages
 
 
     // Red Messages
 
         // Menu Messages
+        case MessageType::VENUES_NOT_SELECTED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "===========================" << endl;
+            cout << "    Venues Not Selected    " << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
         case MessageType::PRESS_RETURN_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -256,11 +323,21 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         
 
         // Email Messages
-        case MessageType::ATTACHMENT_INVALID_CHOICE_ERROR:
+        case MessageType::ATTACHMENT_INVALID_CHOICE_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
             cout << "Invalid choice. Please enter Y or N." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
+        case MessageType::EMAIL_NOT_CREATED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+        cout << "===========================" << endl;
+        cout << "     Email Not Created     " << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -274,15 +351,83 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break;        
+            break;
+        case MessageType::EMAIL_SENDING_FAILED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+        cout << "===========================" << endl;
+        cout << "    Email Sending Failed   " << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif               
+            break;
+        case MessageType::EMAIL_SENDING_ABORTED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+        cout << "Email sending aborted by user." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif               
+            break; 
 
         // Template Messages
+        case MessageType::VENUES_NOT_SELECTED_FOR_TEMPLATES_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "No venues have been selected. Please select venues first before attempting to send the templates." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
+        case MessageType::NO_BOOKING_TEMPLATES_CREATED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+
+        cout << "No booking templates have been created yet." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif               
+            break;
         case MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
 
         cout << "Do you wish to modify this template? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif               
+            break;
+        case MessageType::MANDATORY_TEMPLATE_FIELD_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+
+        cout << "This field is mandatory. Please provide a value." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif               
+            break;
+        case MessageType::EMPTY_FIELD_CONFIRMATION_TEMPLATE_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+
+        cout << "You've left this field empty. Was this intentional? (y/n): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif               
+            break;
+        case MessageType::TEMPLATE_SENDING_ABORTED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+
+        cout << "Template sending aborted by user." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
