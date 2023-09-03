@@ -97,13 +97,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
     // Prompt the user to enter the message for the email and perform checks
     bool inputProvided;
     do {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_MESSAGE_FOR_EMAIL_MESSAGE);
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
         string line;
         inputProvided = false;
 
@@ -139,8 +133,8 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 
     // Prompt the user to add an attachment
         while (true) {
-            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
-             char addAttachmentChoice;
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
+            char addAttachmentChoice;
             cin >> addAttachmentChoice;
             ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
@@ -150,6 +144,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
             getline(cin, attachmentPath);
+            ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
             attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
             attachmentPath = ConsoleUtils::trim(attachmentPath);
@@ -171,7 +166,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
             try {
                 if (filesystem::exists(attachmentPath)) {
 #ifndef UNIT_TESTING
-                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif                   
                     size_t fileSize = boost::filesystem::file_size(attachmentPath);
                     attachmentSize = to_string(fileSize) + " bytes";

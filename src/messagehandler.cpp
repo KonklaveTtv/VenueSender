@@ -80,7 +80,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-            cout << "Enter the path of the file to attach (or press Enter to skip): ";
+            cout << "Email Created Successfully" "\n";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif      
