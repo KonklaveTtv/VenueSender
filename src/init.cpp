@@ -50,7 +50,7 @@ void Init::splashscreen() {
 #endif
     
     cout << "              Initiailizing...              " << endl;
-    this_thread::sleep_for(chrono::seconds(2));
+    this_thread::sleep_for(chrono::seconds(1));
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif

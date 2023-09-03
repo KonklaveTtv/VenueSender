@@ -50,6 +50,13 @@ bool EmailManager::isValidEmail(const string& email) {
     return boost::regex_match(email, emailPattern);
 }
 
+// Example function to validate a URL
+bool EmailManager::isValidURL(const std::string& url) {
+    // Simple regex pattern for URL validation, you can make it more comprehensive
+    boost::regex urlPattern("https?://[\\w\\.-]+");
+    return boost::regex_match(url, urlPattern);
+}
+
 // Function to guide the user in constructing an email with a subject, message, and optional attachment
 void EmailManager::constructEmail(string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, istream &in) const {
     
@@ -367,6 +374,7 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
 #endif      
             cout << "===========================" << endl;
             cout << "        Email saved        " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
@@ -452,6 +460,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
 #endif
             cout << "===========================" << endl;
             cout << "      Template Saved       " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
@@ -781,6 +790,13 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
     return true;
 }
 
+// Helper function to conditionally append a line to the message
+void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) const {
+    if (!value.empty()) {
+        os << label << ": " << value << "\n";
+    }
+}
+
 void EmailManager::createBookingTemplate(CURL* curl,
                                        const string& senderEmail,
                                        map<string, pair<string, string>>& emailToTemplate,
@@ -791,9 +807,58 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                        string& attachmentPath,
                                        const vector<SelectedVenue>& selectedVenuesForEmail,
                                        bool templateExists) const {
+
+    // String declarations for the booking template
+    string genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
+
     char choice;
     bool modifyTemplate = true;
-    
+
+    auto getInputWithConfirmation = [&](string& input, const string& prompt, bool isMandatory = false) {
+        bool inputConfirmed = false;
+        while (!inputConfirmed) {
+    #ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+            cout << prompt;
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+    #endif
+            getline(cin, input);
+            ConsoleUtils::clearInputBuffer();
+
+            if (input.empty()) {
+                if (isMandatory) {
+    #ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+    #endif
+                    cout << "This field is mandatory. Please provide a value." << endl;
+    #ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+    #endif
+                    continue; // Go back to the input prompt
+                }
+
+                char confirmation;
+    #ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+                cout << "You've left this field empty. Was this intentional? (y/n): ";
+    #ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+    #endif
+                cin >> confirmation;
+                ConsoleUtils::clearInputBuffer();
+
+                if (confirmation == 'y' || confirmation == 'Y') {
+                    inputConfirmed = true;
+                }
+            } else {
+                inputConfirmed = true;
+            }
+        }
+    };
+
     while (modifyTemplate) {
         // Check if venues are selected
         if (selectedVenuesForEmail.empty()) {
@@ -807,168 +872,70 @@ void EmailManager::createBookingTemplate(CURL* curl,
             return;  // Exit the function
         }
 
-    // Prompt the user for the required data to fill the placeholders
-    string genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
+        // Prompt the user for the required data to fill the placeholders
+        getInputWithConfirmation(genre, "Enter Genre (press Enter on a new line to finish): ");
+        getInputWithConfirmation(performanceType, "What Are You? (Band, DJ, Singer) (press Enter on a new line to finish): ");
+        getInputWithConfirmation(performanceName, "Enter Performance Name (press Enter on a new line to finish): ");
+        getInputWithConfirmation(hometown, "Enter Hometown (press Enter on a new line to finish): ");
+        getInputWithConfirmation(similarArtists, "Enter Similar Artists (press Enter on a new line to finish): ");
+        getInputWithConfirmation(date, "Enter Date (press Enter on a new line to finish): ");
+        getInputWithConfirmation(musicLink, "Enter Music Link (press Enter on a new line to finish): ");
+        getInputWithConfirmation(livePerfVideo, "Enter Live Performance Video Link (press Enter on a new line to finish): ");
+        getInputWithConfirmation(musicVideo, "Enter Music Video Link (press Enter on a new line to finish): ");
+        getInputWithConfirmation(pressQuote, "Enter Press Quote (press Enter on a new line to finish): ");
 
+        // Special case for Name due to it being mandatory
+        bool nameConfirmed = false;
+        while (!nameConfirmed) {
+            getInputWithConfirmation(name, "Enter Your Name: ", true);
+            if (name.empty()) {
     #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
     #endif
-        cout << "Enter Genre (press Enter on a new line to finish): ";
+                cout << "The name field must not be empty. Please enter your name." << endl;
     #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
+                ConsoleUtils::resetColor();
     #endif
-        getline(cin, genre);
-        ConsoleUtils::clearInputBuffer();
+            } else {
+                nameConfirmed = true;
+            }
+        }
 
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "What Are You? (Band, DJ, Singer) (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, performanceType);
-        ConsoleUtils::clearInputBuffer();
+        getInputWithConfirmation(socials, "Enter Social Links (press Enter on a new line to finish): ");
 
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Performance Name (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, performanceName);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Hometown (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, hometown);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Similar Artists (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, similarArtists);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Date (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, date);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Music Link (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, musicLink);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Live Performance Video Link (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, livePerfVideo);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Music Video Link (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, musicVideo);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Press Quote (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, pressQuote);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Your Name (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, name);
-        ConsoleUtils::clearInputBuffer();
-
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Enter Social Links (press Enter on a new line to finish): ";
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
-        getline(cin, socials);
-        ConsoleUtils::clearInputBuffer();
 
         // Construct the email template for each venue without sending it
         for (const SelectedVenue& venue : selectedVenuesForEmail) {
-
+            std::ostringstream os;
+            
             // Declare and initialize mandatory parts of the email
             string subject = "Booking Inquiry for " + venue.name;
-            string templateMessage = string("Hi!,\n\n")
-                                    + "I am booking a tour for " + performanceName + " a " + genre + " " + performanceType +  ", from \n\n"
-                                    + hometown + ". The music is similar to " + similarArtists + ".\n\n"
-                                    + "We're planning to be in the " + venue.city + " area on " + date + " and are\n\n"
-                                    + "wondering if you might be interested in booking us at " + venue.name + ".\n\n";
+
+            os << "Hi!,\n\n"
+               << "I am booking a tour for " << performanceName << " a " << genre << " " << performanceType << ", from \n\n"
+               << hometown << ". The music is similar to " << similarArtists << ".\n\n"
+               << "We're planning to be in the " << venue.city << " area on " << date << " and are\n\n"
+               << "wondering if you might be interested in booking us at " << venue.name << ".\n\n";
 
             // Add optional fields only if they are not empty
-            if (!musicLink.empty()) {
-                templateMessage += "Here are some resources to familiarize you with our work:\n";
-                templateMessage += "- Music: " + musicLink + "\n";
-            }
-            if (!livePerfVideo.empty()) {
-                templateMessage += "- Live Performance: " + livePerfVideo + "\n";
-            }
-            if (!musicVideo.empty()) {
-                templateMessage += "- Music Video: " + musicVideo + "\n";
-            }
+            appendIfNotEmpty(os, "- Music", musicLink);
+            appendIfNotEmpty(os, "- Live Performance", livePerfVideo);
+            appendIfNotEmpty(os, "- Music Video", musicVideo);
 
             if (!pressQuote.empty()) {
-                templateMessage += "\nWhat people are saying about " + performanceName + "\n";
-                templateMessage += "\"" + pressQuote + "\"\n";
+                os << "\nWhat people are saying about " << performanceName << "\n"
+                   << "\"" << pressQuote << "\"\n";
             }
 
-            templateMessage += string("\nPlease let me know if you have any questions or need additional information.\n\n")
-                               + "We appreciate your time and consideration!\n\n"
-                               + "Best wishes,\n"
-                               + name + "\n\n";
+            os << "\nPlease let me know if you have any questions or need additional information.\n\n"
+               << "We appreciate your time and consideration!\n\n"
+               << "Best wishes,\n"
+               << name << "\n\n";
 
-            if (!socials.empty()) {
-                templateMessage += "-- Social Links --\n" + socials + "\n";
-            }
+            appendIfNotEmpty(os, "-- Social Links", socials);
 
             // Map each venue's email to its unique message and subject
-            emailToTemplate[venue.email] = make_pair(subject, templateMessage);
+            emailToTemplate[venue.email] = make_pair(subject, os.str());
         }
 
         if (!emailToTemplate.empty()) {
@@ -1133,6 +1100,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #endif
                 cout << "===========================" << endl;
                 cout << "      Template Saved       " << endl;
+                cout << "===========================" << endl;
 #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
 #endif
@@ -1533,6 +1501,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 #endif           
             cout << "===========================" << endl;
             cout << "        Email Saved        " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif

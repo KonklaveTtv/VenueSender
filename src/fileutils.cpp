@@ -169,11 +169,11 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
                 break;
             }
 
+            password += ch;
+
             if (initColor) {
-                password += ch;
                 putchar('*');
             } else {
-                password += ch;
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -235,11 +235,12 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
                 break;
             }
 
+            confirm += ch;
+
             if (initColor) {
-                password += ch;
                 putchar('*');
             } else {
-                password += ch;
+
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif

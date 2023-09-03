@@ -56,6 +56,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
             cerr << boost::format("Invalid index format. %s Skipping.\n") % extraInfo;
             break;
+        case ErrorType::INVALID_URL_ERROR:
+            cerr << "Invalid URL." << endl;
+            break;
         case ErrorType::EMPTY_VENUE_LIST_ERROR:
             cerr << "No venues could be loaded for filtering" << endl;
             break;

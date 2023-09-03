@@ -73,8 +73,8 @@ namespace confPaths {
 // Class for utility functions related to the console
 class ConsoleUtils {
 public:
-    static inline const int MIN_PASSWORD_LENGTH = 1;
-    static inline const int MAX_PASSWORD_LENGTH = 100;
+    static constexpr int MIN_PASSWORD_LENGTH = 1;
+    static constexpr int MAX_PASSWORD_LENGTH = 100;
 
     static constexpr int ASCII_BACKSPACE = 8;
     static constexpr int ASCII_DELETE = 127;

@@ -136,6 +136,8 @@ public:
     // Function to validate an email address format
     static bool isValidEmail(const std::string& email);
 
+    static bool isValidURL(const std::string& url);
+
     // Function to construct an email, including the subject, message, and attachment details
     void constructEmail(std::string& subject, std::string& message, std::string& attachmentPath, std::string& attachmentName, std::string& attachmentSize, std::istream &in = std::cin) const;
 
@@ -185,6 +187,9 @@ public:
                                    std::string& attachmentName,
                                    std::string& attachmentSize,
                                    std::string& attachmentPath);
+
+    // Function to append the string for the booking template
+    void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) const;
 
     // Function to send a booking template email
     void createBookingTemplate(CURL* curl,
