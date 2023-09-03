@@ -5,7 +5,7 @@
 #include "errorhandler.h"
 #include "fileutils.h"
 #include "filtercriteria.h"
-//#include "mail.h"
+#include "messagehandler.h"
 #include "structs.h"
 
 #include <iostream>

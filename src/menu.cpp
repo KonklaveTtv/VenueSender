@@ -153,47 +153,24 @@ int MenuManager::displayMenuOptions() {
         cout << TEMPLATES_OPTION << ". Templates" << endl;
         cout << CONFIGURATION_OPTION << ". Configuration" << endl;
         cout << EXIT_OPTION << ". Exit" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Blue for headers
-#endif
-        cout << "Enter your choice: ";
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
-        ConsoleUtils::clearInputBuffer();
+        //ConsoleUtils::clearInputBuffer();
+
         // Handle exit right here
         if (choice == EXIT_OPTION) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-        cout << "Are you sure you want to exit? (Y/N): ";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EXIT_CONFIRMATION_MESSAGE);
+
             char confirmExit;
             cin >> confirmExit;
-            ConsoleUtils::clearInputBuffer();
 
             if (confirmExit == 'Y' || confirmExit == 'y') {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED); // Blue for headers
-#endif
-                cout << "Exiting VenueSender" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EXITING_VENUESENDER_MESSAGE);
                 // Cleanup before exiting
                 CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
                 exit(0);  // Exit the program
             } else if (confirmExit == 'N' || confirmExit == 'n') {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Blue for headers
-#endif                
-                cout << "Returning to the Main Menu" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::RETURN_TO_MAIN_MENU_MESSAGE);
                 continue;  // Continue to the next iteration of the loop
             } else {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
@@ -224,14 +201,10 @@ int MenuManager::displayVenueSelectionOptions() {
 #endif
         cout << SELECT_VENUES_OPTION << ". Select Venues" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION << ". Return to Main Menu" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Blue for headers
-#endif
-        cout << "Enter your choice: ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+
         if (choice >= SELECT_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
             break;
         } else {
@@ -256,15 +229,10 @@ int MenuManager::displayVenueOptions() {
         cout << VIEW_SELECTED_VENUES_OPTION << ". View Selected Venues" << endl;
         cout << CLEAR_SELECTED_VENUES_OPTION << ". Clear Selected Venues" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS << ". Return to Main Menu" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Enter your choice: ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
-        ConsoleUtils::clearInputBuffer();
+
         if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS) {
             break;
         } else {
@@ -284,22 +252,17 @@ int MenuManager::displayEmailOptions() {
         cout << "           Email           "<< endl;
         cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
+        ConsoleUtils::resetColor();
 #endif
         cout << CREATE_EMAIL_OPTION << ". Create Email" << endl;
         cout << VIEW_EDIT_EMAILS_OPTION << ". View & Edit Email" << endl;
         cout << EMAIL_CUSTOM_ADDRESS_OPTION << ". Email Custom Address" << endl;
         cout << SEND_EMAILS_OPTION << ". Send Emails" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS << ". Return to Main Menu" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Enter your choice: ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
-        ConsoleUtils::clearInputBuffer();
+
         if (choice >= CREATE_EMAIL_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS) {
             break;
         } else {
@@ -326,15 +289,10 @@ int MenuManager::displayTemplateOptions() {
         cout << SEND_BOOKING_TEMPLATES_OPTION << ". Send Booking Templates" << endl;
         cout << CLEAR_BOOKING_TEMPLATE_OPTION << ". Clear Booking Template" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS << ". Return to Main Menu" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Enter your choice: ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
-        ConsoleUtils::clearInputBuffer();
+
         if (choice >= CREATE_VENUE_BOOKING_TEMPLATE_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS) {
             break;
         } else {
@@ -359,15 +317,10 @@ int MenuManager::displayConfigurationOptions() {
         cout << SHOW_EMAIL_SETTINGS_OPTION << ". Show Email Settings" << endl;
         cout << EDIT_EMAIL_SETTINGS_OPTION << ". Edit Email Settings" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS << ". Return to Main Menu" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Enter your choice: ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
         cin >> choice;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
-        ConsoleUtils::clearInputBuffer();
+
         if (choice >= SHOW_EMAIL_SETTINGS_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS) {
             break;
         } else {
@@ -404,15 +357,10 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit Peer verification setting
     while (true) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Use SSL? (y/n): ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::USE_SSL_CONFIG_MESSAGE);
         cin >> tempSmtpChar;
-        ConsoleUtils::clearInputBuffer();
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+
         if (tempSmtpChar == 'y' || tempSmtpChar == 'Y') {
             useSSL = true;
             smtpPort = EmailManager::SSL_TLS_SMTP_PORT; // Automatically set the SMTP port based on SSL selection
@@ -428,16 +376,11 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit SSL Cert Path
     while (true) {
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "SSL Cert Path (if unsure press enter on a new line): ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SSL_CERTIFICATE_PATH_CONFIG_MESSAGE);
         string sslCertPathInput;
         getline(cin, sslCertPathInput);
-        ConsoleUtils::clearInputBuffer();
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+
 
         // Remove quotes and trim spaces
         sslCertPathInput.erase(remove(sslCertPathInput.begin(), sslCertPathInput.end(), '\''), sslCertPathInput.end());
@@ -474,16 +417,9 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit Peer verification setting
     while (true) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Verify Peer? (y/n): ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::VERIFY_PEER_CONFIG_MESSAGE);
         cin >> verifyPeerTempChar;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-        
-        ConsoleUtils::clearInputBuffer();
 
         if (verifyPeerTempChar == 'y' || verifyPeerTempChar == 'Y') {
             verifyPeer = true;
@@ -498,17 +434,10 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit Host verification setting
     while (true) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Verify Host? (y/n): ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::VERIFY_HOST_CONFIG_MESSAGE);
         cin >> verifyHostTempChar;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-        
-        ConsoleUtils::clearInputBuffer();
-        
+
         if (verifyHostTempChar == 'y' || verifyHostTempChar == 'Y') {
             verifyHost = true;
             break;
@@ -522,16 +451,9 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit verbose setting
     while (true) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Verbose? (y/n): ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::VERBOSE_CONFIG_MESSAGE);
         cin >> verboseTempChar;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-        
-        ConsoleUtils::clearInputBuffer();
         
         if (verboseTempChar == 'y' || verboseTempChar == 'Y') {
             verbose = true;
@@ -546,16 +468,9 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit sender email
     while (true) {
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "Sender Email: ";
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SENDER_EMAIL_CONFIG_MESSAGE);
         cin >> senderEmailTempStr;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
 
-        ConsoleUtils::clearInputBuffer();
         if (!EmailManager::isValidEmail(senderEmailTempStr)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
@@ -569,15 +484,9 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit SMTP Username
     while (true) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "SMTP Username (this is usually your email address): ";
+
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_USERNAME_CONFIG_MESSAGE);
         cin >> smtpUsernameTempStr;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-        ConsoleUtils::clearInputBuffer();
 
         // Check for whitespace and control characters
         if (smtpUsernameTempStr.find_first_of(" \t\n\r\f\v") != string::npos) {
@@ -586,15 +495,8 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         }
 
         if (!EmailManager::isValidEmail(smtpUsernameTempStr)) {
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-            cout << "Your SMTP Username is not an email, is this correct? (y/n): ";
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_USERNAME_NON_MATCH_ERROR);
             cin >> smtpUsernameTempChar;
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-#endif
-            ConsoleUtils::clearInputBuffer();
 
             if (smtpUsernameTempChar == 'y' || smtpUsernameTempChar == 'Y') {
                 smtpUsername = smtpUsernameTempStr;
@@ -612,15 +514,8 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit SMTP Server
     while (true) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-        cout << "SMTP Server: ";
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_SERVER_CONFIG_MESSAGE);
         cin >> smtpServerTempStr;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
-        ConsoleUtils::clearInputBuffer();
 
         // Length check
         if (smtpServerTempStr.length() < EmailManager::MIN_SMTP_SERVER_LENGTH || smtpServerTempStr.length() > EmailManager::MAX_SMTP_SERVER_LENGTH) {
@@ -646,16 +541,9 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Edit SMTP port
     while (true) {
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "SMTP Port (if unsure press enter on a new line): ";
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_PORT_CONFIG_MESSAGE);
         string portInput;
         getline(cin, portInput);  // Using getline to capture the full line, which allows empty input
-    #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-    #endif
-        ConsoleUtils::clearInputBuffer();
 
         // Whitespace check (full whitespace)
         if (count(portInput.begin(), portInput.end(), ' ') > 1 &&
@@ -691,15 +579,8 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Confirm Edit SMTP Password
 while (true) {
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
-        cout << "Edit SMTP Password? (y/n): ";
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_PASSWORD_CONFIG_MESSAGE);
         cin >> tempSmtpChar;
-    #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-    #endif
-        ConsoleUtils::clearInputBuffer();
 
         if (tempSmtpChar == 'y' || tempSmtpChar == 'Y') {
             // Edit SMTP Password
@@ -729,13 +610,9 @@ while (true) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-    cout << "Settings Updated" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SETTINGS_UPDATED_MESSAGE);
+
     return true;
 }
 

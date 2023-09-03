@@ -41,7 +41,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
     
         // Menu/Selection Errors
         case ErrorType::INVALID_CHOICE_ERROR:
-            cerr << "Invalid choice. Press return..." << endl;
+            cerr << "Invalid choice. Press return...";
             break;
         case ErrorType::INVALID_INDEX_ERROR:
             cerr << boost::format("Invalid index: %s\n") % extraInfo;
@@ -56,7 +56,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Input too long. Please try again." << endl;
             break;
         case ErrorType::INVALID_MENU_INPUT_ERROR:
-            cerr << "Invalid input, please enter a number. Press return to retry..." << endl;
+            cerr << "Invalid input, please enter a number. Press return to retry...";
             break;
         case ErrorType::EMPTY_VENUE_LIST_ERROR:
             cerr << "No venues could be loaded for filtering" << endl;
@@ -73,6 +73,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::NO_VENUES_SELECTED_FOR_TEMPLATE_ERROR:
             cerr << "No venues have been selected. Please select venues first before attempting to send the template." << endl;
             break;
+
 
         // Email/Attachment/Template Errors
         case ErrorType::SUBJECT_LENGTH_ERROR:
@@ -137,6 +138,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "===========================" << endl;
             break;
 
+
         // Email/cURL Config Errors
         case ErrorType::EMAIL_PASSWORD_EMPTY_ERROR:
             cerr << "Error: The email password has not been set." << endl;
@@ -152,6 +154,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             break;
         case ErrorType::SMTP_USERNAME_LENGTH_ERROR:
             cerr << "Invalid SMTP Username length" << extraInfo << endl;
+            break;
+        case ErrorType::SMTP_USERNAME_NON_MATCH_ERROR:
+            cout << "Your SMTP Username is not an email, is this correct? (y/n): ";
             break;
         case ErrorType::SMTP_SERVER_LENGTH_ERROR:
             cerr << "Invalid SMTP Server length." << extraInfo << endl;
@@ -172,7 +177,8 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Invalid URL." << endl;
             break;
 
-        // System/Database errors
+
+        // System errors
         case ErrorType::OPENSSL_INITIALIZATION_ERROR:
             cerr << "Failed to initialize OpenSSL context.\n" << endl;
             break;
@@ -197,6 +203,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::CONFIG_OPEN_TO_WRITE_ERROR:
             cerr << "Failed to open " << extraInfo << " for writing." << endl;
             break;
+
+
+        // Database Errors
         case ErrorType::INVALID_CAPACITY_IN_CSV_ERROR:
             cerr << boost::format("Invalid capacity in CSV file: %1%\n") % extraInfo << endl;
             break;
@@ -221,6 +230,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::SQLITE_STATEMENT_ERROR:
             cerr << "Failed to prepare statement: " << extraInfo << endl;
             break;
+
+
+        // Default Error
 #ifdef UNIT_TESTING
         default:
             cerr << "" << endl;
@@ -250,9 +262,14 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo)
 #endif
     string errorMessage;
     switch(error) {
+
+        // Menu errors
         case ErrorType::MENU_LOAD_ERROR:
             errorMessage = "Menu failed to load, please restart the program.";
             break;
+
+
+        // Email Errors
         case ErrorType::LIBCURL_ERROR:
 #ifndef UNIT_TESTING
             errorMessage = "Failed to initialize libcurl.";
@@ -261,6 +278,9 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo)
             }
 #endif
             break;
+
+
+        // System Errors
         case ErrorType::FILESYSTEM_ERROR:
             errorMessage = boost::str(boost::format("Filesystem error: %s") % extraInfo);
             break;
@@ -273,9 +293,15 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo)
         case ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR:
             errorMessage = "Failed to restore terminal attributes.";
             break;
+
+
+        // Database Errors
         case ErrorType::SQLITE_DATABASE_OPEN_ERROR:
             cerr << boost::str(boost::format("Database failed to open: %s\n") % extraInfo);
             break;
+
+
+        // Default Error
 #ifdef UNIT_TESTING
         default:
             cerr << "" << endl;

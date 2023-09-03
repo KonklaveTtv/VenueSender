@@ -180,7 +180,7 @@ public:
     inline static void clearInputBuffer() {
         // Clear the input buffer
         std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max());
     }
 
     // Function to check a file exists at a given path
