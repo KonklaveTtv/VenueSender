@@ -395,13 +395,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                                      bool& templateExists) const {
 
     if (emailToTemplate.empty()) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-        cerr << "No templates have been created. Please create a template first." << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_PENDING_ERROR);
         return;
     }
 
@@ -597,6 +591,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 #endif
         cout << "===========================" << endl; 
         cout << "        Emails Sent        " << endl;
+        cout << "===========================" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -606,6 +601,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 #endif
         cout << "===========================" << endl;
         cout << "    Email Sending Failed   " << endl;
+        cout << "===========================" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -737,13 +733,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 #endif
             cout.flush();
         } else {
-            #ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-            cerr << "Failed to send email to " << recipientEmail << endl;
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-#endif
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SENDING_ERROR);
             continue;  // Skip to the next iteration
         }
 
@@ -762,18 +752,12 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 #endif
         cout << "===========================" << endl; 
         cout << "        Emails Sent        " << endl;
+        cout << "===========================" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
     } else {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-        cout << "===========================" << endl;
-        cout << "    Email Sending Failed   " << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
     }
     
     if (!ErrorHandler::handleCurlError(res)) {
@@ -841,7 +825,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
                 char confirmation;
     #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
     #endif
                 cout << "You've left this field empty. Was this intentional? (y/n): ";
     #ifndef UNIT_TESTING
@@ -862,13 +846,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
     while (modifyTemplate) {
         // Check if venues are selected
         if (selectedVenuesForEmail.empty()) {
-    #ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-    #endif
-            cerr << "Error: No venues have been selected. Please select venues first before attempting to send the template." << endl;
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_FOR_TEMPLATE_ERROR);
             return;  // Exit the function
         }
 
@@ -889,13 +867,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
         while (!nameConfirmed) {
             getInputWithConfirmation(name, "Enter Your Name: ", true);
             if (name.empty()) {
-    #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-    #endif
-                cout << "The name field must not be empty. Please enter your name." << endl;
-    #ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
-    #endif
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_NAME_FIELD_EMPTY_FIELD_ERROR);
             } else {
                 nameConfirmed = true;
             }
@@ -1088,11 +1060,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 // Now, send the email to all venues
                 bool sent = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
                 if (!sent) {
-#ifndef UNIT_TESTING
-                    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-                    cerr << "===========================" << endl;
-                    cerr << "  Template Sending Failed  " << endl;
-#endif
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                 }
             } else {
 #ifndef UNIT_TESTING

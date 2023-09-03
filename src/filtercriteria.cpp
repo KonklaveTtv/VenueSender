@@ -170,14 +170,14 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     // Do not allow the user to enter an input less than MAX_INPUT_LENGTH
     if (to_string(selectedIndex).length() <= MIN_INPUT_LENGTH) {
         input.ignore(numeric_limits<streamsize>::max(), '\n');
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_LENGTH_ERROR);
         return;
     }
 
     // Validate input is not greater than MAX_INPUT_LENGTH
     if (to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
         input.ignore(numeric_limits<streamsize>::max(), '\n');
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_LENGTH_ERROR);
         return;
     }
 
