@@ -1144,14 +1144,14 @@ void EmailManager::createBookingTemplate(CURL* curl,
 }
 
 void EmailManager::emailCustomAddress(CURL* curl,
-                                      const std::string& senderEmail,
-                                      std::string& customAddressSubject,
-                                      std::string& customAddressMessage,
-                                      const std::string& smtpServer,
+                                      const string& senderEmail,
+                                      string& customAddressSubject,
+                                      string& customAddressMessage,
+                                      const string& smtpServer,
                                       int smtpPort,
-                                      std::string& customAddressAttachmentName,
-                                      std::string& customAddressAttachmentSize,
-                                      std::string& customAddressAttachmentPath) const {
+                                      string& customAddressAttachmentName,
+                                      string& customAddressAttachmentSize,
+                                      string& customAddressAttachmentPath) const {
 
     const string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
     const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;

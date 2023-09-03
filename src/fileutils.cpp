@@ -45,8 +45,8 @@ const unsigned char REGISTRATION_AES_IV[] = {
     0x58, 0x26, 0x5a, 0x5e, 0x04, 0x6a, 0xc9, 0x12
 };
 
-using Sqlite3Ptr = std::unique_ptr<sqlite3, Sqlite3Deleter>;
-using Sqlite3StmtPtr = std::unique_ptr<sqlite3_stmt, Sqlite3StmtDeleter>;
+using Sqlite3Ptr = unique_ptr<sqlite3, Sqlite3Deleter>;
+using Sqlite3StmtPtr = unique_ptr<sqlite3_stmt, Sqlite3StmtDeleter>;
 
 // Namespace to hold configuration file paths
 namespace confPaths {
@@ -69,7 +69,7 @@ void ConsoleUtils::clearConsole() {
 #endif
 }
 
-bool ConsoleUtils::caseSensitiveStringCompare(const std::string& str1, const std::string& str2) {
+bool ConsoleUtils::caseSensitiveStringCompare(const string& str1, const string& str2) {
     return boost::algorithm::equals(str1, str2);
 }
 
@@ -102,9 +102,9 @@ bool ConsoleUtils::isCapsLockOn() {
 #endif
 }
 
-std::string ConsoleUtils::passwordEntry(bool& initColor) {
-    std::string password;
-    std::string confirm;
+string ConsoleUtils::passwordEntry(bool& initColor) {
+    string password;
+    string confirm;
 
     // Disable terminal echoing and enable manual input capture
     struct termios oldt, newt;
@@ -126,19 +126,19 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-            std::cout << "Warning: Caps Lock is on!" << std::endl;
+            cout << "Warning: Caps Lock is on!" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset color
 #endif
         }
 
         if (initColor) {
-            std::cout << "Enter your email password: ";
+            cout << "Enter your email password: ";
         } else {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
 #endif
-            std::cout << "Enter your email password: ";
+            cout << "Enter your email password: ";
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset color
 #endif
@@ -157,7 +157,7 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
             // Handle backspace or delete
             if (ch == 127 || ch == '\b') {
                 if (!password.empty()) {
-                    std::cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
+                    cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
                     password.pop_back();
                 }
                 continue;
@@ -171,7 +171,7 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
 
             // Add the character to the password
             password += ch;
-            std::putchar('*');
+            putchar('*');
         }
 
         // Check for minimum password length
@@ -184,19 +184,19 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-            std::cout << "Warning: Caps Lock is on!" << std::endl;
+            cout << "Warning: Caps Lock is on!" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset color
 #endif
         }
 
         if (initColor) {
-           std::cout << std::endl << "Confirm your email password: ";
+           cout << endl << "Confirm your email password: ";
         } else {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
 #endif
-            std::cout << std::endl << "Confirm your email password: ";
+            cout << endl << "Confirm your email password: ";
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset color
 #endif
@@ -213,7 +213,7 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
             // Handle backspace or delete
             if (ch == 127 || ch == '\b') {
                 if (!confirm.empty()) {
-                    std::cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
+                    cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
                     confirm.pop_back();
                 }
                 continue;
@@ -227,7 +227,7 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
 
             // Add the character to the password
             confirm += ch;
-            std::putchar('*');
+            putchar('*');
         }
 
         if (ConsoleUtils::caseSensitiveStringCompare(password, confirm)) {
@@ -242,11 +242,11 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN); // Green for success
 #endif
-    std::cout << std::endl << "Password matches!" << std::endl;
+    cout << endl << "Password matches!" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor(); // Reset color
 #endif
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    this_thread::sleep_for(chrono::seconds(1));
     ConsoleUtils::clearConsole();
 
     // Restore terminal settings
@@ -254,7 +254,7 @@ std::string ConsoleUtils::passwordEntry(bool& initColor) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR);
     }
 
-    std::cout << std::endl;  // Move to the next line after password entry
+    cout << endl;  // Move to the next line after password entry
     return password;
 }
 
@@ -276,7 +276,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     namespace pt = boost::property_tree;
     pt::ptree config;
 
-    std::string configPath = isUnitTest ? confPaths::mockConfigJsonPath : confPaths::configJsonPath;
+    string configPath = isUnitTest ? confPaths::mockConfigJsonPath : confPaths::configJsonPath;
 
     if (!boost::filesystem::exists(configPath)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
@@ -297,11 +297,11 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     // Load settings from the parsed JSON
     try {
-        senderEmail = config.get<std::string>(isUnitTest ? "mock_sender_email" : "sender_email");
+        senderEmail = config.get<string>(isUnitTest ? "mock_sender_email" : "sender_email");
         smtpPort = config.get<int>(isUnitTest ? "mock_smtp_port" : "smtp_port");
-        smtpServer = config.get<std::string>(isUnitTest ? "mock_smtp_server" : "smtp_server");
-        smtpUsername = config.get<std::string>(isUnitTest ? "mock_smtp_username" : "smtp_username");
-        venuesCsvPath = config.get<std::string>("venues_csv_path");
+        smtpServer = config.get<string>(isUnitTest ? "mock_smtp_server" : "smtp_server");
+        smtpUsername = config.get<string>(isUnitTest ? "mock_smtp_username" : "smtp_username");
+        venuesCsvPath = config.get<string>("venues_csv_path");
 
         useSSL = config.get<bool>("useSSL");
         verifyPeer = config.get<bool>("verifyPeer");
@@ -320,11 +320,11 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-        std::cout << "Configuration from config.json Loaded" << std::endl;
+        cout << "Configuration from config.json Loaded" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        this_thread::sleep_for(chrono::seconds(1));
         ConsoleUtils::clearConsole();
     } else {
 #ifndef UNIT_TESTING
@@ -340,7 +340,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 }
 
 // Function to check a file exists at a given path
-bool ConsoleUtils::fileExists(const std::string& filename) {
+bool ConsoleUtils::fileExists(const string& filename) {
     boost::filesystem::path filePath(filename);
     if (!boost::filesystem::exists(filePath)) {
         if (filename != confPaths::venuesCsvPath) { // Add this line to prevent error for venues.csv
@@ -357,12 +357,12 @@ string ConsoleUtils::trim(const string& str){
 }
 
 // Function to decrypt SQLite database using AES-256-CBC and store it in memory
-bool VenueDatabaseReader::decryptRegistrationKey(const std::string& registrationKeyPath, std::vector<unsigned char>& decryptedRegistrationKeyData) {
+bool VenueDatabaseReader::decryptRegistrationKey(const string& registrationKeyPath, vector<unsigned char>& decryptedRegistrationKeyData) {
     // Initialize OpenSSL
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
         // Handle error
-        std::cerr << "Failed to initialize OpenSSL context.\n";
+        cerr << "Failed to initialize OpenSSL context.\n";
         return false;
     }
 
@@ -376,7 +376,7 @@ bool VenueDatabaseReader::decryptRegistrationKey(const std::string& registration
     boost::iostreams::mapped_file_source file(registrationKeyPath);
 
     // Read encrypted data into a buffer
-    std::vector<unsigned char> encryptedRegistrationKeyData(file.begin(), file.end());
+    vector<unsigned char> encryptedRegistrationKeyData(file.begin(), file.end());
 
     // Prepare buffer to store decrypted data
     decryptedRegistrationKeyData.resize(encryptedRegistrationKeyData.size());
@@ -402,11 +402,11 @@ bool VenueDatabaseReader::decryptRegistrationKey(const std::string& registration
 }
 
 // Function to decrypt SQLite database using AES-256-CBC and store it in memory
-bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFilePath, std::vector<unsigned char>& decryptedData) {
+bool VenueDatabaseReader::decryptSQLiteDatabase(const string& encryptedFilePath, vector<unsigned char>& decryptedData) {
     // Initialize OpenSSL
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
-        std::cerr << "Failed to initialize OpenSSL context.\n";
+        cerr << "Failed to initialize OpenSSL context.\n";
         return false;
     }
 
@@ -418,7 +418,7 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
     }
 
     // Read encrypted data into a buffer
-    std::vector<unsigned char> encryptedData(mappedFile.begin(), mappedFile.end());
+    vector<unsigned char> encryptedData(mappedFile.begin(), mappedFile.end());
 
     // Prepare buffer to store decrypted data
     decryptedData.resize(encryptedData.size());
@@ -442,7 +442,7 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const std::string& encryptedFile
 }
 
 // Function to read venue data from a CSV file
-void VenueDatabaseReader::readFromCsv(std::vector<Venue>& venues, std::istream& stream) {
+void VenueDatabaseReader::readFromCsv(vector<Venue>& venues, istream& stream) {
     // Check if the venues.csv file exists
     bool venuesCsvExists = ConsoleUtils::fileExists(confPaths::venuesCsvPath);
 
@@ -453,14 +453,14 @@ void VenueDatabaseReader::readFromCsv(std::vector<Venue>& venues, std::istream& 
         return;
     }
 
-    std::string line;
+    string line;
 #ifndef UNIT_TESTING
     getline(stream, line);  // Skip the header line
 #endif
 
     while (getline(stream, line)) {
         boost::tokenizer<boost::escaped_list_separator<char>> tok(line);
-        std::vector<std::string> rowData(tok.begin(), tok.end());
+        vector<string> rowData(tok.begin(), tok.end());
 
         if (rowData.size() == 7) {
             Venue venue;
@@ -469,7 +469,7 @@ void VenueDatabaseReader::readFromCsv(std::vector<Venue>& venues, std::istream& 
             venue.country = rowData[2];
             venue.state = rowData[3];
             venue.city = rowData[4];
-            venue.capacity = std::stoi(rowData[5]);
+            venue.capacity = stoi(rowData[5]);
             venue.genre = rowData[6];
             venues.push_back(venue);
         } else if (venuesCsvExists) {
@@ -479,10 +479,10 @@ void VenueDatabaseReader::readFromCsv(std::vector<Venue>& venues, std::istream& 
 }
 
 // Function to initialize SQLite and read data from CSV or encrypted database
-bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath) {
+bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venues, const string& venuesCsvPath) {
     bool success = false;
 
-    std::vector<unsigned char> decryptedRegistrationKeyData;
+    vector<unsigned char> decryptedRegistrationKeyData;
     bool decryptionSuccess = decryptRegistrationKey(confPaths::registrationKeyPath, decryptedRegistrationKeyData);
     if (!decryptionSuccess) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::REGISTRATION_KEY_INVALID_ERROR);
@@ -494,8 +494,8 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>&
     csvMappedFile.open(venuesCsvPath);
     if (csvMappedFile.is_open()) {
         // Create a string from the iterators and then a stringstream
-        std::string csvData(csvMappedFile.begin(), csvMappedFile.end());
-        std::istringstream csvStream(csvData);
+        string csvData(csvMappedFile.begin(), csvMappedFile.end());
+        istringstream csvStream(csvData);
         readFromCsv(venues, csvStream);
         csvMappedFile.close();
         success = true;
@@ -504,28 +504,28 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>&
     // Fallback to SQLite if reading from CSV fails
     if (!success) {
         // Decrypt the SQLite database and store it in memory
-        std::vector<unsigned char> decryptedData;
+        vector<unsigned char> decryptedData;
         bool decryptionSuccess = decryptSQLiteDatabase(confPaths::sqliteEncryptedDatabasePath, decryptedData);
         if (!decryptionSuccess) {
-            std::cerr << "Failed to decrypt SQLite database.\n";
+            cerr << "Failed to decrypt SQLite database.\n";
             return false;
         }
 
         // Initialize an in-memory SQLite database from the decrypted data
         sqlite3* db = nullptr;
         if (sqlite3_open(":memory:", &db) != SQLITE_OK) {
-            std::cerr << "Failed to open in-memory SQLite database: " << sqlite3_errmsg(db) << "\n";
+            cerr << "Failed to open in-memory SQLite database: " << sqlite3_errmsg(db) << "\n";
             return false;
         }
 
         // Use boost::scoped_array for memory management
         boost::scoped_array<unsigned char> sqliteBuffer(new unsigned char[decryptedData.size()]);
-        std::copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer.get());
+        copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer.get());
 
         // Load the copied data into the in-memory SQLite database
         if (sqlite3_deserialize(db, "main", sqliteBuffer.get(), decryptedData.size(), decryptedData.size(),
                                 SQLITE_DESERIALIZE_RESIZEABLE | SQLITE_DESERIALIZE_FREEONCLOSE) != SQLITE_OK) {
-            std::cerr << "Failed to load decrypted data into SQLite database: " << sqlite3_errmsg(db) << "\n";
+            cerr << "Failed to load decrypted data into SQLite database: " << sqlite3_errmsg(db) << "\n";
             return false;
         }
 
@@ -539,7 +539,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(std::vector<Venue>&
 }
 
 // Function to read venue data from an SQLite database
-void VenueDatabaseReader::readFromSQLite(std::vector<Venue>& venues, sqlite3* db) {
+void VenueDatabaseReader::readFromSQLite(vector<Venue>& venues, sqlite3* db) {
     Sqlite3Ptr dbPtr(nullptr, Sqlite3Deleter());
 
     if (db == nullptr) {
@@ -554,20 +554,20 @@ void VenueDatabaseReader::readFromSQLite(std::vector<Venue>& venues, sqlite3* db
     const char* query = "SELECT name, email, country, state, city, capacity, genre FROM \"venues\"";
     sqlite3_stmt* tempStmt;
     if (sqlite3_prepare_v2(db, query, -1, &tempStmt, nullptr) != SQLITE_OK) {
-        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
+        cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << endl;
         return;
     }
     Sqlite3StmtPtr stmtPtr(tempStmt, Sqlite3StmtDeleter());
 
     while (sqlite3_step(stmtPtr.get()) == SQLITE_ROW) {
         Venue venue;
-        venue.name = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 0)));
-        venue.email = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 1)));
-        venue.country = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 2)));
-        venue.state = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 3)));
-        venue.city = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 4)));
+        venue.name = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 0)));
+        venue.email = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 1)));
+        venue.country = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 2)));
+        venue.state = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 3)));
+        venue.city = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 4)));
         venue.capacity = sqlite3_column_int(stmtPtr.get(), 5);
-        venue.genre = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 6)));
+        venue.genre = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), 6)));
 
         venues.push_back(venue);
     }

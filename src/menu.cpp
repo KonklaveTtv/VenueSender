@@ -454,7 +454,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         sslCertPathInput = ConsoleUtils::trim(sslCertPathInput);
 
         // Whitespace check (full whitespace)
-        if (std::count(sslCertPathInput.begin(), sslCertPathInput.end(), ' ') > 1 &&
+        if (count(sslCertPathInput.begin(), sslCertPathInput.end(), ' ') > 1 &&
             all_of(sslCertPathInput.begin(), sslCertPathInput.end(), ::isspace)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CERT_PATH_ERROR);
             continue;
@@ -668,7 +668,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         ConsoleUtils::clearInputBuffer();
 
         // Whitespace check (full whitespace)
-        if (std::count(portInput.begin(), portInput.end(), ' ') > 1 &&
+        if (count(portInput.begin(), portInput.end(), ' ') > 1 &&
             all_of(portInput.begin(), portInput.end(), ::isspace)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
             continue;
@@ -689,7 +689,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
                 }
                 smtpPort = smtpPortTempInt;
                 break;
-            } catch (const std::invalid_argument&) {
+            } catch (const invalid_argument&) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
                 continue;
             }
@@ -730,12 +730,12 @@ void MenuManager::setupCurlHandle(CurlHandleWrapper& curlWrapper,
                                   bool useSSL,
                                   bool verifyPeer,
                                   bool verifyHost,
-                                  const std::string& sslCertPath,
-                                  const std::string& smtpUsername,
-                                  const std::string& mailPass,
-                                  const std::string& senderEmail,
+                                  const string& sslCertPath,
+                                  const string& smtpUsername,
+                                  const string& mailPass,
+                                  const string& senderEmail,
                                   int smtpPort,
-                                  const std::string& smtpServer,
+                                  const string& smtpServer,
                                   bool verbose) {
     CURL* curl = curlWrapper.get();
     if (!curl) {
@@ -758,7 +758,7 @@ void MenuManager::setupCurlHandle(CurlHandleWrapper& curlWrapper,
     curl_easy_setopt(curl, CURLOPT_VERBOSE, verbose ? 1L : 0L);
 
     // SMTP Server Configuration
-    std::string smtpUrl = "smtp://" + smtpServer + ":" + std::to_string(smtpPort);
+    string smtpUrl = "smtp://" + smtpServer + ":" + to_string(smtpPort);
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 }
 

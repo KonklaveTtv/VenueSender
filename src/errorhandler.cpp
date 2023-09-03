@@ -51,10 +51,10 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Invalid choice. Press return..." << endl;
             break;
         case ErrorType::INVALID_INDEX_ERROR:
-            std::cerr << boost::format("Invalid index: %s\n") % extraInfo;
+            cerr << boost::format("Invalid index: %s\n") % extraInfo;
             break;
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
-            std::cerr << boost::format("Invalid index format. %s Skipping.\n") % extraInfo;
+            cerr << boost::format("Invalid index format. %s Skipping.\n") % extraInfo;
             break;
         case ErrorType::EMPTY_VENUE_LIST_ERROR:
             cerr << "No venues could be loaded for filtering" << endl;
@@ -108,7 +108,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "The recipient email formatting is not correct" << endl;
             break;
         case ErrorType::SENDER_EMAIL_FORMAT_ERROR:
-            std::cerr << boost::format("Error: The sender email '%1%' is not the valid format.\nPlease set it correctly in your custom.json file.\n") % extraInfo;
+            cerr << boost::format("Error: The sender email '%1%' is not the valid format.\nPlease set it correctly in your custom.json file.\n") % extraInfo;
             break;
         case ErrorType::EMAIL_PASSWORD_MIN_LENGTH_ERROR:
             cerr << "Error: The email password is too short." << endl;
@@ -129,10 +129,10 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Failed to open " << extraInfo << " for writing." << endl;
             break;
         case ErrorType::INVALID_CAPACITY_IN_CSV_ERROR:
-            std::cerr << boost::format("Invalid capacity in CSV file: %1%\n") % extraInfo;
+            cerr << boost::format("Invalid capacity in CSV file: %1%\n") % extraInfo;
             break;
         case ErrorType::INVALID_DATA_IN_CSV_ERROR:
-            std::cerr << boost::format("Invalid data in CSV file: %1%\n") % extraInfo;
+            cerr << boost::format("Invalid data in CSV file: %1%\n") % extraInfo;
             break;
         case ErrorType::REGISTRATION_KEY_MISSING_ERROR:
             cerr << "The registration key is missing: " << extraInfo << endl;
@@ -192,12 +192,12 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error) {
     handleErrorAndReturn(error, "");
 }
 
-void ErrorHandler::handleErrorAndThrow(ErrorType error, const std::string& extraInfo) {
+void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo) {
     boost::lock_guard<boost::mutex> lock(outputMutex); // Lock the mutex
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-    std::string errorMessage;
+    string errorMessage;
     switch(error) {
         case ErrorType::MENU_LOAD_ERROR:
             errorMessage = "Menu failed to load, please restart the program.";
@@ -209,7 +209,7 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const std::string& extra
             errorMessage = "An error occurred while entering subject and message.";
             break;
         case ErrorType::SQLITE_DATABASE_OPEN_ERROR:
-            std::cerr << boost::str(boost::format("Database failed to open: %s\n") % extraInfo);
+            cerr << boost::str(boost::format("Database failed to open: %s\n") % extraInfo);
             break;
         case ErrorType::FILESYSTEM_ERROR:
             errorMessage = boost::str(boost::format("Filesystem error: %s") % extraInfo);
@@ -241,6 +241,6 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const std::string& extra
 #endif
 
     // Throw the exception
-    std::cerr << errorMessage << std::endl;
+    cerr << errorMessage << endl;
     throw ErrorHandlerException(errorMessage);
 }

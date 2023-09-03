@@ -43,12 +43,12 @@ TEST_CASE("ConsoleUtils::trim() functionality", "[ConsoleUtils]") {
 // -----------------------
 
 TEST_CASE("VenueDatabaseReader::readFromCsv() functionality", "[VenueDatabaseReader]") {
-    std::string csvData =
+    string csvData =
         "Venue1,venue1@mock.com,USA,AL,Daphne,100,Mixed\n"
         "Venue2,venue2@mock.com,France,Paris Region,Paris,300,Rock\n";
 
-    std::istringstream csvStream(csvData);
-    std::vector<Venue> venues;
+    istringstream csvStream(csvData);
+    vector<Venue> venues;
 
     VenueDatabaseReader::readFromCsv(venues, csvStream);
 
@@ -191,7 +191,7 @@ TEST_CASE("MenuManager::displaySelectedVenues() functionality", "[MenuManager]")
     cout.rdbuf(originalCoutBuffer);
 
     // Expected output
-    std::string expectedOutput = 
+    string expectedOutput = 
         "===========================\n"
         "      Selected Venues      \n"
         "===========================\n"
@@ -227,19 +227,19 @@ TEST_CASE("EmailManager::getCurrentDateRfc2822() functionality", "[EmailManager]
     EmailManager emailManager; // Instantiate the class you're testing
 
     // Act
-    std::string result = emailManager.getCurrentDateRfc2822();
+    string result = emailManager.getCurrentDateRfc2822();
 
     // Assert
     // You can use a regular expression or manual parsing to check the format.
     // Here, we're using a regex to match the expected format.
-    std::regex dateFormat(R"(\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} \w{3})");
-    REQUIRE(std::regex_match(result, dateFormat));
+    regex dateFormat(R"(\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} \w{3})");
+    REQUIRE(regex_match(result, dateFormat));
 }
 
 TEST_CASE("EmailManager::sanitizeSubject() functionality", "[EmailManager]") {
     // Arrange
     EmailManager emailManager; // Instantiate the class you're testing
-    std::string subject = "Hello World\nTest"; // Contains newline character
+    string subject = "Hello World\nTest"; // Contains newline character
 
     // Act
     emailManager.sanitizeSubject(subject);
@@ -304,11 +304,11 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
     SelectedVenue venue;
     venue.email = "venue1@mock.com";
 
-    std::string senderEmail = "mock@example.com";
-    std::string subject = "Test Subject";
-    std::string message = "This is a test message.";
+    string senderEmail = "mock@example.com";
+    string subject = "Test Subject";
+    string message = "This is a test message.";
 
-    std::string smtpServer = "mock_smtp_server";
+    string smtpServer = "mock_smtp_server";
     int smtpPort = 587;
 
     SECTION("Sending email with valid parameters") {
@@ -331,7 +331,7 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
         // Add 60 mock venues to the selectedVenuesForEmail
         for (int i = 0; i < 60; i++) {
             SelectedVenue tempVenue;
-            tempVenue.email = "venue" + std::to_string(i + 2) + "@mock.com";  // venue2@mock.com, venue3@mock.com, ...
+            tempVenue.email = "venue" + to_string(i + 2) + "@mock.com";  // venue2@mock.com, venue3@mock.com, ...
             selectedVenuesForEmail.push_back(tempVenue);
         }
 
@@ -357,12 +357,12 @@ TEST_CASE("VenueFilter::processVenueSelection() functionality", "[VenueFilter]")
         Venue{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
     };    
 
-    std::vector<SelectedVenue> selectedVenuesForEmail;
-    std::vector<SelectedVenue> selectedVenuesForTemplates;
+    vector<SelectedVenue> selectedVenuesForEmail;
+    vector<SelectedVenue> selectedVenuesForTemplates;
 
     // Mock user input: select USA as the country, and 1 as the index for state, city, capacity, genre and final selection
-    std::istringstream mockInput("1\n1\n1\n1\n1\n1\n"); 
-    std::ostringstream mockOutput;
+    istringstream mockInput("1\n1\n1\n1\n1\n1\n"); 
+    ostringstream mockOutput;
 
     VenueFilter venueFilter;
 
@@ -380,7 +380,7 @@ TEST_CASE("VenueFilter::processVenueSelection() functionality", "[VenueFilter]")
     // Check output to the user
     // Depending on the implementation details, the exact output string might vary.
     // Below is a simplified version; you may need to adjust this.
-    std::string expectedOutputStart = "===========================\n      Venue Selection      \n===========================\n";
+    string expectedOutputStart = "===========================\n      Venue Selection      \n===========================\n";
     REQUIRE(mockOutput.str().substr(0, expectedOutputStart.size()) == expectedOutputStart);
 }
 
