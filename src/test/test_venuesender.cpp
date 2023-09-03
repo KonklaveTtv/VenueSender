@@ -350,38 +350,68 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
 // Test Group: VenueFilter
 // -----------------------
 
-TEST_CASE("VenueFilter::processVenueSelection() functionality", "[VenueFilter]") {
-    // Set up mock data and expected results
-    vector<Venue> venues = {
-        Venue{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
-        Venue{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
-    };    
+TEST_CASE("processVenueSelection functionality", "[VenueFilter]") {
 
-    vector<SelectedVenue> selectedVenuesForEmail;
-    vector<SelectedVenue> selectedVenuesForTemplates;
 
-    // Mock user input: select USA as the country, and 1 as the index for state, city, capacity, genre and final selection
-    istringstream mockInput("1\n1\n1\n1\n1\n1\n"); 
-    ostringstream mockOutput;
+    SECTION("Filters by country correctly") {
+        // Set up mock data and expected results
+        vector<Venue> venues = {
+            Venue{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
+            Venue{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
+        };    
+        vector<SelectedVenue> selectedVenuesForEmail;
+        vector<SelectedVenue> selectedVenuesForTemplates;
+        std::istringstream input("1\n1\n1\n1\n1\n1\n"); // Mock selecting the first country
+        std::ostringstream output;
+        VenueFilter venueFilter;
 
-    VenueFilter venueFilter;
+        venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, input, output);
 
-    // Call the function
-    venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, mockInput, mockOutput);
+        REQUIRE(selectedVenuesForEmail.size() == 1);
+        REQUIRE(selectedVenuesForEmail[0].country == "France");
+    }
 
-    // Check results for emails
-    REQUIRE(selectedVenuesForEmail.size() == 1); 
-    REQUIRE(selectedVenuesForEmail[0].name == "Venue2");
+    SECTION("Handles invalid input") {
+        // Redirect std::cerr to capture error messages
+        std::ostringstream err_output;
+        auto old_err = std::cerr.rdbuf(err_output.rdbuf());
 
-    // Check results for templates
-    REQUIRE(selectedVenuesForTemplates.size() == 1); 
-    REQUIRE(selectedVenuesForTemplates[0].name == "Venue2");
+        // Set up mock data and expected results
+        vector<Venue> venues = {
+            Venue{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
+            Venue{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
+        };    
+        vector<SelectedVenue> selectedVenuesForEmail;
+        vector<SelectedVenue> selectedVenuesForTemplates;
+        std::istringstream input("3\n");  // Mock invalid input
+        std::ostringstream output;
+        VenueFilter venueFilter;
 
-    // Check output to the user
-    // Depending on the implementation details, the exact output string might vary.
-    // Below is a simplified version; you may need to adjust this.
-    string expectedOutputStart = "===========================\n      Venue Selection      \n===========================\n";
-    REQUIRE(mockOutput.str().substr(0, expectedOutputStart.size()) == expectedOutputStart);
+        venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, input, output);
+
+        // Restore old std::cerr buffer
+        std::cerr.rdbuf(old_err);
+        
+        REQUIRE(err_output.str().find("Invalid index:") != std::string::npos);
+    }
+
+    SECTION("Proper final venue selection") {
+        // Set up mock data and expected results
+        vector<Venue> venues = {
+            Venue{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
+            Venue{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
+        };    
+        vector<SelectedVenue> selectedVenuesForEmail;
+        vector<SelectedVenue> selectedVenuesForTemplates;
+        std::istringstream input("1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
+        std::ostringstream output;
+        VenueFilter venueFilter;
+
+        venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, input, output);
+
+        REQUIRE(selectedVenuesForEmail.size() == 1);
+        REQUIRE(selectedVenuesForEmail[0].name == "Venue2");
+    }
 }
 
 

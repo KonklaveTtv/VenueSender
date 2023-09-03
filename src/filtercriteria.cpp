@@ -156,32 +156,33 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     output << "\nPlease select a country index: ";
     size_t selectedIndex;
     input >> selectedIndex;
-    ConsoleUtils::clearInputBuffer();
+    input.ignore(numeric_limits<streamsize>::max(), '\n');
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
 
     if (input.fail()) {
-        ConsoleUtils::clearInputBuffer();
+        input.ignore(numeric_limits<streamsize>::max(), '\n');
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
         return;
     }
-    
+
     // Do not allow the user to enter an input less than MAX_INPUT_LENGTH
     if (to_string(selectedIndex).length() <= MIN_INPUT_LENGTH) {
+        input.ignore(numeric_limits<streamsize>::max(), '\n');
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
         return;
     }
 
     // Validate input is not greater than MAX_INPUT_LENGTH
     if (to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
-        ConsoleUtils::clearInputBuffer();
+        input.ignore(numeric_limits<streamsize>::max(), '\n');
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
         return;
     }
 
     if (selectedIndex > uniqueCountries.size() || selectedIndex < 1 || selectedIndex > maxCountriesToShow) {
-        ConsoleUtils::clearInputBuffer();
+        input.ignore(numeric_limits<streamsize>::max(), '\n');
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
         return;
     }
@@ -241,6 +242,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
         transform(inputIndices.begin(), inputIndices.end(), inputIndices.begin(), ::tolower);
 
         if (inputIndices.empty()) {
+            input.ignore(numeric_limits<streamsize>::max(), '\n');
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
             return;
         }
@@ -251,6 +253,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
         } else {
             // Check if the input contains only digits and commas
             if (!all_of(inputIndices.begin(), inputIndices.end(), [](char c) { return isdigit(c) || c == ','; })) {
+                input.ignore(numeric_limits<streamsize>::max(), '\n');
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
                 return;
             }
@@ -262,15 +265,15 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             while (getline(iss, indexStr, CSV_DELIMITER)) {
                 try {
                     size_t selectedIndex = stoul(indexStr);
-
-
-                    if (selectedIndex == 0 || selectedIndex > localIndex -1) {
+                    if (selectedIndex == 0 || selectedIndex > localIndex - 1) {
+                        input.ignore(numeric_limits<streamsize>::max(), '\n');
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                         return;
                     }
                     selectedIndex--;
                     selectedIndices.push_back(selectedIndex);
                 } catch (const invalid_argument& e) {
+                    input.ignore(numeric_limits<streamsize>::max(), '\n');
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
                     return;
                 }
@@ -345,6 +348,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
                 size_t finalIndex = stoul(indexStr);
                 finalSelectedIndices.push_back(finalIndex);
             } catch (const exception& e) {
+                input.ignore(numeric_limits<streamsize>::max(), '\n');
                 ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                 return;
             }
@@ -352,6 +356,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 
         for (size_t finalIndex : finalSelectedIndices) {
             if (finalIndex < 1 || finalIndex > temporaryFilteredVenues.size()) {
+                input.ignore(numeric_limits<streamsize>::max(), '\n');
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
                 return;
             }
