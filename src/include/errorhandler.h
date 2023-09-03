@@ -6,6 +6,12 @@
 #include <iostream>
 #include <mutex>
 
+// Boost Libraries
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
+#include <boost/format.hpp>
+#include <boost/thread/lock_guard.hpp>
+#include <boost/thread/mutex.hpp>
+
 // Forward declarations due to circular dependency between fileutils.h and errorhandler.h
 class ConfigManager;
 class ConsoleUtils; 
@@ -18,7 +24,7 @@ public:
 // ErrorHandler class to manage different types of errors
 class ErrorHandler {
 private:
-    static std::mutex outputMutex; // Mutex for thread-safe output
+    static boost::mutex outputMutex; // Mutex for thread-safe output
 public:
     // Enumeration to represent different types of errors that can be encountered
     enum class ErrorType {

@@ -46,8 +46,8 @@ void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, boo
 
 // Function to validate if the provided string is a valid email address format
 bool EmailManager::isValidEmail(const string& email) {
-    static const regex emailPattern(R"((?=.{1,256})(?=.{1,64}@.{1,255})[^\s@]+@[^\s@]+\.[^\s@]+)");
-    return regex_match(email, emailPattern);
+    static const boost::regex emailPattern(R"((?=.{1,256})(?=.{1,64}@.{1,255})[^\s@]+@[^\s@]+\.[^\s@]+)");
+    return boost::regex_match(email, emailPattern);
 }
 
 // Function to guide the user in constructing an email with a subject, message, and optional attachment
@@ -200,7 +200,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
 #endif                   
-                    size_t fileSize = filesystem::file_size(attachmentPath);
+                    size_t fileSize = boost::filesystem::file_size(attachmentPath);
                     attachmentSize = to_string(fileSize) + " bytes";
                     cout << "File Size: " << fileSize << " bytes" << endl;
 #ifndef UNIT_TESTING
@@ -529,7 +529,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
     if (!attachmentPath.empty()) {
 
-        size_t fileSize = filesystem::file_size(attachmentPath);
+        size_t fileSize = boost::filesystem::file_size(attachmentPath);
         attachmentSize = to_string(fileSize) + " bytes";
 
         // Add the attachment part
@@ -682,7 +682,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         if (!attachmentPath.empty()) {
             
 
-            size_t fileSize = filesystem::file_size(attachmentPath);
+            size_t fileSize = boost::filesystem::file_size(attachmentPath);
             attachmentSize = to_string(fileSize) + " bytes";
 
             // Add the attachment part
@@ -1033,7 +1033,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
             try {
                 if (filesystem::exists(attachmentPath)) {
-                    size_t fileSize = filesystem::file_size(attachmentPath);
+                    size_t fileSize = boost::filesystem::file_size(attachmentPath);
                     attachmentSize = to_string(fileSize) + " bytes";
     #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
@@ -1288,7 +1288,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         try {
             if (filesystem::exists(customAddressAttachmentPath)) {
-                size_t fileSize = filesystem::file_size(customAddressAttachmentPath);
+                size_t fileSize = boost::filesystem::file_size(customAddressAttachmentPath);
                 customAddressAttachmentSize = to_string(fileSize) + " bytes";
                 cout << "File Size: " << fileSize << " bytes" << endl;
 
@@ -1437,7 +1437,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
              if (!customAddressAttachmentPath.empty()) {
                 // Add the attachment part conditionally
-                size_t fileSize = filesystem::file_size(customAddressAttachmentPath);
+                size_t fileSize = boost::filesystem::file_size(customAddressAttachmentPath);
                 customAddressAttachmentSize = to_string(fileSize) + " bytes";
                 part = curl_mime_addpart(mime);
                 curl_mime_filedata(part, customAddressAttachmentPath.c_str());

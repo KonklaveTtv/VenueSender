@@ -49,14 +49,14 @@ jobs:
         done
 
     - name: Link the main executable
-      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender obj/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams
+      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender obj/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex
 
     - name: Link the debug executable
-      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/debug/venuesender_debug obj/debug/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams
+      run: g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/debug/venuesender_debug obj/debug/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex
 
     - name: Link the test executable
       run: |
-        g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender_test obj/test/*.o obj/test_for_test/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams
+        g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -o bin/venuesender_test obj/test/*.o obj/test_for_test/*.o -lcurl -ljsoncpp -lX11 -lssl -lcrypto -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex
     - name: Run tests
       run: ./bin/venuesender_test
 

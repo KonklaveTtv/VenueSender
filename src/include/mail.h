@@ -11,6 +11,10 @@
 #include <regex>
 #include <thread>
 
+// Boost Libraries
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
+#include <boost/regex.hpp>
+
 // Class responsible for managing email-related operations
 class EmailManager {
 public:

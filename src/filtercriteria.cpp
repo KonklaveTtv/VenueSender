@@ -136,24 +136,24 @@ void VenueFilter::processVenueSelection(const std::vector<Venue>& venues,
         return;
     }
 
-// Step 2: Filter by country
-std::set<std::string> uniqueCountries = venueUtilities.getUniqueCountries(venues);
-output << "Available Countries: ";
+    // Step 2: Filter by country
+    std::set<std::string> uniqueCountries = venueUtilities.getUniqueCountries(venues);
+    output << "Available Countries: ";
 
-// Limit the number of countries to show (for example, only show the first 5)
-size_t index = INDICES_START_AT_ONE;
-size_t maxCountriesToShow = MAX_COUNTRIES_TO_DISPLAY; // Set the desired maximum number of countries to show
-for (const auto& country : uniqueCountries) {
-    if (index > maxCountriesToShow) {
-        break; // Stop displaying countries after reaching the limit
+    // Limit the number of countries to show (for example, only show the first 5)
+    size_t index = INDICES_START_AT_ONE;
+    size_t maxCountriesToShow = MAX_COUNTRIES_TO_DISPLAY; // Set the desired maximum number of countries to show
+    for (const auto& country : uniqueCountries) {
+        if (index > maxCountriesToShow) {
+            break; // Stop displaying countries after reaching the limit
+        }
+        output << index++ << ". " << country << " ";
     }
-    output << index++ << ". " << country << " ";
-}
 
 #ifndef UNIT_TESTING
 ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-output << "\nPlease select a country index: ";
+    output << "\nPlease select a country index: ";
     size_t selectedIndex;
     input >> selectedIndex;
     input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -161,7 +161,7 @@ output << "\nPlease select a country index: ";
     ConsoleUtils::resetColor();
 #endif
 
-    // Validate input length
+    // Validate input is not greater than MAX_INPUT_LENGTH
     if (std::to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
         return;

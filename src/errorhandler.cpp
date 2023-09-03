@@ -6,21 +6,20 @@
 using namespace std;
 
 // Define the static member variable
-std::mutex ErrorHandler::outputMutex;
+boost::mutex ErrorHandler::outputMutex;
 
 // Function to handle CURL errors
 bool ErrorHandler::handleCurlError(CURLcode res) {
-    // Check if CURL operation was successful
     if (res != CURLE_OK) {
+        boost::lock_guard<boost::mutex> lock(outputMutex);
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cerr << "CURL Error: " << curl_easy_strerror(res) << endl; // Display CURL error message
+        cerr << boost::format("CURL Error: %s\n") % curl_easy_strerror(res);
 #ifndef UNIT_TESTING
-    // After displaying the error, reset the console text color
-    ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
-        handleErrorAndReturn(ErrorType::LIBCURL_ERROR); // Handle the error
+        handleErrorAndReturn(ErrorType::LIBCURL_ERROR);
         return false;
     }
     return true;
@@ -33,7 +32,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error) {
 
 // Function to handle various types of errors and display appropriate messages
 void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo = "") {
-    std::lock_guard<std::mutex> lock(outputMutex); // Lock the mutex
+    boost::lock_guard<boost::mutex> lock(outputMutex);
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
@@ -52,10 +51,10 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Invalid choice. Press return..." << endl;
             break;
         case ErrorType::INVALID_INDEX_ERROR:
-            cerr << "Invalid index: " << extraInfo << endl;
+            std::cerr << boost::format("Invalid index: %s\n") % extraInfo;
             break;
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
-            cerr << "Invalid index format." << extraInfo << "Skipping." << endl;
+            std::cerr << boost::format("Invalid index format. %s Skipping.\n") % extraInfo;
             break;
         case ErrorType::EMPTY_VENUE_LIST_ERROR:
             cerr << "No venues could be loaded for filtering" << endl;
@@ -109,8 +108,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "The recipient email formatting is not correct" << endl;
             break;
         case ErrorType::SENDER_EMAIL_FORMAT_ERROR:
-            cerr << "Error: The sender email '" << extraInfo << "' is not the valid format." << endl;
-            cerr << "Please set it correctly in your custom.json file." << endl;
+            std::cerr << boost::format("Error: The sender email '%1%' is not the valid format.\nPlease set it correctly in your custom.json file.\n") % extraInfo;
             break;
         case ErrorType::EMAIL_PASSWORD_MIN_LENGTH_ERROR:
             cerr << "Error: The email password is too short." << endl;
@@ -131,10 +129,10 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Failed to open " << extraInfo << " for writing." << endl;
             break;
         case ErrorType::INVALID_CAPACITY_IN_CSV_ERROR:
-            cerr << "Invalid capacity in CSV file: " << extraInfo << endl;
+            std::cerr << boost::format("Invalid capacity in CSV file: %1%\n") % extraInfo;
             break;
         case ErrorType::INVALID_DATA_IN_CSV_ERROR:
-            cerr << "Invalid data in CSV file: " << extraInfo << endl;
+            std::cerr << boost::format("Invalid data in CSV file: %1%\n") % extraInfo;
             break;
         case ErrorType::REGISTRATION_KEY_MISSING_ERROR:
             cerr << "The registration key is missing: " << extraInfo << endl;
@@ -194,8 +192,8 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error) {
     handleErrorAndReturn(error, "");
 }
 
-void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo = "") {
-    std::lock_guard<std::mutex> lock(outputMutex); // Lock the mutex
+void ErrorHandler::handleErrorAndThrow(ErrorType error, const std::string& extraInfo) {
+    boost::lock_guard<boost::mutex> lock(outputMutex); // Lock the mutex
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
@@ -205,22 +203,22 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo 
             errorMessage = "Menu failed to load, please restart the program.";
             break;
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
-            errorMessage = "Invalid index format. " + extraInfo + " Skipping.";
+            errorMessage = boost::str(boost::format("Invalid index format. %s Skipping.") % extraInfo);
             break;
         case ErrorType::SUBJECT_MESSAGE_ERROR:
             errorMessage = "An error occurred while entering subject and message.";
             break;
         case ErrorType::SQLITE_DATABASE_OPEN_ERROR:
-            cerr << "Database failed to open: " << extraInfo << endl;
-            break;        
+            std::cerr << boost::str(boost::format("Database failed to open: %s\n") % extraInfo);
+            break;
         case ErrorType::FILESYSTEM_ERROR:
-            errorMessage = "Filesystem error: " + extraInfo;
+            errorMessage = boost::str(boost::format("Filesystem error: %s") % extraInfo);
             break;
         case ErrorType::LIBCURL_ERROR:
 #ifndef UNIT_TESTING
             errorMessage = "Failed to initialize libcurl.";
             if (!extraInfo.empty()) {
-                errorMessage += " " + extraInfo;
+                errorMessage = boost::str(boost::format("%s %s") % errorMessage % extraInfo);
             }
 #endif
             break;

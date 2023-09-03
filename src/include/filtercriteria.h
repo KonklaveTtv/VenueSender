@@ -57,6 +57,9 @@ private:
 
     // Max length for venue selection indices input
     static constexpr std::string::size_type MAX_INPUT_LENGTH = 256;
+
+    // Min length for venue selection indices input
+    static constexpr std::string::size_type MIN_INPUT_LENGTH = 1;
    
     // Delimiter used in CSV files
     static constexpr char CSV_DELIMITER = ','; // Delimiter used in CSV files
