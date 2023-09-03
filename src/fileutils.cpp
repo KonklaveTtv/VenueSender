@@ -129,7 +129,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         if (initColor) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::INIT_ENTER_PASSWORD_MESSAGE);
         } else {
-            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_PASSWORD_CONFIG_MESSAGE);
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_CONFIG_ENTER_PASSWORD_MESSAGE);
         }
 
         password.clear();
@@ -313,7 +313,6 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     if (configLoadedSuccessfully) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIG_JSON_LOADED_MESSAGE);
         this_thread::sleep_for(chrono::seconds(1));
-        ConsoleUtils::clearConsole();
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
 
@@ -380,6 +379,9 @@ bool VenueDatabaseReader::decryptRegistrationKey(const string& registrationKeyPa
 
     decryptedRegistrationKeyData.resize(decryptedLen + finalLen);
     EVP_CIPHER_CTX_free(ctx);
+
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::REGISTRATION_KEY_VALID_MESSAGE);
+    this_thread::sleep_for(chrono::seconds(1));
 
     return true;
 }
@@ -515,6 +517,16 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         readFromSQLite(venues, db);
         sqlite3_close(db);
         success = true;
+    }
+
+    if (!success) {
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CSV_DATABASE_LOADED_MESSAGE);
+        this_thread::sleep_for(chrono::seconds(1));
+        ConsoleUtils::clearConsole();    
+    } else {
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SQLITE_DATABASE_LOADED_MESSAGE);
+        this_thread::sleep_for(chrono::seconds(1));
+        ConsoleUtils::clearConsole();   
     }
 
     return success;

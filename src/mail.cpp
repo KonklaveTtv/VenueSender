@@ -409,6 +409,10 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                                        const vector<SelectedVenue>& selectedVenuesForEmail) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
+    struct curl_slist* recipients = nullptr;
+    struct curl_slist* headers = nullptr;
+    curl_mime *mime = nullptr;
+
 
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
@@ -433,14 +437,11 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
             ConsoleUtils::resetColor();
 #endif
 
-    struct curl_slist* recipients = nullptr;
-
-    // Logic for sending individual emails with "To:"
+    // Set Recipient(s)
     recipients = curl_slist_append(recipients, selectedVenue.email.c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
     // cURL headers
-    struct curl_slist* headers = nullptr;
     string dateHeader = "Date: " + getCurrentDateRfc2822();
     string toHeader = "To: " + selectedVenue.email;
     string fromHeader = "From: " + senderEmail;
@@ -454,12 +455,20 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     // Set headers
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-    curl_mime *mime = nullptr;
 
+    // Initialize MIME
     mime = curl_mime_init(curl);
+    if (!mime) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_INIT_ERROR);
+        return false;
+    }
 
     // Add the message part
-    curl_mimepart *part = curl_mime_addpart(mime);
+    curl_mimepart* part = curl_mime_addpart(mime);
+    if (!part) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+        return false;
+    }
     curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
 
     if (!attachmentPath.empty()) {
@@ -467,8 +476,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         size_t fileSize = boost::filesystem::file_size(attachmentPath);
         attachmentSize = to_string(fileSize) + " bytes";
 
-        // Add the attachment part
         part = curl_mime_addpart(mime);
+        if (!part) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+            return false;
+        }
+
+        // Add the attachment part
         curl_mime_filedata(part, attachmentPath.c_str());
 
         // Retrieve attachment filename
@@ -483,6 +497,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_AUTH_MESSAGE);
     cout.flush();
 
+    // Push the email
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
     // Update totalEmails dynamically
@@ -509,9 +524,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     if (mime) {
         curl_mime_free(mime);
     }
-
+    if (recipients) {
     curl_slist_free_all(recipients);
+
+    }
+    if (headers) {
     curl_slist_free_all(headers);
+    }
 
     if (res == 0) {
 #ifndef UNIT_TESTING
@@ -559,6 +578,9 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
                                              string& attachmentPath) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
+        struct curl_slist* recipients = nullptr;
+        struct curl_slist* headers = nullptr;
+        curl_mime *mime = nullptr;
 
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
@@ -584,12 +606,11 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         string subject = kv.second.first;
         string message = kv.second.second;
 
-        struct curl_slist* recipients = nullptr;
+        // Set Recipient(s)
         recipients = curl_slist_append(recipients, recipientEmail.c_str());
         curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
 
-        struct curl_slist* headers = nullptr;
         string dateHeader = "Date: " + getCurrentDateRfc2822();
         string toHeader = "To: " + recipientEmail;
         string fromHeader = "From: " + senderEmail;
@@ -603,13 +624,19 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         // Set headers
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-        // Setting up MIME and other options
-        curl_mime *mime = nullptr;
-
+        // Initialize MIME
         mime = curl_mime_init(curl);
+        if (!mime) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_INIT_ERROR);
+            return false;
+        }
 
         // Add the message part
-        curl_mimepart *part = curl_mime_addpart(mime);
+        curl_mimepart* part = curl_mime_addpart(mime);
+        if (!part) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+            return false;
+        }
         curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
 
         if (!attachmentPath.empty()) {
@@ -618,8 +645,13 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
             size_t fileSize = boost::filesystem::file_size(attachmentPath);
             attachmentSize = to_string(fileSize) + " bytes";
 
-            // Add the attachment part
             part = curl_mime_addpart(mime);
+            if (!part) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+                return false;
+            }
+
+            // Add the attachment part
             curl_mime_filedata(part, attachmentPath.c_str());
 
             // Retrieve attachment filename
@@ -634,6 +666,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_AUTH_MESSAGE);
         cout.flush();
 
+        // Push the email
         curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
         // Update totalEmails dynamically
@@ -723,16 +756,16 @@ void EmailManager::createBookingTemplate(CURL* curl,
     auto getInputWithConfirmation = [&](string& input, const string& prompt, bool isMandatory = false) {
         bool inputConfirmed = false;
         while (!inputConfirmed) {
-    #ifndef UNIT_TESTING
+#ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
+#endif
             cout << prompt;
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
+
             getline(cin, input);
             ConsoleUtils::clearInputBuffer();
-
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
             if (input.empty()) {
                 if (isMandatory) {
                     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MANDATORY_TEMPLATE_FIELD_MESSAGE);
@@ -741,7 +774,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
                 char confirmation;
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMPTY_FIELD_CONFIRMATION_TEMPLATE_MESSAGE);
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
                 cin >> confirmation;
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
                 ConsoleUtils::clearInputBuffer();
 
                 if (confirmation == 'y' || confirmation == 'Y') {
@@ -843,15 +882,15 @@ void EmailManager::createBookingTemplate(CURL* curl,
         }
 
         while (true) {
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-    #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
         char addAttachmentChoice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cin >> addAttachmentChoice;
-    #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-    #endif
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
         if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
@@ -859,7 +898,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
             
         } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             getline(cin, attachmentPath);
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
             ConsoleUtils::clearInputBuffer();
             if (attachmentPath.empty()) {
                 break; // No attachment provided, move on
@@ -878,20 +923,26 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 if (filesystem::exists(attachmentPath)) {
                     size_t fileSize = boost::filesystem::file_size(attachmentPath);
                     attachmentSize = to_string(fileSize) + " bytes";
-    #ifndef UNIT_TESTING
+#ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
-    #endif
+#endif
                     cout << "File Size: " << fileSize << " bytes" << endl;
-    #ifndef UNIT_TESTING
+#ifndef UNIT_TESTING
                     ConsoleUtils::resetColor();
-    #endif
+#endif
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                         clearAttachmentData(attachmentName, attachmentSize, attachmentPath);
                         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
 
                         char choice;
+#ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
                         cin >> choice;
+#ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+#endif
                         ConsoleUtils::clearInputBuffer();
                         if (choice == 'Y' || choice == 'y') {
                             continue; // Go back to asking for a new file
@@ -900,13 +951,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
                         }
                     }
 
-    #ifndef UNIT_TESTING                
+#ifndef UNIT_TESTING                
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
-    #endif
+#endif
                     cout << "Attachment: " << attachmentName << " (" << attachmentSize << ")" << endl;
-    #ifndef UNIT_TESTING
+#ifndef UNIT_TESTING
                     ConsoleUtils::resetColor();
-    #endif
+#endif
                     break;  // Exit the loop if the file is valid
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
@@ -942,8 +993,14 @@ void EmailManager::createBookingTemplate(CURL* curl,
     
             // Ask the user if they want to send the template
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
-            ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cin >> choice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        ConsoleUtils::clearInputBuffer();
 
             if (choice == 'Y' || choice == 'y') {
                 templateExists = false; // Reset the flag since we're sending the email
@@ -984,6 +1041,9 @@ void EmailManager::emailCustomAddress(CURL* curl,
     const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
+    struct curl_slist* recipients = nullptr;
+    struct curl_slist* headers = nullptr;
+    curl_mime *mime = nullptr;
 
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
@@ -1200,13 +1260,12 @@ void EmailManager::emailCustomAddress(CURL* curl,
             cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
-#endif            
-            struct curl_slist* recipients = nullptr;
+#endif       
+            // Set Recipient     
             recipients = curl_slist_append(recipients, customAddressRecipientEmail.c_str());
             curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
             // cURL headers
-            struct curl_slist* headers = nullptr;
             string dateHeader = "Date: " + getCurrentDateRfc2822();
             string toHeader = "To: " + customAddressRecipientEmail;
             string fromHeader = "From: " + senderEmail;
@@ -1220,21 +1279,37 @@ void EmailManager::emailCustomAddress(CURL* curl,
             // Set headers
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-            curl_mime *mime = nullptr;
-            
+            // Initialize MIME
             mime = curl_mime_init(curl);
+            if (!mime) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_INIT_ERROR);
+                return;
+            }
 
             // Add the message part
-            curl_mimepart *part = curl_mime_addpart(mime);
+            curl_mimepart* part = curl_mime_addpart(mime);
+            if (!part) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+                return;
+            }
             curl_mime_data(part, customAddressMessage.c_str(), CURL_ZERO_TERMINATED);
 
-             if (!customAddressAttachmentPath.empty()) {
+            if (!customAddressAttachmentPath.empty()) {
                 // Add the attachment part conditionally
                 size_t fileSize = boost::filesystem::file_size(customAddressAttachmentPath);
                 customAddressAttachmentSize = to_string(fileSize) + " bytes";
                 part = curl_mime_addpart(mime);
+                if (!part) {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+                    return;
+                }
+                // Add the attachment part
                 curl_mime_filedata(part, customAddressAttachmentPath.c_str());
+        
+                // Retrieve attachment filename
                 curl_mime_filename(part, customAddressAttachmentName.c_str());
+
+                // Set MIME type for attachment
                 curl_mime_type(part, "application/octet-stream");
             }
 
@@ -1243,8 +1318,10 @@ void EmailManager::emailCustomAddress(CURL* curl,
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_AUTH_MESSAGE);
             cout.flush();
 
+            // Push the email
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
+            // Total Emails Is Always One
             totalCustomEmails = CUSTOM_EMAIL_TO_SEND_COUNT;
 
             // Perform the operation
@@ -1263,8 +1340,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 ConsoleUtils::resetColor();
         #endif
                 cout.flush();
-            } else {
-                // Handle error
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
@@ -1280,9 +1355,12 @@ void EmailManager::emailCustomAddress(CURL* curl,
             if (mime) {
                 curl_mime_free(mime);
             }
-
+            if (recipients) {
             curl_slist_free_all(recipients);
+            }
+            if (headers) {
             curl_slist_free_all(headers);
+            }
 
             if (res == 0) {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);

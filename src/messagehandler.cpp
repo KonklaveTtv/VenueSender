@@ -53,8 +53,36 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-        break;        
-        
+        break;  
+        case MessageType::REGISTRATION_KEY_VALID_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Registration Key Valid" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;
+        case MessageType::CSV_DATABASE_LOADED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "CSV Venue Database Loaded" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;
+        case MessageType::SQLITE_DATABASE_LOADED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "SQLite Venues Database Loaded" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;       
+
+
         //Email Config Messages
         case MessageType::PASSWORD_MATCHES_MESSAGE:
 #ifndef UNIT_TESTING

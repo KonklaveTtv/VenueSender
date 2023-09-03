@@ -31,6 +31,10 @@ public:
     		
 	        // System Messages
 	        CONFIG_JSON_LOADED_MESSAGE,
+	        REGISTRATION_KEY_VALID_MESSAGE,
+	        CSV_DATABASE_LOADED_MESSAGE,
+	        SQLITE_DATABASE_LOADED_MESSAGE,
+
 
        		// Email Config
 	        PASSWORD_MATCHES_MESSAGE,

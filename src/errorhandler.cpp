@@ -287,6 +287,12 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo)
             }
 #endif
             break;
+        case ErrorType::MIME_INIT_ERROR:
+            cerr << "cURL MIME initialization failed." << endl;
+            break;
+        case ErrorType::MIME_PART_ERROR:
+            cerr << "cURL MIME part failed." << endl;
+            break;
 
 
         // System Errors
