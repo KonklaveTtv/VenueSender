@@ -190,7 +190,7 @@ public:
                                           std::string& attachmentPath);
 
     // Function to append the string for the booking template
-    void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) const;
+    static void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) ;
 
     // Function to send a booking template email
     void createBookingTemplate(CURL* curl,

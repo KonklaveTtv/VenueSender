@@ -702,7 +702,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 }
 
 // Helper function to conditionally append a line to the message
-void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) const {
+void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) {
     if (!value.empty()) {
         os << label << ": " << value << "\n";
     }

@@ -203,7 +203,12 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::CONFIG_OPEN_TO_WRITE_ERROR:
             cerr << "Failed to open " << extraInfo << " for writing." << endl;
             break;
-
+        case ErrorType::FILE_NOT_OPEN_ERROR:
+            cerr << "File not open" << endl;
+            break;
+        case ErrorType::UNKNOWN_ERROR:
+            cerr << "Unknown Error" << endl;
+            break;
 
         // Database Errors
         case ErrorType::INVALID_CAPACITY_IN_CSV_ERROR:
@@ -231,6 +236,10 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "Failed to prepare statement: " << extraInfo << endl;
             break;
 
+        // Boost Iostreams Errors
+        case ErrorType::BOOST_IOSTREAMS_ERROR:
+            cerr << boost::format("Boost Iostreams Error: %s\n") % extraInfo;
+            break;
 
         // Default Error
 #ifdef UNIT_TESTING

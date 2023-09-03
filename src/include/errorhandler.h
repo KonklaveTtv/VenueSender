@@ -92,6 +92,9 @@ public:
     CONFIG_OPEN_ERROR,
     CONFIG_LOAD_ERROR,
     CONFIG_OPEN_TO_WRITE_ERROR,
+    FILE_NOT_OPEN_ERROR,
+    UNKNOWN_ERROR,
+
 
     // Database Errors
     INVALID_CAPACITY_IN_CSV_ERROR,
@@ -102,7 +105,10 @@ public:
     SQLITE_STATEMENT_ERROR,
     DATABASE_OPEN_ERROR,
     DATABASE_QUERY_ERROR,
-    SQLITE_DATABASE_OPEN_ERROR
+    SQLITE_DATABASE_OPEN_ERROR,
+
+    // Boost Errors
+    BOOST_IOSTREAMS_ERROR
     };
 
     // Function to handle errors and display appropriate messages based on the type of error

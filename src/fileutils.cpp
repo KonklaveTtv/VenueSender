@@ -341,6 +341,7 @@ string ConsoleUtils::trim(const string& str){
 
 // Function to decrypt SQLite database using AES-256-CBC and store it in memory
 bool VenueDatabaseReader::decryptRegistrationKey(const string& registrationKeyPath, vector<unsigned char>& decryptedRegistrationKeyData) {
+
     // Initialize OpenSSL
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
@@ -472,14 +473,10 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
     }
 
     // Try to read from CSV first
-    boost::iostreams::mapped_file_source csvMappedFile;
-    csvMappedFile.open(venuesCsvPath);
-    if (csvMappedFile.is_open()) {
-        // Create a string from the iterators and then a stringstream
-        string csvData(csvMappedFile.begin(), csvMappedFile.end());
-        istringstream csvStream(csvData);
-        readFromCsv(venues, csvStream);
-        csvMappedFile.close();
+    std::ifstream csvFile(venuesCsvPath);
+    if (csvFile.is_open()) {
+        readFromCsv(venues, csvFile);
+        csvFile.close();
         success = true;
     }
 
@@ -500,13 +497,16 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
             return false;
         }
 
-        // Use boost::scoped_array for memory management
-        boost::scoped_array<unsigned char> sqliteBuffer(new unsigned char[decryptedData.size()]);
-        copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer.get());
-
+        // Allocate a separate buffer and copy the decrypted data into it
+        auto* sqliteBuffer = (unsigned char*) malloc(decryptedData.size());
+        if (sqliteBuffer == nullptr) {
+            std::cerr << "Failed to allocate memory for SQLite buffer.\n";
+            return false;
+        }
+        std::copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer);
+        
         // Load the copied data into the in-memory SQLite database
-        if (sqlite3_deserialize(db, "main", sqliteBuffer.get(), decryptedData.size(), decryptedData.size(),
-                                SQLITE_DESERIALIZE_RESIZEABLE | SQLITE_DESERIALIZE_FREEONCLOSE) != SQLITE_OK) {
+        if (sqlite3_deserialize(db, "main", sqliteBuffer, decryptedData.size(), decryptedData.size(),                                SQLITE_DESERIALIZE_RESIZEABLE | SQLITE_DESERIALIZE_FREEONCLOSE) != SQLITE_OK) {
             ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DECRYPTED_DATABASE_LOAD_ERROR);
             return false;
         }

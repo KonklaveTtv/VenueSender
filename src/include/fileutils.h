@@ -8,10 +8,12 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <limits>
 #include <memory>
 #include <sstream>
+#include <string>
 #include <termios.h>  
 #include <thread>
 #include <unistd.h>
@@ -22,6 +24,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/iostreams/stream.hpp>
 #include <boost/optional.hpp>
 #include <boost/predef.h>
 #include <boost/property_tree/ptree.hpp>
@@ -230,7 +233,7 @@ public:
     // Destructor
     ~VenueDatabaseReader() = default;
 
-    bool decryptSQLiteDatabase(const std::string& encryptedFilePath, std::vector<unsigned char>& decryptedData);
+    static bool decryptSQLiteDatabase(const std::string& encryptedFilePath, std::vector<unsigned char>& decryptedData);
 
     static bool decryptRegistrationKey(const std::string& registrationKeyPath, std::vector<unsigned char>& decryptedRegistrationKeyData);
 

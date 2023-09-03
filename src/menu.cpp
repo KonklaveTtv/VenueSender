@@ -698,8 +698,7 @@ while (true) {
     }   
     
     // Update curl handle settings using the provided CurlHandleWrapper
-    MenuManager menuManager;
-    menuManager.setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, sslCertPath, smtpUsername,
+    MenuManager::setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, sslCertPath, smtpUsername,
                     mailPass, senderEmail, smtpPort, smtpServer, verbose);
 
     EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
