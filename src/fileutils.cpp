@@ -169,9 +169,19 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
                 break;
             }
 
-            // Add the character to the password
-            password += ch;
-            putchar('*');
+            if (initColor) {
+                password += ch;
+                putchar('*');
+            } else {
+                password += ch;
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+                putchar('*');
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor(); // Reset color
+#endif
+            }
         }
 
         // Check for minimum password length
@@ -225,9 +235,19 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
                 break;
             }
 
-            // Add the character to the password
-            confirm += ch;
-            putchar('*');
+            if (initColor) {
+                password += ch;
+                putchar('*');
+            } else {
+                password += ch;
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+                putchar('*');
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor(); // Reset color
+#endif
+            }
         }
 
         if (ConsoleUtils::caseSensitiveStringCompare(password, confirm)) {
@@ -291,6 +311,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
     initColor = true;
 #else
     // Use the password entered by the user
+    initColor = true;
     mailPass = ConsoleUtils::passwordEntry(initColor);
     initColor = false;
 #endif

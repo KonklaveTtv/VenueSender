@@ -20,7 +20,7 @@ int main() {
     string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort;
     bool templateExists = false;
-    bool initColor = true;
+    bool initColor;
     bool useSSL, verifyPeer, verifyHost, verbose;
 
     // Load configurations from JSON file

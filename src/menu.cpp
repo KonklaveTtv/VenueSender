@@ -699,9 +699,32 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         }
     }
 
-    // Edit Mail password
-    mailPass = ConsoleUtils::passwordEntry(initColor);  // Assuming the passwordEntry function is available within the same class or public
+    // Confirm Edit SMTP Password
+while (true) {
+    #ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+        cout << "Edit SMTP Password? (y/n): ";
+        cin >> tempSmtpChar;
+    #ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+    #endif
+        ConsoleUtils::clearInputBuffer();
 
+        if (tempSmtpChar == 'y' || tempSmtpChar == 'Y') {
+            // Edit SMTP Password
+            initColor = false;
+            mailPass = ConsoleUtils::passwordEntry(initColor);
+            break;
+        } 
+        else if (tempSmtpChar == 'n' || tempSmtpChar == 'N') {
+            if (mailPass.empty()) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_EMPTY_ERROR);
+            }
+            break;
+        }
+    }   
+    
     // Update curl handle settings using the provided CurlHandleWrapper
     MenuManager menuManager;
     menuManager.setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, sslCertPath, smtpUsername,

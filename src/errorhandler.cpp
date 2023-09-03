@@ -110,6 +110,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::SENDER_EMAIL_FORMAT_ERROR:
             cerr << boost::format("Error: The sender email '%1%' is not the valid format.\nPlease set it correctly in your custom.json file.\n") % extraInfo;
             break;
+        case ErrorType::EMAIL_PASSWORD_EMPTY_ERROR:
+            cerr << "Error: The email password has not been set." << endl;
+            break;
         case ErrorType::EMAIL_PASSWORD_MIN_LENGTH_ERROR:
             cerr << "Error: The email password is too short." << endl;
             break;
