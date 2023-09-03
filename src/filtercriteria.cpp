@@ -156,18 +156,32 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     output << "\nPlease select a country index: ";
     size_t selectedIndex;
     input >> selectedIndex;
-    input.ignore(numeric_limits<streamsize>::max(), '\n');
+    ConsoleUtils::clearInputBuffer();
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
 
+    if (input.fail()) {
+        ConsoleUtils::clearInputBuffer();
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+        return;
+    }
+    
+    // Do not allow the user to enter an input less than MAX_INPUT_LENGTH
+    if (to_string(selectedIndex).length() <= MIN_INPUT_LENGTH) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
+        return;
+    }
+
     // Validate input is not greater than MAX_INPUT_LENGTH
     if (to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
+        ConsoleUtils::clearInputBuffer();
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INPUT_LENGTH_ERROR);
         return;
     }
 
     if (selectedIndex > uniqueCountries.size() || selectedIndex < 1 || selectedIndex > maxCountriesToShow) {
+        ConsoleUtils::clearInputBuffer();
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
         return;
     }
@@ -226,6 +240,11 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
         // Convert the input to lowercase for case-insensitive comparison
         transform(inputIndices.begin(), inputIndices.end(), inputIndices.begin(), ::tolower);
 
+        if (inputIndices.empty()) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+            return;
+        }
+
         if (inputIndices == "all") {
             // User selected all options, no need to filter
             temporaryFilteredVenuesBuffer = temporaryFilteredVenues;
@@ -243,7 +262,9 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             while (getline(iss, indexStr, CSV_DELIMITER)) {
                 try {
                     size_t selectedIndex = stoul(indexStr);
-                    if (selectedIndex == 0 || selectedIndex > localIndex) {
+
+
+                    if (selectedIndex == 0 || selectedIndex > localIndex -1) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                         return;
                     }
