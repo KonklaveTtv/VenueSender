@@ -39,8 +39,6 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION:
-                            // Logic to return to the main menu
-                            // No action needed, loop will start from the beginning
                             break;
                     }
                     break;
@@ -60,8 +58,6 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             EmailManager::clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS:
-                            // Logic to return to the main menu
-                            // No action needed, loop will start from the beginning
                             break;
                     }
 
@@ -86,8 +82,6 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             EmailManager::confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS:
-                            // Logic to return to the main menu
-                            // No action needed, loop will start from the beginning
                             break;
                     }
                     break;
@@ -111,8 +105,6 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS:
-                            // Logic to return to the main menu
-                            // No action needed, loop will start from the beginning
                             break;
                     }
                     break;
@@ -131,8 +123,6 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                                           mailPass, smtpPort, smtpServer, initColor, curlWrapper);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS:
-                            // Logic to return to the main menu
-                            // No action needed, loop will start from the beginning
                             break;
                     }
                     break;

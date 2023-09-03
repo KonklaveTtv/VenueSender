@@ -27,7 +27,7 @@ void Init::splashscreen() {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-    cout << "               Version 1.0.0               " << endl;
+    cout << "               Version 0.0.1a               " << endl;
 
     // Display copyright and other text in cyan
 #ifndef UNIT_TESTING

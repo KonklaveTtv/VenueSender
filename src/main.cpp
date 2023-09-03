@@ -7,7 +7,7 @@ using namespace std;
 CurlHandleWrapper& curlWrapper = CurlHandleWrapper::getInstance();
 VenueFilter venueFilter;
 
-// Exclude the following code block if UNIT_TESTING is defined
+// int main() is disabled during unit testing
 #ifndef UNIT_TESTING
 
 int main() {
