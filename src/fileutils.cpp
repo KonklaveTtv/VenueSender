@@ -480,6 +480,8 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         readFromCsv(venues, csvFile);
         csvFile.close();
         success = true;
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CSV_DATABASE_LOADED_MESSAGE);
+        this_thread::sleep_for(chrono::seconds(1));
     }
 
     // Fallback to SQLite if reading from CSV fails
@@ -517,16 +519,9 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         readFromSQLite(venues, db);
         sqlite3_close(db);
         success = true;
-    }
 
-    if (!success) {
-        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CSV_DATABASE_LOADED_MESSAGE);
-        this_thread::sleep_for(chrono::seconds(1));
-        ConsoleUtils::clearConsole();    
-    } else {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SQLITE_DATABASE_LOADED_MESSAGE);
         this_thread::sleep_for(chrono::seconds(1));
-        ConsoleUtils::clearConsole();   
     }
 
     return success;
