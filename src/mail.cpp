@@ -17,15 +17,7 @@ int totalTemplateEmails;
 void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
                                      const string& senderEmail, const string& smtpUsername, int smtpPort, const string& smtpServer) {
     // Display the email settings in a structured format
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "============================"<< endl
-         << "       Email Settings       "<< endl
-         << "============================"<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EMAIL_SETTINGS_MENU_HEADER);
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
@@ -62,15 +54,8 @@ bool EmailManager::isValidURL(const std::string& url) {
 void EmailManager::constructEmail(string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, istream &in) const {
     
     clearAllEmailData(subject, message, attachmentName, attachmentSize, attachmentPath);
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "==========================="<< endl;
-    cout << "===== Construct Email ====="<< endl;
-    cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::CONSTRUCT_EMAIL_MENU_HEADER);
 
     // Prompt the user to enter the subject and perform checks
     do {
@@ -263,12 +248,11 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
                                   string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists,
                                   map<string, pair<string, string>>& emailToTemplate) const {
 
+
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EMAIL_DETAILS_MENU_HEADER);
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    cout << "===========================\n";
-    cout << "       EMAIL DETAILS       \n";
-    cout << "===========================\n";
     cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
     cout << "Subject: " << subject << "\n";
 #ifndef UNIT_TESTING
@@ -353,15 +337,7 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
             }
 
         } else {
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);           
-#endif      
-            cout << "===========================" << endl;
-            cout << "        Email saved        " << endl;
-            cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-#endif
+            MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EMAIL_SAVED_MENU_HEADER);
             return;
         }
     }
@@ -388,12 +364,10 @@ void EmailManager::viewEditTemplates(CURL* curl,
     string firstSubject = firstElement->second.first;
     string firstMessage = firstElement->second.second;
 
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_DETAILS_MENU_HEADER);
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    cout << "=============================\n";
-    cout << "      TEMPLATE DETAILS       \n";
-    cout << "=============================\n";
     cout << "For: " << firstEmail << "\n";
     cout << "Subject: " << firstSubject << "\n";
 #ifndef UNIT_TESTING
@@ -432,15 +406,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
             createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort,
                                   attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
         } else {
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-            cout << "===========================" << endl;
-            cout << "      Template Saved       " << endl;
-            cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-#endif
+            MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
             return;
         }
     }
@@ -1053,15 +1019,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                 }
             } else {
-#ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-                cout << "===========================" << endl;
-                cout << "      Template Saved       " << endl;
-                cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
-#endif
+                MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
+
                 // If user chooses not to send, the template and subjects stay in the map
                 templateExists = true;
             }
@@ -1488,14 +1447,9 @@ void EmailManager::confirmSendEmail(CURL* curl,
     }
 
     // Display a summary of all emails to be sent.
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EMAIL_SUMMARY_MENU_HEADER);
+
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "===========================" << endl;
-    cout << "       Email Summary       " << endl;
-    cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE); // Setting color for attachment details
 #endif
     cout << "Number of emails to send: " << selectedVenuesForEmail.size() << endl;
@@ -1603,15 +1557,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     }
 
     // Display a summary of all templates to be sent.
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "============================"<< endl;
-    cout << "  Booking Template Summary  "<< endl;
-    cout << "============================"<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::BOOKING_TEMPLATE_SUMMARY_MENU_HEADER);
 
     // Display the first template as an example
     auto firstElement = emailToTemplate.begin();

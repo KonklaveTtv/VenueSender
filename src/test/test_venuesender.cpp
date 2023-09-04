@@ -404,7 +404,7 @@ TEST_CASE("processVenueSelection functionality", "[VenueFilter]") {
         };    
         vector<SelectedVenue> selectedVenuesForEmail;
         vector<SelectedVenue> selectedVenuesForTemplates;
-        std::istringstream input("1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
+        std::istringstream input("1\n1\n1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
         std::ostringstream output;
         VenueFilter venueFilter;
 

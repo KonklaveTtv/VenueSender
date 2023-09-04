@@ -138,15 +138,7 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
 int MenuManager::displayMenuOptions() {
     int choice;
     do {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
-#endif
-        cout << "==========================="<< endl;
-        cout << "         Main Menu         "<< endl;
-        cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::MAIN_MENU_HEADER);
         cout << VENUE_SELECTION_OPTION << ". Venue Selection" << endl;
         cout << VENUE_OPTIONS_OPTION << ". Venue Options" << endl;
         cout << EMAIL_OPTIONS_OPTION << ". Email" << endl;
@@ -203,15 +195,7 @@ int MenuManager::displayMenuOptions() {
 int MenuManager::displayVenueSelectionOptions() {
     int choice;
     do {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
-#endif
-        cout << "==========================="<< endl;
-        cout << "      Venue Selection      "<< endl;
-        cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::MAIN_MENU_HEADER);
         cout << SELECT_VENUES_OPTION << ". Select Venues" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION << ". Return to Main Menu" << endl;
 
@@ -237,15 +221,7 @@ int MenuManager::displayVenueSelectionOptions() {
 int MenuManager::displayVenueOptions() {
     int choice;
     do {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
-#endif
-        cout << "==========================="<< endl;
-        cout << "       Venue Options       "<< endl;
-        cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUE_OPTIONS_MENU_HEADER);
         cout << VIEW_SELECTED_VENUES_OPTION << ". View Selected Venues" << endl;
         cout << CLEAR_SELECTED_VENUES_OPTION << ". Clear Selected Venues" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS << ". Return to Main Menu" << endl;
@@ -272,15 +248,7 @@ int MenuManager::displayVenueOptions() {
 int MenuManager::displayEmailOptions() {
     int choice;
     do {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
-#endif
-        cout << "==========================="<< endl;
-        cout << "           Email           "<< endl;
-        cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EMAIL_MENU_HEADER);
         cout << CREATE_EMAIL_OPTION << ". Create Email" << endl;
         cout << VIEW_EDIT_EMAILS_OPTION << ". View & Edit Email" << endl;
         cout << EMAIL_CUSTOM_ADDRESS_OPTION << ". Email Custom Address" << endl;
@@ -309,15 +277,7 @@ int MenuManager::displayEmailOptions() {
 int MenuManager::displayTemplateOptions() {
     int choice;
     do {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
-#endif
-      //cout << "==========================="<< endl;
-        cout << "         Templates         "<< endl;
-        cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATES_MENU_HEADER);
         cout << CREATE_VENUE_BOOKING_TEMPLATE_OPTION << ". Create Venue Booking Template" << endl;
         cout << VIEW_EDIT_BOOKING_TEMPLATES_OPTION << ". View & Edit Booking Template" << endl;
         cout << SEND_BOOKING_TEMPLATES_OPTION << ". Send Booking Templates" << endl;
@@ -346,15 +306,7 @@ int MenuManager::displayTemplateOptions() {
 int MenuManager::displayConfigurationOptions() {
     int choice;
     do {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN); // Blue for headers
-#endif
-        cout << "==========================="<< endl;
-        cout << "       Configuration       "<< endl;
-        cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::CONFIGURATION_MENU_HEADER);
         cout << SHOW_EMAIL_SETTINGS_OPTION << ". Show Email Settings" << endl;
         cout << EDIT_EMAIL_SETTINGS_OPTION << ". Edit Email Settings" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_CONFIGURATION_OPTIONS << ". Return to Main Menu" << endl;
@@ -393,15 +345,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
     // Prompt the user to enter new settings
 
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "===========================" << endl;
-    cout << "Edit Configuration Settings" << endl;
-    cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EDIT_CONFIGURATION_MENU_HEADER);
 
     // Edit Peer verification setting
     while (true) {
@@ -790,16 +734,9 @@ void MenuManager::setupCurlHandle(CurlHandleWrapper& curlWrapper,
 }
 
 void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
-    // Display header
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "==========================="<< endl;
-    cout << "      Selected Venues      "<< endl;
-    cout << "==========================="<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    // Display menu header
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EDIT_CONFIGURATION_MENU_HEADER);
+
     if (selectedVenues.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
     } else {

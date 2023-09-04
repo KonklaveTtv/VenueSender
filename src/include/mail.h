@@ -5,6 +5,7 @@
 #include "fileutils.h"
 #include "errorhandler.h"
 #include "messagehandler.h"
+#include "menutitlehandler.h"
 #include "structs.h"
 
 #include <ctime>
