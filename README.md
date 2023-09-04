@@ -108,10 +108,10 @@ This project is licensed under the MIT License.
 
 ### Acknowledgments
 
-libjsoncpp: A C++ library for working with JSON data.
-libcurl4: A client-side URL transfer library.
-libx11: The X11 client-side library.
-libssl: A library for implementing Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols.
-libsqlite3: A C library that provides a lightweight disk-based database.
-libboost: A set of libraries that extend the functionality of C++.
-Catch2: A modern, C++-native, header-only, test framework for unit tests.
+- libjsoncpp: A C++ library for working with JSON data.
+- libcurl4: A client-side URL transfer library.
+- libx11: The X11 client-side library.
+- libssl: A library for implementing Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols.
+- libsqlite3: A C library that provides a lightweight disk-based database.
+- libboost: A set of libraries that extend the functionality of C++.
+- Catch2: A modern, C++-native, header-only, test framework for unit tests.
