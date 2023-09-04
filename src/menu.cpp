@@ -195,7 +195,7 @@ int MenuManager::displayMenuOptions() {
 int MenuManager::displayVenueSelectionOptions() {
     int choice;
     do {
-        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::MAIN_MENU_HEADER);
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUE_SELECTION_MENU_HEADER);
         cout << SELECT_VENUES_OPTION << ". Select Venues" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION << ". Return to Main Menu" << endl;
 
@@ -735,7 +735,7 @@ void MenuManager::setupCurlHandle(CurlHandleWrapper& curlWrapper,
 
 void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
     // Display menu header
-    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EDIT_CONFIGURATION_MENU_HEADER);
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::SELECTED_VENUES_MENU_HEADER);
 
     if (selectedVenues.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);

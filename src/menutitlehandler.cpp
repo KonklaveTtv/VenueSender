@@ -205,6 +205,28 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 
 
         // Filter Menus
+		case MenuTitleType::FINAL_VENUE_SELECTION_MENU_HEADER:
+#ifndef UNIT_TESTING
+        	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
+			cout << "===========================" << endl;
+			cout << "   Final Venue Selection   " << endl;
+			cout << "===========================\n";
+#ifndef UNIT_TESTING
+        	ConsoleUtils::resetColor();
+#endif	
+		break;	
+
+		case MenuTitleType::VENUES_ADDED_MENU_HEADER:
+#ifndef UNIT_TESTING
+        	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
+		cout << "===========================" << endl;
+		cout << "        Venues Added       " << endl;
+#ifndef UNIT_TESTING
+        	ConsoleUtils::resetColor();
+#endif	
+		break;	
 
         // File Utils
 

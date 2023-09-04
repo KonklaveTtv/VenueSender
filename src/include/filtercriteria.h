@@ -3,6 +3,7 @@
 
 #include "fileutils.h"
 #include "messagehandler.h"
+#include "menutitlehandler.h"
 #include "structs.h"
 
 #include <iomanip>

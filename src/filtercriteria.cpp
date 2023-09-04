@@ -111,15 +111,7 @@ void VenueFilter::processVenueSelection(const vector<Venue>& venues,
                                         vector<SelectedVenue>& selectedVenuesForTemplates,
                                         istream& input,
                                         ostream& output) {
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    output << "===========================" << endl;
-    output << "      Venue Selection      " << endl;
-    output << "===========================" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUE_SELECTION_MENU_HEADER);
 
     // Clear the temporary filtered venue vectors
     VenueFilter::clearTemporaryFilteredVenuesVectors();
@@ -307,15 +299,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     }
 
     // Step 4: Final Venue Selection
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    output << "===========================" << endl;
-    output << "   Final Venue Selection   " << endl;
-    output << "===========================\n";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::FINAL_VENUE_SELECTION_MENU_HEADER);
 
     index = INDICES_START_AT_ONE;
     for (const auto& venue : temporaryFilteredVenues) {
@@ -370,12 +354,5 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             selectedVenuesForTemplates.push_back(temporaryFilteredVenues[finalIndex - 1]);
         }
     }
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-    cout << "===========================" << endl;
-    cout << "        Venues Added       " << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUES_ADDED_MENU_HEADER);
 }

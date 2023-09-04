@@ -35,7 +35,6 @@ public:
             BOOKING_TEMPLATE_SUMMARY_MENU_HEADER,
 
             // Venue Selection
-            VENUE_SELECTION_MENU_HEADER,
             FINAL_VENUE_SELECTION_MENU_HEADER,
             VENUES_ADDED_MENU_HEADER
 
