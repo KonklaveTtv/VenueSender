@@ -252,6 +252,16 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif
             break;
+
+        case MessageType::SMTP_MATCH_SENDER_EMAIL_CHECK_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Is the SMTP Username the same as Sender Email? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;
         case MessageType::SENDER_EMAIL_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);

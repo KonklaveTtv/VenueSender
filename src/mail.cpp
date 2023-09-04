@@ -15,7 +15,7 @@ int totalTemplateEmails;
 
 // Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
-                                     const string& senderEmail, int smtpPort, const string& smtpServer) {
+                                     const string& senderEmail, const string& smtpUsername, int smtpPort, const string& smtpServer) {
     // Display the email settings in a structured format
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
@@ -29,7 +29,8 @@ void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, boo
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
-    cout << "SMTP Server: " << smtpServer << endl
+    cout << "SMTP Username: " << smtpUsername << endl
+         << "SMTP Server: " << smtpServer << endl
          << "SMTP Port: " << smtpPort << endl
          << "Sender Email: " << senderEmail << endl
          << "SSL: " << (useSSL ? "true" : "false") << endl;

@@ -116,7 +116,7 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayConfigurationOptions();
                     switch (subChoice) {
                         case SHOW_EMAIL_SETTINGS_OPTION:
-                            EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+                            EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, smtpPort, smtpServer);
                             continue;
                         case EDIT_EMAIL_SETTINGS_OPTION:
                             MenuManager::editConfigurationSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, 
@@ -571,45 +571,64 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
     }
 
     // Edit SMTP Username
-    while (true) {
 
-        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_USERNAME_CONFIG_MESSAGE);
+    // Check if SMTP Username is the same as sender email
+    char sameAsSenderEmail;
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_MATCH_SENDER_EMAIL_CHECK_MESSAGE);
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-        cin >> smtpUsernameTempStr;
+    cin >> sameAsSenderEmail;
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
+    ConsoleUtils::resetColor(); // Reset to default color
 #endif
-        ConsoleUtils::clearInputBuffer();
+    ConsoleUtils::clearInputBuffer();
 
-        // Check for whitespace and control characters
-        if (smtpUsernameTempStr.find_first_of(" \t\n\r\f\v") != string::npos) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
-            continue;
-        }
+    if (sameAsSenderEmail == 'Y' || sameAsSenderEmail == 'y') {
+        smtpUsername = senderEmailTempStr;
+    } else if (smtpUsernameTempChar == 'n' || smtpUsernameTempChar == 'N') {
+        // Edit SMTP Username
+        while (true) {
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_USERNAME_CONFIG_MESSAGE);
+    #ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+            cin >> smtpUsernameTempStr;
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor(); // Reset to default color
+    #endif
+            ConsoleUtils::clearInputBuffer();
 
-        if (!EmailManager::isValidEmail(smtpUsernameTempStr)) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_USERNAME_NON_MATCH_ERROR);
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cin >> smtpUsernameTempChar;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor(); // Reset to default color
-#endif
-            if (smtpUsernameTempChar == 'y' || smtpUsernameTempChar == 'Y') {
+            // Check for whitespace and control characters
+            if (smtpUsernameTempStr.find_first_of(" \t\n\r\f\v") != string::npos) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                continue;
+            }
+
+            if (!EmailManager::isValidEmail(smtpUsernameTempStr)) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_USERNAME_NON_MATCH_ERROR);
+    #ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+                cin >> smtpUsernameTempChar;
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor(); // Reset to default color
+    #endif
+                if (smtpUsernameTempChar == 'y' || smtpUsernameTempChar == 'Y') {
+                    smtpUsername = smtpUsernameTempStr;
+                    break;
+                } else if (smtpUsernameTempChar == 'n' || smtpUsernameTempChar == 'N') {
+                    continue;
+                } else {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                }
+            } else {
                 smtpUsername = smtpUsernameTempStr;
                 break;
-            } else if (smtpUsernameTempChar == 'n' || smtpUsernameTempChar == 'N') {
-                continue;
-            } else {
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
             }
-        } else {
-            smtpUsername = smtpUsernameTempStr;
-            break;
         }
+    } else {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
     }
 
     // Edit SMTP Server
@@ -719,7 +738,7 @@ while (true) {
     menuManager.setupCurlHandle(curlWrapper, useSSL, verifyPeer, verifyHost, sslCertPath, smtpUsername,
                     mailPass, senderEmail, smtpPort, smtpServer, verbose);
 
-    EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpPort, smtpServer);
+    EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, smtpPort, smtpServer);
 
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
