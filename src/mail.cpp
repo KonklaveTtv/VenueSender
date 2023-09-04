@@ -303,7 +303,7 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
 
         char modifyEmailChoice;
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         cin >> modifyEmailChoice;
 #ifndef UNIT_TESTING
@@ -1058,7 +1058,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             // Ask the user if they want to send the template
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
 #ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
             cin >> choice;
 #ifndef UNIT_TESTING
@@ -1330,7 +1330,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         char modifyEmailChoice;
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         cin >> modifyEmailChoice;
 #ifndef UNIT_TESTING
@@ -1349,7 +1349,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_EMAIL_MESSAGE);
     char confirmSend;
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
     cin >> confirmSend;
 #ifndef UNIT_TESTING
@@ -1543,7 +1543,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_EMAILS_MESSAGE);
     char confirmSend;
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
     cin >> confirmSend;
 #ifndef UNIT_TESTING
