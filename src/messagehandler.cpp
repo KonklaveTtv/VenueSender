@@ -185,16 +185,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif
             break;
-        case MessageType::EXITING_VENUESENDER_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Exiting VenueSender" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-            break;
-
 
         // Email Config Messages
         case MessageType::USE_SSL_CONFIG_MESSAGE:
@@ -413,7 +403,15 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif
             break;
-        
+        case MessageType::EXITING_VENUESENDER_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "Exiting VenueSender" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+            break;        
 
         // Email Messages
         case MessageType::ATTACHMENT_INVALID_CHOICE_MESSAGE:
