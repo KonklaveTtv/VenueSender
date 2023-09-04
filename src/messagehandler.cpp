@@ -14,19 +14,19 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         case MessageType::SPLASH_TITLE_VERSION_MESSAGE:
             cout << "                VenueSender                " << "\n" << endl;
             cout << "                  v0.0.1a                  " << endl;
-            break;
+        break;
         case MessageType::COPYRIGHT_INFO_MESSAGE:
             cout << "    Copyright (c) 2023 | Spencer Lievens    " << endl;
-            break;
+        break;
         case MessageType::INITIALIZATION_MESSAGE:
             cout << "              Initiailizing...              " << endl;
-            break;
+        break;
         case MessageType::INIT_ENTER_PASSWORD_MESSAGE:
             cout << "Enter your email password: ";
-            break;
+        break;
         case MessageType::INIT_CONFIRM_PASSWORD_MESSAGE:
             cout << endl << "Confirm your email password: ";
-            break;
+        break;
 
         // Venue Filtering Messages
         case MessageType::AVAILABLE_COUNTRIES_MESSAGE:
@@ -195,7 +195,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::RETURN_TO_MAIN_MENU_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -204,7 +204,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
 
         // Email Config Messages
         case MessageType::USE_SSL_CONFIG_MESSAGE:
@@ -215,7 +215,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::SSL_CERTIFICATE_PATH_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -224,7 +224,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::VERIFY_PEER_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -233,7 +233,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::VERIFY_HOST_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -242,7 +242,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::VERBOSE_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -251,7 +251,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
 
         case MessageType::SMTP_MATCH_SENDER_EMAIL_CHECK_MESSAGE:
 #ifndef UNIT_TESTING
@@ -261,7 +261,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::SENDER_EMAIL_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -270,7 +270,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::SMTP_USERNAME_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -279,7 +279,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::SMTP_SERVER_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -288,7 +288,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::SMTP_PORT_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -297,7 +297,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::EMAIL_CONFIG_ENTER_PASSWORD_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -306,7 +306,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::EMAIL_CONFIG_CONFIRM_PASSWORD_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -315,7 +315,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::SMTP_PASSWORD_CONFIG_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -324,7 +324,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
 
         // Email Messages
         case MessageType::ENTER_SUBJECT_FOR_EMAIL_MESSAGE:
@@ -404,7 +404,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::VENUES_NOT_SELECTED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -414,7 +414,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::PRESS_RETURN_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -423,7 +423,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::EXIT_CONFIRMATION_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -432,7 +432,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::EXITING_VENUESENDER_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -441,7 +441,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;        
+        break;        
 
         // Email Messages
         case MessageType::ATTACHMENT_INVALID_CHOICE_MESSAGE:
@@ -452,45 +452,45 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::EMAIL_NOT_CREATED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "===========================" << endl;
-        cout << "     Email Not Created     " << endl;
+            cout << "===========================" << endl;
+            cout << "     Email Not Created     " << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::MODIFY_EMAIL_CONFIRMATION_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "Do you wish to modify this email? (Y/N): ";
+            cout << "Do you wish to modify this email? (Y/N): ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break;
+        break;
         case MessageType::EMAIL_SENDING_FAILED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "===========================" << endl;
-        cout << "    Email Sending Failed   " << endl;
+            cout << "===========================" << endl;
+            cout << "    Email Sending Failed   " << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break;
+        break;
         case MessageType::EMAIL_SENDING_ABORTED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "Email sending aborted by user." << endl;
+            cout << "Email sending aborted by user." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break; 
+        break; 
 
         // Template Messages
         case MessageType::VENUES_NOT_SELECTED_FOR_TEMPLATES_MESSAGE:
@@ -501,52 +501,52 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
         case MessageType::NO_BOOKING_TEMPLATES_CREATED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "No booking templates have been created yet." << endl;
+            cout << "No booking templates have been created yet." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break;
+        break;
         case MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "Do you wish to modify this template? (Y/N): ";
+            cout << "Do you wish to modify this template? (Y/N): ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break;
+        break;
         case MessageType::MANDATORY_TEMPLATE_FIELD_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "This field is mandatory. Please provide a value." << endl;
+            cout << "This field is mandatory. Please provide a value." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break;
+        break;
         case MessageType::EMPTY_FIELD_CONFIRMATION_TEMPLATE_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "You've left this field empty. Was this intentional? (y/n): ";
+            cout << "You've left this field empty. Was this intentional? (y/n): ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break;
+        break;
         case MessageType::TEMPLATE_SENDING_ABORTED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-        cout << "Template sending aborted by user." << endl;
+            cout << "Template sending aborted by user." << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
-            break;
+        break;
 
     // end of red messages
 
@@ -555,7 +555,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifdef UNIT_TESTING
         default:
             cerr << "" << endl;
-            break;
+        break;
 #else
 
         default:
@@ -566,7 +566,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-            break;
+        break;
 
 #endif // UNIT_TESTING
     }

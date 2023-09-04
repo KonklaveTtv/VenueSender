@@ -8,75 +8,75 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 	    switch (menutitle) {
 
 
-	    // Main Menu
+		// Main Menu
 
-        case MenuTitleType::MAIN_MENU_HEADER:
+		case MenuTitleType::MAIN_MENU_HEADER:
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif	
-	        cout << "==========================="<< endl;
-	        cout << "         Main Menu         "<< endl;
-	        cout << "==========================="<< endl;
+		        cout << "==========================="<< endl;
+		        cout << "         Main Menu         "<< endl;
+		        cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif		    
-	    break;
+	    	break;
 
-	    case MenuTitleType::VENUE_SELECTION_MENU_HEADER:
+	    	case MenuTitleType::VENUE_SELECTION_MENU_HEADER:
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-	        cout << "==========================="<< endl;
-	        cout << "      Venue Selection      "<< endl;
-	        cout << "==========================="<< endl;
+		        cout << "==========================="<< endl;
+		        cout << "      Venue Selection      "<< endl;
+		        cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
-        break;
+        	break;
 
-        case MenuTitleType::VENUE_OPTIONS_MENU_HEADER:
+		case MenuTitleType::VENUE_OPTIONS_MENU_HEADER:
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-	        cout << "==========================="<< endl;
-	        cout << "       Venue Options       "<< endl;
-	        cout << "==========================="<< endl;
+			cout << "==========================="<< endl;
+			cout << "       Venue Options       "<< endl;
+			cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
-	    break;
+	    	break;
 
 		case MenuTitleType::EMAIL_MENU_HEADER:
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-	        cout << "==========================="<< endl;
-	        cout << "           Email           "<< endl;
-	        cout << "==========================="<< endl;
+			cout << "==========================="<< endl;
+			cout << "           Email           "<< endl;
+			cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
-	    break;
+	    	break;
 
 		case MenuTitleType::TEMPLATES_MENU_HEADER:
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-	      	cout << "==========================="<< endl;
-	        cout << "         Templates         "<< endl;
-	        cout << "==========================="<< endl;
+			cout << "==========================="<< endl;
+			cout << "         Templates         "<< endl;
+			cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
-	    break;
+	    	break;
 
 		case MenuTitleType::CONFIGURATION_MENU_HEADER:    
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-	        cout << "==========================="<< endl;
-	        cout << "       Configuration       "<< endl;
-	        cout << "==========================="<< endl;
+			cout << "==========================="<< endl;
+			cout << "       Configuration       "<< endl;
+			cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -86,9 +86,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-		    cout << "===========================" << endl;
-		    cout << "Edit Configuration Settings" << endl;
-		    cout << "===========================" << endl;
+			cout << "===========================" << endl;
+			cout << "Edit Configuration Settings" << endl;
+			cout << "===========================" << endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -98,9 +98,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-		    cout << "==========================="<< endl;
-		    cout << "      Selected Venues      "<< endl;
-		    cout << "==========================="<< endl;
+			cout << "==========================="<< endl;
+			cout << "      Selected Venues      "<< endl;
+			cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -111,9 +111,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-		    cout << "============================"<< endl
-		         << "       Email Settings       "<< endl
-		         << "============================"<< endl;
+			cout << "============================"<< endl
+			     << "       Email Settings       "<< endl
+			     << "============================"<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -123,9 +123,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-		    cout << "==========================="<< endl;
-		    cout << "===== Construct Email ====="<< endl;
-		    cout << "==========================="<< endl;
+			cout << "==========================="<< endl;
+			cout << "===== Construct Email ====="<< endl;
+			cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -135,9 +135,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-		    cout << "===========================\n";
-		    cout << "       EMAIL DETAILS       \n";
-		    cout << "===========================\n";
+			cout << "===========================\n";
+			cout << "       EMAIL DETAILS       \n";
+			cout << "===========================\n";
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -147,9 +147,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-            cout << "===========================" << endl;
-            cout << "        Email saved        " << endl;
-            cout << "===========================" << endl;
+			cout << "===========================" << endl;
+			cout << "        Email saved        " << endl;
+			cout << "===========================" << endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -159,9 +159,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-		    cout << "=============================\n";
-		    cout << "      TEMPLATE DETAILS       \n";
-		    cout << "=============================\n";
+			cout << "=============================\n";
+			cout << "      TEMPLATE DETAILS       \n";
+			cout << "=============================\n";
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -171,9 +171,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-                cout << "===========================" << endl;
-                cout << "      Template Saved       " << endl;
-                cout << "===========================" << endl;
+			cout << "===========================" << endl;
+			cout << "      Template Saved       " << endl;
+			cout << "===========================" << endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -183,9 +183,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-			    cout << "===========================" << endl;
-			    cout << "       Email Summary       " << endl;
-			    cout << "==========================="<< endl;
+			cout << "===========================" << endl;
+			cout << "       Email Summary       " << endl;
+			cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -195,9 +195,9 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-			    cout << "============================"<< endl;
-			    cout << "  Booking Template Summary  "<< endl;
-			    cout << "============================"<< endl;
+			cout << "============================"<< endl;
+			cout << "  Booking Template Summary  "<< endl;
+			cout << "============================"<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
