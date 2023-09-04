@@ -168,8 +168,13 @@ int MenuManager::displayMenuOptions() {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EXIT_CONFIRMATION_MESSAGE);
 
             char confirmExit;
+#ifndef UNIT_TESTING
+              ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cin >> confirmExit;
-
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
             if (confirmExit == 'Y' || confirmExit == 'y') {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EXITING_VENUESENDER_MESSAGE);
                 // Cleanup before exiting
@@ -426,7 +431,13 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SSL_CERTIFICATE_PATH_CONFIG_MESSAGE);
         string sslCertPathInput;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         getline(cin, sslCertPathInput);
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         ConsoleUtils::clearInputBuffer();
 
 
@@ -579,8 +590,13 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 
         if (!EmailManager::isValidEmail(smtpUsernameTempStr)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_USERNAME_NON_MATCH_ERROR);
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cin >> smtpUsernameTempChar;
-
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor(); // Reset to default color
+#endif
             if (smtpUsernameTempChar == 'y' || smtpUsernameTempChar == 'Y') {
                 smtpUsername = smtpUsernameTempStr;
                 break;

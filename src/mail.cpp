@@ -69,7 +69,8 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
     cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
-#endif       
+#endif
+
     // Prompt the user to enter the subject and perform checks
     do {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_SUBJECT_FOR_EMAIL_MESSAGE);
@@ -89,7 +90,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
         ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cin.get();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         subject.clear();
         return;
     }
@@ -107,7 +114,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
                 ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
                 cin.get();
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
 
                 int charsToAdd = maxMessageLength - message.length();
                 message += ConsoleUtils::trim(line).substr(0, charsToAdd);
@@ -122,7 +135,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_BLANK_ERROR);
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cin.get();
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
         }
 
         if (!inputProvided) {
@@ -135,7 +154,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         while (true) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
             char addAttachmentChoice;
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cin >> addAttachmentChoice;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
             ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
         if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
@@ -143,7 +168,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 
         } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             getline(cin, attachmentPath);
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
             ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
             attachmentPath.erase(remove(attachmentPath.begin(), attachmentPath.end(), '\''), attachmentPath.end());
@@ -182,7 +213,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
 
                         char choice;
+#ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
                         cin >> choice;
+#ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+#endif
                         ConsoleUtils::clearInputBuffer();
                         if (choice == 'Y' || choice == 'y') {
                             continue; // Go back to asking for a new file
@@ -265,7 +302,13 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_EMAIL_CONFIRMATION_MESSAGE);
 
         char modifyEmailChoice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cin >> modifyEmailChoice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         ConsoleUtils::clearInputBuffer();
         
         if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
@@ -373,7 +416,13 @@ void EmailManager::viewEditTemplates(CURL* curl,
     while (attempts < 3) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE);
         char modifyTemplateChoice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cin >> modifyTemplateChoice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         ConsoleUtils::clearInputBuffer();
 
         if (modifyTemplateChoice == 'Y' || modifyTemplateChoice == 'y') {
@@ -762,10 +811,11 @@ void EmailManager::createBookingTemplate(CURL* curl,
             cout << prompt;
 
             getline(cin, input);
-            ConsoleUtils::clearInputBuffer();
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
+            ConsoleUtils::clearInputBuffer();
+
             if (input.empty()) {
                 if (isMandatory) {
                     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MANDATORY_TEMPLATE_FIELD_MESSAGE);
@@ -1064,14 +1114,15 @@ void EmailManager::emailCustomAddress(CURL* curl,
     
         // Prompt the user for the custom email address
         do {
+
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CUSTOM_ADDRESS_MESSAGE);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CUSTOM_ADDRESS_MESSAGE);
+            cin >> customAddressRecipientEmail;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
-            cin >> customAddressRecipientEmail;
             ConsoleUtils::clearInputBuffer();
 
             if (isValidEmail(customAddressRecipientEmail)) {
@@ -1097,9 +1148,14 @@ void EmailManager::emailCustomAddress(CURL* curl,
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
         #ifndef UNIT_TESTING
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
-            cin.ignore();
             ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cin.get();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         #endif
             customAddressSubject.clear();
             return;
@@ -1116,9 +1172,14 @@ void EmailManager::emailCustomAddress(CURL* curl,
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
         #ifndef UNIT_TESTING
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
-            cin.ignore();
             ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cin.get();
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         #endif
             int charsToAdd = maxMessageLength - customAddressMessage.length();
             customAddressMessage += ConsoleUtils::trim(customAddressLine).substr(0, charsToAdd);
@@ -1129,7 +1190,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
 
             char addAttachmentChoice;
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             cin >> addAttachmentChoice;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
             ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
             if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
@@ -1137,8 +1204,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
-
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             getline(cin, customAddressAttachmentPath);
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
             customAddressAttachmentPath.erase(remove(customAddressAttachmentPath.begin(), customAddressAttachmentPath.end(), '\''), customAddressAttachmentPath.end());
             customAddressAttachmentPath = ConsoleUtils::trim(customAddressAttachmentPath);
 
@@ -1157,7 +1229,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
             if (filesystem::exists(customAddressAttachmentPath)) {
                 size_t fileSize = boost::filesystem::file_size(customAddressAttachmentPath);
                 customAddressAttachmentSize = to_string(fileSize) + " bytes";
+#ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
+#endif
                 cout << "File Size: " << fileSize << " bytes" << endl;
+#ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+#endif
 
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
@@ -1165,7 +1243,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
                     
                     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
                     char choice;
+#ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
                     cin >> choice;
+#ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+#endif
                     ConsoleUtils::clearInputBuffer();
                     if (choice == 'Y' || choice == 'y') {
                         continue; // Go back to asking for a new file
@@ -1231,7 +1315,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_EMAIL_CONFIRMATION_MESSAGE);
 
         char modifyEmailChoice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         cin >> modifyEmailChoice;
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
         ConsoleUtils::clearInputBuffer();
 
         if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
@@ -1244,7 +1334,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_EMAIL_MESSAGE);
     char confirmSend;
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cin >> confirmSend;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
     ConsoleUtils::clearInputBuffer();
 
         // Proceed to send emails if confirmed
@@ -1441,7 +1537,13 @@ void EmailManager::confirmSendEmail(CURL* curl,
     // Confirm with the user that they want to proceed.
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_EMAILS_MESSAGE);
     char confirmSend;
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cin >> confirmSend;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
     ConsoleUtils::clearInputBuffer();
 
     if (confirmSend != 'Y' && confirmSend != 'y') {
@@ -1571,7 +1673,13 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     ConsoleUtils::resetColor();
 #endif
     char confirmSend;
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
     cin >> confirmSend;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
     ConsoleUtils::clearInputBuffer();
 
     if (confirmSend != 'Y' && confirmSend != 'y') {
