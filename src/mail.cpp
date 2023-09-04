@@ -1450,15 +1450,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 ConsoleUtils::resetColor();
         #endif
                 cout.flush();
-#ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-                cout << "Email sending failed. Error code: " << res << endl;
-#ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
-#endif
-                cout.flush();
-                // You can log the error, display more details, or take appropriate actions here
             }
 
             // Free the MIME structure
@@ -1466,10 +1457,10 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 curl_mime_free(mime);
             }
             if (recipients) {
-            curl_slist_free_all(recipients);
+                curl_slist_free_all(recipients);
             }
             if (headers) {
-            curl_slist_free_all(headers);
+                curl_slist_free_all(headers);
             }
 
             if (res == 0) {

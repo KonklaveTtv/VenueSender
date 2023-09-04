@@ -570,7 +570,6 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         }
     }
 
-
     // Edit SMTP Username
     while (true) {
 
