@@ -169,12 +169,14 @@ int MenuManager::displayMenuOptions() {
 
             char confirmExit;
 #ifndef UNIT_TESTING
-              ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+              ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
             cin >> confirmExit;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
+        ConsoleUtils::clearInputBuffer();
+
             if (confirmExit == 'Y' || confirmExit == 'y') {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EXITING_VENUESENDER_MESSAGE);
                 // Cleanup before exiting

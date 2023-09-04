@@ -41,7 +41,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
     
         // Menu/Selection Errors
         case ErrorType::INVALID_CHOICE_ERROR:
-            cerr << "Invalid choice. Press return...";
+            cerr << "Invalid Choice" "\n";
             break;
         case ErrorType::INVALID_INDEX_ERROR:
             cerr << boost::format("Invalid index: %s\n") % extraInfo;
