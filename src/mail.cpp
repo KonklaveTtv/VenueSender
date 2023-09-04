@@ -75,6 +75,9 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
     do {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_SUBJECT_FOR_EMAIL_MESSAGE);
         string line;
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         while (getline(in, line)) {
             if (line.empty()) break;
             subject += sanitizeSubject(line) + " ";
@@ -90,9 +93,6 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
         ConsoleUtils::clearInputBuffer();
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
         cin.get();
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
@@ -108,15 +108,16 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         string line;
         inputProvided = false;
 
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         while (getline(in, line)) {
             if (line.empty()) break;
             if (message.length() + line.length() > maxMessageLength) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
                 ConsoleUtils::clearInputBuffer();
-#ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
+
                 cin.get();
 #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
@@ -800,7 +801,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 char confirmation;
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMPTY_FIELD_CONFIRMATION_TEMPLATE_MESSAGE);
 #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+                ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
                 cin >> confirmation;
 #ifndef UNIT_TESTING
