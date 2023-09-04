@@ -23,13 +23,6 @@ int main() {
     bool initColor;
     bool useSSL, verifyPeer, verifyHost, verbose;
 
-    // Load configurations from JSON file
-    string venuesPathCopy = confPaths::venuesCsvPath;
-    if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy, initColor)) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
-        exit(1);
-    }
-
     // Set up and initialize CURL
     CurlHandleWrapper::init();
         CURL* curl = setupCurlHandle(curlWrapper, useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer);
@@ -37,6 +30,16 @@ int main() {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return 1;
     }
+
+    // Load configurations from JSON file
+    string venuesPathCopy = confPaths::venuesCsvPath;
+    if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy, initColor)) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
+        exit(1);
+    }
+
+    // Pass the configuration variables to the MenuManager constructor
+    MenuManager menuManager(useSSL, verifyPeer, verifyHost, verbose, senderEmail, mailPass, smtpUsername, smtpPort, smtpServer);
 
     // Extract unique genres, states, cities, and capacities from the venues data
     set<string> uniqueGenres = VenueUtilities::getUniqueGenres(venues);
@@ -66,9 +69,6 @@ int main() {
     
     // Initialize map for booking templates
     map<string, pair<string, string>> emailToTemplate;
-
-    // Pass the configuration variables to the MenuManager constructor
-    MenuManager menuManager(useSSL, verifyPeer, verifyHost, verbose, senderEmail, mailPass, smtpUsername, smtpPort, smtpServer);
 
     // Create an EmailManager object
     EmailManager emailManager;
