@@ -482,6 +482,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         success = true;
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CSV_DATABASE_LOADED_MESSAGE);
         this_thread::sleep_for(chrono::seconds(1));
+        ConsoleUtils::clearConsole();
     }
 
     // Fallback to SQLite if reading from CSV fails
