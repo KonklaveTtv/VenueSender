@@ -1125,7 +1125,9 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         do {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_SUBJECT_FOR_EMAIL_MESSAGE);
-
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
             while (getline(cin, customAddressLine)) {
                 if (customAddressLine.empty()) break;
                 customAddressSubject += sanitizeSubject(customAddressLine) + " ";
@@ -1139,9 +1141,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         #ifndef UNIT_TESTING
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
+
             cin.get();
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
@@ -1153,7 +1153,9 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         // Read multiple lines for the message body of the email
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_MESSAGE_FOR_EMAIL_MESSAGE);
-
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
         while (getline(cin, customAddressLine) && !customAddressLine.empty()) {
             customAddressMessage += customAddressLine + "\n";
         }
@@ -1163,9 +1165,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         #ifndef UNIT_TESTING
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
+
             cin.get();
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
