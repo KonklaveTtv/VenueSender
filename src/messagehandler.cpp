@@ -131,12 +131,32 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif      
         break;
+        case MessageType::EMAIL_SENT_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "===========================" << endl; 
+            cout << "        Email Sent         " << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
         case MessageType::EMAILS_SENT_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
             cout << "===========================" << endl; 
             cout << "        Emails Sent        " << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::EMAILS_SAVED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "===========================" << endl;
+            cout << "        Email Saved        " << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif      

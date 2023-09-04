@@ -582,25 +582,9 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     }
 
     if (res == 0) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-        cout << "===========================" << endl; 
-        cout << "        Emails Sent        " << endl;
-        cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
     } else {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-        cout << "===========================" << endl;
-        cout << "    Email Sending Failed   " << endl;
-        cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
     }
 
     if (!ErrorHandler::handleCurlError(res)) {
@@ -751,15 +735,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
     }
 
     if (res == 0) {
-#ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-        cout << "===========================" << endl; 
-        cout << "        Emails Sent        " << endl;
-        cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
     }
@@ -1464,7 +1440,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
             }
 
             if (res == 0) {
-                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
+                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_SENT_MESSAGE);
             } else {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_SENDING_FAILED_MESSAGE);
             }
@@ -1482,15 +1458,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 }
             }
         } else {
-#ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif           
-            cout << "===========================" << endl;
-            cout << "        Email Saved        " << endl;
-            cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
-#endif
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SAVED_MESSAGE);
             return;
     }
 }
