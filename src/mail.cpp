@@ -802,8 +802,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
     char choice;
     bool modifyTemplate = true;
 
-    auto getInputWithConfirmation = [&](string& input, const string& prompt, bool isMandatory = false) {
-        bool inputConfirmed = false;
+    auto getInputWithConfirmation = [&](string& input, const string& prompt, bool isMandatory = false, bool checkURL = false) {        bool inputConfirmed = false;
         while (!inputConfirmed) {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -837,6 +836,21 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     inputConfirmed = true;
                 }
             } else {
+                if (checkURL && !isValidURL(input)) {
+                    char confirmation;
+                    cout << "The URL seems to be invalid. Is this correct? (Y/N): ";
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif 
+                    cin >> confirmation;
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
+                    ConsoleUtils::clearInputBuffer();
+                    if (confirmation == 'N' || confirmation == 'n') {
+                        continue;
+                    }
+                }
                 inputConfirmed = true;
             }
         }
@@ -856,10 +870,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
         getInputWithConfirmation(hometown, "Enter Hometown (press Enter on a new line to finish): ");
         getInputWithConfirmation(similarArtists, "Enter Similar Artists (press Enter on a new line to finish): ");
         getInputWithConfirmation(date, "Enter Date (press Enter on a new line to finish): ");
-        getInputWithConfirmation(musicLink, "Enter Music Link (press Enter on a new line to finish): ");
-        getInputWithConfirmation(livePerfVideo, "Enter Live Performance Video Link (press Enter on a new line to finish): ");
-        getInputWithConfirmation(musicVideo, "Enter Music Video Link (press Enter on a new line to finish): ");
-        getInputWithConfirmation(pressQuote, "Enter Press Quote (press Enter on a new line to finish): ");
+        
+        // Check these for valid urls and give user a friendly warning
+        getInputWithConfirmation(musicLink, "Enter Music Link (press Enter on a new line to finish): ", false, true);
+        getInputWithConfirmation(livePerfVideo, "Enter Live Performance Video Link (press Enter on a new line to finish): ", false, true);
+        getInputWithConfirmation(musicVideo, "Enter Music Video Link (press Enter on a new line to finish): ", false, true);
+        getInputWithConfirmation(pressQuote, "Enter Press Quote (press Enter on a new line to finish): ", false, true);  // Added this line
+        getInputWithConfirmation(socials, "Enter Social Links (press Enter on a new line to finish): ", false, true);
 
         // Special case for Name due to it being mandatory
         bool nameConfirmed = false;
@@ -871,9 +888,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 nameConfirmed = true;
             }
         }
-
-        getInputWithConfirmation(socials, "Enter Social Links (press Enter on a new line to finish): ");
-
 
         // Construct the email template for each venue without sending it
         for (const SelectedVenue& venue : selectedVenuesForEmail) {
@@ -927,7 +941,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
         cout << firstMessage << endl;
         cout << "=========================================\n";
     #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
     #endif
         }
 
@@ -1026,7 +1040,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
         // Ask user if they want to modify or send
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE);
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         cin >> choice;
 #ifndef UNIT_TESTING
@@ -1044,11 +1058,11 @@ void EmailManager::createBookingTemplate(CURL* curl,
             // Ask the user if they want to send the template
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
             cin >> choice;
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
+            ConsoleUtils::resetColor();
 #endif
         ConsoleUtils::clearInputBuffer();
 
@@ -1150,11 +1164,11 @@ void EmailManager::emailCustomAddress(CURL* curl,
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
             cin.get();
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
+            ConsoleUtils::resetColor();
 #endif
         #endif
             customAddressSubject.clear();
@@ -1174,11 +1188,11 @@ void EmailManager::emailCustomAddress(CURL* curl,
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
             cin.get();
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
+            ConsoleUtils::resetColor();
 #endif
         #endif
             int charsToAdd = maxMessageLength - customAddressMessage.length();

@@ -126,7 +126,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-            cout << "Do you wish to send this emails? (Y/N): ";
+            cout << "Do you wish to send these emails? (Y/N): ";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif      

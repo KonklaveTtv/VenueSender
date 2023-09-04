@@ -169,13 +169,13 @@ int MenuManager::displayMenuOptions() {
 
             char confirmExit;
 #ifndef UNIT_TESTING
-              ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
             cin >> confirmExit;
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
+            ConsoleUtils::resetColor();
 #endif
-        ConsoleUtils::clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
 
             if (confirmExit == 'Y' || confirmExit == 'y') {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EXITING_VENUESENDER_MESSAGE);
@@ -400,7 +400,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
     cout << "Edit Configuration Settings" << endl;
     cout << "===========================" << endl;
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
+    ConsoleUtils::resetColor();
 #endif
 
     // Edit Peer verification setting
