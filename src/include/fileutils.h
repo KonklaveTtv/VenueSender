@@ -238,7 +238,7 @@ public:
     static bool decryptRegistrationKey(const std::string& registrationKeyPath, std::vector<unsigned char>& decryptedRegistrationKeyData);
 
     // Function to initialize SQLite and read data from CSV or encrypted database
-    bool initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath);
+    static bool initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath);
 
     // Function to read venue data from a CSV file
     static void readFromCsv(std::vector<Venue>& venues, std::istream& stream);
