@@ -9,19 +9,21 @@ VenueSender is a command-line tool designed to facilitate the process of sending
 
 VenueSender by default builds a static binary. If you wish to not build statically and instead want to do a dynamic build, simply rename 'Makefile' to 'Makefile static' and 'Makefile dynamic' to 'Makefile'.
 
-To run this project, you need the following installed on your system:
+
+### Installing Dependencies To Build Statically
+
+To build this project statically, you will need the following installed on your system:
 
 - GCC (GNU Compiler Collection)
 - C++20 compatible compiler
-- libjsoncpp v1.9.5-4 (Install with apt-get install)
 - Curl v7.88.1 (Install from source)
+- libjsoncpp v1.9.5-4 (Install from source)
 - libx11 v1.8.4 (Install from source)
+- libpsl 0.21.2 (Install from source)
 - libssl v3.0.8-1ubuntu1.2 (Install with apt-get install)
 - libsqlite3 v3.40.1-1 (Install with apt-get install)
 - libboost v1.74.0.3ubuntu7 (Install with apt-get install)
 - Catch2 v2.13.10-1 (Install with apt-get install)
-
-### Installing Dependencies To Build Statically
 
 Run the following commands to install the first lot of dependencies:
 
@@ -30,12 +32,38 @@ Run the following commands to install the first lot of dependencies:
 
 Curl v7.88.1 when installing from source must be ran like this:
 
+      wget https://github.com/curl/curl/releases/download/curl-7_88_1/curl-7.88.1.tar.gz
+      tar -xvf curl-7.88.1.tar.gz
+      cd curl-7.88.1
       ./configure --with-openssl --enable-static --disable-shared
       make
       sudo make install 
 
-The other dependencies can be installed using:
+libjoncpp 1.9.5-4 can be installed using:
 
+      wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libjsoncpp/1.9.5-4/libjsoncpp_1.9.5.orig.tar.gz
+      tar -xvf libjsoncpp_1.9.5.orig.tar.gz
+      cd libjsoncpp-1.9.5
+      mkdir -p build/debug
+      cd build/debug
+      cmake -DCMAKE_BUILD_TYPE=debug -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -DARCHIVE_INSTALL_DIR=. -G "Unix Makefiles" ../../
+      make
+      sudo make install
+
+libx11 v1.8.4 can be installed using:
+
+      wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libx11/2:1.8.4-2/libx11_1.8.4.orig.tar.gz
+      tar -xvf libx11_1.8.4.orig.tar.gz
+      cd libx11-1.8.4
+      ./configure --enable-static --disable-shared
+      make
+      sudo make install
+
+libpsl v0.21.2 can be installed using:
+
+      wget https://github.com/rockdaboot/libpsl/releases/download/0.21.2/libpsl-0.21.2.tar.gz
+      tar -xvf libpsl-0.21.2.tar.gz
+      cd libpsl-0.21.2
       ./configure --enable-static --disable-shared
       make
       sudo make install
@@ -65,7 +93,19 @@ You may have to edit the paths in the Makefile to the actual locations of the li
 
 ### Installing Dependencies To Build Dynamically
 
-Run the following commands to install the dependencies:
+To build this project dynamically, you will need the following installed on your system:
+
+- GCC (GNU Compiler Collection)
+- C++20 compatible compiler
+- libjsoncpp v1.9.5-4 (Install with apt-get install)
+- Curl v7.88.1 (Install from source)
+- libx11 v1.8.4 (Install from source)
+- libssl v3.0.8-1ubuntu1.2 (Install with apt-get install)
+- libsqlite3 v3.40.1-1 (Install with apt-get install)
+- libboost v1.74.0.3ubuntu7 (Install with apt-get install)
+- Catch2 v2.13.10-1 (Install with apt-get install)
+
+Run the following commands to install the above dependencies:
 
       sudo apt-get update
       sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libx11-dev libssl-dev libsqlite3-dev libboost-all-dev
