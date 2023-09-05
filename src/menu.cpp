@@ -341,7 +341,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
     // Temporary variables to hold the new settings
     string senderEmailTempStr, smtpUsernameTempStr, smtpServerTempStr;
     int smtpPortTempInt;
-    char tempSmtpChar, verifyPeerTempChar, verifyHostTempChar, verboseTempChar, smtpUsernameTempChar;
+    char tempSmtpChar, verifyPeerTempChar, verifyHostTempChar, verboseTempChar, smtpUsernameTempChar = '\0';
 
     // Prompt the user to enter new settings
 
@@ -527,7 +527,6 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
     ConsoleUtils::resetColor(); // Reset to default color
 #endif
     ConsoleUtils::clearInputBuffer();
-
     if (sameAsSenderEmail == 'Y' || sameAsSenderEmail == 'y') {
         smtpUsername = senderEmailTempStr;
     } else if (smtpUsernameTempChar == 'n' || smtpUsernameTempChar == 'N') {

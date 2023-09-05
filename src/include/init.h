@@ -14,8 +14,6 @@
 class Init {
 private:
 	std::string senderEmail, smtpServer; 
-    int smtpPort;
-    bool useSSL, verifyPeer, verifyHost, verbose;
 public:
 
 	// Length of asterisks for border

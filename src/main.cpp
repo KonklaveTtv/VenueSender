@@ -18,10 +18,13 @@ int main() {
     vector<Venue> venues;
     vector<SelectedVenue> selectedVenuesForTemplates;
     string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
-    int smtpPort;
-    bool templateExists = false;
+    int smtpPort = 587;
     bool initColor;
-    bool useSSL, verifyPeer, verifyHost, verbose;
+    bool templateExists = false;
+    bool useSSL = false;
+    bool verifyPeer = false;
+    bool verifyHost = false;
+    bool verbose = false;
 
     // Set up and initialize CURL
     CurlHandleWrapper::init();

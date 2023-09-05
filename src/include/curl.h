@@ -46,9 +46,6 @@ private:
     // The actual cURL handle
     CURL* curl;
 
-    // Progress of the current cURL operation
-    double progress{};
-
     // Email address of the recipient for the email being sent
     std::string emailBeingSent;
 };

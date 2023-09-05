@@ -7,7 +7,11 @@ VenueSender is a command-line tool designed to facilitate the process of sending
 
 ### Prerequisites
 
-VenueSender by default builds a static binary. If you wish to not build statically and instead want to do a dynamic build, simply rename 'Makefile' to 'Makefile static' and 'Makefile dynamic' to 'Makefile'.
+VenueSender has multiple Makefiles to build statically with GCC, Clang, ICPC or the MinGW-w64 compiler. There is also a Makefile.dynamic to build a dynamically linked version using GCC.
+
+After install dependencies and you are ready to build invoke:
+
+      make -f Makefile.<compiler/dynamic>
 
 
 ### Installing Dependencies To Build Statically
@@ -93,6 +97,9 @@ You may have to edit the paths in the Makefile to the actual locations of the li
                     /usr/lib/x86_64-linux-gnu/libboost_iostreams.a \
                     /usr/lib/x86_64-linux-gnu/libboost_regex.a              
 
+To make clean:
+
+      make -f Makefile.<compiler/dynamic> clean
 
 ### Installing Dependencies To Build Dynamically
 
@@ -140,6 +147,10 @@ Installation (with tests)
 Follow the same steps as above but compile using:
 
       make test
+
+To make clean:
+
+      make -f Makefile.dynamic clean
 
 
 ### Usage
