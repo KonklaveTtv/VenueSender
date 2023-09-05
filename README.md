@@ -25,6 +25,9 @@ To build this project statically, you will need the following installed on your 
 - libboost v1.74.0.3ubuntu7 (Install with apt-get install)
 - Catch2 v2.13.10-1 (Install with apt-get install)
 
+The versions mentioned are the ones that VenueSender was built and tested with, it may build with newer versions but this is not guaranteed.
+
+
 Run the following commands to install the first lot of dependencies:
 
       sudo apt-get update
@@ -104,6 +107,9 @@ To build this project dynamically, you will need the following installed on your
 - libsqlite3 v3.40.1-1 (Install with apt-get install)
 - libboost v1.74.0.3ubuntu7 (Install with apt-get install)
 - Catch2 v2.13.10-1 (Install with apt-get install)
+
+The versions mentioned are the ones that VenueSender was built and tested with, it may build with newer versions but this is not guaranteed.
+
 
 Run the following commands to install the above dependencies:
 

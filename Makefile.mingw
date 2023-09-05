@@ -1,0 +1,59 @@
+# Makefile for venuesender project
+
+# Detect the OS type
+UNAME_S := $(shell uname -s)
+
+# Compiler and flags for MinGW-w64
+CXX = x86_64-w64-mingw32-g++
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -I/path/to/boost/include
+LDFLAGS = -static-libgcc -static-libstdc++
+
+# Directories
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
+
+# Targets
+TARGET = $(BINDIR)/venuesender.exe
+
+# Source files
+SRCS = $(wildcard $(SRCDIR)/*.cpp)
+
+# Object files
+OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
+
+# Static Libraries for cross-compilation (replace with Windows versions)
+# Note: You will need to cross-compile these or obtain the Windows versions.
+STATIC_LIBS = /path/to/libcurl.a \
+              /path/to/libpsl.a \
+              /path/to/libz.a \
+              /path/to/libjsoncpp.a \
+              /path/to/libssl.a \
+              /path/to/libcrypto.a \
+              /path/to/libsqlite3.a \
+              /path/to/libboost_system.a \
+              /path/to/libboost_filesystem.a \
+              /path/to/libboost_iostreams.a \
+              /path/to/libboost_regex.a
+
+# Compile rules
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Default target
+all: directories $(TARGET)
+
+# Create necessary directories
+directories:
+	mkdir -p $(OBJDIR)
+	mkdir -p $(BINDIR)
+
+# Link the main executable
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(STATIC_LIBS) $(LDFLAGS)
+
+# Clean up
+clean:
+	rm -rf $(OBJDIR) $(BINDIR)
+
+.PHONY: all directories clean
