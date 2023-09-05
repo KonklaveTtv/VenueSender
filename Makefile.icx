@@ -5,8 +5,8 @@ UNAME_S := $(shell uname -s)
 
 # Compiler and flags
 CXX = icx
-CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -I/path/to/boost/include
-LDFLAGS = -L/usr/lib -L/usr/local/lib
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Isrc/include -Isrc -I/path/to/boost/include
+LDFLAGS = -L/usr/lib -L/usr/local/lib -lstdc++
 INCLUDES = -Isrc/include -Isrc
 
 # Directories
