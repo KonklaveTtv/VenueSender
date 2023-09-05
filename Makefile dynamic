@@ -31,22 +31,13 @@ DEBUG_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(DEBUGOBJDIR)/%.o, $(SRCS))
 TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
 
-# Static Libraries for Ubuntu (replace with actual paths if they differ)
-STATIC_LIBS = /usr/local/lib/libcurl.a \
-              /usr/local/lib/libpsl.a \
-              /usr/lib/x86_64-linux-gnu/libz.a \
-              /usr/local/lib/libX11.a \
-              /usr/lib/x86_64-linux-gnu/libxcb.a \
-              /usr/lib/x86_64-linux-gnu/libXau.a \
-              /usr/lib/x86_64-linux-gnu/libXdmcp.a \
-              /usr/local/lib/libjsoncpp.a \
-              /usr/lib/x86_64-linux-gnu/libssl.a \
-              /usr/lib/x86_64-linux-gnu/libcrypto.a \
-              /usr/lib/x86_64-linux-gnu/libsqlite3.a \
-              /usr/lib/x86_64-linux-gnu/libboost_system.a \
-              /usr/lib/x86_64-linux-gnu/libboost_filesystem.a \
-              /usr/lib/x86_64-linux-gnu/libboost_iostreams.a \
-              /usr/lib/x86_64-linux-gnu/libboost_regex.a              
+# Libraries common to all platforms
+LIBS = -lcurl -ljsoncpp -lssl -lcrypto -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex
+
+# Add X11 library if on Linux
+ifeq ($(UNAME_S),Linux)
+    LIBS += -lX11
+endif
 
 # Add platform-specific libraries for macOS
 ifeq ($(UNAME_S),Darwin)
@@ -90,15 +81,15 @@ directories:
 
 # Link the main executable
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(STATIC_LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBS)
 
 # Link the debug executable
 $(DEBUG_TARGET): $(DEBUG_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $(DEBUG_OBJS) $(STATIC_LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $(DEBUG_OBJS) $(LIBS)
 
 # Link the venuesender_test
 $(TEST_TARGET): $(TEST_OBJS) $(TEST_MAIN_OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(filter-out $(OBJDIR)/test_main.o, $(TEST_MAIN_OBJS)) $(STATIC_LIBS)
+	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(filter-out $(OBJDIR)/test_main.o, $(TEST_MAIN_OBJS)) $(LIBS)
 
 # Run tests
 run_tests: test $(TEST_TARGET)

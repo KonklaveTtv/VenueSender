@@ -1,0 +1,30 @@
+---
+name: "VenueSender"
+reference_datetime: "2023-09-05 11:00:00"
+sshkeys:
+  - "/home/spencerlievens/.ssh/id_rsa"  # Specify the path to your SSH key here
+remotes:
+  - url: "git@github.com:KonklaveTtv/VenueSender.git"
+    branch: "main"
+    commit: "60d800d3ddc880e7c3216f8c32cbb6ad038d8ee8"
+suites:
+  - "lunar"
+architectures:
+  - "amd64"
+packages:
+  - "build-essential"
+  - "clang"
+  - "libc++-dev"
+files:
+  - "base-lunar-amd64"
+script: |
+  set -e
+  cd VenueSender
+  make  # Your Makefile should handle cross-compilation for macOS
+  cp bin/VenueSender $OUTDIR/VenueSender-osx-amd64
+
+  # Sign the generated macOS executable
+  gpg --output $OUTDIR/VenueSender-osx-amd64.sig --detach-sig $OUTDIR/VenueSender-osx-amd64
+
+  # Create manifest for the macOS executable
+  sha256sum $OUTDIR/VenueSender-osx-amd64 > $OUTDIR/VenueSender-osx-amd64.manifest
