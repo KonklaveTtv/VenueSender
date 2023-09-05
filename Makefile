@@ -50,12 +50,14 @@ STATIC_LIBS = /usr/local/lib/libcurl.a \
 
 # Add platform-specific libraries for macOS
 ifeq ($(UNAME_S),Darwin)
-    LIBS += -framework Cocoa
+    STATIC_LIBS += /System/Library/Frameworks/Cocoa.framework/Cocoa
+    LDFLAGS += -Wl,-force_load,/System/Library/Frameworks/Cocoa.framework/Cocoa
 endif
 
 # Add platform-specific libraries for Windows
 ifeq ($(UNAME_S),Windows_NT)
-    LIBS += -luser32 -lgdi32
+    STATIC_LIBS += C:\Windows\System32\user32.lib C:\Windows\System32\gdi32.lib
+    LDFLAGS += -Wl,-Bstatic,C:\Windows\System32\user32.lib -Wl,-Bstatic,C:\Windows\System32\gdi32.lib
 endif
 
 # Compile rules
