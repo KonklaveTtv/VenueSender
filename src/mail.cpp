@@ -579,10 +579,6 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
                                              string& attachmentPath) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
-        struct curl_slist* recipients = nullptr;
-        struct curl_slist* headers = nullptr;
-        curl_mime *mime = nullptr;
-
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return false;
@@ -607,6 +603,10 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         string subject = kv.second.first;
         string message = kv.second.second;
 
+        struct curl_slist* recipients = nullptr;
+        struct curl_slist* headers = nullptr;
+        curl_mime *mime = nullptr;
+        
         // Set Recipient(s)
         recipients = curl_slist_append(recipients, recipientEmail.c_str());
         curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
@@ -697,9 +697,13 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         if (mime) {
             curl_mime_free(mime);
         }
-
+        if (recipients) {
         curl_slist_free_all(recipients);
+
+        }
+        if (headers) {
         curl_slist_free_all(headers);
+        }
     }
 
     if (res == 0) {
