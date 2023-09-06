@@ -15,8 +15,7 @@ packages:
   - "build-essential"
   - "mingw-w64"
   - "g++-mingw-w64"
-files:
-  - "base-lunar-amd64"
+files: []
 script: |
   set -e
   cd VenueSender

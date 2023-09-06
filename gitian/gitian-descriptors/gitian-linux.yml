@@ -18,11 +18,10 @@ packages:
   - "libssl-dev"
   - "libsqlite3-dev"
   - "libboost-all-dev"
-files:
-  - "base-lunar-amd64"
+files: []
 script: |
   set -e
-  
+
   # Build Curl v7.88.1 from source
   wget https://github.com/curl/curl/releases/download/curl-7_88_1/curl-7.88.1.tar.gz
   tar -xvf curl-7.88.1.tar.gz

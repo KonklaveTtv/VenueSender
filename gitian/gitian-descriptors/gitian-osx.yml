@@ -15,8 +15,7 @@ packages:
   - "build-essential"
   - "clang"
   - "libc++-dev"
-files:
-  - "base-lunar-amd64"
+files: []
 script: |
   set -e
   cd VenueSender

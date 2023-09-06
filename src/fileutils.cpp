@@ -50,11 +50,11 @@ using Sqlite3StmtPtr = unique_ptr<sqlite3_stmt, Sqlite3StmtDeleter>;
 
 // Namespace to hold configuration file paths
 namespace confPaths {
-string venuesCsvPath = "venues.csv";
+string venuesCsvPath = "db/venues.csv";
 string configJsonPath = "config.json";
 string mockVenuesCsvPath = "src/test/mock_venues.csv";
 string mockConfigJsonPath = "src/test/mock_config.json";
-string sqliteEncryptedDatabasePath = "src/db/venues.db";
+string sqliteEncryptedDatabasePath = "db/venues.db";
 string registrationKeyPath = "registration_key.txt";
 }
 
@@ -485,10 +485,11 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         ConsoleUtils::clearConsole();
     }
 
+
     // Fallback to SQLite if reading from CSV fails
     if (!success) {
         // Decrypt the SQLite database and store it in memory
-        vector<unsigned char> decryptedData;
+        std::vector<unsigned char> decryptedData;
         bool decryptionSuccess = decryptSQLiteDatabase(confPaths::sqliteEncryptedDatabasePath, decryptedData);
         if (!decryptionSuccess) {
             ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DATABASE_DECRYPTION_ERROR);
@@ -502,17 +503,14 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
             return false;
         }
 
-        // Allocate a separate buffer and copy the decrypted data into it
-        auto* sqliteBuffer = (unsigned char*) malloc(decryptedData.size());
-        if (sqliteBuffer == nullptr) {
-            std::cerr << "Failed to allocate memory for SQLite buffer.\n";
-            return false;
-        }
-        std::copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer);
-        
+        // Use boost::scoped_array for memory management
+        boost::scoped_array<unsigned char> sqliteBuffer(new unsigned char[decryptedData.size()]);
+        std::copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer.get());
+
         // Load the copied data into the in-memory SQLite database
-        if (sqlite3_deserialize(db, "main", sqliteBuffer, decryptedData.size(), decryptedData.size(),                                SQLITE_DESERIALIZE_RESIZEABLE | SQLITE_DESERIALIZE_FREEONCLOSE) != SQLITE_OK) {
-            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DECRYPTED_DATABASE_LOAD_ERROR);
+        if (sqlite3_deserialize(db, "main", sqliteBuffer.get(), decryptedData.size(), decryptedData.size(),
+                                SQLITE_DESERIALIZE_RESIZEABLE) != SQLITE_OK) {
+                                ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DECRYPTED_DATABASE_LOAD_ERROR);
             return false;
         }
 
@@ -520,9 +518,6 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         readFromSQLite(venues, db);
         sqlite3_close(db);
         success = true;
-
-        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SQLITE_DATABASE_LOADED_MESSAGE);
-        this_thread::sleep_for(chrono::seconds(1));
     }
 
     return success;
