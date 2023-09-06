@@ -2,7 +2,7 @@
 set -e  # Stop the script on any error
 
 # Start the ssh-agent and add the key
-SSH_KEY_PATH="/root/.ssh/id_rsa"  # Adjust this based on where you place your SSH key in the container
+SSH_KEY_PATH="/root/.ssh/id_rsa"
 eval $(ssh-agent -s)
 ssh-add $SSH_KEY_PATH
 
@@ -13,12 +13,12 @@ VERSION="0.0.1a"
 SIGNER="spencerlievens@gmail.com"
 
 # Define directory variables
-DIR="/home/ubuntu"  # Adjust this to the home directory or wherever you have your code in the container
-GITIAN_DIR="$DIR/gitian-builder/bin"
-ETC_DIR="$DIR/gitian-builder/etc"
-LIBEXEC_DIR="$DIR/gitian-builder/libexec/"
-SHARE_DIR="$DIR/gitian-builder/share"
-TARGET_BIN_DIR="$DIR/gitian-builder/target-bin"
+DIR="/root/gitian-builder/VenueSender/gitian/build"
+GITIAN_DIR="/root/gitian-builder/bin"
+ETC_DIR="/root/gitian-builder/etc"
+LIBEXEC_DIR="/root/gitian-builder/libexec/"
+SHARE_DIR="/root/gitian-builder/share"
+TARGET_BIN_DIR="/root/gitian-builder/target-bin"
 
 # Set environment variables for the gbuild script
 export USE_LXC=1
@@ -38,8 +38,8 @@ ${GITIAN_DIR}/make-base-vm --lxc --arch amd64 --suite lunar --disksize 38147
 # Build and sign for each platform
 for platform in linux win osx; do
     # Build
-    echo "Executing: $GITIAN_DIR/gbuild $DIR/VenueSender/gitian/gitian-descriptors/gitian-${platform}.yml"
-    FULL_PATH_TO_YAML=$(realpath "$DIR/VenueSender/gitian/gitian-descriptors/gitian-${platform}.yml")
+    echo "Executing: $GITIAN_DIR/gbuild $DIR/gitian-descriptors/gitian-${platform}.yml"
+    FULL_PATH_TO_YAML=$(realpath "$DIR/gitian-descriptors/gitian-${platform}.yml")
     sudo -E $GITIAN_DIR/gbuild $FULL_PATH_TO_YAML
     echo "gbuild exit code: $?"
 
