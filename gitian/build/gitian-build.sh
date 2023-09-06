@@ -2,7 +2,7 @@
 set -e  # Stop the script on any error
 
 # Start the ssh-agent and add the key
-SSH_KEY_PATH="/home/spencerlievens/.ssh/id_rsa"
+SSH_KEY_PATH="/root/.ssh/id_rsa"  # Adjust this based on where you place your SSH key in the container
 eval $(ssh-agent -s)
 ssh-add $SSH_KEY_PATH
 
@@ -13,7 +13,7 @@ VERSION="0.0.1a"
 SIGNER="spencerlievens@gmail.com"
 
 # Define directory variables
-DIR="/home/spencerlievens"
+DIR="/home/ubuntu"  # Adjust this to the home directory or wherever you have your code in the container
 GITIAN_DIR="$DIR/gitian-builder/bin"
 ETC_DIR="$DIR/gitian-builder/etc"
 LIBEXEC_DIR="$DIR/gitian-builder/libexec/"
