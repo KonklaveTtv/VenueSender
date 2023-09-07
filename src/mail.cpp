@@ -794,7 +794,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          bool templateExists) const {
 
     // String declarations for the booking template
-    string genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, name, socials;
+    string genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, name, socials;
 
     char choice;
     bool modifyTemplate = true;
@@ -872,7 +872,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
         getInputWithConfirmation(musicLink, "Enter Music Link (press Enter on a new line to finish): ", false, true);
         getInputWithConfirmation(livePerfVideo, "Enter Live Performance Video Link (press Enter on a new line to finish): ", false, true);
         getInputWithConfirmation(musicVideo, "Enter Music Video Link (press Enter on a new line to finish): ", false, true);
-        getInputWithConfirmation(pressQuote, "Enter Press Quote (press Enter on a new line to finish): ", false, true);  // Added this line
+        getInputWithConfirmation(pressQuote, "Enter Press Quote (press Enter on a new line to finish): ", false, true);
+        getInputWithConfirmation(quoteSource, "Enter Quote Source (press Enter on a new line to finish): ", false, true);
         getInputWithConfirmation(socials, "Enter Social Links (press Enter on a new line to finish): ", false, true);
 
         // Special case for Name due to it being mandatory
@@ -906,7 +907,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
             if (!pressQuote.empty()) {
                 os << "\nWhat people are saying about " << performanceName << "\n"
-                   << "\"" << pressQuote << "\"\n";
+                   << "\"" << pressQuote << "\" - " << quoteSource << "\n";
             }
 
             os << "\nPlease let me know if you have any questions or need additional information.\n\n"
