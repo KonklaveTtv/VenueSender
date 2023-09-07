@@ -244,7 +244,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_CREATION_SUCCESS_MESSAGE);
 }
 
-void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, const string& senderEmail, 
+void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtpPort, vector<SelectedVenue>& selectedVenuesForEmail, vector<SelectedVenue>& selectedVenuesForTemplates, const string& senderEmail, 
                                   string& subject, string& message, string& attachmentName, string& attachmentSize, string& attachmentPath, bool& templateExists,
                                   map<string, pair<string, string>>& emailToTemplate) const {
 
@@ -301,7 +301,7 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
             if (templateExists) {
                 message.clear();
                 createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, 
-                                      attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
+                                      attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, selectedVenuesForTemplates, templateExists);
             } else {
                 clearSubjectMessageData(subject, message);                                    
                 try {
@@ -347,6 +347,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                                      const string& smtpServer,
                                      int smtpPort,
                                      vector<SelectedVenue>& selectedVenuesForEmail,
+                                     vector<SelectedVenue>& selectedVenuesForTemplates,
                                      const string& senderEmail,
                                      map<string, pair<string, string>>& emailToTemplate,
                                      string& attachmentName,
@@ -404,7 +405,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
         if (modifyTemplateChoice == 'Y' || modifyTemplateChoice == 'y') {
             clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
             createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort,
-                                  attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, templateExists);
+                                  attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, selectedVenuesForTemplates, templateExists);
         } else {
             MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
             return;
@@ -423,7 +424,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                                        string& attachmentName,
                                        string& attachmentSize,
                                        string& attachmentPath,
-                                       const vector<SelectedVenue>& selectedVenuesForEmail) {
+                                       vector<SelectedVenue>& selectedVenuesForEmail) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
     struct curl_slist* recipients = nullptr;
@@ -446,12 +447,12 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     }
 
 #ifndef UNIT_TESTING
-            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-            // Inform user we are connecting to the SMTP server
-            cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
+    // Inform user we are connecting to the SMTP server
+    cout << "Connecting to SMTP server: " << smtpServer << ":" << smtpPort << endl;
 #ifndef UNIT_TESTING
-            ConsoleUtils::resetColor();
+    ConsoleUtils::resetColor();
 #endif
 
     // Set Recipient(s)
@@ -472,7 +473,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     // Set headers
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-
     // Initialize MIME
     mime = curl_mime_init(curl);
     if (!mime) {
@@ -489,7 +489,6 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
 
     if (!attachmentPath.empty()) {
-
         size_t fileSize = boost::filesystem::file_size(attachmentPath);
         attachmentSize = to_string(fileSize) + " bytes";
 
@@ -541,16 +540,63 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     if (mime) {
         curl_mime_free(mime);
     }
+
     if (recipients) {
     curl_slist_free_all(recipients);
-
     }
+
     if (headers) {
     curl_slist_free_all(headers);
     }
 
     if (res == 0) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
+        
+        // Variable to capture user's decision
+        std::string clearVenuesDecision;
+
+        // Loop to ask for valid input
+        while (true) {
+            // Ask the user if they wish to clear the selected venues
+            std::cout << "Do you wish to clear the selected venues now you have emailed them? (Y/N): ";
+    #ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+    #endif
+            std::cin >> clearVenuesDecision;
+    #ifndef UNIT_TESTING
+            ConsoleUtils::resetColor(); // Reset to default color
+    #endif
+            ConsoleUtils::clearInputBuffer();
+
+            // Remove any quotes and trim spaces
+            clearVenuesDecision.erase(std::remove(clearVenuesDecision.begin(), clearVenuesDecision.end(), '\''), clearVenuesDecision.end());
+            clearVenuesDecision = ConsoleUtils::trim(clearVenuesDecision);
+
+            // ANSI escape code check
+            if (clearVenuesDecision.find("\033") != std::string::npos) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                continue;
+            }
+
+            // Whitespace check (full whitespace)
+            if (std::all_of(clearVenuesDecision.begin(), clearVenuesDecision.end(), ::isspace)) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                continue;
+            }
+
+            // Check the user's input
+            if (clearVenuesDecision == "Y" || clearVenuesDecision == "y") {
+                // Clear all selectedVenuesForEmail and selectedVenuesForTemplates
+                EmailManager::clearSelectedVenues(selectedVenuesForEmail);
+                break;  // Exit the loop
+            } else if (clearVenuesDecision == "N" || clearVenuesDecision == "n") {
+                // Do nothing and just continue
+                break;  // Exit the loop
+            } else {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                // Loop will continue to ask for a valid input
+            }
+        }
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
     }
@@ -576,7 +622,9 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
                                              int smtpPort,
                                              string& attachmentName,
                                              string& attachmentSize,
-                                             string& attachmentPath) {
+                                             string& attachmentPath,
+                                             vector<SelectedVenue>& selectedVenuesForEmail,
+                                             vector<SelectedVenue>& selectedVenuesForTemplates) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
     if (!curl) {
@@ -641,8 +689,6 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
 
         if (!attachmentPath.empty()) {
-            
-
             size_t fileSize = boost::filesystem::file_size(attachmentPath);
             attachmentSize = to_string(fileSize) + " bytes";
 
@@ -660,7 +706,6 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 
             // Set MIME type for attachment
             curl_mime_type(part, "application/octet-stream");
-
         }
         curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
 
@@ -708,6 +753,9 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 
     if (res == 0) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
+        // We clear all selectedVenuesForEmail and selectedVenuesForTemplates here
+        EmailManager::clearSelectedVenues(selectedVenuesForEmail);
+        EmailManager::clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
     }
@@ -741,7 +789,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          string& attachmentName,
                                          string& attachmentSize,
                                          string& attachmentPath,
-                                         const vector<SelectedVenue>& selectedVenuesForEmail,
+                                         vector<SelectedVenue>& selectedVenuesForEmail,
+                                         vector<SelectedVenue>& selectedVenuesForTemplates,
                                          bool templateExists) const {
 
     // String declarations for the booking template
@@ -844,7 +893,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             // Declare and initialize mandatory parts of the email
             string subject = "Booking Inquiry for " + venue.name;
 
-            os << "Hi!,\n\n"
+            os << "Hi!\n\n"
                << "I am booking a tour for " << performanceName << " a " << genre << " " << performanceType << ", from \n\n"
                << hometown << ". The music is similar to " << similarArtists << ".\n\n"
                << "We're planning to be in the " << venue.city << " area on " << date << " and are\n\n"
@@ -907,7 +956,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
         if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
             break;
-            
         } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
 #ifndef UNIT_TESTING
@@ -1002,7 +1050,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
             clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
         } else {
             modifyTemplate = false;
-    
             // Ask the user if they want to send the template
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
 #ifndef UNIT_TESTING
@@ -1016,15 +1063,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
             if (choice == 'Y' || choice == 'y') {
                 templateExists = false; // Reset the flag since we're sending the email
-
                 // Now, send the email to all venues
-                bool sent = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                bool sent = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, selectedVenuesForTemplates);
                 if (!sent) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                 }
             } else {
                 MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
-
                 // If user chooses not to send, the template and subjects stay in the map
                 templateExists = true;
             }
@@ -1069,7 +1114,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
     
         // Prompt the user for the custom email address
         do {
-
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CUSTOM_ADDRESS_MESSAGE);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1098,7 +1142,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 customAddressSubject += sanitizeSubject(customAddressLine) + " ";
             }
             customAddressSubject = ConsoleUtils::trim(customAddressSubject);
-
         } while (customAddressSubject.empty());
 
         if (customAddressSubject.length() > maxSubjectLength) {
@@ -1106,7 +1149,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
         #ifndef UNIT_TESTING
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
-
             cin.get();
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
@@ -1130,7 +1172,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
         #ifndef UNIT_TESTING
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
-
             cin.get();
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
@@ -1156,7 +1197,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
             if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
                 break;
-
         } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
 #ifndef UNIT_TESTING
@@ -1172,8 +1212,8 @@ void EmailManager::emailCustomAddress(CURL* curl,
             if (customAddressAttachmentPath.empty()) {
                 break;
             }
-
             size_t lastSlash = customAddressAttachmentPath.find_last_of("/\\\\");
+
             if (lastSlash == string::npos) {
                 customAddressAttachmentName = customAddressAttachmentPath;
             } else {
@@ -1191,11 +1231,9 @@ void EmailManager::emailCustomAddress(CURL* curl,
 #ifndef UNIT_TESTING
                     ConsoleUtils::resetColor();
 #endif
-
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
                     clearCustomAddressAttachmentData(customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
-                    
                     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
                     char choice;
 #ifndef UNIT_TESTING
@@ -1300,7 +1338,6 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         // Proceed to send emails if confirmed
         if (confirmSend == 'Y' || confirmSend == 'y') {
-
             if (!curl) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
                 return;
@@ -1354,6 +1391,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
                     return;
                 }
+
                 // Add the attachment part
                 curl_mime_filedata(part, customAddressAttachmentPath.c_str());
         
@@ -1397,9 +1435,11 @@ void EmailManager::emailCustomAddress(CURL* curl,
             if (mime) {
                 curl_mime_free(mime);
             }
+
             if (recipients) {
                 curl_slist_free_all(recipients);
             }
+
             if (headers) {
                 curl_slist_free_all(headers);
             }
@@ -1465,7 +1505,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-    cout << "===========================" << endl;
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::LIGHT_BLUE_BORDER);
 
     // Confirm with the user that they want to proceed.
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_EMAILS_MESSAGE);
@@ -1528,6 +1568,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
 }
 
 void EmailManager::confirmSendBookingTemplates(CURL* curl,
+                                               vector<SelectedVenue>& selectedVenuesForEmail,
                                                vector<SelectedVenue>& selectedVenuesForTemplates,
                                                const string& senderEmail,
                                                map<string, pair<string, string>>& emailToTemplate,
@@ -1587,7 +1628,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-    cout << "==============================="<< endl;
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::CYAN_BORDER);
 
     // Confirm with the user that they want to proceed.
 #ifndef UNIT_TESTING
@@ -1619,16 +1660,10 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     }
 
     // Send each template, displaying progress as it goes.
-    bool sendStatus = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+    bool sendStatus = sendBookingTemplateEmails(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, selectedVenuesForTemplates);
 
     // Set the initial color to Orange
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "==============================="<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::ORANGE_BORDER);
     // Set the color based on sendStatus (Green if completed, Red if failed)
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(sendStatus ? ConsoleUtils::Color::GREEN : ConsoleUtils::Color::RED);
@@ -1637,14 +1672,6 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-    // Set the color back to Orange
-#ifndef UNIT_TESTING    
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-    cout << "==============================="<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::ORANGE_BORDER);
 }
 

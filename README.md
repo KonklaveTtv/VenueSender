@@ -2,14 +2,15 @@
 
 VenueSender is a command-line tool designed to facilitate the process of sending emails and attachments to different venues based on specific criteria. Users can filter venues by genre, city, state, and capacity to send custom email messages to the selected venues.
 
-
 ## Getting Started
 
 ### Prerequisites
 
 VenueSender has multiple Makefiles to build statically with GCC, Clang, ICX or the MinGW-w64 compiler. There is also a Makefile.dynamic to build a dynamically linked version using GCC.
 
-After install dependencies and you are ready to build invoke:
+If you choose to go the static building route, then build using Makefile.dynamic will no longer be possible.
+
+After installing dependencies and you are ready to build invoke:
 
       make -f Makefile.<compiler/dynamic>
 
@@ -24,10 +25,10 @@ To build this project statically, you will need the following installed on your 
 - libjsoncpp v1.9.5-4 (Install from source)
 - libx11 v1.8.4 (Install from source)
 - libpsl 0.21.2 (Install from source)
-- libssl v3.0.8-1ubuntu1.2 (Install with apt-get install)
-- libsqlite3 v3.40.1-1 (Install with apt-get install)
-- libboost v1.74.0.3ubuntu7 (Install with apt-get install)
-- Catch2 v2.13.10-1 (Install with apt-get install)
+- libssl v3.0.8-1ubuntu1.2 (Install with apt)
+- libsqlite3 v3.40.1-1 (Install with apt)
+- libboost v1.74.0.3ubuntu7 (Install with apt)
+- Catch2 v2.13.10-1 (Install with apt)
 
 The versions mentioned are the ones that VenueSender was built and tested with, it may build with newer versions but this is not guaranteed.
 
@@ -107,13 +108,13 @@ To build this project dynamically, you will need the following installed on your
 
 - GCC (GNU Compiler Collection)
 - C++20 compatible compiler
-- libjsoncpp v1.9.5-4 (Install with apt-get install)
-- Curl v7.88.1 (Install from source)
-- libx11 v1.8.4 (Install from source)
-- libssl v3.0.8-1ubuntu1.2 (Install with apt-get install)
-- libsqlite3 v3.40.1-1 (Install with apt-get install)
-- libboost v1.74.0.3ubuntu7 (Install with apt-get install)
-- Catch2 v2.13.10-1 (Install with apt-get install)
+- libjsoncpp
+- Curl
+- libx11
+- libssl
+- libsqlite3
+- libboost
+- Catch2
 
 The versions mentioned are the ones that VenueSender was built and tested with, it may build with newer versions but this is not guaranteed.
 
@@ -177,8 +178,6 @@ Prepare a custom venues.csv file with the list of your personalised venues in th
 Run VenueSender:
 
       ./venuesender
-
-The program will prompt you to select filter options and compose the email subject and message. You can send emails to filtered venues by confirming your choices.
 
 
 ### Running Tests

@@ -7,6 +7,7 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 
 	    switch (menutitle) {
 
+	// CYAN
 
 		// Main Menu
 
@@ -203,6 +204,16 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #endif	
 		break;
 
+		case MenuTitleType::CYAN_BORDER:
+#ifndef UNIT_TESTING
+		ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif		
+		cout << "==========================="<< endl;
+#ifndef UNIT_TESTING
+		ConsoleUtils::resetColor();
+#endif		
+		break;
+
 
         // Filter Menus
 		case MenuTitleType::FINAL_VENUE_SELECTION_MENU_HEADER:
@@ -228,12 +239,32 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #endif	
 		break;	
 
-        // File Utils
+	// LIGHT BLUE
 
+		// Email Menu
 
-
-    }
+		case MenuTitleType::LIGHT_BLUE_BORDER:
 #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+		ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
+#endif		
+		cout << "==========================="<< endl;
+#ifndef UNIT_TESTING
+		ConsoleUtils::resetColor();
+#endif		
+		break;
+
+        // ORANGE
+
+        	// Email Menu
+
+		case MenuTitleType::ORANGE_BORDER:
+#ifndef UNIT_TESTING
+		ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif		
+		cout << "==========================="<< endl;
+#ifndef UNIT_TESTING
+		ConsoleUtils::resetColor();
+#endif		
+		break;
+    }
 }

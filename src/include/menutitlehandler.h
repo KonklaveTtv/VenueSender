@@ -33,12 +33,21 @@ public:
             TEMPLATE_SAVED_MENU_HEADER,
             EMAIL_SUMMARY_MENU_HEADER,
             BOOKING_TEMPLATE_SUMMARY_MENU_HEADER,
+            CYAN_BORDER,
 
             // Venue Selection
             FINAL_VENUE_SELECTION_MENU_HEADER,
-            VENUES_ADDED_MENU_HEADER
+            VENUES_ADDED_MENU_HEADER,
 
+        // LIGHT BLUE
 
+            // Email Menu
+            LIGHT_BLUE_BORDER,
+
+        // ORANGE
+
+            // Email Menu
+            ORANGE_BORDER,
     };
 
     static void displayMenuTitle(MenuTitleType menutitle);

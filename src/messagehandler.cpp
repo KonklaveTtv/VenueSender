@@ -82,6 +82,16 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #endif
         break;       
 
+        // Venue Filtering Messages
+        case MessageType::SELECTED_VENUES_CLEARED:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "Selected venues cleared." << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;        
 
         //Email Config Messages
         case MessageType::PASSWORD_MATCHES_MESSAGE:
