@@ -12,6 +12,7 @@
 #include <filesystem>
 #include <regex>
 #include <thread>
+#include <unordered_set>
 
 // Boost Libraries
 #define BOOST_BIND_GLOBAL_PLACEHOLDERS
@@ -19,6 +20,10 @@
 
 // Class responsible for managing email-related operations
 class EmailManager {
+private:
+    // Map to store email addresses we have sent to this session
+    static std::unordered_set<std::string> sentEmailAddresses;
+
 public:
     // SSL/TLS SMTP Port
     static inline const int SSL_TLS_SMTP_PORT = 465;

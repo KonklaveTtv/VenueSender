@@ -362,7 +362,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             if (it == selectedVenuesForEmail.end()) {
                 // The venue has not been selected yet, so add it
                 selectedVenuesForEmail.push_back(temporaryFilteredVenues[finalIndex - 1]);
-                selectedVenuesForTemplate.push_back(temporaryFilteredVenues[finalIndex - 1]);
+                selectedVenuesForTemplates.push_back(temporaryFilteredVenues[finalIndex - 1]);
             } else {
                 ostringstream duplicateVenueDetails;
                 duplicateVenueDetails << it->name << endl

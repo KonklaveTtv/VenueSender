@@ -13,6 +13,9 @@ int totalEmails;
 int totalCustomEmails;
 int totalTemplateEmails;
 
+// Global definition to store emails sent to this session
+std::unordered_set<std::string> EmailManager::sentEmailAddresses;
+
 // Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
                                      const string& senderEmail, const string& smtpUsername, int smtpPort, const string& smtpServer) {
@@ -536,6 +539,8 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         cout.flush();
     }
 
+    EmailManager::sentEmailAddresses.insert(selectedVenue.email);  // Add to set
+
     // Free the MIME structure
     if (mime) {
         curl_mime_free(mime);
@@ -737,6 +742,8 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SENDING_ERROR);
             continue;  // Skip to the next iteration
         }
+
+        sentEmailAddresses.insert(recipientEmail);  // Add to set
 
         // Free the MIME structure
         if (mime) {
