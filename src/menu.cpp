@@ -754,7 +754,7 @@ void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVen
             ConsoleUtils::resetColor();
 #endif
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
     cout << "---------------------------"<< endl;
 #ifndef UNIT_TESTING

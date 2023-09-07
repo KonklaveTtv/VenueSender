@@ -275,7 +275,7 @@ void EmailManager::viewEditEmails(CURL* curl, const string& smtpServer, int smtp
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-    cout << "-------------------------\n";
+    cout << "---------------------------\n";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif 

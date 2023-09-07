@@ -87,7 +87,9 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
+            cout << "========================" << endl;
             cout << "Selected venues cleared." << endl;
+            cout << "========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -191,6 +193,18 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif      
         break;
+        case MessageType::BOOKING_TEMPLATES_CLEARED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "=========================" << endl;
+            cout << "Booking template cleared." << endl;
+            cout << "=========================" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+
     // end of green messages
 
 
