@@ -350,8 +350,26 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
                 return;
             }
-            selectedVenuesForEmail.push_back(temporaryFilteredVenues[finalIndex - 1]);
-            selectedVenuesForTemplates.push_back(temporaryFilteredVenues[finalIndex - 1]);
+            // Check if the venue is already selected
+            auto it = std::find_if(selectedVenuesForEmail.begin(), selectedVenuesForEmail.end(), 
+                [this, finalIndex](const SelectedVenue& venue) {
+                    return venue.name == this->temporaryFilteredVenues[finalIndex - 1].name && 
+                           venue.state == this->temporaryFilteredVenues[finalIndex - 1].state &&
+                           venue.city == this->temporaryFilteredVenues[finalIndex - 1].city && 
+                           venue.capacity == this->temporaryFilteredVenues[finalIndex - 1].capacity;
+                });
+
+            if (it == selectedVenuesForEmail.end()) {
+                // The venue has not been selected yet, so add it
+                selectedVenuesForEmail.push_back(temporaryFilteredVenues[finalIndex - 1]);
+                selectedVenuesForTemplate.push_back(temporaryFilteredVenues[finalIndex - 1]);
+            } else {
+                ostringstream duplicateVenueDetails;
+                duplicateVenueDetails << it->name << endl
+                                      << it->city << endl
+                                      << it->state;
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR, duplicateVenueDetails.str());
+            }
         }
     }
     MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUES_ADDED_MENU_HEADER);

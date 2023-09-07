@@ -65,7 +65,11 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "No venues selected yet." << endl;
             break;
         case ErrorType::VENUE_ALREADY_SELECTED_ERROR:
-            cerr << "Venue already selected. Skipping." << endl;
+            cerr << "===========================" << endl
+                 << "      ALREADY SELECTED     " << endl
+                 << "===========================" << endl
+                 << extraInfo << endl
+                 << "---------------------------" << endl;
             break;
         case ErrorType::NO_VENUES_SELECTED_FOR_EMAIL_ERROR:
             cerr << "No venues selected. Please add venues before sending emails." << endl;
