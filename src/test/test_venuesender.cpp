@@ -184,7 +184,7 @@ TEST_CASE("MenuManager::displayMenuOptions() functionality", "[MenuManager]") {
         "4. Templates Options" "\n"
         "5. Configuration" "\n"
         "6. Exit" "\n"
-        "Enter your choice: ";
+        "Enter Your Choice: ";
 
     // Check the captured output and the returned choice
     REQUIRE(output.str() == expectedOutput);
