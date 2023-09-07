@@ -280,7 +280,7 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #ifndef UNIT_TESTING
 		ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif	
-	            cerr << "Unknown menu item." << endl;
+	            cerr << "UNKNOWN MENU ITEM" << endl;
 #ifndef UNIT_TESTING
 		ConsoleUtils::resetColor();
 #endif
