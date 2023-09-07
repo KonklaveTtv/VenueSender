@@ -204,7 +204,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif      
         break;
-
     // end of green messages
 
 
@@ -571,27 +570,23 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif               
         break;
-
     // end of red messages
-
   
         // Default Message
 #ifdef UNIT_TESTING
         default:
             cerr << "" << endl;
-        break;
-#else
-
+            break;
+#else      
         default:
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+            ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-            cerr << "Success." << endl;
+            cerr << "Unknown message type." << endl;
 #ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
+            ConsoleUtils::resetColor();
 #endif
-        break;
-
-#endif // UNIT_TESTING
-    }
+            break;
+#endif
+}
 }

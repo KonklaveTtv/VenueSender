@@ -5,7 +5,7 @@ using namespace std;
 
 void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 
-	    switch (menutitle) {
+    	switch (menutitle) {
 
 	// CYAN
 
@@ -238,6 +238,8 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
         	ConsoleUtils::resetColor();
 #endif	
 		break;	
+	// end of CYAN
+
 
 	// LIGHT BLUE
 
@@ -252,6 +254,7 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 		ConsoleUtils::resetColor();
 #endif		
 		break;
+	// end of LIGHT BLUE
 
         // ORANGE
 
@@ -266,5 +269,22 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 		ConsoleUtils::resetColor();
 #endif		
 		break;
+
+	        // Default Menu Item
+#ifdef UNIT_TESTING
+	        default:
+	            cerr << "" << endl;
+	            break;
+#else
+	        default:
+#ifndef UNIT_TESTING
+		ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif	
+	            cerr << "Unknown menu item." << endl;
+#ifndef UNIT_TESTING
+		ConsoleUtils::resetColor();
+#endif
+	            break;
+#endif
     }
 }
