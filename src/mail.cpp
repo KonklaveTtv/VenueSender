@@ -829,7 +829,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             } else {
                 if (checkURL && !isValidURL(input)) {
                     char confirmation;
-                    cout << "The URL seems to be invalid. Is this correct? (Y/N): ";
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_POSSIBLE_ENTRY_ERROR);
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif 
@@ -889,7 +889,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             string subject = "Booking Inquiry for " + venueForTemplates.name;
 
             os << "Hi!\n\n"
-               << "I am booking a tour for " << performanceName << " a " << genre << " " << performanceType << ", from \n\n"
+               << "I am booking a tour for " << performanceName << " a " << genre << " " << performanceType << " from \n\n"
                << hometown << ". The music is similar to " << similarArtists << ".\n\n"
                << "We're planning to be in the " << venueForTemplates.city << " area on " << date << " and are\n\n"
                << "wondering if you might be interested in booking us at " << venueForTemplates.name << ".\n\n";

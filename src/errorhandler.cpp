@@ -136,6 +136,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::TEMPLATE_NAME_FIELD_EMPTY_FIELD_ERROR:
             cerr << "ERROR: The name field must not be empty. Please enter your name." << endl;
             break;
+        case ErrorType::TEMPLATE_POSSIBLE_ENTRY_ERROR:
+            cerr << "The URL seems to be invalid. Is this correct? (Y/N): ";
+            break;
         case ErrorType::TEMPLATE_SENDING_FAILED_ERROR:
             cerr << "===========================" << endl;
             cerr << "  TEMPLATE SENDING FAILED  " << endl;
