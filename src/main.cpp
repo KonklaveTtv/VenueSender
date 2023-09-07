@@ -15,8 +15,10 @@ int main() {
     Init::splashscreen();
 
     // Initialize necessary variables
-    vector<Venue> venues;
-    vector<SelectedVenue> selectedVenuesForTemplates;
+    vector<VenueForEmails> venuesForEmails;
+    vector<VenueForTemplates> venuesForTemplates;
+    vector<SelectedVenueForEmails> selectedVenuesForEmails;
+    vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
     string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort = 587;
     bool initColor;
@@ -44,34 +46,49 @@ int main() {
     // Pass the configuration variables to the MenuManager constructor
     MenuManager menuManager(useSSL, verifyPeer, verifyHost, verbose, senderEmail, mailPass, smtpUsername, smtpPort, smtpServer);
 
-    // Extract unique genres, states, cities, and capacities from the venues data
-    set<string> uniqueGenres = VenueUtilities::getUniqueGenres(venues);
-    set<string> uniqueCountries = VenueUtilities::getUniqueCountries(venues);
-    set<int> uniqueCapacities = VenueUtilities::getUniqueCapacities(venues);
-    set<string> uniqueStates = VenueUtilities::getUniqueStates(venues);
-    set<string> uniqueCities = VenueUtilities::getUniqueCities(venues);
+    // Extract unique genres, states, cities, and capacities from the venues data for emails
+    set<string> uniqueGenresForEmails = VenueUtilities::getUniqueGenresForEmails(venuesForEmails);
+    set<string> uniqueCountriesForEmails = VenueUtilities::getUniqueCountriesForEmails(venuesForEmails);
+    set<int> uniqueCapacitiesForEmails = VenueUtilities::getUniqueCapacitiesForEmails(venuesForEmails);
+    set<string> uniqueStatesForEmails = VenueUtilities::getUniqueStatesForEmails(venuesForEmails);
+    set<string> uniqueCitiesForEmails = VenueUtilities::getUniqueCitiesForEmails(venuesForEmails);
 
-    //Initialize variables for filters and selected venues
+    // Extract unique genres, states, cities, and capacities from the venues data for templates
+    set<string> uniqueGenresForTemplates = VenueUtilities::getUniqueGenresForTemplates(venuesForTemplates);
+    set<string> uniqueCountriesForTemplates = VenueUtilities::getUniqueCountriesForTemplates(venuesForTemplates);
+    set<int> uniqueCapacitiesForTemplates = VenueUtilities::getUniqueCapacitiesForTemplates(venuesForTemplates);
+    set<string> uniqueStatesForTemplates = VenueUtilities::getUniqueStatesForTemplates(venuesForTemplates);
+    set<string> uniqueCitiesForTemplates = VenueUtilities::getUniqueCitiesForTemplates(venuesForTemplates);
+
+    // Initialize variables for filters and selected venues for emails
     FilterCriteria criteria;
-    vector<SelectedVenue> selectedVenuesForEmail;
-    vector<SelectedVenue> filteredVenues;
-    vector<SelectedVenue> temporaryFilteredVenues;
-    vector<SelectedVenue> temporaryCountryBuffer;
-    vector<SelectedVenue> temporaryStateBuffer;
-    vector<SelectedVenue> temporaryCityBuffer;
-    vector<SelectedVenue> temporaryCapacityBuffer;
-    vector<SelectedVenue> temporaryGenreBuffer;
+    vector<SelectedVenueForEmails> filteredVenuesForEmails;
+    vector<SelectedVenueForEmails> temporaryFilteredVenuesForEmails;
+    vector<SelectedVenueForEmails> temporaryCountryBufferForEmails;
+    vector<SelectedVenueForEmails> temporaryStateBufferForEmails;
+    vector<SelectedVenueForEmails> temporaryCityBufferForEmails;
+    vector<SelectedVenueForEmails> temporaryCapacityBufferForEmails;
+    vector<SelectedVenueForEmails> temporaryGenreBufferForEmails;
 
+    // Initialize variables for filters and selected venues for templates
+    vector<SelectedVenueForTemplates> filteredVenuesForTemplates;
+    vector<SelectedVenueForTemplates> temporaryFilteredVenuesForTemplates;
+    vector<SelectedVenueForTemplates> temporaryCountryBufferForTemplates;
+    vector<SelectedVenueForTemplates> temporaryStateBufferForTemplates;
+    vector<SelectedVenueForTemplates> temporaryCityBufferForTemplates;
+    vector<SelectedVenueForTemplates> temporaryCapacityBufferForTemplates;
+    vector<SelectedVenueForTemplates> temporaryGenreBufferForTemplates;
+    
     // Create a VenueDatabaseReader object
     VenueDatabaseReader dbReader;
 
-    if (!dbReader.initializeDatabaseAndReadVenueData(venues, confPaths::venuesCsvPath)) {
+    if (!dbReader.initializeDatabaseAndReadVenueData(venuesForEmails, venuesForTemplates, confPaths::venuesCsvPath)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR);
         exit(1);
     }
     
     // Initialize map for booking templates
-    map<string, pair<string, string>> emailToTemplate;
+    map<string, pair<string, string>> templateForEmail;
 
     // Create an EmailManager object
     EmailManager emailManager;
@@ -80,10 +97,11 @@ int main() {
     try {
         menuManager.navigateMenus(emailManager, 
                                   curl, 
-                                  venues,
+                                  venuesForEmails,
+                                  venuesForTemplates,
                                   selectedVenuesForTemplates,
-                                  selectedVenuesForEmail,
-                                  emailToTemplate,
+                                  selectedVenuesForEmails,
+                                  templateForEmail,
                                   sslCertPath,
                                   subject,
                                   message,

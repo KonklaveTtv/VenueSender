@@ -42,13 +42,16 @@ public:
     };
 
     enum class VenueSelectionOption {
-        SelectVenues = 1,
+        SelectVenuesForEmail = 1,
+        SelectVenuesForTemplates,
         ReturnToMainMenu
     };
 
     enum class VenueOptions {
-        ViewSelectedVenues = 1,
-        ClearSelectedVenues,
+        ViewSelectedVenuesForEmail = 1,
+        ViewSelectedVenuesForTemplates,
+        ClearSelectedVenuesForEmail,
+        ClearSelectedVenuesForTemplates,
         ReturnToMainMenu
     };
 
@@ -75,12 +78,15 @@ public:
     };
 
     // Constants for Venue Filtering sub-menu options
-    static constexpr int SELECT_VENUES_OPTION = static_cast<int>(VenueSelectionOption::SelectVenues);
+    static constexpr int SELECT_VENUES_FOR_EMAILS_OPTION = static_cast<int>(VenueSelectionOption::SelectVenuesForEmail);
+    static constexpr int SELECT_VENUES_FOR_TEMPLATES_OPTION = static_cast<int>(VenueSelectionOption::SelectVenuesForTemplates);
     static constexpr int RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION = static_cast<int>(VenueSelectionOption::ReturnToMainMenu);
 
     // Constants for Venue Options sub-menu options
-    static constexpr int VIEW_SELECTED_VENUES_OPTION = static_cast<int>(VenueOptions::ViewSelectedVenues);
-    static constexpr int CLEAR_SELECTED_VENUES_OPTION = static_cast<int>(VenueOptions::ClearSelectedVenues);
+    static constexpr int VIEW_SELECTED_VENUES_FOR_EMAIL_OPTION = static_cast<int>(VenueOptions::ViewSelectedVenuesForEmail);
+    static constexpr int VIEW_SELECTED_VENUES_FOR_TEMPLATES_OPTION = static_cast<int>(VenueOptions::ViewSelectedVenuesForTemplates);
+    static constexpr int CLEAR_SELECTED_VENUES_FOR_EMAIL_OPTION = static_cast<int>(VenueOptions::ClearSelectedVenuesForEmail);
+    static constexpr int CLEAR_SELECTED_VENUES_FOR_TEMPLATES_OPTION = static_cast<int>(VenueOptions::ClearSelectedVenuesForTemplates);
     static constexpr int RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS = static_cast<int>(VenueOptions::ReturnToMainMenu);
 
     // Constants for Email sub-menu options
@@ -118,10 +124,11 @@ public:
     // Function to nevigate the menu system
     bool navigateMenus(EmailManager& emailManager, 
                        CURL* curl, 
-                       std::vector<Venue>& venues,
-                       std::vector<SelectedVenue>& selectedVenuesForTemplates,
-                       std::vector<SelectedVenue>& selectedVenuesForEmail,
-                       std::map<std::string, std::pair<std::string, std::string>>& emailToTemplate,
+                       std::vector<VenueForEmails>& venuesForEmails,
+                       std::vector<VenueForTemplates>& venuesForTemplates,
+                       std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                       std::vector<SelectedVenueForEmails>& selectedVenuesForEmails,
+                       std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                        std::string& sslCertPath,
                        std::string& subject,
                        std::string& message,
@@ -175,12 +182,15 @@ public:
                                           std::string& mailPass, int& smtpPort, std::string& smtpServer, bool& initColor, CurlHandleWrapper& curlWrapper);
 
     // Function to display the list of venues selected by the user
-    static void displaySelectedVenues(const std::vector<SelectedVenue>& selectedVenues);
+    static void displaySelectedVenuesForEmails(const std::vector<SelectedVenueForEmails>& selectedVenuesForEmails);
+
+    // Function to display the list of venues selected by the user
+    static void displaySelectedVenuesForTemplates(const std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates);
 
 #ifdef UNIT_TESTING
     // Function to validate if the user's choice is a valid menu option
     static inline bool isValidMenuChoice(int choice) {
-        return choice >= SELECT_VENUES_OPTION && choice <= EXIT_OPTION;
+        return choice >= SELECT_VENUES_FOR_EMAILS_OPTION && choice <= EXIT_OPTION;
     }
 #endif
 };

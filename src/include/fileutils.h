@@ -238,13 +238,13 @@ public:
     static bool decryptRegistrationKey(const std::string& registrationKeyPath, std::vector<unsigned char>& decryptedRegistrationKeyData);
 
     // Function to initialize SQLite and read data from CSV or encrypted database
-    static bool initializeDatabaseAndReadVenueData(std::vector<Venue>& venues, const std::string& venuesCsvPath);
+    static bool initializeDatabaseAndReadVenueData(std::vector<VenueForEmails>& venuesForEmails, std::vector<VenueForTemplates>& venuesForTemplates, const std::string& venuesCsvPath);
 
     // Function to read venue data from a CSV file
-    static void readFromCsv(std::vector<Venue>& venues, std::istream& stream);
+    static void readFromCsv(std::vector<VenueForEmails>& venuesForEmails, std::vector<VenueForTemplates>& venuesForTemplates, std::istream& stream);
              
     // Function to read venue data from an SQLite database
-    static void readFromSQLite(std::vector<Venue>& venues, sqlite3* db);
+    static void readFromSQLite(std::vector<VenueForEmails>& venuesForEmails, std::vector<VenueForTemplates>& venuesForTemplates, sqlite3* db);
 };
 
 // Class for managing configuration settings

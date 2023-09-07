@@ -427,7 +427,7 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const string& encryptedFilePath,
 }
 
 // Function to read venue data from a CSV file
-void VenueDatabaseReader::readFromCsv(vector<Venue>& venues, istream& stream) {
+void VenueDatabaseReader::readFromCsv(vector<VenueForEmails>& venuesForEmails, vector<VenueForTemplates>& venuesForTemplates,istream& stream) {
     // Check if the venues.csv file exists
     bool venuesCsvExists = ConsoleUtils::fileExists(confPaths::venuesCsvPath);
 
@@ -448,15 +448,28 @@ void VenueDatabaseReader::readFromCsv(vector<Venue>& venues, istream& stream) {
         vector<string> rowData(tok.begin(), tok.end());
 
         if (rowData.size() == CSV_TOTAL_ROW_COUNT) {
-            Venue venue;
-            venue.name = rowData[CSV_NAME_ROW_NUMBER];
-            venue.email = rowData[CSV_EMAIL_ROW_NUMBER];
-            venue.country = rowData[CSV_COUNTRY_ROW_NUMBER];
-            venue.state = rowData[CSV_STATE_ROW_NUMBER];
-            venue.city = rowData[CSV_CITY_ROW_NUMBER];
-            venue.capacity = stoi(rowData[CSV_CAPACITY_ROW_NUMBER]);
-            venue.genre = rowData[CSV_GENRE_ROW_NUMBER];
-            venues.push_back(venue);
+            VenueForEmails venueForEmails;
+            venueForEmails.name = rowData[CSV_NAME_ROW_NUMBER];
+            venueForEmails.email = rowData[CSV_EMAIL_ROW_NUMBER];
+            venueForEmails.country = rowData[CSV_COUNTRY_ROW_NUMBER];
+            venueForEmails.state = rowData[CSV_STATE_ROW_NUMBER];
+            venueForEmails.city = rowData[CSV_CITY_ROW_NUMBER];
+            venueForEmails.capacity = stoi(rowData[CSV_CAPACITY_ROW_NUMBER]);
+            venueForEmails.genre = rowData[CSV_GENRE_ROW_NUMBER];
+            venuesForEmails.push_back(venueForEmails);
+        } else if (venuesCsvExists) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV_ERROR, confPaths::venuesCsvPath);
+        }
+        if (rowData.size() == CSV_TOTAL_ROW_COUNT) {
+            VenueForTemplates venueForTemplates;
+            venueForTemplates.name = rowData[CSV_NAME_ROW_NUMBER];
+            venueForTemplates.email = rowData[CSV_EMAIL_ROW_NUMBER];
+            venueForTemplates.country = rowData[CSV_COUNTRY_ROW_NUMBER];
+            venueForTemplates.state = rowData[CSV_STATE_ROW_NUMBER];
+            venueForTemplates.city = rowData[CSV_CITY_ROW_NUMBER];
+            venueForTemplates.capacity = stoi(rowData[CSV_CAPACITY_ROW_NUMBER]);
+            venueForTemplates.genre = rowData[CSV_GENRE_ROW_NUMBER];
+            venuesForTemplates.push_back(venueForTemplates);
         } else if (venuesCsvExists) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV_ERROR, confPaths::venuesCsvPath);
         }
@@ -464,7 +477,7 @@ void VenueDatabaseReader::readFromCsv(vector<Venue>& venues, istream& stream) {
 }
 
 // Function to initialize SQLite and read data from CSV or encrypted database
-bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venues, const string& venuesCsvPath) {
+bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmails>& venuesForEmails, vector<VenueForTemplates>& venuesForTemplates, const string& venuesCsvPath) {
     bool success = false;
 
     vector<unsigned char> decryptedRegistrationKeyData;
@@ -477,7 +490,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
     // Try to read from CSV first
     std::ifstream csvFile(venuesCsvPath);
     if (csvFile.is_open()) {
-        readFromCsv(venues, csvFile);
+        readFromCsv(venuesForEmails, venuesForTemplates, csvFile);
         csvFile.close();
         success = true;
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CSV_DATABASE_LOADED_MESSAGE);
@@ -515,7 +528,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
         }
 
         // Read from the in-memory SQLite database
-        readFromSQLite(venues, db);
+        readFromSQLite(venuesForEmails, venuesForTemplates, db);
         sqlite3_close(db);
         success = true;
     }
@@ -524,7 +537,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<Venue>& venu
 }
 
 // Function to read venue data from an SQLite database
-void VenueDatabaseReader::readFromSQLite(vector<Venue>& venues, sqlite3* db) {
+void VenueDatabaseReader::readFromSQLite(vector<VenueForEmails>& venuesForEmails, vector<VenueForTemplates>& venuesForTemplates, sqlite3* db) {
     Sqlite3Ptr dbPtr(nullptr, Sqlite3Deleter());
 
     if (db == nullptr) {
@@ -545,16 +558,27 @@ void VenueDatabaseReader::readFromSQLite(vector<Venue>& venues, sqlite3* db) {
     Sqlite3StmtPtr stmtPtr(tempStmt, Sqlite3StmtDeleter());
 
     while (sqlite3_step(stmtPtr.get()) == SQLITE_ROW) {
-        Venue venue;
-        venue.name = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_NAME_ROW_NUMBER)));
-        venue.email = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_EMAIL_ROW_NUMBER)));
-        venue.country = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_COUNTRY_ROW_NUMBER)));
-        venue.state = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_STATE_ROW_NUMBER)));
-        venue.city = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_CITY_ROW_NUMBER)));
-        venue.capacity = sqlite3_column_int(stmtPtr.get(), SQLITE_CAPACITY_ROW_NUMBER);
-        venue.genre = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_GENRE_ROW_NUMBER)));
+        VenueForEmails venueForEmails;
+        venueForEmails.name = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_NAME_ROW_NUMBER)));
+        venueForEmails.email = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_EMAIL_ROW_NUMBER)));
+        venueForEmails.country = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_COUNTRY_ROW_NUMBER)));
+        venueForEmails.state = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_STATE_ROW_NUMBER)));
+        venueForEmails.city = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_CITY_ROW_NUMBER)));
+        venueForEmails.capacity = sqlite3_column_int(stmtPtr.get(), SQLITE_CAPACITY_ROW_NUMBER);
+        venueForEmails.genre = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_GENRE_ROW_NUMBER)));
 
-        venues.push_back(venue);
+        venuesForEmails.push_back(venueForEmails);
+
+        VenueForTemplates venueForTemplates;
+        venueForTemplates.name = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_NAME_ROW_NUMBER)));
+        venueForTemplates.email = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_EMAIL_ROW_NUMBER)));
+        venueForTemplates.country = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_COUNTRY_ROW_NUMBER)));
+        venueForTemplates.state = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_STATE_ROW_NUMBER)));
+        venueForTemplates.city = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_CITY_ROW_NUMBER)));
+        venueForTemplates.capacity = sqlite3_column_int(stmtPtr.get(), SQLITE_CAPACITY_ROW_NUMBER);
+        venueForTemplates.genre = string(reinterpret_cast<const char*>(sqlite3_column_text(stmtPtr.get(), SQLITE_GENRE_ROW_NUMBER)));
+
+        venuesForTemplates.push_back(venueForTemplates);
     }
 
     // Resources are automatically released when the unique_ptr's go out of scope.

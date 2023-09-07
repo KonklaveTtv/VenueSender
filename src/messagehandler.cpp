@@ -88,12 +88,23 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
             cout << "========================" << endl;
-            cout << "Selected venues cleared." << endl;
+            cout << "Venues For Email Cleared" << endl;
             cout << "========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
-        break;        
+        break;
+        case MessageType::SELECTED_VENUES_FOR_TEMPLATES_CLEARED:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "========================" << endl;
+            cout << "Templates Venues Cleared " << endl;
+            cout << "========================" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;      
 
         //Email Config Messages
         case MessageType::PASSWORD_MATCHES_MESSAGE:

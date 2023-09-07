@@ -6,10 +6,11 @@ using namespace std;
 
 bool MenuManager::navigateMenus(EmailManager& emailManager, 
                                 CURL* curl, 
-                                vector<Venue>& venues,
-                                vector<SelectedVenue>& selectedVenuesForTemplates,
-                                vector<SelectedVenue>& selectedVenuesForEmail,
-                                map<string, pair<string, string>>& emailToTemplate,
+                                vector<VenueForEmails>& venuesForEmails,
+                                vector<VenueForTemplates>& venuesForTemplates,
+                                vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                                vector<SelectedVenueForEmails>& selectedVenuesForEmails,
+                                map<string, pair<string, string>>& templateForEmail,
                                 string& sslCertPath,
                                 string& subject,
                                 string& message,
@@ -35,8 +36,11 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayVenueSelectionOptions();
 
                     switch (subChoice) {
-                        case SELECT_VENUES_OPTION:
-                            venueFilter.processVenueSelection(venues, selectedVenuesForEmail, selectedVenuesForTemplates, cin, cout);
+                        case SELECT_VENUES_FOR_EMAILS_OPTION:
+                            venueFilter.processVenueSelectionForEmails(venuesForEmails, selectedVenuesForEmails, cin, cout);
+                            continue;
+                        case SELECT_VENUES_FOR_TEMPLATES_OPTION:
+                            venueFilter.processVenueSelectionForTemplates(venuesForTemplates, selectedVenuesForTemplates, cin, cout);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION:
                             break;
@@ -50,11 +54,16 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayVenueOptions();
                     
                     switch (subChoice) {
-                        case VIEW_SELECTED_VENUES_OPTION:
-                            displaySelectedVenues(selectedVenuesForEmail);
+                        case VIEW_SELECTED_VENUES_FOR_EMAIL_OPTION:
+                            displaySelectedVenuesForEmails(selectedVenuesForEmails);
                             continue;
-                        case CLEAR_SELECTED_VENUES_OPTION:
-                            EmailManager::clearSelectedVenues(selectedVenuesForEmail);
+                        case VIEW_SELECTED_VENUES_FOR_TEMPLATES_OPTION:
+                            displaySelectedVenuesForTemplates(selectedVenuesForTemplates);
+                            continue;
+                        case CLEAR_SELECTED_VENUES_FOR_EMAIL_OPTION:
+                            EmailManager::clearSelectedVenuesForEmails(selectedVenuesForEmails);
+                            continue;
+                        case CLEAR_SELECTED_VENUES_FOR_TEMPLATES_OPTION:
                             EmailManager::clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS:
@@ -73,13 +82,13 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             emailManager.constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                             continue;
                         case VIEW_EDIT_EMAILS_OPTION:
-                            emailManager.viewEditEmails(curl, smtpServer, smtpPort, selectedVenuesForEmail, selectedVenuesForTemplates, senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath, templateExists, emailToTemplate);
+                            emailManager.viewEditEmails(senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case EMAIL_CUSTOM_ADDRESS_OPTION:
                             emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case SEND_EMAILS_OPTION:
-                            EmailManager::confirmSendEmail(curl, selectedVenuesForEmail, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                            EmailManager::confirmSendEmail(curl, selectedVenuesForEmails, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS:
                             break;
@@ -93,16 +102,16 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayTemplateOptions();
                     switch (subChoice) {
                         case CREATE_VENUE_BOOKING_TEMPLATE_OPTION:
-                            emailManager.createBookingTemplate(curl, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail, selectedVenuesForTemplates, templateExists);
+                            emailManager.createBookingTemplate(curl, senderEmail, templateForEmail, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForTemplates, templateExists);
                             continue;
                         case VIEW_EDIT_BOOKING_TEMPLATES_OPTION:
-                            emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForEmail, selectedVenuesForTemplates, senderEmail, emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForTemplates, senderEmail, templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case SEND_BOOKING_TEMPLATES_OPTION:
-                            EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForEmail, selectedVenuesForTemplates, senderEmail, emailToTemplate, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                            EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case CLEAR_BOOKING_TEMPLATE_OPTION:
-                            EmailManager::clearBookingTemplate(emailToTemplate, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            EmailManager::clearAllBookingTemplateData(templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS:
                             break;
@@ -141,8 +150,8 @@ int MenuManager::displayMenuOptions() {
         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::MAIN_MENU_HEADER);
         cout << VENUE_SELECTION_OPTION << ". Venue Selection" << endl;
         cout << VENUE_OPTIONS_OPTION << ". Venue Options" << endl;
-        cout << EMAIL_OPTIONS_OPTION << ". Email" << endl;
-        cout << TEMPLATES_OPTION << ". Templates" << endl;
+        cout << EMAIL_OPTIONS_OPTION << ". Email Options" << endl;
+        cout << TEMPLATES_OPTION << ". Templates Options" << endl;
         cout << CONFIGURATION_OPTION << ". Configuration" << endl;
         cout << EXIT_OPTION << ". Exit" << endl;
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
@@ -196,7 +205,8 @@ int MenuManager::displayVenueSelectionOptions() {
     int choice;
     do {
         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUE_SELECTION_MENU_HEADER);
-        cout << SELECT_VENUES_OPTION << ". Select Venues" << endl;
+        cout << SELECT_VENUES_FOR_EMAILS_OPTION << ". Select Venue For Email" << endl;
+        cout << SELECT_VENUES_FOR_TEMPLATES_OPTION << ". Select Venues For Templates" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION << ". Return to Main Menu" << endl;
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
@@ -209,7 +219,7 @@ int MenuManager::displayVenueSelectionOptions() {
 #endif
         ConsoleUtils::clearInputBuffer();
 
-        if (choice >= SELECT_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
+        if (choice >= SELECT_VENUES_FOR_EMAILS_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_SELECTION) {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
@@ -222,8 +232,10 @@ int MenuManager::displayVenueOptions() {
     int choice;
     do {
         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUE_OPTIONS_MENU_HEADER);
-        cout << VIEW_SELECTED_VENUES_OPTION << ". View Selected Venues" << endl;
-        cout << CLEAR_SELECTED_VENUES_OPTION << ". Clear Selected Venues" << endl;
+        cout << VIEW_SELECTED_VENUES_FOR_EMAIL_OPTION << ". View Selected Venues For Email" << endl;
+        cout << VIEW_SELECTED_VENUES_FOR_TEMPLATES_OPTION << ". View Selected Venues For Templates" << endl;
+        cout << CLEAR_SELECTED_VENUES_FOR_EMAIL_OPTION << ". Clear Selected Venues For Email" << endl;
+        cout << CLEAR_SELECTED_VENUES_FOR_TEMPLATES_OPTION << ". Clear Selected Venues For Templates" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS << ". Return to Main Menu" << endl;
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CHOICE_MESSAGE);
@@ -236,7 +248,7 @@ int MenuManager::displayVenueOptions() {
 #endif
         ConsoleUtils::clearInputBuffer();
 
-        if (choice >= VIEW_SELECTED_VENUES_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS) {
+        if (choice >= VIEW_SELECTED_VENUES_FOR_EMAIL_OPTION && choice <= RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS) {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
@@ -732,23 +744,55 @@ void MenuManager::setupCurlHandle(CurlHandleWrapper& curlWrapper,
     curl_easy_setopt(curl, CURLOPT_URL, smtpUrl.c_str());
 }
 
-void MenuManager::displaySelectedVenues(const vector<SelectedVenue>& selectedVenues) {
+void MenuManager::displaySelectedVenuesForEmails(const vector<SelectedVenueForEmails>& selectedVenuesForEmails) {
     // Display menu header
     MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::SELECTED_VENUES_MENU_HEADER);
 
-    if (selectedVenues.empty()) {
+    if (selectedVenuesForEmails.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
     } else {
-        for (const auto& venue : selectedVenues) {
+        for (const auto& venueForEmails : selectedVenuesForEmails) {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
-            cout << "Name: " << venue.name << endl;
-            cout << "Country: " << venue.country << endl;
-            cout << "State: " << venue.state << endl;
-            cout << "City: " << venue.city << endl;
-            cout << "Capacity: " << venue.capacity << endl;
-            cout << "Genre: " << venue.genre << endl;
+            cout << "Name: " << venueForEmails.name << endl;
+            cout << "Country: " << venueForEmails.country << endl;
+            cout << "State: " << venueForEmails.state << endl;
+            cout << "City: " << venueForEmails.city << endl;
+            cout << "Capacity: " << venueForEmails.capacity << endl;
+            cout << "Genre: " << venueForEmails.genre << endl;
+
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
+#endif
+    cout << "---------------------------"<< endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        }
+    }
+}
+
+void MenuManager::displaySelectedVenuesForTemplates(const vector<SelectedVenueForTemplates>& selectedVenuesForTemplates) {
+    // Display menu header
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::SELECTED_VENUES_MENU_HEADER);
+
+    if (selectedVenuesForTemplates.empty()) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
+    } else {
+        for (const auto& venueForTemplates : selectedVenuesForTemplates) {
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
+#endif
+            cout << "Name: " << venueForTemplates.name << endl;
+            cout << "Country: " << venueForTemplates.country << endl;
+            cout << "State: " << venueForTemplates.state << endl;
+            cout << "City: " << venueForTemplates.city << endl;
+            cout << "Capacity: " << venueForTemplates.capacity << endl;
+            cout << "Genre: " << venueForTemplates.genre << endl;
 
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();

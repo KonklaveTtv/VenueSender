@@ -37,6 +37,7 @@ public:
 
 			// Venue Filtering
 			SELECTED_VENUES_CLEARED,
+			SELECTED_VENUES_FOR_TEMPLATES_CLEARED,
 
 			// Email Config
 			PASSWORD_MATCHES_MESSAGE,
