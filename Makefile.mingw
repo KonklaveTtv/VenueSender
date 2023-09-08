@@ -14,7 +14,7 @@ OBJDIR = obj
 BINDIR = bin
 
 # Targets
-TARGET = $(BINDIR)/venuesender.exe
+TARGET = $(BINDIR)/VenueSender.exe
 
 # Source files
 SRCS = $(wildcard $(SRCDIR)/*.cpp)

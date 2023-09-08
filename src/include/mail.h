@@ -26,8 +26,9 @@ private:
     // Map to store email addresses we have sent to this session
     static std::unordered_set<std::string> sentEmailAddressesForEmails;
     static std::unordered_set<std::string> sentEmailAddressesForTemplates;
-
-public:
+    // Map to store custom booking templates
+    static std::map<std::string, std::map<std::string, std::pair<std::string, std::string>>> savedTemplates;
+public:    
     // SSL/TLS SMTP Port
     static inline const int SSL_TLS_SMTP_PORT = 465;
 
@@ -156,7 +157,7 @@ public:
     void viewEditTemplates(CURL* curl,
                            const std::string& smtpServer,
                            int smtpPort,
-                           std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                           const std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                            const std::string& senderEmail,
                            std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                            std::string& templateAttachmentName,
@@ -190,6 +191,13 @@ public:
     // Function to append the string for the booking template
     static void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) ;
 
+    static void constructEmailTemplate(const std::string& templateName,
+                                       const SelectedVenueForTemplates& venueForTemplates,
+                                       std::string& genre, std::string& performanceType, std::string& performanceName,
+                                       std::string& hometown, std::string& similarArtists, std::string& date,
+                                       std::string& musicLink, std::string& livePerfVideo, std::string& musicVideo,
+                                       std::string& pressQuote, std::string& quoteSource, std::string& socials, std::string& name);
+
     // Function to send a booking template email
     void createBookingTemplate(CURL* curl,
                                const std::string& senderEmail,
@@ -199,7 +207,7 @@ public:
                                std::string& templateAttachmentName,
                                std::string& templateAttachmentSize,
                                std::string& templateAttachmentPath,
-                               std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                               const std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                bool templateExists) const;
 
     // Function to send to a custom email address
@@ -226,7 +234,7 @@ public:
                                  std::string& attachmentPath);
 
     static void confirmSendBookingTemplates(CURL* curl,
-                                            std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                                            const std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                             const std::string& senderEmail,
                                             std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                                             const std::string& smtpServer,

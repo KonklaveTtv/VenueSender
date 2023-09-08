@@ -17,9 +17,9 @@ BINDIR = bin
 DEBUGBINDIR = bin/debug
 
 # Targets
-TARGET = $(BINDIR)/venuesender
-DEBUG_TARGET = $(DEBUGBINDIR)/venuesender_debug
-TEST_TARGET = $(BINDIR)/venuesender_test
+TARGET = $(BINDIR)/VenueSender
+DEBUG_TARGET = $(DEBUGBINDIR)/VenueSender_debug
+TEST_TARGET = $(BINDIR)/VenueSender_test
 
 # Source files
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
