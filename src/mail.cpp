@@ -776,6 +776,41 @@ void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& l
     }
 }
 
+void EmailManager::constructEmailTemplate(SelectedVenueForTemplates& venueForTemplates,
+                            map<string, pair<string, string>>& templateForEmail,
+                            string& genre, string& performanceType, string& performanceName,
+                            string& hometown, string& similarArtists, string& date,
+                            string& musicLink, string& livePerfVideo, string& musicVideo,
+                            string& pressQuote, string& quoteSource, string& socials, string& name) {
+    std::ostringstream os;
+    string subject = "Booking Inquiry for " + venueForTemplates.name;
+
+    os << "Hi!\n\n"
+       << "I am booking a tour for " << performanceName << " a " << genre << " " << performanceType << " from \n\n"
+       << hometown << ". The music is similar to " << similarArtists << ".\n\n"
+       << "We're planning to be in the " << venueForTemplates.city << " area on " << date << " and are\n\n"
+       << "wondering if you might be interested in booking us at " << venueForTemplates.name << ".\n\n";
+
+    // Add optional fields only if they are not empty
+    appendIfNotEmpty(os, "- Music", musicLink);
+    appendIfNotEmpty(os, "- Live Performance", livePerfVideo);
+    appendIfNotEmpty(os, "- Music Video", musicVideo);
+
+    if (!pressQuote.empty()) {
+        os << "\nWhat people are saying about " << performanceName << "\n"
+           << "\"" << pressQuote << "\" - " << quoteSource << "\n";
+    }
+
+    os << "\nPlease let me know if you have any questions or need additional information.\n\n"
+       << "We appreciate your time and consideration!\n\n"
+       << "Best wishes,\n"
+       << name << "\n\n";
+
+    appendIfNotEmpty(os, "-- Social Links", socials);
+
+    templateForEmail[venueForTemplates.email] = make_pair(subject, os.str());
+}
+
 void EmailManager::createBookingTemplate(CURL* curl,
                                          const string& senderEmail,
                                          map<string, pair<string, string>>& templateForEmail,
@@ -847,6 +882,17 @@ void EmailManager::createBookingTemplate(CURL* curl,
         }
     };
 
+    // Helper function to modify individual fields
+    auto modifyField = [](string& field, const string& fieldName) {
+        string newField;
+        cout << "Current " << fieldName << ": " << field << endl;
+        cout << "Enter new " << fieldName << " (press Enter to keep the current value): ";
+        getline(cin, newField);
+        if (!newField.empty()) {
+            field = newField;
+        }
+    };
+
     while (modifyTemplate) {
         // Check if venues are selected
         if (selectedVenuesForTemplates.empty()) {
@@ -881,38 +927,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
             }
         }
 
-        // Construct the email template for each venue without sending it
-        for (const SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
-            std::ostringstream os;
-            
-            // Declare and initialize mandatory parts of the email
-            string subject = "Booking Inquiry for " + venueForTemplates.name;
-
-            os << "Hi!\n\n"
-               << "I am booking a tour for " << performanceName << " a " << genre << " " << performanceType << " from \n\n"
-               << hometown << ". The music is similar to " << similarArtists << ".\n\n"
-               << "We're planning to be in the " << venueForTemplates.city << " area on " << date << " and are\n\n"
-               << "wondering if you might be interested in booking us at " << venueForTemplates.name << ".\n\n";
-
-            // Add optional fields only if they are not empty
-            appendIfNotEmpty(os, "- Music", musicLink);
-            appendIfNotEmpty(os, "- Live Performance", livePerfVideo);
-            appendIfNotEmpty(os, "- Music Video", musicVideo);
-
-            if (!pressQuote.empty()) {
-                os << "\nWhat people are saying about " << performanceName << "\n"
-                   << "\"" << pressQuote << "\" - " << quoteSource << "\n";
-            }
-
-            os << "\nPlease let me know if you have any questions or need additional information.\n\n"
-               << "We appreciate your time and consideration!\n\n"
-               << "Best wishes,\n"
-               << name << "\n\n";
-
-            appendIfNotEmpty(os, "-- Social Links", socials);
-
-            // Map each venue's email to its unique message and subject
-            templateForEmail[venueForTemplates.email] = make_pair(subject, os.str());
+        for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
+            EmailManager::constructEmailTemplate(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
+                                   hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
         }
 
         if (!templateForEmail.empty()) {
@@ -1039,10 +1056,125 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #endif
         ConsoleUtils::clearInputBuffer();
 
-
         if (choice == 'Y' || choice == 'y') {
-            // Clear the existing template and start over
-            clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::REDO_OR_MODIFY_TEMPLATE_MESSAGE);
+            string modifyChoice;
+            cin >> modifyChoice;
+            ConsoleUtils::clearInputBuffer();  // Clear the input buffer
+            
+            // Convert to upper case for case-insensitive comparison
+            transform(modifyChoice.begin(), modifyChoice.end(), modifyChoice.begin(), ::toupper);
+            
+            if (modifyChoice == "REDO" || modifyChoice == "redo" || modifyChoice == "R" || modifyChoice == "r") {
+                // Clear the existing template and start over
+                clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+            } else if (modifyChoice == "MODIFY" || modifyChoice == "modify" || modifyChoice == "M" || modifyChoice == "m") {
+                // Display available fields to the user
+                cout << "Available fields to modify:" << endl;
+                cout << "1. Genre" << endl;
+                cout << "2. Performance Type" << endl;
+                cout << "3. Performance Name" << endl;
+                cout << "4. Hometown" << endl;
+                cout << "5. Similar Artists" << endl;
+                cout << "6. Date" << endl;
+                cout << "7. Music Link" << endl;
+                cout << "8. Live Performance Video" << endl;
+                cout << "9. Music Video" << endl;
+                cout << "10. Press Quote" << endl;
+                cout << "11. Quote Source" << endl;
+                cout << "12. Social Links" << endl;
+                cout << "13. Name" << endl;
+ 
+                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CHOOSE_FIELDS_TO_MODIFY_MESSSAGE);
+                string indices;
+
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif                   
+                getline(cin, indices);
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
+                // Convert the comma-separated string into a vector of integers
+                stringstream ss(indices);
+                vector<int> selectedIndices;
+                int i;
+                while (ss >> i) {
+                    selectedIndices.push_back(i);
+                    if (ss.peek() == ',') ss.ignore();
+                }
+                
+                // Modify individual fields based on user choice
+                for (int index : selectedIndices) {
+                    switch (index) {
+                        case 1: modifyField(genre, "Genre"); break;
+                        case 2: modifyField(performanceType, "Performance Type"); break;
+                        case 3: modifyField(performanceName, "Performance Name"); break;
+                        case 4: modifyField(hometown, "Hometown"); break;
+                        case 5: modifyField(similarArtists, "Similar Artists"); break;
+                        case 6: modifyField(date, "Date"); break;
+                        case 7: modifyField(musicLink, "Music Link"); break;
+                        case 8: modifyField(livePerfVideo, "Live Performance Video"); break;
+                        case 9: modifyField(musicVideo, "Music Video"); break;
+                        case 10: modifyField(pressQuote, "Press Quote"); break;
+                        case 11: modifyField(quoteSource, "Quote Source"); break;
+                        case 12: modifyField(socials, "Social Links"); break;
+                        case 13: modifyField(name, "Name"); break;
+                        default: cout << "Invalid index " << index << " skipped." << endl; break;
+                    }
+                }
+
+                // Update the templates right here after modification
+                for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
+                    EmailManager::constructEmailTemplate(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
+                        hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
+                }
+
+                if (!templateForEmail.empty()) {
+                    auto firstElement = templateForEmail.begin();
+                    string firstEmail = firstElement->first;
+                    string firstSubject = firstElement->second.first;
+                    string firstMessage = firstElement->second.second;
+
+                    // Display the completed template
+#ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
+                    cout << "=========================================\n";
+                    cout << "Generated Email Template for: " << firstEmail << "\n";
+                    cout << "=========================================\n";
+                    cout << "Subject: " << firstSubject << "\n";
+                    cout << "=========================================\n";
+                    cout << firstMessage << endl;
+                    cout << "=========================================\n";
+#ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+#endif
+                    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_TEMPLATE_SATISFIED_MESSAGE);
+                    char satisfiedChoice;
+#ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+                    cin >> satisfiedChoice;
+#ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+#endif
+                    ConsoleUtils::clearInputBuffer();  // Clear the input buffer
+
+                    if (satisfiedChoice == 'Y' || satisfiedChoice == 'y') {
+                        // If user is satisfied, update the template and move to sending the template
+                        for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
+                            EmailManager::constructEmailTemplate(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
+                                hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
+                        }
+                        modifyTemplate = false;
+                    }
+                } else {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_EMPTY_ERROR);
+                    return;
+                }
+            }
         } else {
             modifyTemplate = false;
             // Ask the user if they want to send the template
@@ -1054,7 +1186,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
-        ConsoleUtils::clearInputBuffer();
+            ConsoleUtils::clearInputBuffer();
 
             if (choice == 'Y' || choice == 'y') {
                 templateExists = false; // Reset the flag since we're sending the email

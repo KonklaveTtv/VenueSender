@@ -130,6 +130,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::TEMPLATE_CREATION_ERROR:
             cerr << "ERROR: No templates have been created. Please create a template first." << endl;
             break;
+        case ErrorType::TEMPLATE_EMPTY_ERROR:
+            cerr << "ERROR: The template fields are empty." << endl;
+            break;
         case ErrorType::TEMPLATE_PENDING_ERROR:
             cerr << "ERROR: Template pending, go back to add more venues, send the template, or clear the template." << endl;
             break;

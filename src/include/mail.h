@@ -190,6 +190,13 @@ public:
     // Function to append the string for the booking template
     static void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) ;
 
+    static void constructEmailTemplate(SelectedVenueForTemplates& venueForTemplates,
+                                std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
+                                std::string& genre, std::string& performanceType, std::string& performanceName,
+                                std::string& hometown, std::string& similarArtists, std::string& date,
+                                std::string& musicLink, std::string& livePerfVideo, std::string& musicVideo,
+                                std::string& pressQuote, std::string& quoteSource, std::string& socials, std::string& name);
+
     // Function to send a booking template email
     void createBookingTemplate(CURL* curl,
                                const std::string& senderEmail,
