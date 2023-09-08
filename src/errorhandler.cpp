@@ -136,11 +136,20 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::TEMPLATE_PENDING_ERROR:
             cerr << "ERROR: Template pending, go back to add more venues, send the template, or clear the template." << endl;
             break;
+        case ErrorType::INVALID_TEMPLATE_INDEX_ERROR:
+            cerr << "ERROR: Invalid index. Returning to menu.\n";
+            break;
+        case ErrorType::NO_SAVED_TEMPLATES_ERROR:
+            cerr << "ERROR: No saved templates available.\n";
+            break;
+        case ErrorType::INVALID_SAVED_TEMPLATE_INDEX_SELECTION_ERROR:
+            cerr << "ERROR: Invalid index. Using the current template.\n";
+            break;
         case ErrorType::TEMPLATE_NAME_FIELD_EMPTY_FIELD_ERROR:
             cerr << "ERROR: The name field must not be empty. Please enter your name." << endl;
             break;
         case ErrorType::TEMPLATE_POSSIBLE_ENTRY_ERROR:
-            cerr << "The URL seems to be invalid. Is this correct? (Y/N): ";
+            cerr << "ERROR: The URL seems to be invalid. Is this correct? (Y/N): ";
             break;
         case ErrorType::TEMPLATE_SENDING_FAILED_ERROR:
             cerr << "===========================" << endl;

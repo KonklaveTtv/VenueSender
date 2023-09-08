@@ -17,6 +17,9 @@ int totalTemplateEmails;
 std::unordered_set<std::string> EmailManager::sentEmailAddressesForEmails;
 std::unordered_set<std::string> EmailManager::sentEmailAddressesForTemplates;
 
+// Global definition for storing/accessing templates
+std::map<std::string, std::map<std::string, std::pair<std::string, std::string>>> EmailManager::savedTemplates;
+
 // Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
                                      const string& senderEmail, const string& smtpUsername, int smtpPort, const string& smtpServer) {
@@ -348,61 +351,85 @@ void EmailManager::viewEditTemplates(CURL* curl,
                                      string& templateAttachmentPath,
                                      bool& templateExists) const {
 
-    if (templateForEmail.empty()) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_PENDING_ERROR);
+    // Check if there are any saved templates first
+    if (savedTemplates.empty()) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_SAVED_TEMPLATES_ERROR);
         return;
     }
 
-    auto firstElement = templateForEmail.begin();
-    string firstEmail = firstElement->first;
-    string firstSubject = firstElement->second.first;
-    string firstMessage = firstElement->second.second;
+    // Display list of saved templates for user selection
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SAVED_TEMPLATE_VIEW_SELECTION_MESSAGE);
+    int index = 1;
+    for (const auto& [name, templateData] : savedTemplates) {
+        std::cout << index++ << ". " << name << '\n';
+    }
 
-    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_DETAILS_MENU_HEADER);
+    // Get user's choice
+    int selectedTemplateIndex;
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SELECT_LOAD_TEMPLATE_MESSAGE);    
 #ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-    cout << "For: " << firstEmail << "\n";
-    cout << "Subject: " << firstSubject << "\n";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
-#endif
-    cout << "Attachment: " << (templateAttachmentName.empty() ? "None" : templateAttachmentName) << "\n";
-    cout << "Size: " << (templateAttachmentSize.empty() ? "None" : templateAttachmentSize) << "\n";
-    cout << "Path: " << (templateAttachmentPath.empty() ? "None" : templateAttachmentPath) << "\n";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-    ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-    cout << "\n" << firstMessage << "\n";
-    cout << "-----------------------------\n";
+    std::cin >> selectedTemplateIndex;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
+    
+    ConsoleUtils::clearInputBuffer();
+    
+    // Validate the index and select the corresponding template from savedTemplates
+    if (selectedTemplateIndex >= 1 && selectedTemplateIndex <= static_cast<int>(savedTemplates.size())) {
+        auto it = std::next(savedTemplates.begin(), selectedTemplateIndex - 1);
+        string selectedTemplateName = it->first;
+        auto& selectedTemplate = it->second;
 
-    int attempts = RESET_SEND_COUNT_TO_ZERO;
+        // Display the selected template
+        // Assuming the template is in the format: map<email, pair<subject, message>>
+        auto firstElement = selectedTemplate.begin();
+        string firstEmail = firstElement->first;
+        string firstSubject = firstElement->second.first;
+        string firstMessage = firstElement->second.second;
+        std::cout << "Selected Template: " << selectedTemplateName << "\n";
+        std::cout << "For: " << firstEmail << "\n";
+        std::cout << "Subject: " << firstSubject << "\n";
+        std::cout << firstMessage << "\n";
 
-    while (attempts < 3) {
+        // Ask if user wants to modify the template
+        char modifyChoice;
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE);
-        char modifyTemplateChoice;
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-        cin >> modifyTemplateChoice;
+        std::cin >> modifyChoice;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
         ConsoleUtils::clearInputBuffer();
 
-        if (modifyTemplateChoice == 'Y' || modifyTemplateChoice == 'y') {
+        if (modifyChoice == 'Y' || modifyChoice == 'y') {
+            // Modify the template
             clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             createBookingTemplate(curl, senderEmail, templateForEmail, smtpServer, smtpPort,
                                   templateAttachmentName, templateAttachmentSize, templateAttachmentPath, selectedVenuesForTemplates, templateExists);
         } else {
-            MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
-            return;
+            // Ask if the user wants to use the selected template for sending
+            char useChoice;
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_TEMPLATE_FOR_SENDING_MESSAGE);
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            std::cin >> useChoice;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+            ConsoleUtils::clearInputBuffer();
+
+            if (useChoice == 'Y' || useChoice == 'y') {
+                templateForEmail = selectedTemplate;
+            }
         }
+    } else {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_TEMPLATE_INDEX_ERROR);
     }
 }
 
@@ -620,6 +647,10 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
                                              bool templateExists) {
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
+    struct curl_slist* recipients = nullptr;
+    struct curl_slist* headers = nullptr;
+    curl_mime *mime = nullptr;
+
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return false;
@@ -645,10 +676,6 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         string subject = kv.second.first;
         string message = kv.second.second;
 
-        struct curl_slist* recipients = nullptr;
-        struct curl_slist* headers = nullptr;
-        curl_mime *mime = nullptr;
-        
         // Set Recipient(s)
         recipients = curl_slist_append(recipients, recipientEmail.c_str());
         curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
@@ -776,12 +803,12 @@ void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& l
     }
 }
 
-void EmailManager::constructEmailTemplate(SelectedVenueForTemplates& venueForTemplates,
-                            map<string, pair<string, string>>& templateForEmail,
-                            string& genre, string& performanceType, string& performanceName,
-                            string& hometown, string& similarArtists, string& date,
-                            string& musicLink, string& livePerfVideo, string& musicVideo,
-                            string& pressQuote, string& quoteSource, string& socials, string& name) {
+void EmailManager::constructEmailTemplate(const string& templateName,
+                                          SelectedVenueForTemplates& venueForTemplates,
+                                          string& genre, string& performanceType, string& performanceName,
+                                          string& hometown, string& similarArtists, string& date,
+                                          string& musicLink, string& livePerfVideo, string& musicVideo,
+                                          string& pressQuote, string& quoteSource, string& socials, string& name) {
     std::ostringstream os;
     string subject = "Booking Inquiry for " + venueForTemplates.name;
 
@@ -808,7 +835,7 @@ void EmailManager::constructEmailTemplate(SelectedVenueForTemplates& venueForTem
 
     appendIfNotEmpty(os, "-- Social Links", socials);
 
-    templateForEmail[venueForTemplates.email] = make_pair(subject, os.str());
+    savedTemplates[templateName][venueForTemplates.email] = make_pair(subject, os.str());
 }
 
 void EmailManager::createBookingTemplate(CURL* curl,
@@ -821,6 +848,17 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          string& templateAttachmentPath,
                                          vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                          bool templateExists) const {
+
+    std::string templateName;
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_TEMPLATE_SAVE_NAME_MESSAGE);
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+    std::cin >> templateName;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+    ConsoleUtils::clearInputBuffer();
 
     // String declarations for the booking template
     string genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, name, socials;
@@ -888,6 +926,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
         cout << "Current " << fieldName << ": " << field << endl;
         cout << "Enter new " << fieldName << " (press Enter to keep the current value): ";
         getline(cin, newField);
+        ConsoleUtils::clearInputBuffer();
         if (!newField.empty()) {
             field = newField;
         }
@@ -928,7 +967,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
         }
 
         for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
-            EmailManager::constructEmailTemplate(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
+            EmailManager::constructEmailTemplate(templateName, venueForTemplates, genre, performanceType, performanceName,
                                    hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
         }
 
@@ -1096,6 +1135,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
 #endif
+                ConsoleUtils::clearInputBuffer();
+                
                 // Convert the comma-separated string into a vector of integers
                 stringstream ss(indices);
                 vector<int> selectedIndices;
@@ -1127,7 +1168,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
                 // Update the templates right here after modification
                 for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
-                    EmailManager::constructEmailTemplate(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
+                    EmailManager::constructEmailTemplate(templateName, venueForTemplates, genre, performanceType, performanceName,
                         hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
                 }
 
@@ -1165,7 +1206,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     if (satisfiedChoice == 'Y' || satisfiedChoice == 'y') {
                         // If user is satisfied, update the template and move to sending the template
                         for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
-                            EmailManager::constructEmailTemplate(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
+                            EmailManager::constructEmailTemplate(templateName, venueForTemplates, genre, performanceType, performanceName,
                                 hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
                         }
                         modifyTemplate = false;
@@ -1175,17 +1216,54 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     return;
                 }
             }
-        } else {
+        } else { // User chooses not to modify the template
             modifyTemplate = false;
+
+            // Check the number of saved templates
+            if (savedTemplates.size() == 1 || savedTemplates.empty()) { // Includes the current one
+                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::NO_SAVED_TEMPLATES_TO_USE_MESSAGE);
+                // At this point, 'templateForEmail' should already be populated with the current template's data
+            } else if (savedTemplates.size() > 1) {
+                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SELECT_TEMPLATE_MESSAGE);
+                int index = 1;
+                int selectedTemplateIndex = -1;
+                for (const auto& [name, templateData] : savedTemplates) {
+                    std::cout << index << ". " << name << '\n';
+                    index++;
+                }
+                
+                // Get user's choice
+                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SELECT_LOAD_TEMPLATE_MESSAGE);
+#ifndef UNIT_TESTING
+                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+                cin >> selectedTemplateIndex;
+#ifndef UNIT_TESTING
+                ConsoleUtils::resetColor();
+#endif
+                ConsoleUtils::clearInputBuffer();
+
+                // Validate the selectedTemplateIndex and populate templateForEmail with the selected template's data
+                if (selectedTemplateIndex >= 1 && static_cast<std::size_t>(selectedTemplateIndex) <= savedTemplates.size()) {
+                    auto it = std::next(savedTemplates.begin(), selectedTemplateIndex - 1);
+                    templateForEmail = it->second; // Assuming the second element in the pair is compatible with 'templateForEmail'
+                } else {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_SAVED_TEMPLATE_INDEX_SELECTION_ERROR);
+                }
+            } else {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_SAVED_TEMPLATES_ERROR);
+                // TODO: Handle this case as appropriate
+            }
+
             // Ask the user if they want to send the template
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
-#ifndef UNIT_TESTING
+        #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
+        #endif
             cin >> choice;
-#ifndef UNIT_TESTING
+        #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
-#endif
+        #endif
             ConsoleUtils::clearInputBuffer();
 
             if (choice == 'Y' || choice == 'y') {

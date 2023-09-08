@@ -86,12 +86,12 @@ int main() {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR);
         exit(1);
     }
-    
-    // Initialize map for booking templates
-    map<string, pair<string, string>> templateForEmail;
 
     // Create an EmailManager object
     EmailManager emailManager;
+
+    // Initialize map for booking templates
+    map<string, pair<string, string>> templateForEmail;
 
     // Pass the necessary objects to the navigateMenus function
     try {
