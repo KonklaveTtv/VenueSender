@@ -157,7 +157,7 @@ public:
     void viewEditTemplates(CURL* curl,
                            const std::string& smtpServer,
                            int smtpPort,
-                           std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                           const std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                            const std::string& senderEmail,
                            std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                            std::string& templateAttachmentName,
@@ -192,7 +192,7 @@ public:
     static void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) ;
 
     static void constructEmailTemplate(const std::string& templateName,
-                                       SelectedVenueForTemplates& venueForTemplates,
+                                       const SelectedVenueForTemplates& venueForTemplates,
                                        std::string& genre, std::string& performanceType, std::string& performanceName,
                                        std::string& hometown, std::string& similarArtists, std::string& date,
                                        std::string& musicLink, std::string& livePerfVideo, std::string& musicVideo,
@@ -207,7 +207,7 @@ public:
                                std::string& templateAttachmentName,
                                std::string& templateAttachmentSize,
                                std::string& templateAttachmentPath,
-                               std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                               const std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                bool templateExists) const;
 
     // Function to send to a custom email address
@@ -234,7 +234,7 @@ public:
                                  std::string& attachmentPath);
 
     static void confirmSendBookingTemplates(CURL* curl,
-                                            std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                                            const std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                             const std::string& senderEmail,
                                             std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                                             const std::string& smtpServer,

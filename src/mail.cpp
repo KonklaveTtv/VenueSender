@@ -343,7 +343,7 @@ void EmailManager::viewEditEmails(const string& senderEmail, string& subject, st
 void EmailManager::viewEditTemplates(CURL* curl,
                                      const string& smtpServer,
                                      int smtpPort,
-                                     vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                                     const vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                      const string& senderEmail,
                                      map<string, pair<string, string>>& templateForEmail,
                                      string& templateAttachmentName,
@@ -804,7 +804,7 @@ void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& l
 }
 
 void EmailManager::constructEmailTemplate(const string& templateName,
-                                          SelectedVenueForTemplates& venueForTemplates,
+                                          const SelectedVenueForTemplates& venueForTemplates,
                                           string& genre, string& performanceType, string& performanceName,
                                           string& hometown, string& similarArtists, string& date,
                                           string& musicLink, string& livePerfVideo, string& musicVideo,
@@ -846,7 +846,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          string& templateAttachmentName,
                                          string& templateAttachmentSize,
                                          string& templateAttachmentPath,
-                                         vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                                         const vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                          bool templateExists) const {
 
     std::string templateName;
@@ -966,7 +966,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             }
         }
 
-        for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
+        for (const SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
             EmailManager::constructEmailTemplate(templateName, venueForTemplates, genre, performanceType, performanceName,
                                    hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
         }
@@ -1167,7 +1167,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                 }
 
                 // Update the templates right here after modification
-                for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
+                for (const SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
                     EmailManager::constructEmailTemplate(templateName, venueForTemplates, genre, performanceType, performanceName,
                         hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
                 }
@@ -1205,7 +1205,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
                     if (satisfiedChoice == 'Y' || satisfiedChoice == 'y') {
                         // If user is satisfied, update the template and move to sending the template
-                        for (SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
+                        for (const SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
                             EmailManager::constructEmailTemplate(templateName, venueForTemplates, genre, performanceType, performanceName,
                                 hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, socials, name);
                         }
@@ -1773,7 +1773,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
 }
 
 void EmailManager::confirmSendBookingTemplates(CURL* curl,
-                                               vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
+                                               const vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                                const string& senderEmail,
                                                map<string, pair<string, string>>& templateForEmail,
                                                const string& smtpServer,
