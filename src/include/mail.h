@@ -185,7 +185,7 @@ public:
                                           std::string& templateAttachmentName,
                                           std::string& templateAttachmentSize,
                                           std::string& templateAttachmentPath,
-                                          std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates);
+                                          bool templateExists);
 
     // Function to append the string for the booking template
     static void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) ;
@@ -233,7 +233,8 @@ public:
                                             int smtpPort,
                                             std::string& templateAttachmentName,
                                             std::string& templateAttachmentSize,
-                                            std::string& templateAttachmentPath);
+                                            std::string& templateAttachmentPath,
+                                            bool templateExists);
 };
 
 #endif // MAIL_H

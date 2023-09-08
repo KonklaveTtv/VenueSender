@@ -108,7 +108,7 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForTemplates, senderEmail, templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case SEND_BOOKING_TEMPLATES_OPTION:
-                            EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                            EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case CLEAR_BOOKING_TEMPLATE_OPTION:
                             EmailManager::clearAllBookingTemplateData(templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
