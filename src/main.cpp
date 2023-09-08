@@ -11,12 +11,17 @@ VenueFilter venueFilter;
 #ifndef UNIT_TESTING
 
 int main() {
-    // Initialize for splashscreen()
-    bool initColor;
+    // Load Splashscreen
+    Init::splashscreen();
 
-    // Initialize necessary variables cURL
-    string smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
+    // Initialize necessary variables
+    vector<VenueForEmails> venuesForEmails;
+    vector<VenueForTemplates> venuesForTemplates;
+    vector<SelectedVenueForEmails> selectedVenuesForEmails;
+    vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
+    string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
     int smtpPort = 587;
+    bool initColor;
     bool templateExists = false;
     bool useSSL = false;
     bool verifyPeer = false;
@@ -30,16 +35,6 @@ int main() {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::LIBCURL_ERROR);
         return 1;
     }
-
-    // Load Splashscreen
-    Init::splashscreen();
-
-    // Initialize necessary variables
-    vector<VenueForEmails> venuesForEmails;
-    vector<VenueForTemplates> venuesForTemplates;
-    vector<SelectedVenueForEmails> selectedVenuesForEmails;
-    vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
-    string configVenuesCsvPath;
 
     // Load configurations from JSON file
     string venuesPathCopy = confPaths::venuesCsvPath;
@@ -91,12 +86,12 @@ int main() {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR);
         exit(1);
     }
+    
+    // Initialize map for booking templates
+    map<string, pair<string, string>> templateForEmail;
 
     // Create an EmailManager object
     EmailManager emailManager;
-
-    // Initialize map for booking templates
-    map<string, pair<string, string>> templateForEmail;
 
     // Pass the necessary objects to the navigateMenus function
     try {

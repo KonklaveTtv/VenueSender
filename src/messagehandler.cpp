@@ -424,78 +424,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif      
         break;
-        case MessageType::ENTER_TEMPLATE_SAVE_NAME_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Enter a name for this template: ";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif      
-        break;
-        case MessageType::SAVED_TEMPLATE_VIEW_SELECTION_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Select a template to view or edit:\n";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif      
-        break;
-        case MessageType::REDO_OR_MODIFY_TEMPLATE_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "REDO The Entire Template, Or MODIFY Specific Fields? (REDO/MODIFY): ";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif      
-        break;
-        case MessageType::CHOOSE_FIELDS_TO_MODIFY_MESSSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Enter The Fields You Wish To Modify Using (comma-separated) Indices: ";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif      
-        break;     
-        case MessageType::CONFIRM_TEMPLATE_SATISFIED_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Are You Satisfied With The Edited Template? (Y/N): ";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif      
-        break;
-        case MessageType::CONFIRM_TEMPLATE_FOR_SENDING_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Are You Satisfied With The Edited Template? (Y/N): ";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif      
-        break;
-        case MessageType::SELECT_TEMPLATE_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Select a template to use:\n";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif      
-        break;
-        case MessageType::SELECT_LOAD_TEMPLATE_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif
-            cout << "Enter The Index Number Of The Template You Want To Use: ";
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif      
-        break;
     // end of orange messages
 
 
@@ -613,15 +541,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
             cout << "NO BOOKING TEMPLATES HAVE BEEN CREATED" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif               
-        break;
-        case MessageType::NO_SAVED_TEMPLATES_TO_USE_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-            cout << "Only the current template is available. Using it.\n";
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
