@@ -398,7 +398,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
         char modifyChoice;
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE);
 #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+        ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         std::cin >> modifyChoice;
 #ifndef UNIT_TESTING
@@ -645,16 +645,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
                                              string& templateAttachmentSize,
                                              string& templateAttachmentPath,
                                              bool templateExists) {
-
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
-    struct curl_slist* recipients = nullptr;
-    struct curl_slist* headers = nullptr;
-    curl_mime *mime = nullptr;
-
-    if (!curl) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
-        return false;
-    }
 
     if (!isValidEmail(senderEmail)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
@@ -675,6 +666,15 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         string recipientEmail = kv.first;
         string subject = kv.second.first;
         string message = kv.second.second;
+
+        struct curl_slist* recipients = nullptr;
+        struct curl_slist* headers = nullptr;
+        curl_mime *mime = nullptr;
+
+        if (!curl) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+            return false;
+        }
 
         // Set Recipient(s)
         recipients = curl_slist_append(recipients, recipientEmail.c_str());
