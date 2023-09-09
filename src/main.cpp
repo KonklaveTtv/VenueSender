@@ -27,7 +27,7 @@ int main() {
     bool verifyPeer = false;
     bool verifyHost = false;
     bool verbose = false;
-
+try {
     // Set up and initialize CURL
     CurlHandleWrapper::init();
         CURL* curl = setupCurlHandle(curlWrapper, useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer);
@@ -94,30 +94,30 @@ int main() {
     EmailManager emailManager;
 
     // Pass the necessary objects to the navigateMenus function
-    try {
-        menuManager.navigateMenus(emailManager, 
-                                  curl, 
-                                  venuesForEmails,
-                                  venuesForTemplates,
-                                  selectedVenuesForTemplates,
-                                  selectedVenuesForEmails,
-                                  templateForEmail,
-                                  sslCertPath,
-                                  subject,
-                                  message,
-                                  attachmentName,
-                                  attachmentPath,
-                                  attachmentSize,
-                                  venueFilter,
-                                  useSSL, 
-                                  verifyPeer, 
-                                  verifyHost, 
-                                  verbose, 
-                                  templateExists,
-                                  initColor,
-                                  curlWrapper
-                                  );
+    menuManager.navigateMenus(emailManager, 
+                              curl, 
+                              venuesForEmails,
+                              venuesForTemplates,
+                              selectedVenuesForTemplates,
+                              selectedVenuesForEmails,
+                              templateForEmail,
+                              sslCertPath,
+                              subject,
+                              message,
+                              attachmentName,
+                              attachmentPath,
+                              attachmentSize,
+                              venueFilter,
+                              useSSL, 
+                              verifyPeer, 
+                              verifyHost, 
+                              verbose, 
+                              templateExists,
+                              initColor,
+                              curlWrapper
+                              );
     } catch (const exception& e) {
+        cerr << "Caught exception: " << e.what() << endl;
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::MENU_LOAD_ERROR);
     }
     
