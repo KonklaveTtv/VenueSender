@@ -123,7 +123,7 @@ The versions mentioned are the ones that VenueSender was built and tested with, 
 Run the following commands to install the above dependencies:
 
       sudo apt-get update
-      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev libx11-dev libssl-dev libsqlite3-dev libboost-all-dev
+      sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev zlib1g-dev libx11-dev libxcb1-dev libxau-dev libxdmcp-dev libssl-dev libsqlite3-dev libboost-all-dev
 
 To run unit tests, install Catch2:
 

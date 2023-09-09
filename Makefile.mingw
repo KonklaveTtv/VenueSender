@@ -5,7 +5,7 @@ UNAME_S := $(shell uname -s)
 
 # Compiler and flags for MinGW-w64
 CXX = x86_64-w64-mingw32-g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -I/path/to/boost/include
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -I/usr/local/include/json -I/path/to/boost/include
 LDFLAGS = -static-libgcc -static-libstdc++
 
 # Directories
