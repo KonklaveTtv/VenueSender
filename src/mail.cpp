@@ -530,7 +530,8 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-        cout << "Progress: " << progressPercentage << "%" << endl;
+        cout << "===========================" << endl;
+        cout << "      Progress: " << progressPercentage << "%" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -737,8 +738,9 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
             }
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-#endif
-            cout << "Progress: " << progressPercentage << "%" << endl;
+#endif      
+            cout << "===========================" << endl;
+            cout << "      Progress: " << progressPercentage << "%" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
@@ -1450,7 +1452,8 @@ void EmailManager::emailCustomAddress(CURL* curl,
         #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
         #endif
-                cout << "Progress: " << progressPercentage << "%" << endl;
+                cout << "===========================" << endl;
+                cout << "      Progress: " << progressPercentage << "%" << endl;
         #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
         #endif
