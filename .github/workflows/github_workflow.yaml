@@ -19,7 +19,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev zlib1g-dev libx11-dev libxcb1-dev libxau-dev libxdmcp-dev libssl-dev libsqlite3-dev libboost-all-dev
+      run: sudo apt-get install make g++ libjsoncpp-dev libcurl4-openssl-dev zlib1g-dev libx11-dev libxcb1-dev libxau-dev libxdmcp-dev libssl-dev libsqlite3-dev libboost-all-dev && sudo ln -s /usr/include/jsoncpp/json/ /usr/include/json
 
     - name: Create necessary directories
       run: mkdir -p obj obj/debug obj/test obj/test_for_test bin bin/debug
