@@ -989,9 +989,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
             size_t lastSlash = templateAttachmentPath.find_last_of("/\\\\");
             if (lastSlash == string::npos) {
-                templateAttachmentPath = templateAttachmentPath;
+                templateAttachmentName = templateAttachmentPath;
             } else {
-                templateAttachmentPath = templateAttachmentPath.substr(lastSlash + 1);
+                templateAttachmentName = templateAttachmentPath.substr(lastSlash + 1);
             }
 
             try {
@@ -1001,6 +1001,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
 #endif
+                    
                     cout << "File Size: " << fileSize << " bytes" << endl;
 #ifndef UNIT_TESTING
                     ConsoleUtils::resetColor();
