@@ -28,9 +28,7 @@ public:
             EMAIL_SETTINGS_MENU_HEADER,
             CONSTRUCT_EMAIL_MENU_HEADER,
             EMAIL_DETAILS_MENU_HEADER,
-            EMAIL_SAVED_MENU_HEADER,
             TEMPLATE_DETAILS_MENU_HEADER,
-            TEMPLATE_SAVED_MENU_HEADER,
             EMAIL_SUMMARY_MENU_HEADER,
             BOOKING_TEMPLATE_SUMMARY_MENU_HEADER,
             CYAN_BORDER,
@@ -48,6 +46,12 @@ public:
 
             // Email Menu
             ORANGE_BORDER,
+
+        // GREEN
+
+            // Email Menu
+            EMAIL_SAVED_MENU_HEADER,
+            TEMPLATE_SAVED_MENU_HEADER,
     };
 
     static void displayMenuTitle(MenuTitleType menutitle);

@@ -144,18 +144,6 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #endif	
 		break;
 
-		case MenuTitleType::EMAIL_SAVED_MENU_HEADER:
-#ifndef UNIT_TESTING
-        	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-			cout << "===========================" << endl;
-			cout << "        Email saved        " << endl;
-			cout << "===========================" << endl;
-#ifndef UNIT_TESTING
-        	ConsoleUtils::resetColor();
-#endif	
-		break;
-
 		case MenuTitleType::TEMPLATE_DETAILS_MENU_HEADER:
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
@@ -163,18 +151,6 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 			cout << "=============================\n";
 			cout << "      TEMPLATE DETAILS       \n";
 			cout << "=============================\n";
-#ifndef UNIT_TESTING
-        	ConsoleUtils::resetColor();
-#endif	
-		break;
-
-		case MenuTitleType::TEMPLATE_SAVED_MENU_HEADER:
-#ifndef UNIT_TESTING
-        	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-#endif
-			cout << "===========================" << endl;
-			cout << "      Template Saved       " << endl;
-			cout << "===========================" << endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();
 #endif	
@@ -269,6 +245,38 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 		ConsoleUtils::resetColor();
 #endif		
 		break;
+	// end of ORANGE
+
+		// GREEN
+
+			// Email Menu
+
+		case MenuTitleType::EMAIL_SAVED_MENU_HEADER:
+#ifndef UNIT_TESTING
+        	ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+			cout << "===========================" << endl;
+			cout << "        Email saved        " << endl;
+			cout << "===========================" << endl;
+#ifndef UNIT_TESTING
+        	ConsoleUtils::resetColor();
+#endif	
+		break;
+
+		case MenuTitleType::TEMPLATE_SAVED_MENU_HEADER:
+#ifndef UNIT_TESTING
+        	ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+			cout << "===========================" << endl;
+			cout << "      Template Saved       " << endl;
+			cout << "===========================" << endl;
+#ifndef UNIT_TESTING
+        	ConsoleUtils::resetColor();
+#endif	
+		break;
+	// end of GREEN
+
+		// RED
 
 	        // Default Menu Item
 #ifdef UNIT_TESTING
