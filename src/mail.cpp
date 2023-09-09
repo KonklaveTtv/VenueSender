@@ -499,6 +499,9 @@ void EmailManager::viewEditTemplates(CURL* curl,
                         default: cout << "Invalid index " << index << " skipped." << endl; break;
                     }
                 }
+            } else {
+                cout << "Invalid input. Please enter 'REDO' or 'MODIFY'." << endl;
+                continue;
             }
         
             // Update the templates right here after modification
@@ -529,6 +532,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
 #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
 #endif
+                // Check if the user is satisfied
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_TEMPLATE_SATISFIED_MESSAGE);
                 char satisfiedChoice;
 #ifndef UNIT_TESTING
@@ -540,37 +544,59 @@ void EmailManager::viewEditTemplates(CURL* curl,
 #endif
                 ConsoleUtils::clearInputBuffer();  // Clear the input buffer
 
+                // Validate the third choice
                 if (satisfiedChoice == 'Y' || satisfiedChoice == 'y') {
-                    // If user is satisfied, update the template and move to sending the template
                     modifyTemplate = false;
-                }
-            } else {
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_EMPTY_ERROR);
-                return;
-            }
-        }
-        modifyTemplate = false;
-        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
-    #ifndef UNIT_TESTING
-        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
-    #endif
-        cin >> choice;
-    #ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-    #endif
-        ConsoleUtils::clearInputBuffer();
 
-        if (choice == 'Y' || choice == 'y') {
-            templateExists = false; // Reset the flag since we're sending the email
-            // Now, send the email to all venues
-            bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
-            if (!sent) {
-                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
+                    // Ask if the user wants to send the email only when they're satisfied
+                    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
+#ifndef UNIT_TESTING
+                    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+                    cin >> choice;
+#ifndef UNIT_TESTING
+                    ConsoleUtils::resetColor();
+#endif
+                    ConsoleUtils::clearInputBuffer();
+
+                    // Validate the final choice
+                    if (choice == 'Y' || choice == 'y') {
+                        templateExists = false; // Reset the flag since we're sending the email
+                        // Now, send the email to all venues
+                        bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                        if (!sent) {
+                            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
+                        }
+                    } else if (choice == 'N' || choice == 'n') {
+                        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
+                        // If user chooses not to send, the template and subjects stay in the map
+                        templateExists = true;
+                    } else {
+                        cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                        // Here you can decide what to do in case of invalid input.
+                        // For example, you might want to display the menu again or exit the function.
+                    }
+                } else if (satisfiedChoice == 'N' || satisfiedChoice == 'n') {
+                    // If the user is not satisfied, regenerate the template
+                    for (const SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
+                        EmailManager emailManager;
+                        emailManager.constructBookingTemplateMessage(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
+                                                      hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
+                                                        pressQuote, quoteSource, socials, name);
+                    }
+                } else {
+                    cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                    continue;
+                }
+            } else if (choice == 'N' || choice == 'n') {
+                MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
+                // If user chooses not to send, the template and subjects stay in the map
+                templateExists = true;
+                modifyTemplate = false;  // Assuming you want to exit the loop
+            } else {
+                cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                continue;
             }
-        } else {
-            MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
-            // If user chooses not to send, the template and subjects stay in the map
-            templateExists = true;
         }
     }
 }
@@ -1165,7 +1191,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
     #endif
         }
 
-        while (true) {
+    while (true) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
         char addAttachmentChoice;
 #ifndef UNIT_TESTING
@@ -1248,13 +1274,12 @@ void EmailManager::createBookingTemplate(CURL* curl,
             } catch (const filesystem::filesystem_error& e) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
-            }
-            
-            } else {
-                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ATTACHMENT_INVALID_CHOICE_MESSAGE);
-                continue;
-            }
+            } 
+        } else {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_CHOICE_ERROR);
+            continue;
         }
+    }
 
         // Ask user if they want to modify or send
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE);

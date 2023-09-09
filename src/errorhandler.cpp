@@ -52,6 +52,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_INPUT_ERROR:
             cerr << "ERROR: INVALID INPUT. Skipping." << endl;
             break;
+        case ErrorType::INVALID_MENU_CHOICE_ERROR:
+            cerr << "ERROR: INVALID INPUT. Skipping." << endl;
+            break;
         case ErrorType::INVALID_INPUT_LENGTH_ERROR:
             cerr << "ERROR: INPUT TOO LONG. Please try again." << endl;
             break;
