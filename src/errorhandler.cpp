@@ -58,6 +58,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_NEGATIVE_CHAR_INPUT_ERROR:
             cerr << "ERROR: Please enter 'N' or 'n'." << endl;
             break;
+        case ErrorType::INVALID_REDO_MODIFY_INPUT_ERROR:
+            cerr << "Invalid input. Please enter 'REDO' or 'MODIFY'." << endl;
+            break;
         case ErrorType::INVALID_INPUT_ERROR:
             cerr << "ERROR: Invalid input. Skipping." << endl;
             break;
