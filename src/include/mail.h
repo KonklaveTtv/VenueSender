@@ -154,11 +154,11 @@ public:
                         std::string& attachmentPath) const;
 
     void viewEditTemplates(CURL* curl,
+                           std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                            const std::string& smtpServer,
                            int smtpPort,
                            bool useSSL,
                            bool verifyPeer,
-                           std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                            const std::string& senderEmail,
                            std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                            std::string& templateAttachmentName,
@@ -198,6 +198,7 @@ public:
 
     // Function to send a booking template email
     void createBookingTemplate(CURL* curl,
+                               std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                const std::string& senderEmail,
                                std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                                const std::string& smtpServer,
@@ -207,21 +208,20 @@ public:
                                std::string& templateAttachmentName,
                                std::string& templateAttachmentSize,
                                std::string& templateAttachmentPath,
-                               std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                bool templateExists) const;
 
     // Function to send to a custom email address
     void emailCustomAddress(CURL* curl,
-                             const std::string& senderEmail,
-                             std::string& customAddressSubject,
-                             std::string& customAddressMessage,
-                             const std::string& smtpServer,
-                             int smtpPort,
-                             bool useSSL,
-                             bool verifyPeer,
-                             std::string& customAddressAttachmentName,
-                             std::string& customAddressAttachmentSize,
-                             std::string& customAddressAttachmentPath) const;
+                            const std::string& senderEmail,
+                            std::string& customAddressSubject,
+                            std::string& customAddressMessage,
+                            const std::string& smtpServer,
+                            int smtpPort,
+                            bool useSSL,
+                            bool verifyPeer,
+                            std::string& customAddressAttachmentName,
+                            std::string& customAddressAttachmentSize,
+                            std::string& customAddressAttachmentPath) const;
 
     // Function to confirm the email before sending
     static void confirmSendEmail(CURL* curl,

@@ -338,11 +338,11 @@ void EmailManager::viewEditEmails(const string& senderEmail, string& subject, st
 }
 
 void EmailManager::viewEditTemplates(CURL* curl,
+                                     vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                      const string& smtpServer,
                                      int smtpPort,
                                      bool useSSL,
                                      bool verifyPeer,
-                                     vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                      const string& senderEmail,
                                      map<string, pair<string, string>>& templateForEmail,
                                      string& templateAttachmentName,
@@ -399,8 +399,8 @@ void EmailManager::viewEditTemplates(CURL* curl,
 
         if (modifyTemplateChoice == 'Y' || modifyTemplateChoice == 'y') {
             clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
-            createBookingTemplate(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer,
-                                  templateAttachmentName, templateAttachmentSize, templateAttachmentPath, selectedVenuesForTemplates, templateExists);
+            createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer,
+                                  templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
         } else {
             MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
             return;
@@ -793,6 +793,7 @@ void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& l
 }
 
 void EmailManager::createBookingTemplate(CURL* curl,
+                                         vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                          const string& senderEmail,
                                          map<string, pair<string, string>>& templateForEmail,
                                          const string& smtpServer,
@@ -802,7 +803,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          string& templateAttachmentName,
                                          string& templateAttachmentSize,
                                          string& templateAttachmentPath,
-                                         vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                          bool templateExists) const {
 
     // String declarations for the booking template

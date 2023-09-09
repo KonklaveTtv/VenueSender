@@ -102,10 +102,10 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayTemplateOptions();
                     switch (subChoice) {
                         case CREATE_VENUE_BOOKING_TEMPLATE_OPTION:
-                            emailManager.createBookingTemplate(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, selectedVenuesForTemplates, templateExists);
+                            emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case VIEW_EDIT_BOOKING_TEMPLATES_OPTION:
-                            emailManager.viewEditTemplates(curl, smtpServer, smtpPort, useSSL, verifyPeer, selectedVenuesForTemplates, senderEmail, templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            emailManager.viewEditTemplates(curl, selectedVenuesForTemplates, smtpServer, smtpPort, useSSL, verifyPeer, senderEmail, templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case SEND_BOOKING_TEMPLATES_OPTION:
                             EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, templateExists);
