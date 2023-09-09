@@ -14,6 +14,19 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                                 string& sslCertPath,
                                 string& subject,
                                 string& message,
+                                string& genre, 
+                                string& performanceType, 
+                                string& performanceName,
+                                string& hometown, 
+                                string& similarArtists, 
+                                string& date,
+                                string& musicLink, 
+                                string& livePerfVideo, 
+                                string& musicVideo,
+                                string& pressQuote, 
+                                string& quoteSource, 
+                                string& socials, 
+                                string& name,
                                 string& attachmentName,
                                 string& attachmentPath,
                                 string& attachmentSize,
@@ -102,10 +115,12 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayTemplateOptions();
                     switch (subChoice) {
                         case CREATE_VENUE_BOOKING_TEMPLATE_OPTION:
-                            emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
+                                                                pressQuote, quoteSource, socials, name, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case VIEW_EDIT_BOOKING_TEMPLATES_OPTION:
-                            emailManager.viewEditTemplates(curl, selectedVenuesForTemplates, smtpServer, smtpPort, useSSL, verifyPeer, senderEmail, templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            emailManager.viewEditTemplates(curl, selectedVenuesForTemplates, smtpServer, smtpPort, useSSL, verifyPeer, senderEmail, templateForEmail, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
+                                                            pressQuote, quoteSource, socials, name, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case SEND_BOOKING_TEMPLATES_OPTION:
                             EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, templateExists);

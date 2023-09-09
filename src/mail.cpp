@@ -345,6 +345,19 @@ void EmailManager::viewEditTemplates(CURL* curl,
                                      bool verifyPeer,
                                      const string& senderEmail,
                                      map<string, pair<string, string>>& templateForEmail,
+                                     string& genre, 
+                                     string& performanceType, 
+                                     string& performanceName,
+                                     string& hometown, 
+                                     string& similarArtists, 
+                                     string& date,
+                                     string& musicLink, 
+                                     string& livePerfVideo, 
+                                     string& musicVideo,
+                                     string& pressQuote, 
+                                     string& quoteSource, 
+                                     string& socials, 
+                                     string& name,
                                      string& templateAttachmentName,
                                      string& templateAttachmentSize,
                                      string& templateAttachmentPath,
@@ -400,7 +413,8 @@ void EmailManager::viewEditTemplates(CURL* curl,
         if (modifyTemplateChoice == 'Y' || modifyTemplateChoice == 'y') {
             clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer,
-                                  templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                                  genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
+                                    pressQuote, quoteSource, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
         } else {
             MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
             return;
@@ -794,6 +808,52 @@ void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& l
     }
 }
 
+void EmailManager::constructBookingTemplateMessage(const SelectedVenueForTemplates& venueForTemplates,
+                                                   map<string, pair<string, string>>& templateForEmail,
+                                                   string& genre, 
+                                                   string& performanceType, 
+                                                   string& performanceName,
+                                                   string& hometown, 
+                                                   string& similarArtists, 
+                                                   string& date,
+                                                   string& musicLink, 
+                                                   string& livePerfVideo, 
+                                                   string& musicVideo,
+                                                   string& pressQuote, 
+                                                   string& quoteSource, 
+                                                   string& socials, 
+                                                   string& name) {
+    std::ostringstream os;
+    string subject = "Booking Inquiry for " + venueForTemplates.name;
+
+    os << "Hi!\n\n"
+       << "I am booking a tour for " << performanceName << " a " << genre << " " << performanceType << " from \n\n"
+       << hometown << ". The music is similar to " << similarArtists << ".\n\n"
+       << "We're planning to be in the " << venueForTemplates.city << " area on " << date << " and are\n\n"
+       << "wondering if you might be interested in booking us at " << venueForTemplates.name << ".\n\n";
+
+    // Add optional fields only if they are not empty
+    appendIfNotEmpty(os, "- Music", musicLink);
+    appendIfNotEmpty(os, "- Live Performance", livePerfVideo);
+    appendIfNotEmpty(os, "- Music Video", musicVideo);
+
+    if (!pressQuote.empty()) {
+        os << "\nWhat people are saying about " << performanceName << "\n"
+           << "\"" << pressQuote << "\" - " << quoteSource << "\n";
+    }
+
+    os << "\nPlease let me know if you have any questions or need additional information.\n\n"
+       << "We appreciate your time and consideration!\n\n"
+       << "Best wishes,\n"
+       << name << "\n\n";
+
+    appendIfNotEmpty(os, "-- Social Links", socials);
+
+    // Map each venue's email to its unique message and subject
+    EmailManager emailManager;
+    templateForEmail[venueForTemplates.email] = make_pair(subject, os.str());
+}
+
 void EmailManager::createBookingTemplate(CURL* curl,
                                          vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                          const string& senderEmail,
@@ -802,14 +862,23 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          int smtpPort,
                                          bool useSSL,
                                          bool verifyPeer,
+                                         string& genre, 
+                                         string& performanceType, 
+                                         string& performanceName,
+                                         string& hometown, 
+                                         string& similarArtists, 
+                                         string& date,
+                                         string& musicLink, 
+                                         string& livePerfVideo, 
+                                         string& musicVideo,
+                                         string& pressQuote, 
+                                         string& quoteSource, 
+                                         string& socials, 
+                                         string& name,
                                          string& templateAttachmentName,
                                          string& templateAttachmentSize,
                                          string& templateAttachmentPath,
                                          bool templateExists) const {
-
-    // String declarations for the booking template
-    string genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, pressQuote, quoteSource, name, socials;
-
     char choice;
     bool modifyTemplate = true;
 
@@ -903,36 +972,10 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
         // Construct the email template for each venue without sending it
         for (const SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
-            std::ostringstream os;
-            
-            // Declare and initialize mandatory parts of the email
-            string subject = "Booking Inquiry for " + venueForTemplates.name;
-
-            os << "Hi!\n\n"
-               << "I am booking a tour for " << performanceName << " a " << genre << " " << performanceType << " from \n\n"
-               << hometown << ". The music is similar to " << similarArtists << ".\n\n"
-               << "We're planning to be in the " << venueForTemplates.city << " area on " << date << " and are\n\n"
-               << "wondering if you might be interested in booking us at " << venueForTemplates.name << ".\n\n";
-
-            // Add optional fields only if they are not empty
-            appendIfNotEmpty(os, "- Music", musicLink);
-            appendIfNotEmpty(os, "- Live Performance", livePerfVideo);
-            appendIfNotEmpty(os, "- Music Video", musicVideo);
-
-            if (!pressQuote.empty()) {
-                os << "\nWhat people are saying about " << performanceName << "\n"
-                   << "\"" << pressQuote << "\" - " << quoteSource << "\n";
-            }
-
-            os << "\nPlease let me know if you have any questions or need additional information.\n\n"
-               << "We appreciate your time and consideration!\n\n"
-               << "Best wishes,\n"
-               << name << "\n\n";
-
-            appendIfNotEmpty(os, "-- Social Links", socials);
-
-            // Map each venue's email to its unique message and subject
-            templateForEmail[venueForTemplates.email] = make_pair(subject, os.str());
+            EmailManager emailManager;
+            emailManager.constructBookingTemplateMessage(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
+                                              hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
+                                                pressQuote, quoteSource, socials, name);
         }
 
         if (!templateForEmail.empty()) {

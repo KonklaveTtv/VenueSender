@@ -19,7 +19,9 @@ int main() {
     vector<VenueForTemplates> venuesForTemplates;
     vector<SelectedVenueForEmails> selectedVenuesForEmails;
     vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
-    string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, message, attachmentName, attachmentPath, attachmentSize;
+    string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, 
+           message, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, 
+           musicVideo, pressQuote, quoteSource, socials, name, attachmentName, attachmentPath, attachmentSize;
     int smtpPort = 587;
     bool initColor;
     bool templateExists = false;
@@ -104,6 +106,19 @@ try {
                               sslCertPath,
                               subject,
                               message,
+                              genre, 
+                              performanceType, 
+                              performanceName,
+                              hometown, 
+                              similarArtists, 
+                              date,
+                              musicLink, 
+                              livePerfVideo, 
+                              musicVideo,
+                              pressQuote, 
+                              quoteSource, 
+                              socials, 
+                              name,
                               attachmentName,
                               attachmentPath,
                               attachmentSize,
