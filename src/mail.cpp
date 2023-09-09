@@ -340,6 +340,8 @@ void EmailManager::viewEditEmails(const string& senderEmail, string& subject, st
 void EmailManager::viewEditTemplates(CURL* curl,
                                      const string& smtpServer,
                                      int smtpPort,
+                                     bool useSSL,
+                                     bool verifyPeer,
                                      vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                      const string& senderEmail,
                                      map<string, pair<string, string>>& templateForEmail,
@@ -397,7 +399,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
 
         if (modifyTemplateChoice == 'Y' || modifyTemplateChoice == 'y') {
             clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
-            createBookingTemplate(curl, senderEmail, templateForEmail, smtpServer, smtpPort,
+            createBookingTemplate(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer,
                                   templateAttachmentName, templateAttachmentSize, templateAttachmentPath, selectedVenuesForTemplates, templateExists);
         } else {
             MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
@@ -414,6 +416,8 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                                        string& message,
                                        const string& smtpServer,
                                        int smtpPort,
+                                       bool useSSL,
+                                       bool verifyPeer,
                                        string& attachmentName,
                                        string& attachmentSize,
                                        string& attachmentPath,
@@ -426,6 +430,11 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        return false;
+    }
+
+    if (useSSL && !verifyPeer) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CONFIGURATION_ERROR);
         return false;
     }
 
@@ -614,6 +623,8 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
                                              map<string, pair<string, string>>& templateForEmail,
                                              const string& smtpServer,
                                              int smtpPort,
+                                             bool useSSL,
+                                             bool verifyPeer,
                                              string& templateAttachmentName,
                                              string& templateAttachmentSize,
                                              string& templateAttachmentPath,
@@ -628,6 +639,11 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
     if (!isValidEmail(senderEmail)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+        return false;
+    }
+
+    if (useSSL && !verifyPeer) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CONFIGURATION_ERROR);
         return false;
     }
 
@@ -781,6 +797,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          map<string, pair<string, string>>& templateForEmail,
                                          const string& smtpServer,
                                          int smtpPort,
+                                         bool useSSL,
+                                         bool verifyPeer,
                                          string& templateAttachmentName,
                                          string& templateAttachmentSize,
                                          string& templateAttachmentPath,
@@ -1059,7 +1077,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             if (choice == 'Y' || choice == 'y') {
                 templateExists = false; // Reset the flag since we're sending the email
                 // Now, send the email to all venues
-                bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                 if (!sent) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                 }
@@ -1078,6 +1096,8 @@ void EmailManager::emailCustomAddress(CURL* curl,
                                       string& customAddressMessage,
                                       const string& smtpServer,
                                       int smtpPort,
+                                      bool useSSL,
+                                      bool verifyPeer,
                                       string& customAddressAttachmentName,
                                       string& customAddressAttachmentSize,
                                       string& customAddressAttachmentPath) const {
@@ -1092,6 +1112,17 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        return;
+    }
+
+    if (!isValidEmail(senderEmail)) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+        return;
+    }
+
+    if (useSSL && !verifyPeer) {
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CONFIGURATION_ERROR);
         return;
     }
 
@@ -1470,6 +1501,8 @@ void EmailManager::confirmSendEmail(CURL* curl,
                                     string& message,
                                     const string& smtpServer,
                                     int smtpPort,
+                                    bool useSSL,
+                                    bool verifyPeer,
                                     string& attachmentName,
                                     string& attachmentSize,
                                     string& attachmentPath) {
@@ -1528,7 +1561,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
     // Send each email, displaying progress as it goes.
     int sendCount = RESET_SEND_COUNT_TO_ZERO;
     for (const auto& venue : selectedVenuesForEmail) {
-        if (sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail)) {
+        if (sendIndividualEmail(curl, venue, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmail)) {
             sendCount++;
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
@@ -1568,6 +1601,8 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
                                                map<string, pair<string, string>>& templateForEmail,
                                                const string& smtpServer,
                                                int smtpPort,
+                                               bool useSSL,
+                                               bool verifyPeer,
                                                string& templateAttachmentName,
                                                string& templateAttachmentSize,
                                                string& templateAttachmentPath,
@@ -1655,7 +1690,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     }
 
     // Send each template, displaying progress as it goes.
-    bool sendStatus = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+    bool sendStatus = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
 
     // Set the initial color to Orange
     MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::ORANGE_BORDER);

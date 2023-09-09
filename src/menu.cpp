@@ -85,10 +85,10 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             emailManager.viewEditEmails(senderEmail, subject, message, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case EMAIL_CUSTOM_ADDRESS_OPTION:
-                            emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                            emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case SEND_EMAILS_OPTION:
-                            EmailManager::confirmSendEmail(curl, selectedVenuesForEmails, senderEmail, subject, message, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath);
+                            EmailManager::confirmSendEmail(curl, selectedVenuesForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS:
                             break;
@@ -102,13 +102,13 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayTemplateOptions();
                     switch (subChoice) {
                         case CREATE_VENUE_BOOKING_TEMPLATE_OPTION:
-                            emailManager.createBookingTemplate(curl, senderEmail, templateForEmail, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, selectedVenuesForTemplates, templateExists);
+                            emailManager.createBookingTemplate(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, selectedVenuesForTemplates, templateExists);
                             continue;
                         case VIEW_EDIT_BOOKING_TEMPLATES_OPTION:
-                            emailManager.viewEditTemplates(curl, smtpServer, smtpPort, selectedVenuesForTemplates, senderEmail, templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            emailManager.viewEditTemplates(curl, smtpServer, smtpPort, useSSL, verifyPeer, selectedVenuesForTemplates, senderEmail, templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case SEND_BOOKING_TEMPLATES_OPTION:
-                            EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case CLEAR_BOOKING_TEMPLATE_OPTION:
                             EmailManager::clearAllBookingTemplateData(templateForEmail, attachmentName, attachmentSize, attachmentPath, templateExists);
