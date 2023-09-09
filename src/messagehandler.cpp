@@ -554,6 +554,42 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif               
         break;
+        case MessageType::REDO_OR_MODIFY_TEMPLATE_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "REDO The Entire Template, Or MODIFY Specific Fields? (REDO/MODIFY): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::CHOOSE_FIELDS_TO_MODIFY_MESSSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Enter The Fields You Wish To Modify Using (comma-separated) Indices: ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;     
+        case MessageType::CONFIRM_TEMPLATE_SATISFIED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Are You Satisfied With The Edited Template? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::CONFIRM_TEMPLATE_FOR_SENDING_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Are You Satisfied With The Edited Template? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif  
+        break;  
         case MessageType::MANDATORY_TEMPLATE_FIELD_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
