@@ -378,9 +378,11 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
 
     string smtpServer = "mock_smtp_server";
     int smtpPort = 587;
-
+    bool useSSL = false;
+    bool verifyPeer = false;
+    
     SECTION("Sending email with valid parameters") {
-        bool result = manager.sendIndividualEmail(mockCurl, venueForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath);
+        bool result = manager.sendIndividualEmail(mockCurl, venueForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmails);
         
         // Here, the expected value is false because our mockCurl is nullptr.
         REQUIRE(result == false);
@@ -389,7 +391,7 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
     SECTION("Sending email with invalid email") {
         venueForEmails.email = "invalid.email.com";  // Missing '@'
         
-        bool result = manager.sendIndividualEmail(mockCurl, venueForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath);
+        bool result = manager.sendIndividualEmail(mockCurl, venueForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmails);
         
         // Here, the expected value is false because our mockCurl is nullptr and email is invalid.
         REQUIRE(result == false);
@@ -405,7 +407,7 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
 
         // Normally, you'd mock the curl_easy_perform function to capture the "To:" and "BCC:" fields and verify
         // the batching logic. Here, for simplicity, we're just calling the function.
-        bool result = manager.sendIndividualEmail(mockCurl, venueForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath);
+        bool result = manager.sendIndividualEmail(mockCurl, venueForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, selectedVenuesForEmails);
 
         // Here, the expected value is false because our mockCurl is nullptr.
         // However, you'd want to validate that the emails are being batched correctly.
