@@ -40,7 +40,7 @@
 #include <sqlite3.h>
 
 // Include headers for JSON processing
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 
 extern const unsigned char DATABASE_AES_KEY[];
 

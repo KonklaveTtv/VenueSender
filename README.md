@@ -21,9 +21,9 @@ To build this project statically, you will need the following installed on your 
 
 - GCC (GNU Compiler Collection)
 - C++20 compatible compiler
-- Curl v7.88.1 (Install from source)
+- Curl v8.2.1 (Install from source)
 - libjsoncpp v1.9.5-4 (Install from source)
-- libx11 v1.8.4 (Install from source)
+- libx11 v1.8.6 (Install from source)
 - libpsl 0.21.2 (Install from source)
 - libssl v3.0.8-1ubuntu1.2 (Install with apt)
 - libsqlite3 v3.40.1-1 (Install with apt)
@@ -36,13 +36,13 @@ The versions mentioned are the ones that VenueSender was built and tested with, 
 Run the following commands to install the first lot of dependencies:
 
       sudo apt-get update
-      sudo apt-get install make g++ libx11-dev libssl-dev libsqlite3-dev libboost-all-dev
+      sudo apt-get install make cmake autogen libtool shtool pkg-config xutils-dev g++ libx11-dev libssl-dev libsqlite3-dev libboost-all-dev
 
-Curl v7.88.1 when installing from source must be ran like this:
+Curl v8.2.1 when installing from source must be ran like this:
 
-      wget https://github.com/curl/curl/releases/download/curl-7_88_1/curl-7.88.1.tar.gz
-      tar -xvf curl-7.88.1.tar.gz
-      cd curl-7.88.1
+      wget https://github.com/curl/curl/releases/download/curl-8_2_1/curl-8.2.1.tar.gz
+      tar -xvf curl-8.2.1.tar.gz
+      cd curl-8.2.1
       ./configure --with-openssl --enable-static --disable-shared
       make
       sudo make install 
@@ -51,18 +51,19 @@ libjoncpp 1.9.5-4 can be installed using:
 
       wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libjsoncpp/1.9.5-4/libjsoncpp_1.9.5.orig.tar.gz
       tar -xvf libjsoncpp_1.9.5.orig.tar.gz
-      cd libjsoncpp-1.9.5
+      cd jsoncpp-1.9.5
       mkdir -p build/debug
       cd build/debug
       cmake -DCMAKE_BUILD_TYPE=debug -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -DARCHIVE_INSTALL_DIR=. -G "Unix Makefiles" ../../
       make
       sudo make install
 
-libx11 v1.8.4 can be installed using:
+libx11 v1.8.6 can be installed using:
 
       wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libx11/2:1.8.4-2/libx11_1.8.4.orig.tar.gz
-      tar -xvf libx11_1.8.4.orig.tar.gz
-      cd libx11-1.8.4
+      tar -xvf libx11-libX11-1.8.6.tar.gz
+      cd libx11-libX11-1.8.6
+      ./autogen.sh
       ./configure --enable-static --disable-shared
       make
       sudo make install
