@@ -1,4 +1,4 @@
-# Makefile for venuesender project
+# Makefile for VenueSender project using the MingGW-w64 cross-compiler
 
 # Detect the OS type
 UNAME_S := $(shell uname -s)
@@ -14,7 +14,7 @@ OBJDIR = obj
 BINDIR = bin
 
 # Targets
-TARGET = $(BINDIR)/venuesender.exe
+TARGET = $(BINDIR)/VenueSender.exe
 
 # Source files
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
