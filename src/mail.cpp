@@ -1062,7 +1062,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
     bool modifyTemplate = true;
 
-    auto getInputWithConfirmation = [&](string& input, const string& prompt, bool isMandatory = false, bool checkURL = false) {        bool inputConfirmed = false;
+    auto getInputWithConfirmation = [&](string& input, const string& prompt, bool isMandatory = false, bool checkURL = false) {        
+        bool inputConfirmed = false;
         while (!inputConfirmed) {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1094,20 +1095,31 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
                 if (confirmation == 'y' || confirmation == 'Y') {
                     inputConfirmed = true;
+                } else if (confirmation == 'n' || confirmation == 'N') {
+                    // Handle the 'No' case if needed
+                } else {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+                    continue;
                 }
             } else {
                 if (checkURL && !isValidURL(input)) {
                     char confirmation;
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_POSSIBLE_ENTRY_ERROR);
 #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif 
                     cin >> confirmation;
 #ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
+                    ConsoleUtils::resetColor();
 #endif
                     ConsoleUtils::clearInputBuffer();
+                    
                     if (confirmation == 'N' || confirmation == 'n') {
+                        continue;
+                    } else if (confirmation == 'y' || confirmation == 'Y') {
+                        // Handle the 'Yes' case if needed
+                    } else {
+                        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
                         continue;
                     }
                 }
@@ -1176,9 +1188,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
         string firstMessage = firstElement->second.second;
 
         // Display the completed template
-    #ifndef UNIT_TESTING
+#ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
-    #endif
+#endif
         cout << "=========================================\n";
         cout << "Generated Email Template for: " << firstEmail << "\n";
         cout << "=========================================\n";
@@ -1186,9 +1198,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
         cout << "=========================================\n";
         cout << firstMessage << endl;
         cout << "=========================================\n";
-    #ifndef UNIT_TESTING
+#ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
-    #endif
+#endif
         }
 
     while (true) {
@@ -1391,6 +1403,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #ifndef UNIT_TESTING
                     ConsoleUtils::resetColor();
 #endif
+                    // Check if the user is satisfied
                     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_TEMPLATE_SATISFIED_MESSAGE);
                     char satisfiedChoice;
 #ifndef UNIT_TESTING

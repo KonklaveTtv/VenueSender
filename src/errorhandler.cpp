@@ -41,7 +41,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
     
         // Menu/Selection Errors
         case ErrorType::INVALID_CHOICE_ERROR:
-            cerr << "ERROR: INVALID CHOICE" "\n";
+            cerr << "ERROR: Invalid choice." "\n";
             break;
         case ErrorType::INVALID_INDEX_ERROR:
             cerr << boost::format("ERROR: Invalid index: %s\n") % extraInfo;
@@ -49,23 +49,32 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::INVALID_INDEX_FORMAT_ERROR:
             cerr << boost::format("ERROR: Invalid index format. %s Skipping.\n") % extraInfo;
             break;
+        case ErrorType::INVALID_CHAR_INPUT_ERROR:
+            cerr << "ERROR: Please enter 'Y' or 'y' or 'N' or 'n'." << endl;
+            break;
+        case ErrorType::INVALID_POSITIVE_CHAR_INPUT_ERROR:
+            cerr << "ERROR: Please enter 'Y' or 'y'." << endl;
+            break;
+        case ErrorType::INVALID_NEGATIVE_CHAR_INPUT_ERROR:
+            cerr << "ERROR: Please enter 'N' or 'n'." << endl;
+            break;
         case ErrorType::INVALID_INPUT_ERROR:
-            cerr << "ERROR: INVALID INPUT. Skipping." << endl;
+            cerr << "ERROR: Invalid input. Skipping." << endl;
             break;
         case ErrorType::INVALID_MENU_CHOICE_ERROR:
-            cerr << "ERROR: INVALID INPUT. Skipping." << endl;
+            cerr << "ERROR: Invalid input. Skipping." << endl;
             break;
         case ErrorType::INVALID_INPUT_LENGTH_ERROR:
-            cerr << "ERROR: INPUT TOO LONG. Please try again." << endl;
+            cerr << "ERROR: Input too long. Please try again." << endl;
             break;
         case ErrorType::INVALID_MENU_INPUT_ERROR:
-            cerr << "ERROR: INVALID INPUT. Please enter a number (press return to retry...)";
+            cerr << "ERROR: Invalid input. Please enter a number (press return to retry...)";
             break;
         case ErrorType::EMPTY_VENUE_LIST_ERROR:
-            cerr << "ERROR: No venues could be loaded for filtering" << endl;
+            cerr << "ERROR: No venues could be loaded for filtering." << endl;
             break;
         case ErrorType::NO_VENUES_SELECTED_ERROR:
-            cerr << "ERROR: NO VENUES SELECTED" << endl;
+            cerr << "ERROR: No venues selected." << endl;
             break;
         case ErrorType::VENUE_ALREADY_SELECTED_ERROR:
             cerr << "===========================" << endl
@@ -75,10 +84,10 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
                  << "---------------------------" << endl;
             break;
         case ErrorType::NO_VENUES_SELECTED_FOR_EMAIL_ERROR:
-            cerr << "ERROR: NO VENUES SELECTED FOR EMAILS. Please add venues before sending emails." << endl;
+            cerr << "ERROR: No venues selected for emails. Please add venues before sending emails." << endl;
             break;
         case ErrorType::NO_VENUES_SELECTED_FOR_TEMPLATE_ERROR:
-            cerr << "ERROR: NO VENUES SELECTED FOR TEMPLATES. Please select venues first before attempting to send the template." << endl;
+            cerr << "ERROR: No venues selected for templates. Please select venues first before attempting to send the template." << endl;
             break;
 
 
@@ -110,7 +119,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "ERROR: An error occurred while processing the email." << endl;
             break;
         case ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR:
-            cerr << "ERROR: SUBJECT AND MESSAGE ARE REQUIRED" << endl;
+            cerr << "ERROR: Subject and Message are required" << endl;
             break;
         case ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR:
             cerr << "ERROR: Too many unsuccessful attempts." << endl;
