@@ -177,6 +177,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::SMTP_AUTH_ERROR:
             cerr << "ERROR: Authentication with SMTP server failed." << endl;
             break;
+        case ErrorType::SSL_CONFIGURATION_ERROR:
+            cerr << "ERROR: Verify Peer must be enabled when using SSL." << endl;
+            break;
         case ErrorType::SSL_CERT_PATH_ERROR:
             cerr << "ERROR: SSL certificate path is not valid." << endl;
             break;
