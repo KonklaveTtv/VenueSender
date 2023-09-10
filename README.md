@@ -8,8 +8,6 @@ VenueSender is a command-line tool designed to facilitate the process of sending
 
 VenueSender has multiple Makefiles to build statically with GCC, Clang, ICX or the MinGW-w64 compiler. There is also a Makefile.dynamic to build a dynamically linked version using GCC.
 
-If you choose to go the static building route, then build using Makefile.dynamic will no longer be possible.
-
 After installing dependencies and you are ready to build invoke:
 
       make -f Makefile.<compiler/dynamic>
