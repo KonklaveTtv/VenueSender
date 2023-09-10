@@ -16,7 +16,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
             cout << "                v0.0.4alpha                " << endl;
         break;
         case MessageType::COPYRIGHT_INFO_MESSAGE:
-            cout << "   Copyright (c) 2023 | Spencer Lievens    " << endl;
+            cout << "    Copyright (c) 2023 | Spencer Lievens   " << endl;
         break;
         case MessageType::INITIALIZATION_MESSAGE:
             cout << "              Initializing...              " << endl;
