@@ -55,7 +55,7 @@ string configJsonPath = "config.json";
 string mockVenuesCsvPath = "src/test/mock_venues.csv";
 string mockConfigJsonPath = "src/test/mock_config.json";
 string sqliteEncryptedDatabasePath = "db/venues.db";
-string registrationKeyPath = "registration_key.txt";
+string registrationKeyPath = "registration_key";
 }
 
 void ConsoleUtils::clearConsole() {
