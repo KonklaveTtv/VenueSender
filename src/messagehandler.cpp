@@ -16,10 +16,10 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
             cout << "                v0.0.2alpha                " << endl;
         break;
         case MessageType::COPYRIGHT_INFO_MESSAGE:
-            cout << "    Copyright (c) 2023 | Spencer Lievens    " << endl;
+            cout << "   Copyright (c) 2023 | Spencer Lievens    " << endl;
         break;
         case MessageType::INITIALIZATION_MESSAGE:
-            cout << "              Initiailizing...              " << endl;
+            cout << "              Initializing...              " << endl;
         break;
         case MessageType::INIT_ENTER_PASSWORD_MESSAGE:
             cout << "Enter Your Email Password: ";
@@ -441,15 +441,6 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     // Red Messages
 
         // Menu Messages
-        case MessageType::CAPS_LOCK_MESSAGE:
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
-#endif
-            cout << "Warning: CAPS LOCK IS ON!" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-        break;
         case MessageType::VENUES_NOT_SELECTED_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);

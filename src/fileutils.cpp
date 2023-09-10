@@ -54,17 +54,13 @@ void ConsoleUtils::clearConsole() {
 }
 
 bool ConsoleUtils::caseSensitiveStringCompare(const string& str1, const string& str2) {
-    return boost::algorithm::equals(str1, str2);
+    return (str1 == str2);
 }
 
 string ConsoleUtils::passwordEntry(bool& initColor) {
     string password;
     string confirm;
 
-    // Initialize X11
-    X11Singleton& x11 = X11Singleton::getInstance();
-    bool isOn = x11.isCapsLockOn();
-    
     // Disable terminal echoing and enable manual input capture
     struct termios oldt, newt;
     memset(&oldt, 0, sizeof(oldt));
@@ -80,12 +76,15 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     }
 
     while (true) {
-        
-
+        // Initialize X11
+        X11Singleton& x11 = X11Singleton::getInstance();
+        x11.openDisplay();
 
         // Check for Caps Lock
+        bool isOn = x11.isCapsLockOn();
+
         if (isOn) {
-            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CAPS_LOCK_MESSAGE);
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_CAPS_LOCK_ERROR, "while entering password");
         }
 
         if (initColor) {
@@ -197,8 +196,9 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MISMATCH_ERROR);
         }
+    x11.closeDisplay();
     }
-
+    
     // If passwords match give confirmation
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PASSWORD_MATCHES_MESSAGE);
     this_thread::sleep_for(chrono::seconds(1));

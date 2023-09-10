@@ -1,6 +1,8 @@
 #ifndef X11SINGLETON_H
 #define X11SINGLETON_H
 
+#include "errorhandler.h"
+
 // For Linux (X11)
 #ifdef __linux__
 #include <X11/XKBlib.h>
@@ -27,6 +29,8 @@ public:
     }
 
     bool isCapsLockOn();
+    void openDisplay();  // New method
+    void closeDisplay(); // New method
 
 private:
     X11Singleton();  // Constructor is private

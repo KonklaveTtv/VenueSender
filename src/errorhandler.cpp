@@ -207,6 +207,22 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
 
 
         // System errors
+        case ErrorType::X11_DISPLAY_ERROR:
+            cerr << "ERROR: Failed to open X11 display." << endl;
+            break;
+        case ErrorType::X11_CAPS_LOCK_ERROR:
+            cerr << "WARNING: Caps Lock is ON";
+            if (!extraInfo.empty()) {
+                cerr << " - " << extraInfo;
+            }
+            cerr << endl;
+            break;
+        case ErrorType::X11_SYSTEM_ERROR:
+            cerr << "ERROR: Failed to get X11 state." << endl;
+            break;
+        case ErrorType::X11_UNSUPPORTED_PLATFORM_ERROR:
+            cerr << "ERROR: Caps Lock check not supported on this platform.\n" << endl;
+            break;
         case ErrorType::OPENSSL_INITIALIZATION_ERROR:
             cerr << "ERROR: Failed to initialize OpenSSL context.\n" << endl;
             break;
@@ -324,9 +340,6 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo)
 
 
         // System Errors
-        case ErrorType::X11_DISPLAY_ERROR:
-            cerr << "ERROR: Failed to open X11 display." << endl;
-            break;
         case ErrorType::FILESYSTEM_ERROR:
             errorMessage = boost::str(boost::format("ERROR: Filesystem error: %s") % extraInfo);
             break;

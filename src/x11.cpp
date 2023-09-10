@@ -1,19 +1,37 @@
 #include "x11.h"
 
-X11Singleton::X11Singleton() {
+// Define constants for better readability
+const unsigned CAPS_MASK = 0x01;
+
+X11Singleton::X11Singleton() : d(nullptr) {
 #ifdef __linux__
-    const char* displayEnv = getenv("DISPLAY");
-    d = XOpenDisplay(displayEnv);
-    if (d == nullptr) {
-        std::cerr << "Failed to open X11 display.\n";
-    }
+    openDisplay();
 #endif
 }
 
 X11Singleton::~X11Singleton() {
 #ifdef __linux__
+    closeDisplay();
+#endif
+}
+
+void X11Singleton::openDisplay() {
+#ifdef __linux__
+    if (d == nullptr) {
+        const char* displayEnv = getenv("DISPLAY");
+        d = XOpenDisplay(displayEnv);
+        if (d == nullptr) {
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_DISPLAY_ERROR);
+        }
+    }
+#endif
+}
+
+void X11Singleton::closeDisplay() {
+#ifdef __linux__
     if (d) {
         XCloseDisplay(d);
+        d = nullptr;
     }
 #endif
 }
@@ -21,28 +39,25 @@ X11Singleton::~X11Singleton() {
 bool X11Singleton::isCapsLockOn() {
 #ifdef __linux__
     if (d == nullptr) {
-        return false;
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_DISPLAY_ERROR);
     }
 
     unsigned n;
     if (XkbGetIndicatorState(d, XkbUseCoreKbd, &n) != Success) {
-        std::cerr << "Failed to get the indicator state from X11.\n";
-        return false;
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_DISPLAY_ERROR);
     }
-    return (n & 0x01) == 1;
+    return (n & CAPS_MASK) == 1;
 
 #elif defined(__APPLE__)
     io_service_t keyService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
     if (keyService == IO_OBJECT_NULL) {
-        std::cerr << "Failed to get IOService for keyboard.\n";
-        return false;
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
     }
 
     CFTypeRef state = IORegistryEntryCreateCFProperty(keyService, CFSTR(kIOHIDKeyboardCapsLockState), kCFAllocatorDefault, 0);
     if (state == nullptr) {
-        std::cerr << "Failed to get Caps Lock state.\n";
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
         IOObjectRelease(keyService);
-        return false;
     }
 
     bool isOn = CFBooleanGetValue((CFBooleanRef)state);
@@ -53,14 +68,13 @@ bool X11Singleton::isCapsLockOn() {
 #elif defined(_WIN32)
     SHORT state = GetKeyState(VK_CAPITAL);
     if (state == 0) {
-        std::cerr << "Failed to get Caps Lock state.\n";
-        return false;
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
     }
 
     return (state & 0x0001) != 0;
 
 #else
-    std::cerr << "Caps Lock check not supported on this platform.\n";
+    ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::UNSUPPORTED_PLATFORM_ERROR);
     return false;
 
 #endif
