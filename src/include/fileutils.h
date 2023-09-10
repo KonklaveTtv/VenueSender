@@ -4,7 +4,10 @@
 #include "errorhandler.h"
 #include "messagehandler.h"
 #include "structs.h"
+
+#ifndef UNIT_TESTING
 #include "x11.h"
+#endif
 
 #include <algorithm>
 #include <chrono>

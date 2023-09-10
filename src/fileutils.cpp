@@ -76,6 +76,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     }
 
     while (true) {
+#ifndef UNIT_TESTING
         // Initialize X11
         X11Singleton& x11 = X11Singleton::getInstance();
         x11.openDisplay();
@@ -86,7 +87,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         if (isOn) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_CAPS_LOCK_ERROR, "while entering password");
         }
-
+#endif
         if (initColor) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::INIT_ENTER_PASSWORD_MESSAGE);
         } else {
@@ -104,7 +105,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             }
 
             // Handle backspace or delete
-            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE || ch == '\b') {
+            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE) {
                 if (!password.empty()) {
                     cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
                     password.pop_back();
@@ -160,7 +161,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             }
 
             // Handle backspace or delete
-            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE || ch == '\b') {
+            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE) {
                 if (!confirm.empty()) {
                     cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
                     confirm.pop_back();
@@ -196,7 +197,9 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MISMATCH_ERROR);
         }
+#ifndef UNIT_TESTING
     x11.closeDisplay();
+#endif
     }
     
     // If passwords match give confirmation
