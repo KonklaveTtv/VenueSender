@@ -72,7 +72,7 @@
 
 	\section{Overview}
 	
-	VenueSender is a specialized tool designed for modern organizers, automating email and template sending to venues. It offers features like venue filtering, email management, and template creation. This guide aims to provide a comprehensive understanding of both the basic and advanced functionalities, including the technicalities of venue selection, email management, and error handling.
+	VenueSender is a specialized tool designed for automating email and booking template sending to venues. It offers features like venue filtering, email management, and template creation. This guide aims to provide a comprehensive understanding of both the basic and advanced functionalities, including the technicalities of venue filtering, selection, email and template creation and sending.
 	
 	\section{Getting Started}
 	
@@ -92,19 +92,25 @@
 	\begin{itemize}
 		\item \texttt{config.json} should be in the same directory as the VenueSender application.
 		\item \texttt{venues.csv} and \texttt{venues.db} should be in a sub-directory named \texttt{db}.
-		\item \texttt{registration\_key.txt} should also be in the same directory as the VenueSender application.
+		\item \texttt{registration\_key} should also be in the same directory as the VenueSender application.
 	\end{itemize}
-	
-	\subsection{Initialization Checks}
-	
-	The program will attempt to read settings from \texttt{config.json}. A message saying "Configuration Loaded" will appear if successful.
 	
 	\subsection{Secure Password Entry}
 	
 	Password Prompt: The program will prompt for your email password securely. Characters will be masked with asterisks (*) for added security.
-	
+
 	\textbf{Note}: The program checks for Caps Lock and alerts if it is on.
+
+	\subsection{Initialization Checks}
 	
+	VenueSender will attempt to read settings from \texttt{config.json}. A message saying "Configuration Loaded" will appear if successful.
+	\newline
+	\newline
+	VenueSender looks for your registration\_key file. If it is missing, a message saying "Registration Key Not Found" will appear.
+	\newline
+	\newline
+	VenueSender then checks for the existence of \texttt{venues.csv} and \texttt{venues.db}. If either of them are missing, a message saying "Database Not Found" will appear.
+		
 	\section{Navigating the Color-Coded Menus}
 	
 	The program utilizes a color-coded system for different menu headers to make the user experience more interactive and intuitive. The color codes are as follows:
@@ -188,11 +194,11 @@
 		\item Genre (e.g., \texttt{Mixed}, \texttt{Rock})
 	\end{itemize}
 	
-	\textbf{Note}: To make multiple selections, use comma-separated indices or type \texttt{ALL} for all options.
+	\textbf{Note}: To make multiple selections, use comma-separated indices or type \texttt{ALL} for State, City, Capacity or Genre. Country selection is limited to one choice.
 	
 	\subsection{Final Venue Selection}
 	
-	After applying the filters, a final list will be generated. For example, if you filter by country "USA," you may get:
+	After applying the filters, a final list will be generated. For example, if you filter by country "USA," state "AL", city "Daphne", capacity "100" you will get:
 	
 	\begin{verbatim}
 		Venue1, venue1@mock.com, USA, AL, Daphne, 100, Mixed
@@ -242,14 +248,14 @@
 	
 	\begin{itemize}
 		\item \textbf{Confirmation Prompt}: After creating emails or templates, a confirmation prompt will appear to confirm the sending operation.
-		\item \textbf{Abort}: You can abort the sending process anytime by choosing 'N' or 'n' when prompted.
+		\item \textbf{Abort}: You can abort the sending process anytime by choosing 'N' or 'n' when prompted and the template will be saved for sending later.
 	\end{itemize}
 	
 	\section{Templates}
 	
 	\subsection{Creating a Booking Template}
 	
-	The system collects data such as genre, performance type, hometown, similar artists, date, and various links like music and live performance videos. Input is validated for mandatory fields and URL formats.
+	The system collects data such as genre, performance type, hometown, similar artists, date, and various links like music and live performance videos. Inputs are validated for mandatory fields and URL formats.
 	
 	\subsection{Booking Templates}
 	
@@ -281,7 +287,7 @@
 	
 	\section{Error Handling}
 	
-	The program employs an \texttt{ErrorHandler} to display appropriate error messages for effective troubleshooting. These error messages are color-coded in red to catch your attention.
+	The program employs an error system to display appropriate error messages for effective troubleshooting. These error messages are color-coded in red to catch your attention.
 	
 	\subsection{Menu and Selection Errors}
 	
@@ -334,30 +340,9 @@
 
 	\section{Conclusion}
 
-	VenueSender offers a comprehensive solution for managing and automating your venue bookings. For any errors encountered, the \texttt{ErrorHandler} module will assist you.
-	
-	\section{FAQ}
-	
-	\textbf{Q1: How do I obtain a VenueSender registration key?}
-	
-	A1: To obtain a registration key, please contact VenueSender support.
-	
-	\textbf{Q2: How can I troubleshoot SMTP-related issues?}
-	
-	A2: Check the SMTP server settings in \texttt{config.json}, ensure SSL/TLS is configured correctly, and verify your credentials.
-	
-	\textbf{Q3: Can I send emails with large attachments?}
-	
-	A3: Yes, you can send attachments up to 24 MB in size.
-	
-	\textbf{Q4: What should I do if I encounter SSL verification errors?}
-	
-	A4: Ensure that SSL settings in \texttt{config.json} are correctly configured and that your system has necessary SSL libraries installed.
-	
-	\textbf{Q5: How can I modify an existing template?}
-	
-	A5: You can modify a template by selecting the "Modifying a Template" option in the Templates menu.
-	
+	VenueSender offers a comprehensive solution for managing and automating your venue bookings. For any errors encountered you will have an appropriate error message to assist you.
+	\newline
+	\newline
 	Happy Booking!
 	
 \end{document}
