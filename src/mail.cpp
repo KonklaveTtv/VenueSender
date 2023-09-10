@@ -588,15 +588,37 @@ void EmailManager::viewEditTemplates(CURL* curl,
                     cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
                     continue;
                 }
+            }
+        } else if (choice == 'N' || choice == 'n') {
+            modifyTemplate = false;  // Exit the loop
+            // Ask if the user wants to send the email
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cin >> choice;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+            ConsoleUtils::clearInputBuffer();
+
+            if (choice == 'Y' || choice == 'y') {
+                templateExists = false; // Reset the flag since we're sending the email
+                // Now, send the email to all venues
+                bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                if (!sent) {
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
+                }
             } else if (choice == 'N' || choice == 'n') {
                 MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
                 // If user chooses not to send, the template and subjects stay in the map
                 templateExists = true;
-                modifyTemplate = false;  // Assuming you want to exit the loop
             } else {
                 cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
-                continue;
             }
+        } else {
+            cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+            continue;
         }
     }
 }
@@ -1060,7 +1082,6 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          bool templateExists) const {
     char choice;
     bool modifyTemplate = true;
-    bool exitToMainMenu = false;
     
     auto getInputWithConfirmation = [&](string& input, const string& prompt, bool isMandatory = false, bool checkURL = false) {        
         bool inputConfirmed = false;
@@ -1453,46 +1474,39 @@ while (modifyTemplate) {
                     continue;  // Continue modifying the template if the user is not satisfied
                 } else {
                     cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                    continue;
                 }
-
-                if (exitToMainMenu) {
-                    break;  // Break out of the outer while loop
-                }
-            
-            } else if (choice == 'N' || choice == 'n') {
-                MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
-                
-                // Ask if the user wants to send the email
-                MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
+            }            
+        } else if (choice == 'N' || choice == 'n') {
+        modifyTemplate = false;  // Exit the loop
+        // Ask if the user wants to send the email
+        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
 #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+        ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-                cin >> choice;
+        cin >> choice;
 #ifndef UNIT_TESTING
-                ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
-                ConsoleUtils::clearInputBuffer();
+        ConsoleUtils::clearInputBuffer();
 
-                // Validate the final choice
-                if (choice == 'Y' || choice == 'y') {
-                    templateExists = false; // Reset the flag since we're sending the email
-                    // Now, send the email to all venues
-                    bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
-                    if (!sent) {
-                        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
-                    }
-                } else if (choice == 'N' || choice == 'n') {
-                    // If user chooses not to send, the template and subjects stay in the map
-                    templateExists = true;
-                } else {
-                    cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
-                }
-                modifyTemplate = false;  // Exit the loop
-                
-            } else {
-                cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
-                continue;
+        if (choice == 'Y' || choice == 'y') {
+            templateExists = false; // Reset the flag since we're sending the email
+            // Now, send the email to all venues
+            bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+            if (!sent) {
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
             }
+        } else if (choice == 'N' || choice == 'n') {
+            MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
+            // If user chooses not to send, the template and subjects stay in the map
+            templateExists = true;
+        } else {
+            cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+        }
+    } else {
+        cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+        continue;
         }
     }
 }
