@@ -1051,7 +1051,6 @@ void EmailManager::constructBookingTemplateMessage(const SelectedVenueForTemplat
     appendIfNotEmpty(os, "-- Social Links", socials);
 
     // Map each venue's email to its unique message and subject
-    EmailManager emailManager;
     templateForEmail[venueForTemplates.email] = make_pair(subject, os.str());
 }
 
