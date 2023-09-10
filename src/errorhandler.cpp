@@ -211,11 +211,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "ERROR: Failed to open X11 display." << endl;
             break;
         case ErrorType::X11_CAPS_LOCK_ERROR:
-            cerr << "WARNING: Caps Lock is ON";
-            if (!extraInfo.empty()) {
-                cerr << " - " << extraInfo;
-            }
-            cerr << endl;
+            cerr << "\nWARNING: Caps Lock is ON." << endl;
             break;
         case ErrorType::X11_SYSTEM_ERROR:
             cerr << "ERROR: Failed to get X11 state." << endl;

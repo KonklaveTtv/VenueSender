@@ -85,7 +85,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         bool isOn = x11.isCapsLockOn();
 
         if (isOn) {
-            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_CAPS_LOCK_ERROR, "while entering password");
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_CAPS_LOCK_ERROR);
         }
 #endif
         if (initColor) {
@@ -132,6 +132,9 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
                 ConsoleUtils::resetColor(); // Reset color
 #endif
             }
+#ifndef UNIT_TESTING
+        x11.closeDisplay();
+#endif
         }
 
         // Check for minimum password length
@@ -152,6 +155,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
 #endif
         }
         confirm.clear();
+
         while (true) {
             ch = getchar();
 
@@ -197,9 +201,6 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MISMATCH_ERROR);
         }
-#ifndef UNIT_TESTING
-    x11.closeDisplay();
-#endif
     }
     
     // If passwords match give confirmation
