@@ -189,13 +189,28 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                 if (filesystem::exists(attachmentPath)) {
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
-#endif                   
+#endif
                     size_t fileSize = boost::filesystem::file_size(attachmentPath);
-                    attachmentSize = to_string(fileSize) + " bytes";
-                    cout << "File Size: " << fileSize << " bytes" << endl;
+                    std::string sizeUnit = " bytes";
+
+                    // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
+                    if (fileSize >= 1000) {
+                        fileSize /= 1000;
+                        sizeUnit = " KB";
+
+                        // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
+                        if (fileSize >= 1000) {
+                            fileSize /= 1000;
+                            sizeUnit = " MB";
+                        }
+                    }
+
+                    attachmentSize = std::to_string(fileSize) + sizeUnit;
+                    cout << "File Size: " << fileSize << sizeUnit << endl;
+
 #ifndef UNIT_TESTING
-                    ConsoleUtils::resetColor();
-#endif  
+        ConsoleUtils::resetColor();
+#endif
                     // Check the attachment size doesn't exceed 24MB
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
@@ -1249,14 +1264,29 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
             try {
                 if (filesystem::exists(templateAttachmentPath)) {
-                    size_t fileSize = boost::filesystem::file_size(templateAttachmentPath);
-                    templateAttachmentSize = to_string(fileSize) + " bytes";
 #ifndef UNIT_TESTING
-                ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
-                    cout << "File Size: " << fileSize << " bytes" << endl;
+                    size_t fileSize = boost::filesystem::file_size(templateAttachmentPath);
+                    std::string sizeUnit = " bytes";
+
+                    // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
+                    if (fileSize >= 1000) {
+                        fileSize /= 1000;
+                        sizeUnit = " KB";
+
+                        // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
+                        if (fileSize >= 1000) {
+                            fileSize /= 1000;
+                            sizeUnit = " MB";
+                        }
+                    }
+
+                    templateAttachmentSize = std::to_string(fileSize) + sizeUnit;
+                    cout << "File Size: " << fileSize << sizeUnit << endl;
+
 #ifndef UNIT_TESTING
-                    ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
@@ -1669,16 +1699,31 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 customAddressAttachmentName = customAddressAttachmentPath.substr(lastSlash + 1);
             }
 
-        try {
-            if (filesystem::exists(customAddressAttachmentPath)) {
-                size_t fileSize = boost::filesystem::file_size(customAddressAttachmentPath);
-                customAddressAttachmentSize = to_string(fileSize) + " bytes";
+            try {
+                if (filesystem::exists(customAddressAttachmentPath)) {
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
-                cout << "File Size: " << fileSize << " bytes" << endl;
+                    size_t fileSize = boost::filesystem::file_size(customAddressAttachmentPath);
+                    std::string sizeUnit = " bytes";
+
+                    // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
+                    if (fileSize >= 1000) {
+                        fileSize /= 1000;
+                        sizeUnit = " KB";
+
+                        // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
+                        if (fileSize >= 1000) {
+                            fileSize /= 1000;
+                            sizeUnit = " MB";
+                        }
+                    }
+
+                    customAddressAttachmentSize = std::to_string(fileSize) + sizeUnit;
+                    cout << "File Size: " << fileSize << sizeUnit << endl;
+
 #ifndef UNIT_TESTING
-                    ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
@@ -2171,14 +2216,29 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
 
             try {
                 if (filesystem::exists(templateAttachmentPath)) {
-                    size_t fileSize = boost::filesystem::file_size(templateAttachmentPath);
-                    templateAttachmentSize = to_string(fileSize) + " bytes";
 #ifndef UNIT_TESTING
-                    ConsoleUtils::setColor(ConsoleUtils::Color::MAGENTA);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
-                    cout << "File Size: " << fileSize << " bytes" << endl;
+                    size_t fileSize = boost::filesystem::file_size(templateAttachmentPath);
+                    std::string sizeUnit = " bytes";
+
+                    // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
+                    if (fileSize >= 1000) {
+                        fileSize /= 1000;
+                        sizeUnit = " KB";
+
+                        // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
+                        if (fileSize >= 1000) {
+                            fileSize /= 1000;
+                            sizeUnit = " MB";
+                        }
+                    }
+
+                    templateAttachmentSize = std::to_string(fileSize) + sizeUnit;
+                    cout << "File Size: " << fileSize << sizeUnit << endl;
+
 #ifndef UNIT_TESTING
-                    ConsoleUtils::resetColor();
+        ConsoleUtils::resetColor();
 #endif
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
