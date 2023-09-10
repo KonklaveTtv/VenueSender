@@ -125,7 +125,7 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
         	ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
 			cout << "==========================="<< endl;
-			cout << "===== Construct Email ====="<< endl;
+			cout << "      Construct Email      "<< endl;
 			cout << "==========================="<< endl;
 #ifndef UNIT_TESTING
         	ConsoleUtils::resetColor();

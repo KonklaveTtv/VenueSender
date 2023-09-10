@@ -447,6 +447,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #endif
             cout << "===========================" << endl;
             cout << "    VENUES NOT SELECTED    " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -494,7 +495,8 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
             cout << "===========================" << endl;
-            cout << "     Email Not Created     " << endl;
+            cout << "     EMAIL NOT CREATED     " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -514,6 +516,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #endif
             cout << "===========================" << endl;
             cout << "    EMAIL SENDING FAILED   " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
@@ -542,7 +545,9 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-            cout << "NO BOOKING TEMPLATES HAVE BEEN CREATED" << endl;
+            cout << "===========================" << endl;
+            cout << "    NO TEMPLATE CREATED    " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif               
