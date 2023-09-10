@@ -2,6 +2,22 @@
 
 #include "errorhandler.h" // Include here due to circular dependency between fileutils.h and errorhandler.h
 
+// For Linux (X11)
+#ifdef __linux__
+#include <X11/XKBlib.h>
+#endif
+
+// For macOS
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#include <IOKit/hidsystem/ev_keymap.h>
+#endif
+
+// For Windows
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 // Use the standard namespace
 using namespace std;
 
@@ -57,37 +73,13 @@ bool ConsoleUtils::caseSensitiveStringCompare(const string& str1, const string& 
     return boost::algorithm::equals(str1, str2);
 }
 
-// ConsoleUtils.cpp
-Display* ConsoleUtils::display = nullptr;
-
-bool ConsoleUtils::initializeX11() {
-#if BOOST_OS_LINUX
-    display = XOpenDisplay(nullptr);
-    if (display == nullptr) {
-        std::cerr << "Failed to open display." << std::endl;
-        return false;
-    }
-    return true;
-#else
-    return false; // Fallback for other platforms
-#endif
-}
-
-// Close X11 display
-void ConsoleUtils::closeX11() {
-#if BOOST_OS_LINUX
-    if (display) {
-        XCloseDisplay(display);
-        display = nullptr;
-    }
-#endif
-}
-
 bool ConsoleUtils::isCapsLockOn() {
 #if BOOST_OS_LINUX
-    if (display) {
-        unsigned n;
-        XkbGetIndicatorState(display, XkbUseCoreKbd, &n);
+    Display *d = XOpenDisplay((char*)nullptr);
+    unsigned n;
+    if (d) {
+        XkbGetIndicatorState(d, XkbUseCoreKbd, &n);
+        XCloseDisplay(d);
         return (n & 0x01) == 1;
     }
     return false;
@@ -128,11 +120,6 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         return "";
     }
 
-    // Check for Caps Lock
-    if (isCapsLockOn()) {
-        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CAPS_LOCK_MESSAGE);
-    }
-
     while (true) {
         // Check for Caps Lock
         if (isCapsLockOn()) {
@@ -156,7 +143,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             }
 
             // Handle backspace or delete
-            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE) {
+            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE || ch == '\b') {
                 if (!password.empty()) {
                     cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
                     password.pop_back();
@@ -212,7 +199,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             }
 
             // Handle backspace or delete
-            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE) {
+            if (ch == ASCII_BACKSPACE || ch == ASCII_DELETE || ch == '\b') {
                 if (!confirm.empty()) {
                     cout << "\b \b";  // Move cursor back, overwrite with space, move cursor back again
                     confirm.pop_back();

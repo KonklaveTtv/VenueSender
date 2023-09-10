@@ -11,12 +11,6 @@ VenueFilter venueFilter;
 #ifndef UNIT_TESTING
 
 int main() {
-    // Initialize X11 display
-    if (!ConsoleUtils::initializeX11()) {
-        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_DISPLAY_ERROR);
-        return 1; // Exit if initialization failed
-    }
-
     // Load Splashscreen
     Init::splashscreen();
 
@@ -145,9 +139,6 @@ try {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::MENU_LOAD_ERROR);
     }
     
-    // Close X11 display
-    ConsoleUtils::closeX11();
-
     // Function load filters and display menu
     Init::Menu();
 

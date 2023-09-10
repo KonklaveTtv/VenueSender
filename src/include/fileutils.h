@@ -42,22 +42,6 @@
 // Include headers for JSON processing
 #include <json/json.h>
 
-// For Linux (X11)
-#ifdef __linux__
-#include <X11/XKBlib.h>
-#endif
-
-// For macOS
-#ifdef __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#include <IOKit/hidsystem/ev_keymap.h>
-#endif
-
-// For Windows
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 extern const unsigned char DATABASE_AES_KEY[];
 
 extern const unsigned char DATABASE_AES_IV[];
@@ -216,10 +200,7 @@ public:
     static bool caseSensitiveStringCompare(const std::string& str1, const std::string& str2);
 
     // Method to capture caps lock state
-    static bool initializeX11();
-    static void closeX11();
     static bool isCapsLockOn();
-    static Display* display;
 
     // Method to securely enter a password
     static std::string passwordEntry(bool& initColor);
