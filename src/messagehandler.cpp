@@ -215,6 +215,17 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif      
         break;
+        case MessageType::BOOKING_TEMPLATE_ATTACHMENTS_CLEARED_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+            cout << "=========================" << endl;
+            cout << "   Attachments Cleared   " << endl;
+            cout << "=========================" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
     // end of green messages
 
 

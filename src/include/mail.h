@@ -132,7 +132,6 @@ public:
         message.clear();
     }
 
-
     // Function to display the email settings from the configuration file
     static void viewEmailSettings(bool useSSL, const std::string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
                            const std::string& senderEmail, const std::string& smtpUsername, int smtpPort, const std::string& smtpServer);
@@ -291,6 +290,10 @@ public:
                                             std::string& templateAttachmentSize,
                                             std::string& templateAttachmentPath,
                                             bool templateExists);
+
+    void addAttachmentToTemplate(std::string& templateAttachmentName, 
+                                 std::string& templateAttachmentSize, 
+                                 std::string& templateAttachmentPath) const;
 };
 
 #endif // MAIL_H

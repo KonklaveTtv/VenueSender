@@ -125,6 +125,13 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             emailManager.viewEditTemplates(curl, selectedVenuesForTemplates, smtpServer, smtpPort, useSSL, verifyPeer, senderEmail, templateForEmail, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
                                                             pressQuote, quoteSource, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                             continue;
+                        case CLEAR_BOOKING_TEMPLATE_ATTACHMENT_OPTION:
+                            emailManager.clearTemplateAttachmentData(templateAttachmentName, templateAttachmentSize, templateAttachmentPath);
+                            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::BOOKING_TEMPLATE_ATTACHMENTS_CLEARED_MESSAGE);
+                            continue;
+                        case ADD_BOOKING_TEMPLATE_ATTACHMENT_OPTION:
+                            emailManager.addAttachmentToTemplate(templateAttachmentName, templateAttachmentSize, templateAttachmentPath);
+                            continue; 
                         case SEND_BOOKING_TEMPLATES_OPTION:
                             EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
@@ -310,6 +317,8 @@ int MenuManager::displayTemplateOptions() {
         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATES_MENU_HEADER);
         cout << CREATE_VENUE_BOOKING_TEMPLATE_OPTION << ". Create Venue Booking Template" << endl;
         cout << VIEW_EDIT_BOOKING_TEMPLATES_OPTION << ". View & Edit Booking Template" << endl;
+        cout << CLEAR_BOOKING_TEMPLATE_ATTACHMENT_OPTION << ". Clear Attachment" << endl;
+        cout << ADD_BOOKING_TEMPLATE_ATTACHMENT_OPTION << ". Add Attachment" << endl;
         cout << SEND_BOOKING_TEMPLATES_OPTION << ". Send Booking Templates" << endl;
         cout << CLEAR_BOOKING_TEMPLATE_OPTION << ". Clear Booking Template" << endl;
         cout << RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS << ". Return to Main Menu" << endl;
