@@ -77,10 +77,10 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             displaySelectedVenuesForTemplates(selectedVenuesForTemplates);
                             continue;
                         case CLEAR_SELECTED_VENUES_FOR_EMAIL_OPTION:
-                            EmailManager::clearSelectedVenuesForEmails(selectedVenuesForEmails);
+                            emailManager.clearSelectedVenuesForEmails(selectedVenuesForEmails);
                             continue;
                         case CLEAR_SELECTED_VENUES_FOR_TEMPLATES_OPTION:
-                            EmailManager::clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
+                            emailManager.clearSelectedVenuesForTemplates(selectedVenuesForTemplates);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_VENUE_OPTIONS:
                             break;
@@ -104,7 +104,7 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             emailManager.emailCustomAddress(curl, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case SEND_EMAILS_OPTION:
-                            EmailManager::confirmSendEmail(curl, selectedVenuesForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath);
+                            emailManager.confirmSendEmail(curl, selectedVenuesForEmails, senderEmail, subject, message, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_EMAIL_OPTIONS:
                             break;
@@ -133,10 +133,10 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                             emailManager.addAttachmentToTemplate(templateAttachmentName, templateAttachmentSize, templateAttachmentPath);
                             continue; 
                         case SEND_BOOKING_TEMPLATES_OPTION:
-                            EmailManager::confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, templateExists);
+                            emailManager.confirmSendBookingTemplates(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, attachmentName, attachmentSize, attachmentPath, templateExists);
                             continue;
                         case CLEAR_BOOKING_TEMPLATE_OPTION:
-                            EmailManager::clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                            emailManager.clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                             continue;
                         case RETURN_TO_MAIN_MENU_FROM_TEMPLATE_OPTIONS:
                             break;
@@ -150,7 +150,7 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     int subChoice = displayConfigurationOptions();
                     switch (subChoice) {
                         case SHOW_EMAIL_SETTINGS_OPTION:
-                            EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, smtpPort, smtpServer);
+                            emailManager.viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, smtpPort, smtpServer);
                             continue;
                         case EDIT_EMAIL_SETTINGS_OPTION:
                             MenuManager::editConfigurationSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, 
