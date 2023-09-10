@@ -2,22 +2,6 @@
 
 #include "errorhandler.h" // Include here due to circular dependency between fileutils.h and errorhandler.h
 
-// For Linux (X11)
-#ifdef __linux__
-#include <X11/XKBlib.h>
-#endif
-
-// For macOS
-#ifdef __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#include <IOKit/hidsystem/ev_keymap.h>
-#endif
-
-// For Windows
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 // Use the standard namespace
 using namespace std;
 
@@ -73,39 +57,14 @@ bool ConsoleUtils::caseSensitiveStringCompare(const string& str1, const string& 
     return boost::algorithm::equals(str1, str2);
 }
 
-bool ConsoleUtils::isCapsLockOn() {
-#if BOOST_OS_LINUX
-    Display *d = XOpenDisplay((char*)nullptr);
-    unsigned n;
-    if (d) {
-        XkbGetIndicatorState(d, XkbUseCoreKbd, &n);
-        XCloseDisplay(d);
-        return (n & 0x01) == 1;
-    }
-    return false;
-#elif BOOST_OS_MACOS
-    io_service_t keyService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
-    if (keyService) {
-        CFTypeRef state = IORegistryEntryCreateCFProperty(keyService, CFSTR(kIOHIDKeyboardCapsLockState), kCFAllocatorDefault, 0);
-        if (state) {
-            bool isOn = CFBooleanGetValue((CFBooleanRef)state);
-            CFRelease(state);
-            IOObjectRelease(keyService);
-            return isOn;
-        }
-    }
-    return false;
-#elif BOOST_OS_WINDOWS
-    return (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
-#else
-    return false; // Fallback for other platforms
-#endif
-}
-
 string ConsoleUtils::passwordEntry(bool& initColor) {
     string password;
     string confirm;
 
+    // Initialize X11
+    X11Singleton& x11 = X11Singleton::getInstance();
+    bool isOn = x11.isCapsLockOn();
+    
     // Disable terminal echoing and enable manual input capture
     struct termios oldt, newt;
     memset(&oldt, 0, sizeof(oldt));
@@ -121,8 +80,11 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     }
 
     while (true) {
+        
+
+
         // Check for Caps Lock
-        if (isCapsLockOn()) {
+        if (isOn) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CAPS_LOCK_MESSAGE);
         }
 

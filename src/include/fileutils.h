@@ -4,6 +4,7 @@
 #include "errorhandler.h"
 #include "messagehandler.h"
 #include "structs.h"
+#include "x11.h"
 
 #include <algorithm>
 #include <chrono>
@@ -198,9 +199,6 @@ public:
 
     // Method to check case-sensitivity of a string
     static bool caseSensitiveStringCompare(const std::string& str1, const std::string& str2);
-
-    // Method to capture caps lock state
-    static bool isCapsLockOn();
 
     // Method to securely enter a password
     static std::string passwordEntry(bool& initColor);
