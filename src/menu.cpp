@@ -23,8 +23,8 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                                 string& musicLink, 
                                 string& livePerfVideo, 
                                 string& musicVideo,
-                                string& pressQuote, 
-                                string& quoteSource, 
+                                vector<string>& pressQuotes, 
+                                vector<string>& quoteSources, 
                                 string& socials, 
                                 string& name,
                                 string& attachmentName,
@@ -119,11 +119,11 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
                     switch (subChoice) {
                         case CREATE_VENUE_BOOKING_TEMPLATE_OPTION:
                             emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
-                                                                pressQuote, quoteSource, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                                                                pressQuotes, quoteSources, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                             continue;
                         case VIEW_EDIT_BOOKING_TEMPLATES_OPTION:
                             emailManager.viewEditTemplates(curl, selectedVenuesForTemplates, smtpServer, smtpPort, useSSL, verifyPeer, senderEmail, templateForEmail, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
-                                                            pressQuote, quoteSource, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                                                            pressQuotes, quoteSources, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                             continue;
                         case CLEAR_BOOKING_TEMPLATE_ATTACHMENT_OPTION:
                             emailManager.clearTemplateAttachmentData(templateAttachmentName, templateAttachmentSize, templateAttachmentPath);

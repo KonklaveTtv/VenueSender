@@ -21,7 +21,7 @@ int main() {
     vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
     string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, 
            message, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, 
-           musicVideo, pressQuote, quoteSource, socials, name, attachmentName, attachmentPath, attachmentSize, templateAttachmentName, templateAttachmentPath, templateAttachmentSize;
+           musicVideo, pressQuotes, quoteSources, socials, name, attachmentName, attachmentPath, attachmentSize, templateAttachmentName, templateAttachmentPath, templateAttachmentSize;
     int smtpPort = 587;
     bool initColor;
     bool templateExists = false;
@@ -92,6 +92,10 @@ try {
     // Initialize map for booking templates
     map<string, pair<string, string>> templateForEmail;
 
+    // Initialize the vectors for templates
+    vector<string> pressQuotes;
+    vector<string> quoteSources;
+
     // Create an EmailManager object
     EmailManager emailManager;
 
@@ -115,8 +119,8 @@ try {
                               musicLink, 
                               livePerfVideo, 
                               musicVideo,
-                              pressQuote, 
-                              quoteSource, 
+                              pressQuotes, 
+                              quoteSources, 
                               socials, 
                               name,
                               attachmentName,

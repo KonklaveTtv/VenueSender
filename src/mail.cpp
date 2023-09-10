@@ -369,8 +369,8 @@ void EmailManager::viewEditTemplates(CURL* curl,
                                      string& musicLink, 
                                      string& livePerfVideo, 
                                      string& musicVideo,
-                                     string& pressQuote, 
-                                     string& quoteSource, 
+                                     vector<string>& pressQuotes, 
+                                     vector<string>& quoteSources, 
                                      string& socials, 
                                      string& name,
                                      string& templateAttachmentName,
@@ -444,7 +444,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                 EmailManager emailManager;
                 emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
-                                                    pressQuote, quoteSource, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                                                    pressQuotes, quoteSources, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             } else if (modifyChoice == "MODIFY" || modifyChoice == "modify" || modifyChoice == "M" || modifyChoice == "m") {
                 // Display available fields to the user
                 cout << "Available fields to modify:" << endl;
@@ -457,10 +457,9 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 cout << "7. Music Link" << endl;
                 cout << "8. Live Performance Video" << endl;
                 cout << "9. Music Video" << endl;
-                cout << "10. Press Quote" << endl;
-                cout << "11. Quote Source" << endl;
-                cout << "12. Social Links" << endl;
-                cout << "13. Name" << endl;
+                cout << "10. Press Quotes and Sources" << endl;  // Combined option
+                cout << "11. Social Links" << endl;
+                cout << "12. Name" << endl;
 
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CHOOSE_FIELDS_TO_MODIFY_MESSSAGE);
                 string indices;
@@ -482,6 +481,44 @@ void EmailManager::viewEditTemplates(CURL* curl,
                     selectedIndices.push_back(i);
                     if (ss.peek() == ',') ss.ignore();
                 }
+
+                auto addPressQuotesAndSources = [](vector<string>& pressQuotes, vector<string>& quoteSources) {
+                    char addMore = 'Y';
+                    while (addMore == 'Y' || addMore == 'y') {
+                        string singlePressQuote, singleQuoteSource;
+#ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif                        
+                        cout << "Enter Press Quote (press Enter on a new line to finish): ";
+                        getline(cin, singlePressQuote);
+#ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+#endif
+                        ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+                        cout << "Enter Quote Source (press Enter on a new line to finish): ";
+                        getline(cin, singleQuoteSource);
+#ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+#endif
+                        ConsoleUtils::clearInputBuffer();
+
+                        pressQuotes.push_back(singlePressQuote);
+                        quoteSources.push_back(singleQuoteSource);
+
+#ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif            
+                        cout << "Would you like to add another quote? (Y/N): ";
+                        cin >> addMore;
+#ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+#endif
+                        ConsoleUtils::clearInputBuffer();
+                    }
+                };
 
                 // Helper function to modify individual fields
                 auto modifyField = [](string& field, const string& fieldName) {
@@ -507,10 +544,9 @@ void EmailManager::viewEditTemplates(CURL* curl,
                         case 7: modifyField(musicLink, "Music Link"); break;
                         case 8: modifyField(livePerfVideo, "Live Performance Video"); break;
                         case 9: modifyField(musicVideo, "Music Video"); break;
-                        case 10: modifyField(pressQuote, "Press Quote"); break;
-                        case 11: modifyField(quoteSource, "Quote Source"); break;
-                        case 12: modifyField(socials, "Social Links"); break;
-                        case 13: modifyField(name, "Name"); break;
+                        case 10: addPressQuotesAndSources(pressQuotes, quoteSources); break;
+                        case 11: modifyField(socials, "Social Links"); break;
+                        case 12: modifyField(name, "Name"); break;
                         default: cout << "Invalid index " << index << " skipped." << endl; break;
                     }
                 }
@@ -524,7 +560,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 EmailManager emailManager;
                 emailManager.constructBookingTemplateMessage(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
                                                   hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
-                                                    pressQuote, quoteSource, socials, name);
+                                                    pressQuotes, quoteSources, socials, name);
             }
 
             if (!templateForEmail.empty()) {
@@ -597,7 +633,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                         EmailManager emailManager;
                         emailManager.constructBookingTemplateMessage(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
                                                       hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
-                                                        pressQuote, quoteSource, socials, name);
+                                                        pressQuotes, quoteSources, socials, name);
                     }
                 } else {
                     cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
@@ -1035,8 +1071,8 @@ void EmailManager::constructBookingTemplateMessage(const SelectedVenueForTemplat
                                                    string& musicLink, 
                                                    string& livePerfVideo, 
                                                    string& musicVideo,
-                                                   string& pressQuote, 
-                                                   string& quoteSource, 
+                                                   vector<string>& pressQuotes, 
+                                                   vector<string>& quoteSources, 
                                                    string& socials, 
                                                    string& name) {
     std::ostringstream os;
@@ -1053,9 +1089,12 @@ void EmailManager::constructBookingTemplateMessage(const SelectedVenueForTemplat
     appendIfNotEmpty(os, "- Live Performance", livePerfVideo);
     appendIfNotEmpty(os, "- Music Video", musicVideo);
 
-    if (!pressQuote.empty()) {
-        os << "\nWhat people are saying about " << performanceName << "\n"
-           << "\"" << pressQuote << "\" - " << quoteSource << "\n";
+    // Loop through each quote/source pair and add it to the message
+    if (!pressQuotes.empty() && pressQuotes.size() == quoteSources.size()) {
+        os << "\nWhat people are saying about " << performanceName << "\n";
+        for (size_t i = 0; i < pressQuotes.size(); ++i) {
+            os << "\"" << pressQuotes[i] << "\" - " << quoteSources[i] << "\n";
+        }
     }
 
     os << "\nPlease let me know if you have any questions or need additional information.\n\n"
@@ -1086,8 +1125,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
                                          string& musicLink, 
                                          string& livePerfVideo, 
                                          string& musicVideo,
-                                         string& pressQuote, 
-                                         string& quoteSource, 
+                                         vector<string>& pressQuotes, 
+                                         vector<string>& quoteSources, 
                                          string& socials, 
                                          string& name,
                                          string& templateAttachmentName,
@@ -1141,7 +1180,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     char confirmation;
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_POSSIBLE_ENTRY_ERROR);
 #ifndef UNIT_TESTING
-                    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+                    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif 
                     cin >> confirmation;
 #ifndef UNIT_TESTING
@@ -1181,8 +1220,27 @@ void EmailManager::createBookingTemplate(CURL* curl,
         getInputWithConfirmation(musicLink, "Enter Music Link (press Enter on a new line to finish): ", false, true);
         getInputWithConfirmation(livePerfVideo, "Enter Live Performance Video Link (press Enter on a new line to finish): ", false, true);
         getInputWithConfirmation(musicVideo, "Enter Music Video Link (press Enter on a new line to finish): ", false, true);
-        getInputWithConfirmation(pressQuote, "Enter Press Quote (press Enter on a new line to finish): ", false, true);
-        getInputWithConfirmation(quoteSource, "Enter Quote Source (press Enter on a new line to finish): ", false, true);
+        
+        // Add this to collect multiple quotes
+        char addMoreQuotes = 'Y';
+        while (addMoreQuotes == 'Y' || addMoreQuotes == 'y') {
+            string singlePressQuote, singleQuoteSource;
+            getInputWithConfirmation(singlePressQuote, "Enter Press Quote (press Enter on a new line to finish): ");
+            getInputWithConfirmation(singleQuoteSource, "Enter Quote Source (press Enter on a new line to finish): ");
+            pressQuotes.push_back(singlePressQuote);
+            quoteSources.push_back(singleQuoteSource);
+#ifndef UNIT_TESTING
+            ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Would you like to add another quote? (Y/N): ";
+            cin >> addMoreQuotes;
+#ifndef UNIT_TESTING
+            ConsoleUtils::resetColor();
+#endif
+            ConsoleUtils::clearInputBuffer();
+        }
+
+        // Ask for social links
         getInputWithConfirmation(socials, "Enter Social Links (press Enter on a new line to finish): ", false, true);
 
         // Special case for Name due to it being mandatory
@@ -1200,7 +1258,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             EmailManager emailManager;
             emailManager.constructBookingTemplateMessage(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
                                               hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
-                                                pressQuote, quoteSource, socials, name);
+                                                pressQuotes, quoteSources, socials, name);
         }
 
         if (!templateForEmail.empty()) {
@@ -1355,7 +1413,7 @@ while (modifyTemplate) {
                 clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                 EmailManager emailManager;
                 emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
-                                                                pressQuote, quoteSource, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                                                                pressQuotes, quoteSources, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             } else if (modifyChoice == "MODIFY" || modifyChoice == "modify" || modifyChoice == "M" || modifyChoice == "m") {
                 // Display available fields to the user
                 cout << "Available fields to modify:" << endl;
@@ -1368,10 +1426,9 @@ while (modifyTemplate) {
                 cout << "7. Music Link" << endl;
                 cout << "8. Live Performance Video" << endl;
                 cout << "9. Music Video" << endl;
-                cout << "10. Press Quote" << endl;
-                cout << "11. Quote Source" << endl;
-                cout << "12. Social Links" << endl;
-                cout << "13. Name" << endl;
+                cout << "10. Press Quotes and Sources" << endl;  // Combined option
+                cout << "11. Social Links" << endl;
+                cout << "12. Name" << endl;
  
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CHOOSE_FIELDS_TO_MODIFY_MESSSAGE);
                 string indices;
@@ -1394,7 +1451,46 @@ while (modifyTemplate) {
                     if (ss.peek() == ',') ss.ignore();
                 }
                 
-                // Helper function to modify individual fields
+                // Helper function to modify vector<string> Press Quotes & Quote Sources
+                auto addPressQuotesAndSources = [](vector<string>& pressQuotes, vector<string>& quoteSources) {
+                    char addMore = 'Y';
+                    while (addMore == 'Y' || addMore == 'y') {
+                        string singlePressQuote, singleQuoteSource;
+#ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif                        
+                        cout << "Enter Press Quote (press Enter on a new line to finish): ";
+                        getline(cin, singlePressQuote);
+#ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+#endif
+                        ConsoleUtils::clearInputBuffer();
+#ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+                        cout << "Enter Quote Source (press Enter on a new line to finish): ";
+                        getline(cin, singleQuoteSource);
+#ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+#endif
+                        ConsoleUtils::clearInputBuffer();
+
+                        pressQuotes.push_back(singlePressQuote);
+                        quoteSources.push_back(singleQuoteSource);
+
+#ifndef UNIT_TESTING
+                        ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif            
+                        cout << "Would you like to add another quote? (Y/N): ";
+                        cin >> addMore;
+#ifndef UNIT_TESTING
+                        ConsoleUtils::resetColor();
+#endif
+                        ConsoleUtils::clearInputBuffer();
+                    }
+                };
+
+                // Helper function to modify individual string fields
                 auto modifyField = [](string& field, const string& fieldName) {
                     string newField;
                     cout << "Current " << fieldName << ": " << field << endl;
@@ -1418,10 +1514,9 @@ while (modifyTemplate) {
                         case 7: modifyField(musicLink, "Music Link"); break;
                         case 8: modifyField(livePerfVideo, "Live Performance Video"); break;
                         case 9: modifyField(musicVideo, "Music Video"); break;
-                        case 10: modifyField(pressQuote, "Press Quote"); break;
-                        case 11: modifyField(quoteSource, "Quote Source"); break;
-                        case 12: modifyField(socials, "Social Links"); break;
-                        case 13: modifyField(name, "Name"); break;
+                        case 10: addPressQuotesAndSources(pressQuotes, quoteSources); break;
+                        case 11: modifyField(socials, "Social Links"); break;
+                        case 12: modifyField(name, "Name"); break;
                         default: cout << "Invalid index " << index << " skipped." << endl; break;
                     }
                 }
@@ -1435,7 +1530,7 @@ while (modifyTemplate) {
                 EmailManager emailManager;
                 emailManager.constructBookingTemplateMessage(venueForTemplates, templateForEmail, genre, performanceType, performanceName,
                                                   hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
-                                                    pressQuote, quoteSource, socials, name);
+                                                    pressQuotes, quoteSources, socials, name);
             }
 
             if (!templateForEmail.empty()) {
