@@ -1102,7 +1102,7 @@ void EmailManager::constructBookingTemplateMessage(const SelectedVenueForTemplat
        << "Best wishes,\n"
        << name << "\n\n";
 
-    appendIfNotEmpty(os, "-- Social Links", socials);
+    appendIfNotEmpty(os, "- Social Links", socials);
 
     // Map each venue's email to its unique message and subject
     templateForEmail[venueForTemplates.email] = make_pair(subject, os.str());
