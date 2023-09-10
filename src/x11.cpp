@@ -54,15 +54,32 @@ bool X11Singleton::isCapsLockOn() {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
     }
 
-    CFTypeRef state = IORegistryEntryCreateCFProperty(keyService, CFSTR(kIOHIDKeyboardCapsLockState), kCFAllocatorDefault, 0);
-    if (state == nullptr) {
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
-        IOObjectRelease(keyService);
-    }
+    CFTypeRef state = nullptr;
+    bool isOn = false;
 
-    bool isOn = CFBooleanGetValue((CFBooleanRef)state);
-    CFRelease(state);
+    try {
+        state = IORegistryEntryCreateCFProperty(keyService, CFSTR(kIOHIDKeyboardCapsLockState), kCFAllocatorDefault, 0);
+        if (state == nullptr) {
+            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
+        } else {
+            isOn = CFBooleanGetValue((CFBooleanRef)state);
+        }
+    } catch (const std::exception& e) {
+        // Log or print the exception's what() message, or do something else
+        std::cerr << "Caught exception: " << e.what() << std::endl;
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR, e.what());
+    } catch (...) {
+        // Catch-all for other exceptions
+        std::cerr << "Caught an unknown exception" << std::endl;
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::UNKNOWN_ERROR);
+    }
+    
+    // Release resources
+    if (state != nullptr) {
+        CFRelease(state);
+    }
     IOObjectRelease(keyService);
+
     return isOn;
 
 #elif defined(_WIN32)
