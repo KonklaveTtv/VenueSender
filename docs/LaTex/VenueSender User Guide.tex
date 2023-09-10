@@ -5,12 +5,18 @@
 \usepackage{geometry}
 \usepackage{listings}
 \usepackage{mdframed}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\usepackage[colorlinks=true, allcolors=accent]{hyperref}
+\usepackage{tocloft} % Added for table of contents formatting
 
 \setmainfont{Arial}
 
 \definecolor{background}{RGB}{40,40,40}
 \definecolor{textcolor}{RGB}{230,230,230}
 \definecolor{accent}{RGB}{90,90,255}
+
 \pagecolor{background}
 \color{textcolor}
 
@@ -34,13 +40,9 @@
 	showtabs=false,
 	tabsize=2
 }
+
 \lstset{style=mystyle}
 
-% Hyperref for links
-\usepackage[colorlinks=true, allcolors=accent]{hyperref}
-
-% Header/Footer setup for dark theme
-\usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\color{textcolor}VenueSender Codebase Overview}
@@ -50,149 +52,312 @@
 \renewcommand{\headrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \headrulewidth\hfill}}
 \renewcommand{\footrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \footrulewidth\hfill}}
 
-% Other packages
-\usepackage{enumitem}
-\usepackage{microtype}
+% Table of Contents Formatting
+\renewcommand{\cftsecfont}{\small}
+\renewcommand{\cftsecpagefont}{\small}
+\renewcommand{\cftsubsecfont}{\small}
+\renewcommand{\cftsubsecpagefont}{\small}
+\setlength{\cftbeforesecskip}{4pt} % Reduce spacing between sections
+\setlength{\cftbeforetoctitleskip}{4pt} % Reduce spacing before TOC title
+\setlength{\cftaftertoctitleskip}{4pt} % Reduce spacing after TOC title
 
 \title{\color{textcolor}User Guide for VenueSender}
+\author{Created by Spencer Lievens}
+\date{\today}
+
 \begin{document}
 	
-	\author{Created by Spencer Lievens}
-	\date{\today}
-	
 	\maketitle
+	\tableofcontents
+
+	\section{Overview}
 	
-\section{Overview}
+	VenueSender is a specialized tool designed for modern organizers, automating email and template sending to venues. It offers features like venue filtering, email management, and template creation. This guide aims to provide a comprehensive understanding of both the basic and advanced functionalities, including the technicalities of venue selection, email management, and error handling.
+	
+	\section{Getting Started}
+	
+	\subsection{Initial Setup}
+	
+	\textbf{Configuration Files:}
+	
+	\begin{itemize}
+		\item \textbf{venues.csv}: Contains your custom venues database.
+		\item \textbf{venues.db}: Contains the official VenueSender database (encrypted).
+		\item \textbf{config.json}: Holds SMTP settings.
+		\item \textbf{registration\_key}: Your VenueSender registration key.
+	\end{itemize}
+	
+	\textbf{File Paths:}
+	
+	\begin{itemize}
+		\item \texttt{config.json} should be in the same directory as the VenueSender application.
+		\item \texttt{venues.csv} and \texttt{venues.db} should be in a sub-directory named \texttt{db}.
+		\item \texttt{registration\_key.txt} should also be in the same directory as the VenueSender application.
+	\end{itemize}
+	
+	\subsection{Initialization Checks}
+	
+	The program will attempt to read settings from \texttt{config.json}. A message saying "Configuration Loaded" will appear if successful.
+	
+	\subsection{Secure Password Entry}
+	
+	Password Prompt: The program will prompt for your email password securely. Characters will be masked with asterisks (*) for added security.
+	
+	\textbf{Note}: The program checks for Caps Lock and alerts if it is on.
+	
+	\section{Navigating the Color-Coded Menus}
+	
+	The program utilizes a color-coded system for different menu headers to make the user experience more interactive and intuitive. The color codes are as follows:
+	
+	\begin{itemize}
+		\item \textcolor{cyan}{Cyan}: Main headers for major categories like Venue Selection, Venue Options, Email Options, etc.
+		\item \textcolor{blue!30}{Light Blue}: Subcategories within Email Options.
+		\item \textcolor{orange}{Orange}: Special attention items.
+		\item \textcolor{green}{Green}: Confirmations like "Email Saved" or "Template Saved".
+		\item \textcolor{red}{Red}: Error or unknown menu items.
+	\end{itemize}
+	
+	\section{Menu Structure}
+	
+	\begin{itemize}
+		\item \textbf{Main Menu} (\texttt{MainMenuOption}):
+		\begin{itemize}
+			\item Venue Selection
+			\item Venue Options
+			\item Email Options
+			\item Templates
+			\item Configuration
+			\item Exit
+		\end{itemize}
+		
+		\item \textbf{Venue Selection} (\texttt{VenueSelectionOption}):
+		\begin{itemize}
+			\item Select Venues for Emails
+			\item Select Venues for Templates
+			\item Return to Main Menu
+		\end{itemize}
+		
+		\item \textbf{Venue Options} (\texttt{VenueOptions}):
+		\begin{itemize}
+			\item View Selected Venues for Emails
+			\item View Selected Venues for Templates
+			\item Clear Selected Venues for Emails
+			\item Clear Selected Venues for Templates
+			\item Return to Main Menu
+		\end{itemize}
+		
+		\item \textbf{Email Options} (\texttt{EmailOptions}):
+		\begin{itemize}
+			\item Create Email
+			\item View/Edit Emails
+			\item Email Custom Address
+			\item Send Emails
+			\item Return to Main Menu
+		\end{itemize}
+		
+		\item \textbf{Templates} (\texttt{TemplateOptions}):
+		\begin{itemize}
+			\item Create Venue Booking Template
+			\item View/Edit Booking Templates
+			\item Clear Booking Template Attachment
+			\item Add Booking Template Attachment
+			\item Send Booking Templates
+			\item Clear Booking Template
+			\item Return to Main Menu
+		\end{itemize}
+		
+		\item \textbf{Configuration} (\texttt{ConfigurationOptions}):
+		\begin{itemize}
+			\item Show Email Settings
+			\item Edit Email Settings
+			\item Return to Main Menu
+		\end{itemize}
+	\end{itemize}
+	
+	\section{Venue Selection}
+	
+	\subsection{Filters}
+	
+	You can filter venues based on:
+	
+	\begin{itemize}
+		\item Country (e.g., \texttt{USA}, \texttt{France})
+		\item State (e.g., \texttt{AL}, \texttt{Paris Region})
+		\item City (e.g., \texttt{Daphne}, \texttt{Paris})
+		\item Capacity (e.g., \texttt{100}, \texttt{300})
+		\item Genre (e.g., \texttt{Mixed}, \texttt{Rock})
+	\end{itemize}
+	
+	\textbf{Note}: To make multiple selections, use comma-separated indices or type \texttt{ALL} for all options.
+	
+	\subsection{Final Venue Selection}
+	
+	After applying the filters, a final list will be generated. For example, if you filter by country "USA," you may get:
+	
+	\begin{verbatim}
+		Venue1, venue1@mock.com, USA, AL, Daphne, 100, Mixed
+	\end{verbatim}
+	
+	\section{Venue Options}
+	
+	\begin{itemize}
+		\item \textbf{View Selected Venues}: See your selected venues.
+		\item \textbf{Clear Selected Venues}: Remove all selected venues.
+	\end{itemize}
+	
+	\section{Email Options}
+	
+	\subsection{Creating Custom Emails}
+	
+	\begin{itemize}
+		\item \textbf{Enter Custom Email Address}: You will be prompted to enter a custom recipient email address.
+		\item \textbf{Enter Subject}: You can enter a custom subject for the email. Subject length is validated.
+		\item \textbf{Enter Message}: You will be prompted to input the message body. Message length is validated.
+		\item \textbf{Attachment}: You will have the option to add an attachment. Attachment size and path are validated.
+	\end{itemize}
+	
+	\textbf{Note}: If SSL is enabled, peer verification should also be enabled to avoid errors.
+	
+	\subsection{Email Configuration}
+	
+	\begin{itemize}
+		\item \textbf{SMTP Ports}: The system supports both SSL/TLS (Port 465) and default SMTP (Port 587) options.
+	\end{itemize}
+	
+	\subsection{Email Validation}
+	
+	The program uses both standard and Boost regex libraries to validate email addresses and URLs.
+	
+	\subsection{Attachments}
+	
+	\begin{itemize}
+		\item \textbf{Add Attachments}: You can add attachments to your emails, limited to 24 MB.
+	\end{itemize}
+	
+	\subsection{Email Sending Progress}
+	
+	The program will display a progress percentage for each successful email sent. This allows you to keep track of how many emails are left to be sent in the current batch.
+	
+	\subsection{Confirming Email Sending}
+	
+	\begin{itemize}
+		\item \textbf{Confirmation Prompt}: After creating emails or templates, a confirmation prompt will appear to confirm the sending operation.
+		\item \textbf{Abort}: You can abort the sending process anytime by choosing 'N' or 'n' when prompted.
+	\end{itemize}
+	
+	\section{Templates}
+	
+	\subsection{Creating a Booking Template}
+	
+	The system collects data such as genre, performance type, hometown, similar artists, date, and various links like music and live performance videos. Input is validated for mandatory fields and URL formats.
+	
+	\subsection{Booking Templates}
+	
+	\begin{itemize}
+		\item \textbf{Append Fields}: You can optionally append fields like genre, performance type, hometown, and more to your templates.
+	\end{itemize}
+	
+	\subsection{Template Attachments}
+	
+	\begin{itemize}
+		\item \textbf{Add Attachments}: You can add attachments to your templates, limited to 24 MB.
+	\end{itemize}
+	
+	\subsection{Optional Template Fields}
+	
+	The program allows you to optionally append fields like genre, performance type, hometown, and more to your templates. These are automatically filled in for each venue based on the data provided.
+	
+	\subsection{Modifying a Template}
+	
+	You can choose to modify any field of the template even after it has been generated. You'll be presented with a list of all fields that can be modified.
+	
+	\section{Configuration}
+	
+	View and update current email settings like SSL, Peer Verification, Host Verification, and other SMTP configurations.
+	
+	\section{Exiting the Program}
+	
+	To exit, choose the Exit option and confirm your choice.
+	
+	\section{Error Handling}
+	
+	The program employs an \texttt{ErrorHandler} to display appropriate error messages for effective troubleshooting. These error messages are color-coded in red to catch your attention.
+	
+	\subsection{Menu and Selection Errors}
+	
+	\begin{itemize}
+		\item \textbf{Invalid Choice}: If you make an invalid choice in the menu.
+		\item \textbf{Invalid Index}: If you try to access an index that does not exist.
+		\item \textbf{Invalid Index Format}: If the format of the index is wrong.
+		\item \textbf{Invalid Character Input}: If you provide characters other than 'Y/y' or 'N/n'.
+	\end{itemize}
+	
+	\subsection{Email, Attachment, and Template Errors}
+	
+	\begin{itemize}
+		\item \textbf{Invalid Subject Length}: If the email subject exceeds 50 characters.
+		\item \textbf{Message Blank}: If the email message is empty.
+		\item \textbf{Message Length Error}: If the email message exceeds 2000 characters.
+		\item \textbf{Email Send Failure}: If the email fails to send.
+		\item \textbf{Invalid Recipient Email Format}: If the email format of the recipient is incorrect.
+		\item \textbf{Invalid Sender Email Format}: If the email format of the sender is incorrect.
+		\item \textbf{Attachment Errors}: If the attachment size exceeds 24 MB or the file doesn't exist at the specified path.
+		\item \textbf{MIME Initialization Error}: If MIME initialization fails during email sending.
+		\item \textbf{SMTP Connection Error}: If the program couldn't connect to the SMTP server.
+		\item \textbf{SMTP Authentication Error}: If the SMTP server denies login due to authentication issues.
+	\end{itemize}
+	
+	\subsection{System Errors}
+	
+	\begin{itemize}
+		\item \textbf{OpenSSL Initialization}: If OpenSSL fails to initialize.
+		\item \textbf{SMTP Errors}: Various errors related to SMTP like connection failure, authentication failure, etc.
+		\item \textbf{SSL Errors}: If SSL verification fails.
+	\end{itemize}
+	
+	\section{Technical Details}
+	
+	\begin{itemize}
+		\item The program is cross-platform and works on Linux, macOS, and Windows.
+		\item Uses AES-256-CBC for encryption.
+		\item Can read venue data from either a CSV file or an encrypted SQLite database.
+		\item Uses Boost libraries for various utility functions.
+	\end{itemize}
+	
+	\section{Progress and Status Display}
+	
+	\begin{itemize}
+		\item \textbf{Email Details}: Before sending the email, the system displays all the details like sender, recipient, subject, and attachments.
+		\item \textbf{Sending Progress}: The system displays real-time progress of the emails sent.
+		\item \textbf{Completion Status}: At the end, a summary will be displayed showing the number of successfully sent emails.
+	\end{itemize}
 
-VenueSender is a powerful tool designed to automate the sending of emails and templates to venues. 
-It allows you to filter venues based on various criteria, manage emails, create and send booking templates, 
-and much more. This enhanced user guide will provide a more in-depth explanation, including details on venue 
-selection based on filters.
+	\section{Conclusion}
 
-\section{Getting Started}
-
-\subsection{Initial Setup}
-
-\begin{enumerate}
-	\item \textbf{Configuration Files}: Make sure \texttt{venues.csv} for the venue data is available and \texttt{config.json} for SMTP settings has the fields set and is available.
-	\item \textbf{Execution}: Run the VenueSender application.
-\end{enumerate}
-
-\subsection{Initialization Checks}
-
-\begin{itemize}
-	\item \textbf{Configuration Loading}: The application will attempt to load settings from \texttt{config.json}. If successful, a message "Configuration Loaded" will appear.
-\end{itemize}
-
-\subsection{Secure Password Entry}
-
-\begin{itemize}
-	\item \textbf{Password Prompt}: You'll be asked to enter your email password securely. As you type, asterisks (*) will appear in place of the characters for added security.
-\end{itemize}
-
-\section{Main Menu}
-
-Once the application is initialized, you are presented with the Main Menu, which provides the following options:
-
-\begin{enumerate}
-	\item \textbf{Venue Selection}: Allows you to filter and select venues.
-	\item \textbf{Venue Options}: View or clear selected venues.
-	\item \textbf{Email Options}: Create, view, edit, and send emails.
-	\item \textbf{Templates}: Create, view, edit, and send email templates.
-	\item \textbf{Configuration}: View email settings.
-	\item \textbf{Exit}: Exit the application.
-\end{enumerate}
-
-\section{Venue Selection}
-
-In this menu, you can:
-
-\begin{enumerate}
-	\item \textbf{Select Venues}: Filter and select venues based on different criteria like country, state, city, capacity, and genre.
-	\item \textbf{Return to Main Menu}: Navigate back to the Main Menu.
-\end{enumerate}
-
-\subsection{Filters}
-
-You can filter venues based on several criteria. This is a step-by-step selection process where you can fine-tune the list of venues. The filters include:
-
-\begin{itemize}
-	\item Country: The program will list all countries present in the venue data. You can select one.
-	\item State: After choosing a country, you can select a state.
-	\item City: Further narrow down by selecting a city.
-	\item Capacity: Choose from venue capacity numbers.
-	\item Genre: Select the genre appropriate for your event.
-\end{itemize}
-
-\textbf{Note}: Use comma-separated indices for multiple selections or type \texttt{ALL} for all options.
-
-\subsection{Final Venue Selection}
-
-\begin{itemize}
-	\item \textbf{Final List}: The application will display a filtered list of venues for your final selection.
-\end{itemize}
-
-\textbf{Note}: Use comma-separated indices for multiple selections or type \texttt{ALL} for all options.
-
-\section{Venue Options}
-
-Here you can:
-
-\begin{enumerate}
-	\item \textbf{View Selected Venues}: List all venues you have currently selected.
-	\item \textbf{Clear Selected Venues}: Remove all venues from the selected list.
-	\item \textbf{Return to Main Menu}: Navigate back to the Main Menu.
-\end{enumerate}
-
-\section{Email Options}
-
-This menu allows you to:
-
-\begin{enumerate}
-	\item \textbf{Create Email}: Construct an email with subject, message, and attachment details.
-	\item \textbf{View \& Edit Emails}: List and edit saved emails.
-	\item \textbf{Email Custom Address}: Send an email to a custom email address.
-	\item \textbf{Send Emails}: Confirm and send the emails to selected venues.
-	\item \textbf{Return to Main Menu}: Navigate back to the Main Menu.
-\end{enumerate}
-
-\section{Templates}
-
-In the Templates menu, you can:
-
-\begin{enumerate}
-	\item \textbf{Create Venue Booking Template}: Create a new booking template for venue booking.
-	\item \textbf{View \& Edit Booking Templates}: Review and edit existing booking templates.
-	\item \textbf{Clear Booking Template}: Remove existing booking templates.
-	\item \textbf{Send Booking Templates}: Confirm and send the booking templates to selected venues.
-	\item \textbf{Return to Main Menu}: Navigate back to the Main Menu.
-\end{enumerate}
-
-\section{Configuration}
-
-\begin{itemize}
-	\item This option allows you to view the current email settings like SSL, Peer Verification, Host Verification, and other SMTP configurations.
-\end{itemize}
-
-\section{Exiting the Program}
-
-\begin{itemize}
-	\item To exit the program, choose the \textbf{Exit} option in the Main Menu. You'll be prompted to confirm your choice. Select 'Y' to confirm and 'N' to cancel.
-\end{itemize}
-
-\section{Error Handling}
-
-\begin{itemize}
-	\item For any issues encountered, the ErrorHandler will display a corresponding error message, helping you troubleshoot effectively.
-\end{itemize}
-
-\section{Conclusion}
-
-\begin{itemize}
-\item VenueSender offers a comprehensive and robust way to manage and automate your venue bookings and interactions. With its user-friendly interface and robust back-end, it makes the whole process hassle-free and efficient.
-
-For any errors encountered during usage, the ErrorHandler module will provide appropriate feedback, allowing you to troubleshoot effectively.
-
-\textbf{Happy Booking!}
-\end{itemize}
+	VenueSender offers a comprehensive solution for managing and automating your venue bookings. For any errors encountered, the \texttt{ErrorHandler} module will assist you.
+	
+	\section{FAQ}
+	
+	\textbf{Q1: How do I obtain a VenueSender registration key?}
+	
+	A1: To obtain a registration key, please contact VenueSender support.
+	
+	\textbf{Q2: How can I troubleshoot SMTP-related issues?}
+	
+	A2: Check the SMTP server settings in \texttt{config.json}, ensure SSL/TLS is configured correctly, and verify your credentials.
+	
+	\textbf{Q3: Can I send emails with large attachments?}
+	
+	A3: Yes, you can send attachments up to 24 MB in size.
+	
+	\textbf{Q4: What should I do if I encounter SSL verification errors?}
+	
+	A4: Ensure that SSL settings in \texttt{config.json} are correctly configured and that your system has necessary SSL libraries installed.
+	
+	\textbf{Q5: How can I modify an existing template?}
+	
+	A5: You can modify a template by selecting the "Modifying a Template" option in the Templates menu.
+	
+	Happy Booking!
+	
 \end{document}
