@@ -324,6 +324,9 @@ void ErrorHandler::handleErrorAndThrow(ErrorType error, const string& extraInfo)
 
 
         // System Errors
+        case ErrorType::X11_DISPLAY_ERROR:
+            cerr << "ERROR: Failed to open X11 display." << endl;
+            break;
         case ErrorType::FILESYSTEM_ERROR:
             errorMessage = boost::str(boost::format("ERROR: Filesystem error: %s") % extraInfo);
             break;
