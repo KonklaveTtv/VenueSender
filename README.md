@@ -36,7 +36,7 @@ Run the following commands to install the first lot of dependencies:
       sudo apt-get update
       sudo apt-get install make cmake autogen libtool shtool pkg-config xutils-dev g++ libx11-dev libssl-dev libsqlite3-dev libboost-all-dev
 
-Curl v8.2.1 when installing from source must be ran like this:
+Curl v8.2.1 when installing from source must be run like this:
 
       wget https://github.com/curl/curl/releases/download/curl-8_2_1/curl-8.2.1.tar.gz
       tar -xvf curl-8.2.1.tar.gz
