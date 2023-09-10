@@ -207,6 +207,20 @@ void VenueFilter::clearTemporaryFilteredVenuesVectorsForTemplates() {
     temporaryFilteredVenuesBufferForTemplates.clear();
 }
 
+std::string displayFilterType(const std::string& filterType) {
+    if (filterType == "state") {
+        return "states";
+    } else if (filterType == "city") {
+        return "cities";
+    } else if (filterType == "genre") {
+        return "genres";
+    } else if (filterType == "capacity") {
+        return "capacities";
+    } else {
+        return filterType;  // Default case, no change.
+    }
+}
+
 // Function to process venue selection based on user input
 void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& venuesForEmails,
                                         vector<SelectedVenueForEmails>& selectedVenuesForEmails,
@@ -303,7 +317,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 
         auto uniqueOptionsVariantForEmails = venueUtilities.getUniqueOptionsForEmails(convertedVenuesForEmails, filterType);
 
-        output << "Available " << filterType << "s: " << endl;
+        output << "Available " << displayFilterType(filterType) << ": " << endl;
         size_t localIndex = INDICES_START_AT_ONE;
         vector<int> localCapacityVector;
 
@@ -570,7 +584,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 
         auto uniqueOptionsVariantForTemplates = venueUtilities.getUniqueOptionsForTemplates(convertedVenuesForTemplates, filterType);
 
-        output << "Available " << filterType << "s: " << endl;
+        output << "Available " << displayFilterType(filterType) << ": " << endl;
         size_t localIndex = INDICES_START_AT_ONE;
         vector<int> localCapacityVector;
 
