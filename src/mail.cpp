@@ -50,7 +50,7 @@ bool EmailManager::isValidEmail(const string& email) {
 // Example function to validate a URL
 bool EmailManager::isValidURL(const std::string& url) {
     // Simple regex pattern for URL validation, you can make it more comprehensive
-    boost::regex urlPattern("https?://[\\w\\.-]+");
+    static const boost::regex urlPattern("https?://[\\w\\.-]+");
     return boost::regex_match(url, urlPattern);
 }
 
@@ -870,7 +870,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
     }
-
+    
     if (!ErrorHandler::handleCurlError(res)) {
         if (res == CURLE_COULDNT_CONNECT) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
