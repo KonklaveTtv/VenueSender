@@ -2,6 +2,7 @@
 
 #include "mail.h" // Forward declaration
 
+// Use the standard namespace
 using namespace std;
 
 bool MenuManager::navigateMenus(EmailManager& emailManager, 

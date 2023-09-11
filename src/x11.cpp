@@ -1,5 +1,8 @@
 #include "x11.h"
 
+// Use the standard namespace
+using namespace std;
+
 // Define constants for better readability
 const unsigned CAPS_MASK = 0x01;
 
@@ -64,13 +67,13 @@ bool X11Singleton::isCapsLockOn() {
         } else {
             isOn = CFBooleanGetValue((CFBooleanRef)state);
         }
-    } catch (const std::exception& e) {
+    } catch (const exception& e) {
         // Log or print the exception's what() message, or do something else
-        std::cerr << "Caught exception: " << e.what() << std::endl;
+        cerr << "Caught exception: " << e.what() << endl;
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR, e.what());
     } catch (...) {
         // Catch-all for other exceptions
-        std::cerr << "Caught an unknown exception" << std::endl;
+        cerr << "Caught an unknown exception" << endl;
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::UNKNOWN_ERROR);
     }
     

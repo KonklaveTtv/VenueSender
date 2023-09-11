@@ -1,6 +1,6 @@
 #include "include/mail.h"
 
-// Use the standard namespace and alias for filesystem
+// Use the standard namespace
 using namespace std;
 
 // Global progress counters
@@ -14,8 +14,8 @@ int totalCustomEmails;
 int totalTemplateEmails;
 
 // Global definition to store emails sent to this session
-std::unordered_set<std::string> EmailManager::sentEmailAddressesForEmails;
-std::unordered_set<std::string> EmailManager::sentEmailAddressesForTemplates;
+unordered_set<string> EmailManager::sentEmailAddressesForEmails;
+unordered_set<string> EmailManager::sentEmailAddressesForTemplates;
 
 // Function to display current email settings
 void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
@@ -48,7 +48,7 @@ bool EmailManager::isValidEmail(const string& email) {
 }
 
 // Example function to validate a URL
-bool EmailManager::isValidURL(const std::string& url) {
+bool EmailManager::isValidURL(const string& url) {
     // Simple regex pattern for URL validation, you can make it more comprehensive
     static const boost::regex urlPattern("https?://[\\w\\.-]+");
     return boost::regex_match(url, urlPattern);
@@ -191,7 +191,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                     size_t fileSize = boost::filesystem::file_size(attachmentPath);
-                    std::string sizeUnit = " bytes";
+                    string sizeUnit = " bytes";
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
                     if (fileSize >= 1000) {
@@ -205,7 +205,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                         }
                     }
 
-                    attachmentSize = std::to_string(fileSize) + sizeUnit;
+                    attachmentSize = to_string(fileSize) + sizeUnit;
                     cout << "File Size: " << fileSize << sizeUnit << endl;
 
 #ifndef UNIT_TESTING
@@ -823,33 +823,33 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
         
         // Variable to capture user's decision
-        std::string clearVenuesDecision;
+        string clearVenuesDecision;
 
         // Loop to ask for valid input
         while (true) {
             // Ask the user if they wish to clear the selected venues
-            std::cout << "Do you wish to clear the selected venues now you have emailed them? (Y/N): ";
+            cout << "Do you wish to clear the selected venues now you have emailed them? (Y/N): ";
     #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     #endif
-            std::cin >> clearVenuesDecision;
+            cin >> clearVenuesDecision;
     #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset to default color
     #endif
             ConsoleUtils::clearInputBuffer();
 
             // Remove any quotes and trim spaces
-            clearVenuesDecision.erase(std::remove(clearVenuesDecision.begin(), clearVenuesDecision.end(), '\''), clearVenuesDecision.end());
+            clearVenuesDecision.erase(remove(clearVenuesDecision.begin(), clearVenuesDecision.end(), '\''), clearVenuesDecision.end());
             clearVenuesDecision = ConsoleUtils::trim(clearVenuesDecision);
 
             // ANSI escape code check
-            if (clearVenuesDecision.find("\033") != std::string::npos) {
+            if (clearVenuesDecision.find("\033") != string::npos) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
                 continue;
             }
 
             // Whitespace check (full whitespace)
-            if (std::all_of(clearVenuesDecision.begin(), clearVenuesDecision.end(), ::isspace)) {
+            if (all_of(clearVenuesDecision.begin(), clearVenuesDecision.end(), ::isspace)) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
                 continue;
             }
@@ -1054,7 +1054,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 }
 
 // Helper function to conditionally append a line to the message
-void EmailManager::appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) {
+void EmailManager::appendIfNotEmpty(ostringstream& os, const string& label, const string& value) {
     if (!value.empty()) {
         os << label << ": " << value << "\n";
     }
@@ -1075,7 +1075,7 @@ void EmailManager::constructBookingTemplateMessage(const SelectedVenueForTemplat
                                                    vector<string>& quoteSources, 
                                                    string& socials, 
                                                    string& name) {
-    std::ostringstream os;
+    ostringstream os;
     string subject = "Booking Inquiry for " + venueForTemplates.name;
 
     os << "Hi!\n\n"
@@ -1326,7 +1326,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                     size_t fileSize = boost::filesystem::file_size(templateAttachmentPath);
-                    std::string sizeUnit = " bytes";
+                    string sizeUnit = " bytes";
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
                     if (fileSize >= 1000) {
@@ -1340,7 +1340,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                         }
                     }
 
-                    templateAttachmentSize = std::to_string(fileSize) + sizeUnit;
+                    templateAttachmentSize = to_string(fileSize) + sizeUnit;
                     cout << "File Size: " << fileSize << sizeUnit << endl;
 
 #ifndef UNIT_TESTING
@@ -1800,7 +1800,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                     size_t fileSize = boost::filesystem::file_size(customAddressAttachmentPath);
-                    std::string sizeUnit = " bytes";
+                    string sizeUnit = " bytes";
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
                     if (fileSize >= 1000) {
@@ -1814,7 +1814,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                         }
                     }
 
-                    customAddressAttachmentSize = std::to_string(fileSize) + sizeUnit;
+                    customAddressAttachmentSize = to_string(fileSize) + sizeUnit;
                     cout << "File Size: " << fileSize << sizeUnit << endl;
 
 #ifndef UNIT_TESTING
@@ -2315,7 +2315,7 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                     size_t fileSize = boost::filesystem::file_size(templateAttachmentPath);
-                    std::string sizeUnit = " bytes";
+                    string sizeUnit = " bytes";
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
                     if (fileSize >= 1000) {
@@ -2329,7 +2329,7 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
                         }
                     }
 
-                    templateAttachmentSize = std::to_string(fileSize) + sizeUnit;
+                    templateAttachmentSize = to_string(fileSize) + sizeUnit;
                     cout << "File Size: " << fileSize << sizeUnit << endl;
 
 #ifndef UNIT_TESTING

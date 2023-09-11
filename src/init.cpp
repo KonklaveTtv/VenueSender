@@ -1,5 +1,6 @@
 #include "include/init.h"
 
+// Use the standard namespace and confPaths
 using namespace confPaths;
 using namespace std;
 

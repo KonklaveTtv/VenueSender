@@ -1,6 +1,6 @@
 #include "include/main.h"
 
-// Use relevant namespaces
+// Use the standard namespace
 using namespace std;
 
 // Global objects to be used across different parts of the code

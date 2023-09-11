@@ -454,7 +454,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmai
     }
 
     // Try to read from CSV first
-    std::ifstream csvFile(venuesCsvPath);
+    ifstream csvFile(venuesCsvPath);
     if (csvFile.is_open()) {
         readFromCsv(venuesForEmails, venuesForTemplates, csvFile);
         csvFile.close();
@@ -468,7 +468,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmai
     // Fallback to SQLite if reading from CSV fails
     if (!success) {
         // Decrypt the SQLite database and store it in memory
-        std::vector<unsigned char> decryptedData;
+        vector<unsigned char> decryptedData;
         bool decryptionSuccess = decryptSQLiteDatabase(confPaths::sqliteEncryptedDatabasePath, decryptedData);
         if (!decryptionSuccess) {
             ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DATABASE_DECRYPTION_ERROR);
@@ -484,7 +484,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmai
 
         // Use boost::scoped_array for memory management
         boost::scoped_array<unsigned char> sqliteBuffer(new unsigned char[decryptedData.size()]);
-        std::copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer.get());
+        copy(decryptedData.begin(), decryptedData.end(), sqliteBuffer.get());
 
         // Load the copied data into the in-memory SQLite database
         if (sqlite3_deserialize(db, "main", sqliteBuffer.get(), decryptedData.size(), decryptedData.size(),

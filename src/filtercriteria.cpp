@@ -207,7 +207,7 @@ void VenueFilter::clearTemporaryFilteredVenuesVectorsForTemplates() {
     temporaryFilteredVenuesBufferForTemplates.clear();
 }
 
-std::string displayFilterType(const std::string& filterType) {
+string displayFilterType(const string& filterType) {
     if (filterType == "state") {
         return "states";
     } else if (filterType == "city") {
@@ -465,7 +465,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
                 return;
             }
             // Check if the venue is already selected
-            auto it = std::find_if(selectedVenuesForEmails.begin(), selectedVenuesForEmails.end(), 
+            auto it = find_if(selectedVenuesForEmails.begin(), selectedVenuesForEmails.end(), 
                 [this, finalIndex](const SelectedVenueForEmails& venueForEmails) {
                     return venueForEmails.name == this->temporaryFilteredVenuesForEmails[finalIndex - 1].name && 
                            venueForEmails.state == this->temporaryFilteredVenuesForEmails[finalIndex - 1].state &&
@@ -732,7 +732,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
                 return;
             }
             // Check if the venue is already selected
-            auto it = std::find_if(selectedVenuesForTemplates.begin(), selectedVenuesForTemplates.end(), 
+            auto it = find_if(selectedVenuesForTemplates.begin(), selectedVenuesForTemplates.end(), 
                 [this, finalIndex](const SelectedVenueForTemplates& venueForTemplates) {
                     return venueForTemplates.name == this->temporaryFilteredVenuesForTemplates[finalIndex - 1].name && 
                            venueForTemplates.state == this->temporaryFilteredVenuesForTemplates[finalIndex - 1].state &&

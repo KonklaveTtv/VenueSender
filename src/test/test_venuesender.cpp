@@ -6,6 +6,7 @@
 
 #include "catch.hpp"
 
+// Use the standard namespace
 using namespace std;
 
 class CinGuard {
@@ -430,8 +431,8 @@ TEST_CASE("processVenueSelectionForEmails functionality", "[VenueFilter]") {
             VenueForEmails{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
         };    
         vector<SelectedVenueForEmails> selectedVenuesForEmails;
-        std::istringstream input("1\n1\n1\n1\n1\n1\n"); // Mock selecting the first country
-        std::ostringstream output;
+        istringstream input("1\n1\n1\n1\n1\n1\n"); // Mock selecting the first country
+        ostringstream output;
         VenueFilter venueFilter;
 
         venueFilter.processVenueSelectionForEmails(venuesForEmails, selectedVenuesForEmails, input, output);
@@ -441,9 +442,9 @@ TEST_CASE("processVenueSelectionForEmails functionality", "[VenueFilter]") {
     }
 
     SECTION("Handles invalid input") {
-        // Redirect std::cerr to capture error messages
-        std::ostringstream err_output;
-        auto old_err = std::cerr.rdbuf(err_output.rdbuf());
+        // Redirect cerr to capture error messages
+        ostringstream err_output;
+        auto old_err = cerr.rdbuf(err_output.rdbuf());
 
         // Set up mock data and expected results
         vector<VenueForEmails> venuesForEmails = {
@@ -451,16 +452,16 @@ TEST_CASE("processVenueSelectionForEmails functionality", "[VenueFilter]") {
             VenueForEmails{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
         };    
         vector<SelectedVenueForEmails> selectedVenuesForEmails;
-        std::istringstream input("4\n");  // Mock invalid input
-        std::ostringstream output;
+        istringstream input("4\n");  // Mock invalid input
+        ostringstream output;
         VenueFilter venueFilter;
 
         venueFilter.processVenueSelectionForEmails(venuesForEmails, selectedVenuesForEmails, input, output);
 
-        // Restore old std::cerr buffer
-        std::cerr.rdbuf(old_err);
+        // Restore old cerr buffer
+        cerr.rdbuf(old_err);
         
-        REQUIRE(err_output.str().find("Invalid index:") != std::string::npos);
+        REQUIRE(err_output.str().find("Invalid index:") != string::npos);
     }
 
     SECTION("Proper final venue selection") {
@@ -470,8 +471,8 @@ TEST_CASE("processVenueSelectionForEmails functionality", "[VenueFilter]") {
             VenueForEmails{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
         };    
         vector<SelectedVenueForEmails> selectedVenuesForEmails;
-        std::istringstream input("1\n1\n1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
-        std::ostringstream output;
+        istringstream input("1\n1\n1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
+        ostringstream output;
         VenueFilter venueFilter;
 
         venueFilter.processVenueSelectionForEmails(venuesForEmails, selectedVenuesForEmails, input, output);
@@ -491,8 +492,8 @@ TEST_CASE("processVenueSelectionForTemplates functionality", "[VenueFilter]") {
             VenueForTemplates{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
         };    
         vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
-        std::istringstream input("1\n1\n1\n1\n1\n1\n"); // Mock selecting the first country
-        std::ostringstream output;
+        istringstream input("1\n1\n1\n1\n1\n1\n"); // Mock selecting the first country
+        ostringstream output;
         VenueFilter venueFilter;
 
         venueFilter.processVenueSelectionForTemplates(venuesForTemplates, selectedVenuesForTemplates, input, output);
@@ -502,9 +503,9 @@ TEST_CASE("processVenueSelectionForTemplates functionality", "[VenueFilter]") {
     }
 
     SECTION("Handles invalid input") {
-        // Redirect std::cerr to capture error messages
-        std::ostringstream err_output;
-        auto old_err = std::cerr.rdbuf(err_output.rdbuf());
+        // Redirect cerr to capture error messages
+        ostringstream err_output;
+        auto old_err = cerr.rdbuf(err_output.rdbuf());
 
         // Set up mock data and expected results
         vector<VenueForTemplates> venuesForTemplates = {
@@ -512,16 +513,16 @@ TEST_CASE("processVenueSelectionForTemplates functionality", "[VenueFilter]") {
             VenueForTemplates{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
         };    
         vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
-        std::istringstream input("4\n");  // Mock invalid input
-        std::ostringstream output;
+        istringstream input("4\n");  // Mock invalid input
+        ostringstream output;
         VenueFilter venueFilter;
 
         venueFilter.processVenueSelectionForTemplates(venuesForTemplates, selectedVenuesForTemplates, input, output);
 
-        // Restore old std::cerr buffer
-        std::cerr.rdbuf(old_err);
+        // Restore old cerr buffer
+        cerr.rdbuf(old_err);
         
-        REQUIRE(err_output.str().find("Invalid index:") != std::string::npos);
+        REQUIRE(err_output.str().find("Invalid index:") != string::npos);
     }
 
     SECTION("Proper final venue selection") {
@@ -531,8 +532,8 @@ TEST_CASE("processVenueSelectionForTemplates functionality", "[VenueFilter]") {
             VenueForTemplates{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
         };    
         vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
-        std::istringstream input("1\n1\n1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
-        std::ostringstream output;
+        istringstream input("1\n1\n1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
+        ostringstream output;
         VenueFilter venueFilter;
 
         venueFilter.processVenueSelectionForTemplates(venuesForTemplates, selectedVenuesForTemplates, input, output);
