@@ -209,13 +209,13 @@ void VenueFilter::clearTemporaryFilteredVenuesVectorsForTemplates() {
 
 string displayFilterType(const string& filterType) {
     if (filterType == "state") {
-        return "states";
+        return "States";
     } else if (filterType == "city") {
-        return "cities";
+        return "Cities";
     } else if (filterType == "genre") {
-        return "genres";
+        return "Genres";
     } else if (filterType == "capacity") {
-        return "capacities";
+        return "Capacities";
     } else {
         return filterType;  // Default case, no change.
     }
