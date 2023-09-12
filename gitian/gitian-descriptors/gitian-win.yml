@@ -6,7 +6,7 @@ sshkeys:
 remotes:
   - url: "git@github.com:KonklaveTtv/VenueSender.git"
     branch: "main"
-    commit: "60d800d3ddc880e7c3216f8c32cbb6ad038d8ee8"
+    commit: "bc64f13c0f1bb180f8bedfd44e557d559c6a68f5"
 suites:
   - "lunar"
 architectures:
