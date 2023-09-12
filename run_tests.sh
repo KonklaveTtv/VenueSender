@@ -4,4 +4,4 @@
 make -f Makefile.static test
 
 # Run the tests with detailed output and save it to a text file
-./bin/venuesender_test -s > test_results.txt
+./bin/VenueSender_test -s > test_results.txt && make -f Makefile.static clean
