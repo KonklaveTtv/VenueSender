@@ -194,13 +194,13 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                     string sizeUnit = " bytes";
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
-                    if (fileSize >= 1000) {
-                        fileSize /= 1000;
+                    if (fileSize >= KIBIBYTES) {
+                        fileSize /= KIBIBYTES;
                         sizeUnit = " KB";
 
                         // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
-                        if (fileSize >= 1000) {
-                            fileSize /= 1000;
+                        if (fileSize >= KIBIBYTES) {
+                            fileSize /= KIBIBYTES;
                             sizeUnit = " MB";
                         }
                     }
@@ -1329,13 +1329,13 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     string sizeUnit = " bytes";
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
-                    if (fileSize >= 1000) {
-                        fileSize /= 1000;
+                    if (fileSize >= KIBIBYTES) {
+                        fileSize /= KIBIBYTES;
                         sizeUnit = " KB";
 
                         // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
-                        if (fileSize >= 1000) {
-                            fileSize /= 1000;
+                        if (fileSize >= KIBIBYTES) {
+                            fileSize /= KIBIBYTES;
                             sizeUnit = " MB";
                         }
                     }
@@ -1803,13 +1803,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
                     string sizeUnit = " bytes";
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
-                    if (fileSize >= 1000) {
-                        fileSize /= 1000;
+                    if (fileSize >= KIBIBYTES) {
+                        fileSize /= KIBIBYTES;
                         sizeUnit = " KB";
 
                         // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
-                        if (fileSize >= 1000) {
-                            fileSize /= 1000;
+                        if (fileSize >= KIBIBYTES) {
+                            fileSize /= KIBIBYTES;
                             sizeUnit = " MB";
                         }
                     }
@@ -2318,13 +2318,13 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
                     string sizeUnit = " bytes";
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
-                    if (fileSize >= 1000) {
-                        fileSize /= 1000;
+                    if (fileSize >= KIBIBYTES) {
+                        fileSize /= KIBIBYTES;
                         sizeUnit = " KB";
 
                         // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
-                        if (fileSize >= 1000) {
-                            fileSize /= 1000;
+                        if (fileSize >= KIBIBYTES) {
+                            fileSize /= KIBIBYTES;
                             sizeUnit = " MB";
                         }
                     }

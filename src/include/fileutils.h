@@ -78,6 +78,9 @@ namespace confPaths {
     extern std::string registrationKeyPath;
 }
 
+// Constant for calculating attachment size
+constexpr int KIBIBYTES = 976.563;
+
 // Class for utility functions related to the console
 class ConsoleUtils {
 public:
