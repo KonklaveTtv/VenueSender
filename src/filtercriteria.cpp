@@ -372,7 +372,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             while (getline(iss, indexStr, CSV_DELIMITER)) {
                 try {
                     size_t selectedIndex = stoul(indexStr);
-                    if (selectedIndex == 0 || selectedIndex > localIndex - 1) {
+                    if (selectedIndex == 0 || selectedIndex > localIndex - SQLITE_TABLE_INDEX) {
                         input.ignore(numeric_limits<streamsize>::max(), '\n');
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                         return;
@@ -639,7 +639,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             while (getline(iss, indexStr, CSV_DELIMITER)) {
                 try {
                     size_t selectedIndex = stoul(indexStr);
-                    if (selectedIndex == 0 || selectedIndex > localIndex - 1) {
+                    if (selectedIndex == 0 || selectedIndex > localIndex - SQLITE_TABLE_INDEX) {
                         input.ignore(numeric_limits<streamsize>::max(), '\n');
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
                         return;

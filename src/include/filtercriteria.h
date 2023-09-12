@@ -90,6 +90,8 @@ private:
     // Min length for venue selection indices input
     static constexpr std::string::size_type MIN_INPUT_LENGTH = 0;
    
+    static constexpr int SQLITE_TABLE_INDEX = 1;
+
     // Delimiter used in CSV files
     static constexpr char CSV_DELIMITER = ','; // Delimiter used in CSV files
 
