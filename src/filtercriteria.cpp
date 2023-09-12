@@ -354,7 +354,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             return;
         }
 
-        if (inputIndices == "all") {
+        if (inputIndices == "all" || inputIndices == "ALL") {
             // User selected all options, no need to filter
             temporaryFilteredVenuesBufferForEmails = temporaryFilteredVenuesForEmails;
         } else {
@@ -441,7 +441,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
         return;
     }
         
-    if (finalIndices == "all") {
+    if (finalIndices == "all" || finalIndices == "ALL") {
         selectedVenuesForEmails = temporaryFilteredVenuesForEmails;
         } else {
         istringstream finalIss(finalIndices);
@@ -621,7 +621,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
             return;
         }
 
-        if (inputIndices == "all") {
+        if (inputIndices == "all" || inputIndices == "ALL") {
             // User selected all options, no need to filter
             temporaryFilteredVenuesBufferForTemplates = temporaryFilteredVenuesForTemplates;
         } else {
@@ -708,7 +708,7 @@ ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
         return;
     }
         
-    if (finalIndices == "all") {
+    if (finalIndices == "all" || finalIndices == "ALL") {
         selectedVenuesForTemplates = temporaryFilteredVenuesForTemplates;
         } else {
         istringstream finalIss(finalIndices);

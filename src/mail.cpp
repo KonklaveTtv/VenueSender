@@ -623,7 +623,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                         // If user chooses not to send, the template and subjects stay in the map
                         templateExists = true;
                     } else {
-                        cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
                         // Here you can decide what to do in case of invalid input.
                         // For example, you might want to display the menu again or exit the function.
                     }
@@ -636,7 +636,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                                                         pressQuotes, quoteSources, socials, name);
                     }
                 } else {
-                    cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
                     continue;
                 }
             }
@@ -665,10 +665,10 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 // If user chooses not to send, the template and subjects stay in the map
                 templateExists = true;
             } else {
-                cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
             }
         } else {
-            cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
             continue;
         }
     }
@@ -1593,14 +1593,14 @@ while (modifyTemplate) {
                         // If user chooses not to send, the template and subjects stay in the map
                         templateExists = true;
                     } else {
-                        cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
                         // Here you can decide what to do in case of invalid input.
                         // For example, you might want to display the menu again or exit the function.
                     }
                 } else if (satisfiedChoice == 'N' || satisfiedChoice == 'n') {
                     continue;  // Continue modifying the template if the user is not satisfied
                 } else {
-                    cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+                    ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
                     continue;
                 }
             }            
@@ -1629,10 +1629,10 @@ while (modifyTemplate) {
             // If user chooses not to send, the template and subjects stay in the map
             templateExists = true;
         } else {
-            cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+            ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
         }
     } else {
-        cout << "Invalid input. Please enter 'Y' for yes or 'N' for no." << endl;
+        ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
         continue;
         }
     }
