@@ -435,6 +435,44 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::resetColor();
 #endif      
         break;
+        case MessageType::CLEAR_EMAILS_CONFIRMATION_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Do you wish to clear the selected venues now you have emailed them? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+
+        // Template Messages
+        case MessageType::ENTER_PRESS_QUOTE_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Enter Press Quote (press Enter on a new line to finish): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::ENTER_QUOTE_SOURCE_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Enter Quote Source (press Enter on a new line to finish): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::ADD_ANOTHER_QUOTE_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Would you like to add another quote? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;        
     // end of orange messages
 
 

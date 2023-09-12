@@ -52,6 +52,7 @@ public:
             // Email Menu
             EMAIL_SAVED_MENU_HEADER,
             TEMPLATE_SAVED_MENU_HEADER,
+            GREEN_BORDER
     };
 
     static void displayMenuTitle(MenuTitleType menutitle);

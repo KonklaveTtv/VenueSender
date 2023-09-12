@@ -489,7 +489,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif                        
-                        cout << "Enter Press Quote (press Enter on a new line to finish): ";
+                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_PRESS_QUOTE_MESSAGE);
                         getline(cin, singlePressQuote);
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
@@ -498,7 +498,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-                        cout << "Enter Quote Source (press Enter on a new line to finish): ";
+                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_QUOTE_SOURCE_MESSAGE);
                         getline(cin, singleQuoteSource);
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
@@ -511,7 +511,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif            
-                        cout << "Would you like to add another quote? (Y/N): ";
+                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
                         cin >> addMore;
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
@@ -796,7 +796,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-        cout << "===========================" << endl;
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::GREEN_BORDER);
         cout << "      Progress: " << progressPercentage << "%" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
@@ -828,7 +828,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         // Loop to ask for valid input
         while (true) {
             // Ask the user if they wish to clear the selected venues
-            cout << "Do you wish to clear the selected venues now you have emailed them? (Y/N): ";
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CLEAR_EMAILS_CONFIRMATION_MESSAGE);
     #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     #endif
@@ -1005,7 +1005,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif      
-            cout << "===========================" << endl;
+            MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::GREEN_BORDER);
             cout << "      Progress: " << progressPercentage << "%" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
@@ -1232,7 +1232,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-            cout << "Would you like to add another quote? (Y/N): ";
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
             cin >> addMoreQuotes;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
@@ -1459,7 +1459,7 @@ while (modifyTemplate) {
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif                        
-                        cout << "Enter Press Quote (press Enter on a new line to finish): ";
+                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_PRESS_QUOTE_MESSAGE);
                         getline(cin, singlePressQuote);
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
@@ -1468,7 +1468,7 @@ while (modifyTemplate) {
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-                        cout << "Enter Quote Source (press Enter on a new line to finish): ";
+                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_QUOTE_SOURCE_MESSAGE);
                         getline(cin, singleQuoteSource);
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
@@ -1481,7 +1481,7 @@ while (modifyTemplate) {
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif            
-                        cout << "Would you like to add another quote? (Y/N): ";
+                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
                         cin >> addMore;
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
@@ -2013,7 +2013,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
         #endif
-                cout << "===========================" << endl;
+                MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::GREEN_BORDER);
                 cout << "      Progress: " << progressPercentage << "%" << endl;
         #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
@@ -2150,10 +2150,10 @@ void EmailManager::confirmSendEmail(CURL* curl,
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-    cout << "==========================="<< endl;
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::GREEN_BORDER);
     cout << "  Email Sending Completed  "<< endl;
     cout << " Sent: " << sendCount << "/"<< selectedVenuesForEmail.size() << endl;
-    cout << "==========================="<< endl;
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::GREEN_BORDER);
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif

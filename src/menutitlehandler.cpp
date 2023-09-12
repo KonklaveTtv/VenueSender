@@ -274,6 +274,16 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
         	ConsoleUtils::resetColor();
 #endif	
 		break;
+
+		case MenuTitleType::GREEN_BORDER:
+#ifndef UNIT_TESTING
+		ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif		
+		cout << "==========================="<< endl;
+#ifndef UNIT_TESTING
+		ConsoleUtils::resetColor();
+#endif		
+		break;
 	// end of GREEN
 
 		// RED
