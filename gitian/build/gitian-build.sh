@@ -7,7 +7,7 @@ eval $(ssh-agent -s)
 ssh-add $SSH_KEY_PATH
 
 # Define version (replace this with the actual version)
-VERSION="0.0.1a"
+VERSION="0.0.6a"
 
 # Your Gitian public key (this should be kept safe and private)
 SIGNER="spencerlievens@gmail.com"
