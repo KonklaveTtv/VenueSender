@@ -58,7 +58,7 @@ libjoncpp 1.9.5-4 can be installed using:
 
 libx11 v1.8.6 can be installed using:
 
-      wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libx11/2:1.8.4-2/libx11_1.8.4.orig.tar.gz
+      wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libx11/2:1.8.6-1/libx11_1.8.6.orig.tar.gz
       tar -xvf libx11-libX11-1.8.6.tar.gz
       cd libx11-libX11-1.8.6
       ./autogen.sh
