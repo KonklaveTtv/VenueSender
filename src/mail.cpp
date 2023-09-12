@@ -508,10 +508,10 @@ void EmailManager::viewEditTemplates(CURL* curl,
                         pressQuotes.push_back(singlePressQuote);
                         quoteSources.push_back(singleQuoteSource);
 
+                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif            
-                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
                         cin >> addMore;
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
@@ -1229,10 +1229,11 @@ void EmailManager::createBookingTemplate(CURL* curl,
             getInputWithConfirmation(singleQuoteSource, "Enter Quote Source (press Enter on a new line to finish): ");
             pressQuotes.push_back(singlePressQuote);
             quoteSources.push_back(singleQuoteSource);
+
+            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-            MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
             cin >> addMoreQuotes;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
@@ -1478,10 +1479,11 @@ while (modifyTemplate) {
                         pressQuotes.push_back(singlePressQuote);
                         quoteSources.push_back(singleQuoteSource);
 
+     
+                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
-#endif            
-                        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
+#endif       
                         cin >> addMore;
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
