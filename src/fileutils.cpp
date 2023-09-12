@@ -46,10 +46,10 @@ void ConsoleUtils::clearConsole() {
     // Platform-specific code to clear the console
     // Windows:
 #ifdef _WIN32
-    system("cls");
+    system(WINDOWS_CLEAR_CONSOLE);
 #else 
     // Mac/Linux:
-    system("clear");
+    system(MAC_LINUX_CLEAR_CONSOLE);
 #endif
 }
 
