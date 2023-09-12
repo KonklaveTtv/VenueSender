@@ -81,6 +81,8 @@ namespace confPaths {
 // Constant for calculating attachment size
 constexpr int KIBIBYTES = 976.563;
 
+constexpr int WHITESPACE_SIZE = 1;
+
 // Class for utility functions related to the console
 class ConsoleUtils {
 public:

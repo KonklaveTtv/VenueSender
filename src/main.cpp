@@ -22,13 +22,13 @@ int main() {
     string configVenuesCsvPath, smtpServer, smtpUsername, sslCertPath, mailPass, senderEmail, subject, 
            message, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, 
            musicVideo, pressQuotes, quoteSources, socials, name, attachmentName, attachmentPath, attachmentSize, templateAttachmentName, templateAttachmentPath, templateAttachmentSize;
-    int smtpPort = 587;
     bool initColor;
     bool templateExists = false;
     bool useSSL = false;
     bool verifyPeer = false;
     bool verifyHost = false;
     bool verbose = false;
+    int smtpPort = EmailManager::DEFAULT_SMTP_PORT;
 try {
     // Set up and initialize CURL
     CurlHandleWrapper::init();

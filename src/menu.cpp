@@ -432,7 +432,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         sslCertPathInput = ConsoleUtils::trim(sslCertPathInput);
 
         // Whitespace check (full whitespace)
-        if (count(sslCertPathInput.begin(), sslCertPathInput.end(), ' ') > 1 &&
+        if (count(sslCertPathInput.begin(), sslCertPathInput.end(), ' ') > WHITESPACE_SIZE &&
             all_of(sslCertPathInput.begin(), sslCertPathInput.end(), ::isspace)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CERT_PATH_ERROR);
             continue;
@@ -662,7 +662,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         ConsoleUtils::clearInputBuffer();
 
         // Whitespace check (full whitespace)
-        if (count(portInput.begin(), portInput.end(), ' ') > 1 &&
+        if (count(portInput.begin(), portInput.end(), ' ') > WHITESPACE_SIZE &&
             all_of(portInput.begin(), portInput.end(), ::isspace)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
             continue;
