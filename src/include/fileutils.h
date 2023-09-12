@@ -98,8 +98,8 @@ public:
     static constexpr char PASSWORD_MASK = '*';
 
     // Console Constants
-    static constexpr char WINDOWS_CLEAR_CONSOLE = "cls";
-    static constexpr char MAC_LINUX_CLEAR_CONSOLE = "clear";
+    static constexpr const char* WINDOWS_CLEAR_CONSOLE = "cls";
+    static constexpr const char* MAC_LINUX_CLEAR_CONSOLE = "clear";
 
 #ifndef UNIT_TESTING
     enum class Color {
