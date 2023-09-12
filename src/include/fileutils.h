@@ -86,12 +86,17 @@ constexpr int WHITESPACE_SIZE = 1;
 // Class for utility functions related to the console
 class ConsoleUtils {
 public:
+    // Email Passwork Min/Max Lengths
     static constexpr int MIN_PASSWORD_LENGTH = 1;
     static constexpr int MAX_PASSWORD_LENGTH = 100;
 
+    // ASCII Constants
     static constexpr int ASCII_BACKSPACE = 8;
     static constexpr int ASCII_DELETE = 127;
     
+    // Password Entry Constants
+    static constexpr char PASSWORD_MASK = '*';
+
 #ifndef UNIT_TESTING
     enum class Color {
         RED,

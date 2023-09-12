@@ -122,12 +122,12 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             password += ch;
 
             if (initColor) {
-                putchar('*');
+                putchar(PASSWORD_MASK);
             } else {
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-                putchar('*');
+                putchar(PASSWORD_MASK);
 #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor(); // Reset color
 #endif
@@ -182,13 +182,13 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             confirm += ch;
 
             if (initColor) {
-                putchar('*');
+                putchar(PASSWORD_MASK);
             } else {
 
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
-                putchar('*');
+                putchar(PASSWORD_MASK);
 #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor(); // Reset color
 #endif
