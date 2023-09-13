@@ -34,49 +34,49 @@ private:
 public:
     enum class MainMenuOption {
         VenueSelection = 1,
-        VenueOptions,
-        Email,
-        Templates,
-        Configuration,
-        Exit
+        VenueOptions = 2,
+        Email = 3,
+        Templates = 4,
+        Configuration = 5,
+        Exit = 6
     };
 
     enum class VenueSelectionOption {
         SelectVenuesForEmail = 1,
-        SelectVenuesForTemplates,
-        ReturnToMainMenu
+        SelectVenuesForTemplates = 2,
+        ReturnToMainMenu = 3
     };
 
     enum class VenueOptions {
         ViewSelectedVenuesForEmail = 1,
-        ViewSelectedVenuesForTemplates,
-        ClearSelectedVenuesForEmail,
-        ClearSelectedVenuesForTemplates,
-        ReturnToMainMenu
+        ViewSelectedVenuesForTemplates = 2,
+        ClearSelectedVenuesForEmail = 3,
+        ClearSelectedVenuesForTemplates = 4,
+        ReturnToMainMenu = 5
     };
 
     enum class EmailOptions {
         CreateEmail = 1,
-        ViewEditEmail,
-        EmailCustomAddress,
-        SendEmails,
-        ReturnToMainMenu
+        ViewEditEmail = 2,
+        EmailCustomAddress = 3,
+        SendEmails = 4,
+        ReturnToMainMenu = 5
     };
 
     enum class TemplateOptions {
         CreateVenueBookingTemplate = 1,
-        ViewEditBookingTemplates,
-        ClearBookingTemplateAttachment,
-        AddBookingTemplateAttachment,
-        SendBookingTemplates,
-        ClearBookingTemplate,
-        ReturnToMainMenu
+        ViewEditBookingTemplates = 2,
+        ClearBookingTemplateAttachment = 3,
+        AddBookingTemplateAttachment = 4,
+        SendBookingTemplates = 5,
+        ClearBookingTemplate = 6,
+        ReturnToMainMenu = 7
     };
 
     enum class ConfigurationOptions {
         ShowEmailSettings = 1,
-        EditEmailSettings,
-        ReturnToMainMenu
+        EditEmailSettings = 2,
+        ReturnToMainMenu = 3
     };
 
     // Constants for Venue Filtering sub-menu options

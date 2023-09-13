@@ -130,7 +130,7 @@ TEST_CASE("ConfigManager::loadConfigSettings() functionality", "[ConfigManager]"
     REQUIRE(verbose == true);
     REQUIRE(senderEmail == "mock@example.com");
     REQUIRE(smtpUsername == "mock_smtp_username");
-    REQUIRE(smtpPort == 587);
+    REQUIRE(smtpPort == DEFAULT_SMTP_PORT);
     REQUIRE(smtpServer == "mock_smtp_server");
     REQUIRE(venuesCsvPath == "src/test/mock_venues.csv"); // Replace with the expected path
 }
@@ -323,7 +323,7 @@ TEST_CASE("EmailManager::viewEmailSettings functionality", "[EmailManager]") {
 
     EmailManager emailManager;
 
-    emailManager.viewEmailSettings(true, "/etc/ssl/certs/ca-certificates.crt", true, true, true, "mock@example.com", "mock@example.com", 587, "mock_smtp_server");
+    emailManager.viewEmailSettings(true, "/etc/ssl/certs/ca-certificates.crt", true, true, true, "mock@example.com", "mock@example.com", DEFAULT_SMTP_PORT, "mock_smtp_server");
 
     cout.rdbuf(oldCoutStreamBuf);
 
@@ -378,7 +378,7 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
     string message = "This is a test message.";
 
     string smtpServer = "mock_smtp_server";
-    int smtpPort = 587;
+    int smtpPort = DEFAULT_SMTP_PORT;
     bool useSSL = false;
     bool verifyPeer = false;
     
