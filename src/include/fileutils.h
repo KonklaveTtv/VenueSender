@@ -78,8 +78,12 @@ namespace confPaths {
     extern std::string registrationKeyPath;
 }
 
-// Constant for calculating attachment size
-constexpr int KIBIBYTES = 976.563;
+// Constants for attachment size
+static constexpr const int KIBIBYTES = 976.563;
+static constexpr const std::string BYTES_STRING = " bytes";
+static constexpr const std::string KB_STRING = " KB";
+static constexpr const std::string MB_STRING = " MB";
+
 
 constexpr int WHITESPACE_SIZE = 1;
 

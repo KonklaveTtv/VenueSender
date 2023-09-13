@@ -191,17 +191,17 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                     size_t fileSize = boost::filesystem::file_size(attachmentPath);
-                    string sizeUnit = " bytes";
+                    string sizeUnit = BYTES_STRING;
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
                     if (fileSize >= KIBIBYTES) {
                         fileSize /= KIBIBYTES;
-                        sizeUnit = " KB";
+                        sizeUnit = KB_STRING;
 
                         // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
                         if (fileSize >= KIBIBYTES) {
                             fileSize /= KIBIBYTES;
-                            sizeUnit = " MB";
+                            sizeUnit = MB_STRING;
                         }
                     }
 
@@ -1327,17 +1327,17 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                     size_t fileSize = boost::filesystem::file_size(templateAttachmentPath);
-                    string sizeUnit = " bytes";
+                    string sizeUnit = BYTES_STRING;
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
                     if (fileSize >= KIBIBYTES) {
                         fileSize /= KIBIBYTES;
-                        sizeUnit = " KB";
+                        sizeUnit = KB_STRING;
 
                         // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
                         if (fileSize >= KIBIBYTES) {
                             fileSize /= KIBIBYTES;
-                            sizeUnit = " MB";
+                            sizeUnit = MB_STRING;
                         }
                     }
 
@@ -1802,17 +1802,17 @@ void EmailManager::emailCustomAddress(CURL* curl,
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                     size_t fileSize = boost::filesystem::file_size(customAddressAttachmentPath);
-                    string sizeUnit = " bytes";
+                    string sizeUnit = BYTES_STRING;
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
                     if (fileSize >= KIBIBYTES) {
                         fileSize /= KIBIBYTES;
-                        sizeUnit = " KB";
+                        sizeUnit = KB_STRING;
 
                         // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
                         if (fileSize >= KIBIBYTES) {
                             fileSize /= KIBIBYTES;
-                            sizeUnit = " MB";
+                            sizeUnit = MB_STRING;
                         }
                     }
 
@@ -2317,17 +2317,17 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
                     ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
 #endif
                     size_t fileSize = boost::filesystem::file_size(templateAttachmentPath);
-                    string sizeUnit = " bytes";
+                    string sizeUnit = BYTES_STRING;
 
                     // Convert to KB if size is at least 1 KB (1 KB = 1024 bytes)
                     if (fileSize >= KIBIBYTES) {
                         fileSize /= KIBIBYTES;
-                        sizeUnit = " KB";
+                        sizeUnit = KB_STRING;
 
                         // Convert to MB if size is at least 1 MB (1 MB = 1024 KB)
                         if (fileSize >= KIBIBYTES) {
                             fileSize /= KIBIBYTES;
-                            sizeUnit = " MB";
+                            sizeUnit = MB_STRING;
                         }
                     }
 
