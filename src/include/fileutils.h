@@ -79,10 +79,10 @@ namespace confPaths {
 }
 
 // Constants for attachment size
-static constexpr const int KIBIBYTES = 976.563;
-static constexpr const std::string BYTES_STRING = " bytes";
-static constexpr const std::string KB_STRING = " KB";
-static constexpr const std::string MB_STRING = " MB";
+static constexpr const double KIBIBYTES = 976.563;
+static const std::string BYTES_STRING = " bytes";
+static const std::string KB_STRING = " KB";
+static const std::string MB_STRING = " MB";
 
 
 constexpr int WHITESPACE_SIZE = 1;
