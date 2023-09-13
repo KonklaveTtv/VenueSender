@@ -101,6 +101,12 @@ public:
     static constexpr const char* WINDOWS_CLEAR_CONSOLE = "cls";
     static constexpr const char* MAC_LINUX_CLEAR_CONSOLE = "clear";
 
+    // Yes/No Constants
+    static constexpr char YES_UPPER = 'Y';
+    static constexpr char YES_LOWER = 'y';
+    static constexpr char NO_UPPER = 'N';
+    static constexpr char NO_LOWER = 'n';
+
 #ifndef UNIT_TESTING
     enum class Color {
         RED,

@@ -154,10 +154,10 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 #endif
             ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
-        if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+        if (addAttachmentChoice == ConsoleUtils::NO_UPPER || addAttachmentChoice == ConsoleUtils::NO_LOWER) {
             break;
 
-        } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+        } else if (addAttachmentChoice == ConsoleUtils::YES_UPPER || addAttachmentChoice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -227,7 +227,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                         ConsoleUtils::resetColor();
 #endif
                         ConsoleUtils::clearInputBuffer();
-                        if (choice == 'Y' || choice == 'y') {
+                        if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                             continue; // Go back to asking for a new file
                         } else {
                             return; // Exit the loop and function
@@ -313,7 +313,7 @@ void EmailManager::viewEditEmails(const string& senderEmail, string& subject, st
 #endif
         ConsoleUtils::clearInputBuffer();
         
-        if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
+        if (modifyEmailChoice == ConsoleUtils::YES_UPPER || modifyEmailChoice == ConsoleUtils::YES_LOWER) {
             try {
                 constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                 modified = true;
@@ -424,7 +424,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
     #endif
         ConsoleUtils::clearInputBuffer();
         
-        if (choice == 'Y' || choice == 'y') {
+        if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::REDO_OR_MODIFY_TEMPLATE_MESSAGE);
             string modifyChoice;
     #ifndef UNIT_TESTING
@@ -483,8 +483,8 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 }
 
                 auto addPressQuotesAndSources = [](vector<string>& pressQuotes, vector<string>& quoteSources) {
-                    char addMore = 'Y';
-                    while (addMore == 'Y' || addMore == 'y') {
+                    char addMore = ConsoleUtils::YES_UPPER;
+                    while (addMore == ConsoleUtils::YES_UPPER || addMore == ConsoleUtils::YES_LOWER) {
                         string singlePressQuote, singleQuoteSource;
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -596,7 +596,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 ConsoleUtils::clearInputBuffer();  // Clear the input buffer
 
                 // Validate the third choice
-                if (satisfiedChoice == 'Y' || satisfiedChoice == 'y') {
+                if (satisfiedChoice == ConsoleUtils::YES_UPPER || satisfiedChoice == ConsoleUtils::YES_LOWER) {
                     modifyTemplate = false;
 
                     // Ask if the user wants to send the email only when they're satisfied
@@ -611,14 +611,14 @@ void EmailManager::viewEditTemplates(CURL* curl,
                     ConsoleUtils::clearInputBuffer();
 
                     // Validate the final choice
-                    if (choice == 'Y' || choice == 'y') {
+                    if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                         templateExists = false; // Reset the flag since we're sending the email
                         // Now, send the email to all venues
                         bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                         if (!sent) {
                             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                         }
-                    } else if (choice == 'N' || choice == 'n') {
+                    } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
                         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
                         // If user chooses not to send, the template and subjects stay in the map
                         templateExists = true;
@@ -627,7 +627,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                         // Here you can decide what to do in case of invalid input.
                         // For example, you might want to display the menu again or exit the function.
                     }
-                } else if (satisfiedChoice == 'N' || satisfiedChoice == 'n') {
+                } else if (satisfiedChoice == ConsoleUtils::NO_UPPER || satisfiedChoice == ConsoleUtils::NO_LOWER) {
                     // If the user is not satisfied, regenerate the template
                     for (const SelectedVenueForTemplates& venueForTemplates : selectedVenuesForTemplates) {
                         EmailManager emailManager;
@@ -640,7 +640,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                     continue;
                 }
             }
-        } else if (choice == 'N' || choice == 'n') {
+        } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
             modifyTemplate = false;  // Exit the loop
             // Ask if the user wants to send the email
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
@@ -653,14 +653,14 @@ void EmailManager::viewEditTemplates(CURL* curl,
 #endif
             ConsoleUtils::clearInputBuffer();
 
-            if (choice == 'Y' || choice == 'y') {
+            if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                 templateExists = false; // Reset the flag since we're sending the email
                 // Now, send the email to all venues
                 bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                 if (!sent) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                 }
-            } else if (choice == 'N' || choice == 'n') {
+            } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
                 MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
                 // If user chooses not to send, the template and subjects stay in the map
                 templateExists = true;
@@ -1167,9 +1167,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #endif
                 ConsoleUtils::clearInputBuffer();
 
-                if (confirmation == 'y' || confirmation == 'Y') {
+                if (confirmation == ConsoleUtils::YES_UPPER || confirmation == ConsoleUtils::YES_LOWER) {
                     inputConfirmed = true;
-                } else if (confirmation == 'n' || confirmation == 'N') {
+                } else if (confirmation == ConsoleUtils::NO_UPPER || confirmation == ConsoleUtils::NO_LOWER) {
                     // Handle the 'No' case if needed
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
@@ -1188,9 +1188,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #endif
                     ConsoleUtils::clearInputBuffer();
                     
-                    if (confirmation == 'N' || confirmation == 'n') {
+                    if (confirmation == ConsoleUtils::NO_UPPER || confirmation == ConsoleUtils::NO_LOWER) {
                         continue;
-                    } else if (confirmation == 'y' || confirmation == 'Y') {
+                    } else if (confirmation == ConsoleUtils::YES_UPPER || confirmation == ConsoleUtils::YES_LOWER) {
                         // Handle the 'Yes' case if needed
                     } else {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
@@ -1222,8 +1222,8 @@ void EmailManager::createBookingTemplate(CURL* curl,
         getInputWithConfirmation(musicVideo, "Enter Music Video Link (press Enter on a new line to finish): ", false, true);
         
         // Add this to collect multiple quotes
-        char addMoreQuotes = 'Y';
-        while (addMoreQuotes == 'Y' || addMoreQuotes == 'y') {
+        char addMoreQuotes = ConsoleUtils::YES_UPPER;
+        while (addMoreQuotes == ConsoleUtils::YES_UPPER || addMoreQuotes == ConsoleUtils::YES_LOWER) {
             string singlePressQuote, singleQuoteSource;
             getInputWithConfirmation(singlePressQuote, "Enter Press Quote (press Enter on a new line to finish): ");
             getInputWithConfirmation(singleQuoteSource, "Enter Quote Source (press Enter on a new line to finish): ");
@@ -1296,9 +1296,9 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #endif
         ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
-        if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+        if (addAttachmentChoice == ConsoleUtils::NO_UPPER || addAttachmentChoice == ConsoleUtils::NO_LOWER) {
             break;
-        } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+        } else if (addAttachmentChoice == ConsoleUtils::YES_UPPER || addAttachmentChoice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1361,7 +1361,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                         ConsoleUtils::resetColor();
 #endif
                         ConsoleUtils::clearInputBuffer();
-                        if (choice == 'Y' || choice == 'y') {
+                        if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                             continue; // Go back to asking for a new file
                         } else {
                             break; // Exit the loop without an attachment
@@ -1400,7 +1400,7 @@ while (modifyTemplate) {
 #endif
         ConsoleUtils::clearInputBuffer();
 
-        if (choice == 'Y' || choice == 'y') {
+        if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::REDO_OR_MODIFY_TEMPLATE_MESSAGE);
             string modifyChoice;
             cin >> modifyChoice;
@@ -1454,8 +1454,8 @@ while (modifyTemplate) {
                 
                 // Helper function to modify vector<string> Press Quotes & Quote Sources
                 auto addPressQuotesAndSources = [](vector<string>& pressQuotes, vector<string>& quoteSources) {
-                    char addMore = 'Y';
-                    while (addMore == 'Y' || addMore == 'y') {
+                    char addMore = ConsoleUtils::YES_UPPER;
+                    while (addMore == ConsoleUtils::YES_UPPER || addMore == ConsoleUtils::YES_LOWER) {
                         string singlePressQuote, singleQuoteSource;
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1568,7 +1568,7 @@ while (modifyTemplate) {
                 ConsoleUtils::clearInputBuffer();  // Clear the input buffer
 
                 // Validate the third choice
-                if (satisfiedChoice == 'Y' || satisfiedChoice == 'y') {
+                if (satisfiedChoice == ConsoleUtils::YES_UPPER || satisfiedChoice == ConsoleUtils::YES_LOWER) {
                     modifyTemplate = false;
 
                     // Ask if the user wants to send the email only when they're satisfied
@@ -1583,14 +1583,14 @@ while (modifyTemplate) {
                     ConsoleUtils::clearInputBuffer();
 
                     // Validate the final choice
-                    if (choice == 'Y' || choice == 'y') {
+                    if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                         templateExists = false; // Reset the flag since we're sending the email
                         // Now, send the email to all venues
                         bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                         if (!sent) {
                             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                         }
-                    } else if (choice == 'N' || choice == 'n') {
+                    } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
                         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
                         // If user chooses not to send, the template and subjects stay in the map
                         templateExists = true;
@@ -1599,14 +1599,14 @@ while (modifyTemplate) {
                         // Here you can decide what to do in case of invalid input.
                         // For example, you might want to display the menu again or exit the function.
                     }
-                } else if (satisfiedChoice == 'N' || satisfiedChoice == 'n') {
+                } else if (satisfiedChoice == ConsoleUtils::NO_UPPER || satisfiedChoice == ConsoleUtils::NO_LOWER) {
                     continue;  // Continue modifying the template if the user is not satisfied
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
                     continue;
                 }
             }            
-        } else if (choice == 'N' || choice == 'n') {
+        } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
         modifyTemplate = false;  // Exit the loop
         // Ask if the user wants to send the email
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
@@ -1619,14 +1619,14 @@ while (modifyTemplate) {
 #endif
         ConsoleUtils::clearInputBuffer();
 
-        if (choice == 'Y' || choice == 'y') {
+        if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
             templateExists = false; // Reset the flag since we're sending the email
             // Now, send the email to all venues
             bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             if (!sent) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
             }
-        } else if (choice == 'N' || choice == 'n') {
+        } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
             MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
             // If user chooses not to send, the template and subjects stay in the map
             templateExists = true;
@@ -1771,9 +1771,9 @@ void EmailManager::emailCustomAddress(CURL* curl,
 #endif
             ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
-            if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+            if (addAttachmentChoice == ConsoleUtils::NO_UPPER || addAttachmentChoice == ConsoleUtils::NO_LOWER) {
                 break;
-        } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+        } else if (addAttachmentChoice == ConsoleUtils::YES_UPPER || addAttachmentChoice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1835,7 +1835,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                     ConsoleUtils::resetColor();
 #endif
                     ConsoleUtils::clearInputBuffer();
-                    if (choice == 'Y' || choice == 'y') {
+                    if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                         continue; // Go back to asking for a new file
                     } else {
                         return; // Exit the loop and function
@@ -1908,7 +1908,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 #endif
         ConsoleUtils::clearInputBuffer();
 
-        if (modifyEmailChoice == 'Y' || modifyEmailChoice == 'y') {
+        if (modifyEmailChoice == ConsoleUtils::YES_UPPER || modifyEmailChoice == ConsoleUtils::YES_LOWER) {
             clearAllCustomAddressEmailData(customAddressSubject, customAddressMessage, customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
             continue; // Loop back to the start of the function
         } else {
@@ -1928,7 +1928,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
     ConsoleUtils::clearInputBuffer();
 
         // Proceed to send emails if confirmed
-        if (confirmSend == 'Y' || confirmSend == 'y') {
+        if (confirmSend == ConsoleUtils::YES_UPPER || confirmSend == ConsoleUtils::YES_LOWER) {
             if (!curl) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
                 return;
@@ -2113,7 +2113,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
 #endif
     ConsoleUtils::clearInputBuffer();
 
-    if (confirmSend != 'Y' && confirmSend != 'y') {
+    if (confirmSend != ConsoleUtils::YES_UPPER && confirmSend != ConsoleUtils::YES_LOWER) {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
@@ -2244,7 +2244,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
 #endif
     ConsoleUtils::clearInputBuffer();
 
-    if (confirmSend != 'Y' && confirmSend != 'y') {
+    if (confirmSend != ConsoleUtils::YES_UPPER && confirmSend != ConsoleUtils::YES_LOWER) {
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
@@ -2286,9 +2286,9 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
 #endif
         ConsoleUtils::clearInputBuffer();  // Assuming this function clears the input buffer
 
-        if (addAttachmentChoice == 'N' || addAttachmentChoice == 'n') {
+        if (addAttachmentChoice == ConsoleUtils::NO_UPPER || addAttachmentChoice == ConsoleUtils::NO_LOWER) {
             break;
-        } else if (addAttachmentChoice == 'Y' || addAttachmentChoice == 'y') {
+        } else if (addAttachmentChoice == ConsoleUtils::YES_UPPER || addAttachmentChoice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -2351,7 +2351,7 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
                         ConsoleUtils::resetColor();
 #endif
                         ConsoleUtils::clearInputBuffer();
-                        if (choice == 'Y' || choice == 'y') {
+                        if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                             continue; // Go back to asking for a new file
                         } else {
                             break; // Exit the loop without an attachment

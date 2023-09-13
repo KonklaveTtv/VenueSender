@@ -204,12 +204,12 @@ int MenuManager::displayMenuOptions() {
 #endif
             ConsoleUtils::clearInputBuffer();
 
-            if (confirmExit == 'Y' || confirmExit == 'y') {
+            if (confirmExit == ConsoleUtils::YES_UPPER || confirmExit == ConsoleUtils::YES_LOWER) {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EXITING_VENUESENDER_MESSAGE);
                 // Cleanup before exiting
                 CurlHandleWrapper::cleanup(); // Assuming you have a cleanup method in your CurlHandleWrapper class that calls curl_global_cleanup();
                 exit(0);  // Exit the program
-            } else if (confirmExit == 'N' || confirmExit == 'n') {
+            } else if (confirmExit == ConsoleUtils::NO_UPPER || confirmExit == ConsoleUtils::NO_LOWER) {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::RETURN_TO_MAIN_MENU_MESSAGE);
                 continue;  // Continue to the next iteration of the loop
             } else {
@@ -399,11 +399,11 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         ConsoleUtils::resetColor(); // Reset to default color
 #endif
         ConsoleUtils::clearInputBuffer();
-        if (tempSmtpChar == 'y' || tempSmtpChar == 'Y') {
+        if (tempSmtpChar == ConsoleUtils::YES_UPPER || tempSmtpChar == ConsoleUtils::YES_LOWER) {
             useSSL = true;
             smtpPort = EmailManager::SSL_TLS_SMTP_PORT; // Automatically set the SMTP port based on SSL selection
             break;
-        } else if (tempSmtpChar == 'n' || tempSmtpChar == 'N') {
+        } else if (tempSmtpChar == ConsoleUtils::NO_UPPER || tempSmtpChar == ConsoleUtils::NO_LOWER) {
             useSSL = false;
             smtpPort = EmailManager::DEFAULT_SMTP_PORT;
             break;
@@ -473,10 +473,10 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 #endif
         ConsoleUtils::clearInputBuffer();
 
-        if (verifyPeerTempChar == 'y' || verifyPeerTempChar == 'Y') {
+        if (verifyPeerTempChar == ConsoleUtils::YES_UPPER || verifyPeerTempChar == ConsoleUtils::YES_LOWER) {
             verifyPeer = true;
             break;
-        } else if (verifyPeerTempChar == 'n' || verifyPeerTempChar == 'N') {
+        } else if (verifyPeerTempChar == ConsoleUtils::NO_UPPER || verifyPeerTempChar == ConsoleUtils::NO_LOWER) {
             verifyPeer = false;
             break;
         } else {
@@ -497,10 +497,10 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 #endif
         ConsoleUtils::clearInputBuffer();
 
-        if (verifyHostTempChar == 'y' || verifyHostTempChar == 'Y') {
+        if (verifyHostTempChar == ConsoleUtils::YES_UPPER || verifyHostTempChar == ConsoleUtils::YES_LOWER) {
             verifyHost = true;
             break;
-        } else if (verifyHostTempChar == 'n' || verifyHostTempChar == 'N') {
+        } else if (verifyHostTempChar == ConsoleUtils::NO_UPPER || verifyHostTempChar == ConsoleUtils::NO_LOWER) {
             verifyHost = false;
             break;
         } else {
@@ -521,10 +521,10 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
 #endif
         ConsoleUtils::clearInputBuffer();
         
-        if (verboseTempChar == 'y' || verboseTempChar == 'Y') {
+        if (verboseTempChar == ConsoleUtils::YES_UPPER || verboseTempChar == ConsoleUtils::YES_LOWER) {
             verbose = true;
             break;
-        } else if (verboseTempChar == 'n' || verboseTempChar == 'N') {
+        } else if (verboseTempChar == ConsoleUtils::NO_UPPER || verboseTempChar == ConsoleUtils::NO_LOWER) {
             verbose = false;
             break;
         } else {
@@ -567,9 +567,9 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
     ConsoleUtils::resetColor(); // Reset to default color
 #endif
     ConsoleUtils::clearInputBuffer();
-    if (sameAsSenderEmail == 'Y' || sameAsSenderEmail == 'y') {
+    if (sameAsSenderEmail == ConsoleUtils::YES_UPPER || sameAsSenderEmail == ConsoleUtils::YES_LOWER) {
         smtpUsername = senderEmailTempStr;
-    } else if (smtpUsernameTempChar == 'n' || smtpUsernameTempChar == 'N') {
+    } else if (smtpUsernameTempChar == ConsoleUtils::NO_UPPER || smtpUsernameTempChar == ConsoleUtils::NO_LOWER) {
         // Edit SMTP Username
         while (true) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_USERNAME_CONFIG_MESSAGE);
@@ -597,10 +597,10 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
     #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset to default color
     #endif
-                if (smtpUsernameTempChar == 'y' || smtpUsernameTempChar == 'Y') {
+                if (smtpUsernameTempChar == ConsoleUtils::YES_UPPER || smtpUsernameTempChar == ConsoleUtils::YES_LOWER) {
                     smtpUsername = smtpUsernameTempStr;
                     break;
-                } else if (smtpUsernameTempChar == 'n' || smtpUsernameTempChar == 'N') {
+                } else if (smtpUsernameTempChar == ConsoleUtils::NO_UPPER || smtpUsernameTempChar == ConsoleUtils::NO_LOWER) {
                     continue;
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
@@ -705,13 +705,13 @@ while (true) {
 #endif
         ConsoleUtils::clearInputBuffer();
         
-        if (tempSmtpChar == 'y' || tempSmtpChar == 'Y') {
+        if (tempSmtpChar == ConsoleUtils::YES_UPPER || tempSmtpChar == ConsoleUtils::YES_LOWER) {
             // Edit SMTP Password
             initColor = false;
             mailPass = ConsoleUtils::passwordEntry(initColor);
             break;
         } 
-        else if (tempSmtpChar == 'n' || tempSmtpChar == 'N') {
+        else if (tempSmtpChar == ConsoleUtils::NO_UPPER || tempSmtpChar == ConsoleUtils::NO_LOWER) {
             break;
         }
     }   
