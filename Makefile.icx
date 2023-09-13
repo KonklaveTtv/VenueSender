@@ -5,7 +5,7 @@ UNAME_S := $(shell uname -s)
 
 # Compiler and flags
 CXX = icx
-CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Isrc/include -Isrc -I/usr/local/include/libcurl -I/usr/local/include/json -I/usr/lib/x86_64-linux-gnu/libz -I/path/to/boost/include -I/usr/local/lib/libX11 -I/usr/lib/x86_64-linux-gnu/libxcb -I/usr/lib/x86_64-linux-gnu/libXau -I/usr/lib/x86_64-linux-gnu/libXdmcp
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Rno-debug-disables-optimization -Isrc/include -Isrc -I/usr/local/include/libcurl -I/usr/local/include/json -I/usr/lib/x86_64-linux-gnu/libz -I/path/to/boost/include -I/usr/local/lib/libX11 -I/usr/lib/x86_64-linux-gnu/libxcb -I/usr/lib/x86_64-linux-gnu/libXau -I/usr/lib/x86_64-linux-gnu/libXdmcp
 LDFLAGS = -L/usr/lib -L/usr/local/lib -lstdc++
 INCLUDES = -Isrc/include -Isrc
 
