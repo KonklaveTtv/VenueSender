@@ -42,6 +42,9 @@ public:
             // Email Menu
             LIGHT_BLUE_BORDER,
 
+            // Template Menu
+            LIGHT_BLUE_THIN_BORDER,
+
         // ORANGE
 
             // Email Menu

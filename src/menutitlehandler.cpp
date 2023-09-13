@@ -230,6 +230,17 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 		ConsoleUtils::resetColor();
 #endif		
 		break;
+
+		// Template Menu
+		case MenuTitleType::LIGHT_BLUE_THIN_BORDER:
+#ifndef UNIT_TESTING
+		ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
+#endif		
+		cout << "---------------------------"<< endl;
+#ifndef UNIT_TESTING
+		ConsoleUtils::resetColor();
+#endif		
+		break;		
 	// end of LIGHT BLUE
 
         // ORANGE

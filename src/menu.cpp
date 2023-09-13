@@ -722,17 +722,8 @@ while (true) {
                     mailPass, senderEmail, smtpPort, smtpServer, verbose);
 
     EmailManager::viewEmailSettings(useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, smtpPort, smtpServer);
-
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
-#endif
-    cout << "--------------------------" << endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
-
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::LIGHT_BLUE_THIN_BORDER);
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SETTINGS_UPDATED_MESSAGE);
-
     return true;
 }
 
@@ -793,13 +784,7 @@ void MenuManager::displaySelectedVenuesForEmails(const vector<SelectedVenueForEm
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
-#endif
-    cout << "---------------------------"<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::LIGHT_BLUE_THIN_BORDER);
         }
     }
 }
@@ -825,13 +810,7 @@ void MenuManager::displaySelectedVenuesForTemplates(const vector<SelectedVenueFo
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
-#ifndef UNIT_TESTING
-    ConsoleUtils::setColor(ConsoleUtils::Color::LIGHT_BLUE);
-#endif
-    cout << "---------------------------"<< endl;
-#ifndef UNIT_TESTING
-    ConsoleUtils::resetColor();
-#endif
+    MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::LIGHT_BLUE_THIN_BORDER);
         }
     }
 }
