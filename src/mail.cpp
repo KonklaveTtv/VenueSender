@@ -1871,12 +1871,18 @@ void EmailManager::emailCustomAddress(CURL* curl,
             }
         }
 
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::CYAN_THIN_BORDER);
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
-        cout << "-------------------------\n";
         cout << "----- EMAIL DETAILS -----\n";
-        cout << "-------------------------\n";
+#ifndef UNIT_TESTING
+        ConsoleUtils::resetColor();
+#endif
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::CYAN_THIN_BORDER);
+#ifndef UNIT_TESTING
+        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif
         cout << "From: \"Sender Name\" <" << senderEmail << ">\n";
         cout << "To: \"Recipient Email\" <" << customAddressRecipientEmail << ">\n";
         cout << "Subject: " << customAddressSubject << "\n";
@@ -1889,13 +1895,9 @@ void EmailManager::emailCustomAddress(CURL* curl,
         cout << "Path: " << (customAddressAttachmentPath.empty() ? "None" : customAddressAttachmentPath) << "\n";
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
-        ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
         cout << "\n" << customAddressMessage << "\n";
-        cout << "-------------------------\n";
-#ifndef UNIT_TESTING
-        ConsoleUtils::resetColor();
-#endif
+        MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::CYAN_THIN_BORDER);
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_EMAIL_CONFIRMATION_MESSAGE);
 
         char modifyEmailChoice;

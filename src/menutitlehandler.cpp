@@ -190,6 +190,16 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #endif		
 		break;
 
+		case MenuTitleType::CYAN_THIN_BORDER:
+#ifndef UNIT_TESTING
+		ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
+#endif		
+		cout << "-------------------------\n";
+#ifndef UNIT_TESTING
+		ConsoleUtils::resetColor();
+#endif		
+		break;
+
 
         // Filter Menus
 		case MenuTitleType::FINAL_VENUE_SELECTION_MENU_HEADER:

@@ -32,6 +32,7 @@ public:
             EMAIL_SUMMARY_MENU_HEADER,
             BOOKING_TEMPLATE_SUMMARY_MENU_HEADER,
             CYAN_BORDER,
+            CYAN_THIN_BORDER,
 
             // Venue Selection
             FINAL_VENUE_SELECTION_MENU_HEADER,
