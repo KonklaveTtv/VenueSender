@@ -37,10 +37,25 @@ jobs:
     - name: Create necessary directories
       run: mkdir -p obj obj/debug obj/test obj/test_for_test bin bin/debug
 
-    - name: Compile object files for the main application
+    - name: Compile object files for the main application (Linux)
+      if: matrix.os == 'ubuntu-latest'
       run: |
         for file in $(find src -name "*.cpp" ! -path "src/test/*"); do
           g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -c $file -o obj/$(basename $file .cpp).o
+        done
+
+    - name: Compile object files for the main application (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        for file in $(find src -name "*.cpp" ! -path "src/test/*"); do
+          g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -D_WIN32 -c $file -o obj/$(basename $file .cpp).o
+        done
+
+    - name: Compile object files for the main application (macOS)
+      if: matrix.os == 'macOS-latest'
+      run: |
+        for file in $(find src -name "*.cpp" ! -path "src/test/*"); do
+          g++ -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -D__APPLE__ -c $file -o obj/$(basename $file .cpp).o
         done
 
     - name: Compile debug object files for the main application
