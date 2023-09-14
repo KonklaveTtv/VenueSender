@@ -25,7 +25,7 @@ jobs:
             link-libraries: "-lcurl -ljsoncpp -lssl -lcrypto -lz -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex"
           - os: macOS-latest
             dependencies: brew install make gcc jsoncpp openssl zlib libx11 curl sqlite3 boost
-            link-libraries: "-lcurl -ljsoncpp -lssl -lcrypto -lz -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex -lX11"
+            link-libraries: "-lcurl -ljsoncpp -lssl -lcrypto -lz -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex -lX11 -framework IOKit"
 
     steps:
     - name: Checkout code
