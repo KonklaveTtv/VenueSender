@@ -82,13 +82,13 @@ private:
     void clearTemporaryFilteredVenuesVectorsForTemplates();
 
     // Indices starting number
-    static constexpr std::string::size_type INDICES_START_AT_ONE = 1;
+    static constexpr size_t INDICES_START_AT_ONE = 1;
 
     // Max length for venue selection indices input
-    static constexpr std::string::size_type MAX_INPUT_LENGTH = 256;
+    static constexpr size_t MAX_INPUT_LENGTH = 256;
 
     // Min length for venue selection indices input
-    static constexpr std::string::size_type MIN_INPUT_LENGTH = 0;
+    static constexpr size_t MIN_INPUT_LENGTH = 0;
    
     static constexpr int SQLITE_TABLE_INDEX = 1;
 
