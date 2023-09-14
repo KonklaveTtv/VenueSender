@@ -625,7 +625,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                     } else {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
                         // Here you can decide what to do in case of invalid input.
-                        // For example, you might want to display the menu again or exit the function.
+                        continue;
                     }
                 } else if (satisfiedChoice == ConsoleUtils::NO_UPPER || satisfiedChoice == ConsoleUtils::NO_LOWER) {
                     // If the user is not satisfied, regenerate the template
@@ -1599,8 +1599,7 @@ while (modifyTemplate) {
                         templateExists = true;
                     } else {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
-                        // Here you can decide what to do in case of invalid input.
-                        // For example, you might want to display the menu again or exit the function.
+                        continue;
                     }
                 } else if (satisfiedChoice == ConsoleUtils::NO_UPPER || satisfiedChoice == ConsoleUtils::NO_LOWER) {
                     continue;  // Continue modifying the template if the user is not satisfied
