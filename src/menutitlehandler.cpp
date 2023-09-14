@@ -312,14 +312,14 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 	        // Default Menu Item
 #ifdef UNIT_TESTING
 	        default:
-	            cerr << "" << endl;
+	            cout << "" << endl;
 	            break;
 #else
 	        default:
 #ifndef UNIT_TESTING
 		ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif	
-	            cerr << "UNKNOWN MENU ITEM" << endl;
+	            cout << "UNKNOWN MENU ITEM" << endl;
 #ifndef UNIT_TESTING
 		ConsoleUtils::resetColor();
 #endif

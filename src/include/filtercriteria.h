@@ -84,12 +84,12 @@ private:
     // Indices starting number
     static constexpr size_t INDICES_START_AT_ONE = 1;
 
-    // Max length for venue selection indices input
-    static constexpr size_t MAX_INPUT_LENGTH = 256;
-
     // Min length for venue selection indices input
     static constexpr size_t MIN_INPUT_LENGTH = 0;
-   
+
+    // Max length for venue selection indices input
+    static constexpr size_t MAX_INPUT_LENGTH = 256;
+       
     static constexpr int SQLITE_TABLE_INDEX = 1;
 
     // Delimiter used in CSV files

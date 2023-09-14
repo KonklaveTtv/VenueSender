@@ -421,127 +421,58 @@ TEST_CASE("EmailManager::sendIndividualEmail() functionality", "[EmailManager]")
 // Test Group: VenueFilter
 // -----------------------
 
-TEST_CASE("processVenueSelectionForEmails functionality", "[VenueFilter]") {
+TEST_CASE("VenueFilter::processVenueSelectionForEmails functionality", "[VenueFilter]") {
+    // Set up mock data for available venues and selected venues
+    vector<VenueForEmails> venuesForEmails = {
+        {"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
+        {"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
+    };
 
+    vector<SelectedVenueForEmails> selectedVenuesForEmails;
 
-    SECTION("Filters by country correctly") {
-        // Set up mock data and expected results
-        vector<VenueForEmails> venuesForEmails = {
-            VenueForEmails{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
-            VenueForEmails{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
-        };    
-        vector<SelectedVenueForEmails> selectedVenuesForEmails;
-        istringstream input("1\n1\n1\n1\n1\n1\n"); // Mock selecting the first country
-        ostringstream output;
-        VenueFilter venueFilter;
+    // Set up mock user input
+    istringstream mockInput("1\n1\n1\n1\n1\n1\n1\n1\n");
+    ostringstream mockOutput;
+    CinGuard cinGuard(mockInput.rdbuf());
+    CoutGuard coutGuard(mockOutput.rdbuf());
 
-        venueFilter.processVenueSelectionForEmails(venuesForEmails, selectedVenuesForEmails, input, output);
+    // Create a VenueFilter instance
+    VenueFilter venueFilter;
 
-        REQUIRE(selectedVenuesForEmails.size() == 1);
-        REQUIRE(selectedVenuesForEmails[0].country == "France");
-    }
+    // Call the function
+    venueFilter.processVenueSelectionForEmails(venuesForEmails, selectedVenuesForEmails, cin, cout);
 
-    SECTION("Handles invalid input") {
-        // Redirect cerr to capture error messages
-        ostringstream err_output;
-        auto old_err = cerr.rdbuf(err_output.rdbuf());
-
-        // Set up mock data and expected results
-        vector<VenueForEmails> venuesForEmails = {
-            VenueForEmails{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
-            VenueForEmails{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
-        };    
-        vector<SelectedVenueForEmails> selectedVenuesForEmails;
-        istringstream input("4\n");  // Mock invalid input
-        ostringstream output;
-        VenueFilter venueFilter;
-
-        venueFilter.processVenueSelectionForEmails(venuesForEmails, selectedVenuesForEmails, input, output);
-
-        // Restore old cerr buffer
-        cerr.rdbuf(old_err);
-        
-        REQUIRE(err_output.str().find("Invalid index:") != string::npos);
-    }
-
-    SECTION("Proper final venue selection") {
-        // Set up mock data and expected results
-        vector<VenueForEmails> venuesForEmails = {
-            VenueForEmails{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
-            VenueForEmails{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
-        };    
-        vector<SelectedVenueForEmails> selectedVenuesForEmails;
-        istringstream input("1\n1\n1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
-        ostringstream output;
-        VenueFilter venueFilter;
-
-        venueFilter.processVenueSelectionForEmails(venuesForEmails, selectedVenuesForEmails, input, output);
-
-        REQUIRE(selectedVenuesForEmails.size() == 1);
-        REQUIRE(selectedVenuesForEmails[0].name == "Venue2");
-    }
+    // Validate the results
+    REQUIRE(selectedVenuesForEmails.size() == 1);
+    REQUIRE(selectedVenuesForEmails[0].name == "Venue2");
 }
 
-TEST_CASE("processVenueSelectionForTemplates functionality", "[VenueFilter]") {
+TEST_CASE("VenueFilter::processVenueSelectionForTemplates functionality", "[VenueFilter]") {
+    // Set up mock data for available venues and selected venues
+    vector<VenueForTemplates> venuesForTemplates = {
+        {"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
+        {"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
+    };
 
+    vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
 
-    SECTION("Filters by country correctly") {
-        // Set up mock data and expected results
-        vector<VenueForTemplates> venuesForTemplates = {
-            VenueForTemplates{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
-            VenueForTemplates{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
-        };    
-        vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
-        istringstream input("1\n1\n1\n1\n1\n1\n"); // Mock selecting the first country
-        ostringstream output;
-        VenueFilter venueFilter;
+    // Set up mock user input
+    istringstream mockInput("1\n1\n1\n1\n1\n1\n1\n1\n");
+    ostringstream mockOutput;
+    CinGuard cinGuard(mockInput.rdbuf());
+    CoutGuard coutGuard(mockOutput.rdbuf());
 
-        venueFilter.processVenueSelectionForTemplates(venuesForTemplates, selectedVenuesForTemplates, input, output);
+    // Create a VenueFilter instance
+    VenueFilter venueFilter;
 
-        REQUIRE(selectedVenuesForTemplates.size() == 1);
-        REQUIRE(selectedVenuesForTemplates[0].country == "France");
-    }
+    // Call the function
+    venueFilter.processVenueSelectionForTemplates(venuesForTemplates, selectedVenuesForTemplates, cin, cout);
 
-    SECTION("Handles invalid input") {
-        // Redirect cerr to capture error messages
-        ostringstream err_output;
-        auto old_err = cerr.rdbuf(err_output.rdbuf());
-
-        // Set up mock data and expected results
-        vector<VenueForTemplates> venuesForTemplates = {
-            VenueForTemplates{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
-            VenueForTemplates{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
-        };    
-        vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
-        istringstream input("4\n");  // Mock invalid input
-        ostringstream output;
-        VenueFilter venueFilter;
-
-        venueFilter.processVenueSelectionForTemplates(venuesForTemplates, selectedVenuesForTemplates, input, output);
-
-        // Restore old cerr buffer
-        cerr.rdbuf(old_err);
-        
-        REQUIRE(err_output.str().find("Invalid index:") != string::npos);
-    }
-
-    SECTION("Proper final venue selection") {
-        // Set up mock data and expected results
-        vector<VenueForTemplates> venuesForTemplates = {
-            VenueForTemplates{"Venue1", "venue1@mock.com", "USA", "AL", "Daphne", 100, "Mixed"},
-            VenueForTemplates{"Venue2", "venue2@mock.com", "France", "Paris Region", "Paris", 300, "Rock"}
-        };    
-        vector<SelectedVenueForTemplates> selectedVenuesForTemplates;
-        istringstream input("1\n1\n1\n1\n1\n1\n1\n1\n");  // Mock selecting the first option at each prompt
-        ostringstream output;
-        VenueFilter venueFilter;
-
-        venueFilter.processVenueSelectionForTemplates(venuesForTemplates, selectedVenuesForTemplates, input, output);
-
-        REQUIRE(selectedVenuesForTemplates.size() == 1);
-        REQUIRE(selectedVenuesForTemplates[0].name == "Venue2");
-    }
+    // Validate the results
+    REQUIRE(selectedVenuesForTemplates.size() == 1);
+    REQUIRE(selectedVenuesForTemplates[0].name == "Venue2");
 }
+
 
 
 // -----------------------

@@ -667,14 +667,14 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         // Default Message
 #ifdef UNIT_TESTING
         default:
-            cerr << "" << endl;
+            cout << "" << endl;
             break;
 #else      
         default:
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
-            cerr << "UNKNOWN MESSAGE TYPE" << endl;
+            cout << "UNKNOWN MESSAGE TYPE" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif

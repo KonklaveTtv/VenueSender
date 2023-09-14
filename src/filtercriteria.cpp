@@ -240,6 +240,7 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
     // If temporaryFilteredVenues is empty we return to Main Menu
     if (temporaryFilteredVenuesForEmails.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMPTY_VENUE_LIST_ERROR);
+        cin.clear();
         return;
     }
 
@@ -265,33 +266,37 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SELECT_COUNTRY_MESSAGE);
+        cin.clear();
         size_t selectedIndex;
         input >> selectedIndex;
-        ConsoleUtils::clearInputBuffer();
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
+        cin.ignore();
 
         if (input.fail()) {
-            ConsoleUtils::clearInputBuffer();
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+            cin.clear();
             continue;
         }
 
         // Do not allow the user to enter an input less than MAX_INPUT_LENGTH
         if (to_string(selectedIndex).length() <= MIN_INPUT_LENGTH) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_LENGTH_ERROR);
+            cin.clear();
             continue;
         }
 
         // Validate input is not greater than MAX_INPUT_LENGTH
         if (to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_LENGTH_ERROR);
+            cin.clear();
             continue;
         }
 
         if (selectedIndex > uniqueCountriesForEmails.size() || selectedIndex < 1 || selectedIndex > maxCountriesToShow) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+            cin.clear();
         } else {
             auto it = uniqueCountriesForEmails.begin();
             advance(it, selectedIndex - 1);
@@ -354,8 +359,8 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
             transform(inputIndices.begin(), inputIndices.end(), inputIndices.begin(), ::tolower);
 
             if (inputIndices.empty()) {
-                std::cin.clear();
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                cin.clear();
                 continue;
             }
 
@@ -367,6 +372,7 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
                 if (!all_of(inputIndices.begin(), inputIndices.end(), [](char c) { return isdigit(c) || c == ','; })) {
                     ConsoleUtils::clearInputBuffer();
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                    cin.clear();
                     continue;
                 }
 
@@ -378,15 +384,15 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
                     try {
                         size_t selectedIndex = stoul(indexStr);
                         if (selectedIndex == 0 || selectedIndex > localIndex - SQLITE_TABLE_INDEX) {
-                            std::cin.clear();
                             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                            cin.clear();
                             continue;
                         }
                         selectedIndex--;
                         selectedIndices.push_back(selectedIndex);
                     } catch (const invalid_argument& e) {
-                        std::cin.clear();
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                        cin.clear();
                         continue;
                     }
                 }
@@ -430,6 +436,7 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
     do {
         isValidInput = true;  // Reset the flag for each iteration
         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::FINAL_VENUE_SELECTION_MENU_HEADER);
+        cin.clear();
         size_t index;
         index = INDICES_START_AT_ONE;
         for (const auto& venueForEmails : temporaryFilteredVenuesForEmails) {
@@ -443,6 +450,7 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::FINAL_VENUE_SELECTION_MESSAGE);
+        cin.clear();
         string finalIndices;
         getline(input, finalIndices);
 #ifndef UNIT_TESTING
@@ -451,9 +459,9 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
         transform(finalIndices.begin(), finalIndices.end(), finalIndices.begin(), ::tolower);
 
         if (finalIndices.empty()) {
-            cin.clear();
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
-            return;
+            cin.clear();
+            continue;
         }
         
         if (finalIndices == "all" || finalIndices == "ALL") {
@@ -470,6 +478,7 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
                 } catch (const exception& e) {
                     ConsoleUtils::clearInputBuffer();
                     ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                    cin.clear();
                     continue;
                 }
             }
@@ -480,8 +489,8 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
 
             for (size_t finalIndex : finalSelectedIndices) {
                 if (finalIndex < 1 || finalIndex > temporaryFilteredVenuesForEmails.size()) {
-                    cin.clear();
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+                    cin.clear();
                     isValidInput = false;
                     break;
                 }
@@ -503,6 +512,7 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
                                           << it->city << endl
                                           << it->state;
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR, duplicateVenueDetails.str());
+                    cin.clear();
                     continue;
                 }
             }
@@ -515,6 +525,7 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
     } while (true);
     
     MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUES_ADDED_MENU_HEADER);
+    cin.clear();
 }
 
 // Function to process venue selection based on user input
@@ -536,6 +547,7 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
     // If temporaryFilteredVenuesForTemplates is empty we return to Main Menu
     if (temporaryFilteredVenuesForTemplates.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMPTY_VENUE_LIST_ERROR);
+        cin.clear();
         return;
     }
 
@@ -561,33 +573,37 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SELECT_COUNTRY_MESSAGE);
+        cin.clear();
         size_t selectedIndex;
         input >> selectedIndex;
-        ConsoleUtils::clearInputBuffer();
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
+        cin.ignore();
 
         if (input.fail()) {
-            ConsoleUtils::clearInputBuffer();
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+            cin.clear();
             continue;
         }
 
         // Do not allow the user to enter an input less than MAX_INPUT_LENGTH
         if (to_string(selectedIndex).length() <= MIN_INPUT_LENGTH) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_LENGTH_ERROR);
+            cin.clear();
             continue;
         }
 
         // Validate input is not greater than MAX_INPUT_LENGTH
         if (to_string(selectedIndex).length() > MAX_INPUT_LENGTH) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_LENGTH_ERROR);
+            cin.clear();
             continue;
         }
 
         if (selectedIndex > uniqueCountriesForTemplates.size() || selectedIndex < 1 || selectedIndex > maxCountriesToShow) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+            cin.clear();
         } else {
             auto it = uniqueCountriesForTemplates.begin();
             advance(it, selectedIndex - 1);
@@ -650,8 +666,8 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
             transform(inputIndices.begin(), inputIndices.end(), inputIndices.begin(), ::tolower);
 
             if (inputIndices.empty()) {
-                std::cin.clear();
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                cin.clear();
                 continue;
             }
 
@@ -661,8 +677,8 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
             } else {
                 // Check if the input contains only digits and commas
                 if (!all_of(inputIndices.begin(), inputIndices.end(), [](char c) { return isdigit(c) || c == ','; })) {
-                    std::cin.clear();
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                    cin.clear();
                     continue;
                 }
 
@@ -674,15 +690,15 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
                     try {
                         size_t selectedIndex = stoul(indexStr);
                         if (selectedIndex == 0 || selectedIndex > localIndex - SQLITE_TABLE_INDEX) {
-                            std::cin.clear();
                             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                            cin.clear();
                             continue;
                         }
                         selectedIndex--;
                         selectedIndices.push_back(selectedIndex);
                     } catch (const invalid_argument& e) {
-                        std::cin.clear();
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                        cin.clear();
                         continue;
                     }
                 }
@@ -726,6 +742,7 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
     do {
         isValidInput = true;  // Reset the flag for each iteration
         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::FINAL_VENUE_SELECTION_MENU_HEADER);
+        cin.clear();
         size_t index;
         index = INDICES_START_AT_ONE;
         for (const auto& venueForTemplates : temporaryFilteredVenuesForTemplates) {
@@ -739,6 +756,7 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::FINAL_VENUE_SELECTION_MESSAGE);
+        cin.clear();
         string finalIndices;
         getline(input, finalIndices);
 #ifndef UNIT_TESTING
@@ -747,8 +765,8 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
         transform(finalIndices.begin(), finalIndices.end(), finalIndices.begin(), ::tolower);
 
         if (finalIndices.empty()) {
-            cin.clear();
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+            cin.clear();
             continue;
         }
         
@@ -766,6 +784,7 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
                 } catch (const exception& e) {
                     ConsoleUtils::clearInputBuffer();
                     ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
+                    cin.clear();
                     continue;
                 }
             }
@@ -776,8 +795,8 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
 
             for (size_t finalIndex : finalSelectedIndices) {
                 if (finalIndex < 1 || finalIndex > temporaryFilteredVenuesForTemplates.size()) {
-                    cin.clear();
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INDEX_ERROR);
+                    cin.clear();
                     isValidInput = false;
                     break;
                 }
@@ -799,6 +818,7 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
                                           << it->city << endl
                                           << it->state;
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::VENUE_ALREADY_SELECTED_ERROR, duplicateVenueDetails.str());
+                    cin.clear();
                     continue;
                 }
             }
@@ -811,4 +831,5 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
     } while (true);
 
     MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::VENUES_ADDED_MENU_HEADER);
+    cin.clear();
 }

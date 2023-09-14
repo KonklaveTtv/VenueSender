@@ -111,9 +111,9 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "ERROR: Failed to send email to " << extraInfo << endl;
             break;
         case ErrorType::EMAIL_SEND_FAILURE_ERROR:
-            cout << "===========================" << endl;
-            cout << "    EMAIL SENDING FAILED   " << endl;
-            cout << "===========================" << endl;
+            cerr << "===========================" << endl;
+            cerr << "    EMAIL SENDING FAILED   " << endl;
+            cerr << "===========================" << endl;
             break;
         case ErrorType::EMAIL_WRITING_ATTEMPTS_ERROR:
             cerr << "ERROR: TOO MANY UNSUCCESSFUL ATTEMPTS. Returning to main menu." << endl;
@@ -181,7 +181,7 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
             cerr << "ERROR: Invalid SMTP Username length" << extraInfo << endl;
             break;
         case ErrorType::SMTP_USERNAME_NON_MATCH_ERROR:
-            cout << "ERROR: Your SMTP Username is not an email, is this correct? (y/n): ";
+            cerr << "ERROR: Your SMTP Username is not an email, is this correct? (y/n): ";
             break;
         case ErrorType::SMTP_SERVER_LENGTH_ERROR:
             cerr << "ERROR: Invalid SMTP Server length." << extraInfo << endl;
