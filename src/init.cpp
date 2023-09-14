@@ -58,6 +58,12 @@ void Init::splashscreen() {
 #endif
 }
 
+void Init::limitsWarning() {
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_SEND_LIMITS_MESSAGE);
+    ConsoleUtils::clearInputBuffer();
+    ConsoleUtils::clearConsole();
+}
+
 void Init::Menu() {
     // Main loop for interacting with the user
     while (true) {

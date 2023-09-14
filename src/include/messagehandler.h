@@ -97,6 +97,9 @@ public:
 
 		// Red
 
+			// System Messages
+			SMTP_SEND_LIMITS_MESSAGE,
+
 			// Menu
 			VENUES_NOT_SELECTED_MESSAGE,
 			PRESS_RETURN_MESSAGE,

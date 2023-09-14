@@ -23,6 +23,9 @@ public:
 	// Function to display the splashscreen
 	static void splashscreen();
 
+	// Function to display SMTP limit warning
+	static void limitsWarning();
+
 	//Function to display the Main Menu to the user
     static void Menu();
 };

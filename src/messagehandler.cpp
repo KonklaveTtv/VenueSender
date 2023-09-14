@@ -478,6 +478,22 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 
     // Red Messages
 
+        // System Messages
+        case MessageType::SMTP_SEND_LIMITS_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::RED);
+#endif
+            cout << "============================================" << endl;
+            cout << "          EMAIL/SMTP LIMIT WARNING          " << endl; 
+            cout << "   Check Daily Limits With Email Provider   " << endl;
+            cout << "                                            " << endl;
+            cout << "        (Press Enter to continue...)        " << endl;                            
+            cout << "============================================" << endl;
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif
+        break;
+
         // Menu Messages
         case MessageType::VENUES_NOT_SELECTED_MESSAGE:
 #ifndef UNIT_TESTING

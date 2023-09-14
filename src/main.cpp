@@ -102,6 +102,8 @@ try {
     // Create an EmailManager object
     EmailManager emailManager;
 
+    Init::limitsWarning();
+
     // Pass the necessary objects to the navigateMenus function
     menuManager.navigateMenus(emailManager, 
                               curl, 
