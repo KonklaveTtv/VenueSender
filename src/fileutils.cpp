@@ -66,12 +66,14 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     memset(&oldt, 0, sizeof(oldt));
     if (tcgetattr(STDIN_FILENO, &oldt) != 0) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR);
+        cin.clear();
         return "";
     }
     newt = oldt;
     newt.c_lflag &= ~(ECHO | ICANON);
     if (tcsetattr(STDIN_FILENO, TCSANOW, &newt) != 0) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR);
+        cin.clear();
         return "";
     }
 
@@ -86,12 +88,15 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
 
         if (isOn) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_CAPS_LOCK_ERROR);
+            cin.clear();
         }
 #endif
         if (initColor) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::INIT_ENTER_PASSWORD_MESSAGE);
+            cin.clear();
         } else {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_CONFIG_ENTER_PASSWORD_MESSAGE);
+            cin.clear();
         }
 
         password.clear();
@@ -116,6 +121,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             // Check for password length
             if (password.length() >= MAX_PASSWORD_LENGTH) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MAX_LENGTH_ERROR);
+                cin.clear();
                 break;
             }
 
@@ -140,16 +146,19 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         // Check for minimum password length
         if (password.length() < MIN_PASSWORD_LENGTH) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MIN_LENGTH_ERROR);
+            cin.clear();
             continue;
         }
 
         if (initColor) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::INIT_CONFIRM_PASSWORD_MESSAGE);
+            cin.clear();
         } else {
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE); // Orange for input
 #endif
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_CONFIG_CONFIRM_PASSWORD_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor(); // Reset color
 #endif
@@ -176,6 +185,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             // Check for password length
             if (confirm.length() >= MAX_PASSWORD_LENGTH) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MAX_LENGTH_ERROR);
+                cin.clear();
                 break;
             }
 
@@ -200,6 +210,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_PASSWORD_MISMATCH_ERROR);
+            cin.clear();
         }
     }
     
@@ -211,6 +222,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     // Restore terminal settings
     if (tcsetattr(STDIN_FILENO, TCSANOW, &oldt) != 0) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR);
+        cin.clear();
     }
 
     cout << endl;  // Move to the next line after password entry
@@ -239,6 +251,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     if (!boost::filesystem::exists(configPath)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR);
+        cin.clear();
         return false;
     }
 
@@ -269,6 +282,7 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
         verbose = config.get<bool>("verbose");
     } catch (pt::ptree_error& e) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
+        cin.clear();
         return false;
     }
 
@@ -278,10 +292,11 @@ bool ConfigManager::loadConfigSettings(bool& useSSL, bool& verifyPeer, bool& ver
 
     if (configLoadedSuccessfully) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIG_JSON_LOADED_MESSAGE);
+        cin.clear();
         this_thread::sleep_for(chrono::seconds(1));
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
-
+        cin.clear();
     }
 
     return configLoadedSuccessfully;
@@ -293,6 +308,7 @@ bool ConsoleUtils::fileExists(const string& filename) {
     if (!boost::filesystem::exists(filePath)) {
         if (filename != confPaths::venuesCsvPath) { // Add this line to prevent error for venues.csv
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, filename);
+            cin.clear();
         }
         return false;
     }
@@ -311,6 +327,7 @@ bool VenueDatabaseReader::decryptRegistrationKey(const string& registrationKeyPa
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::OPENSSL_INITIALIZATION_ERROR);
+        cin.clear();
         return false;
     }
 
@@ -358,6 +375,7 @@ bool VenueDatabaseReader::decryptSQLiteDatabase(const string& encryptedFilePath,
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
     if (ctx == nullptr) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::OPENSSL_INITIALIZATION_ERROR);
+        cin.clear();
         return false;
     }
 
@@ -400,6 +418,7 @@ void VenueDatabaseReader::readFromCsv(vector<VenueForEmails>& venuesForEmails, v
     if (!stream) {
         if (venuesCsvExists) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_OPEN_ERROR, confPaths::venuesCsvPath);
+            cin.clear();
         }
         return;
     }
@@ -425,6 +444,7 @@ void VenueDatabaseReader::readFromCsv(vector<VenueForEmails>& venuesForEmails, v
             venuesForEmails.push_back(venueForEmails);
         } else if (venuesCsvExists) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV_ERROR, confPaths::venuesCsvPath);
+            cin.clear();
         }
         if (rowData.size() == CSV_TOTAL_ROW_COUNT) {
             VenueForTemplates venueForTemplates;
@@ -438,6 +458,7 @@ void VenueDatabaseReader::readFromCsv(vector<VenueForEmails>& venuesForEmails, v
             venuesForTemplates.push_back(venueForTemplates);
         } else if (venuesCsvExists) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_DATA_IN_CSV_ERROR, confPaths::venuesCsvPath);
+            cin.clear();
         }
     }
 }
@@ -450,6 +471,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmai
     bool decryptionSuccess = decryptRegistrationKey(confPaths::registrationKeyPath, decryptedRegistrationKeyData);
     if (!decryptionSuccess) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::REGISTRATION_KEY_INVALID_ERROR);
+        cin.clear();
         return false;
     }
 
@@ -460,6 +482,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmai
         csvFile.close();
         success = true;
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CSV_DATABASE_LOADED_MESSAGE);
+        cin.clear();
         this_thread::sleep_for(chrono::seconds(1));
         ConsoleUtils::clearConsole();
     }
@@ -472,6 +495,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmai
         bool decryptionSuccess = decryptSQLiteDatabase(confPaths::sqliteEncryptedDatabasePath, decryptedData);
         if (!decryptionSuccess) {
             ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DATABASE_DECRYPTION_ERROR);
+            cin.clear();
             return false;
         }
 
@@ -479,6 +503,7 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmai
         sqlite3* db = nullptr;
         if (sqlite3_open(":memory:", &db) != SQLITE_OK) {
             ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_MEMORY_ALLOCATION_ERROR);
+            cin.clear();
             return false;
         }
 
@@ -490,7 +515,8 @@ bool VenueDatabaseReader::initializeDatabaseAndReadVenueData(vector<VenueForEmai
         if (sqlite3_deserialize(db, "main", sqliteBuffer.get(), decryptedData.size(), decryptedData.size(),
                                 SQLITE_DESERIALIZE_RESIZEABLE) != SQLITE_OK) {
                                 ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SQLITE_DECRYPTED_DATABASE_LOAD_ERROR);
-            return false;
+                                cin.clear();
+                                return false;
         }
 
         // Read from the in-memory SQLite database
@@ -510,6 +536,7 @@ void VenueDatabaseReader::readFromSQLite(vector<VenueForEmails>& venuesForEmails
         sqlite3* tempDb;
         if (sqlite3_open(":memory:", &tempDb) != SQLITE_OK) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR, "In-memory database");
+            cin.clear();
             return;
         }
         dbPtr.reset(tempDb);
@@ -519,6 +546,7 @@ void VenueDatabaseReader::readFromSQLite(vector<VenueForEmails>& venuesForEmails
     sqlite3_stmt* tempStmt;
     if (sqlite3_prepare_v2(db, query, -1, &tempStmt, nullptr) != SQLITE_OK) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SQLITE_STATEMENT_ERROR);
+        cin.clear();
         return;
     }
     Sqlite3StmtPtr stmtPtr(tempStmt, Sqlite3StmtDeleter());

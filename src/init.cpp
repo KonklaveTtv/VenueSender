@@ -21,6 +21,7 @@ void Init::splashscreen() {
 
     // Display splash text centered
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SPLASH_TITLE_VERSION_MESSAGE);
+    cin.clear();
 
     // Display copyright and other text in cyan
 #ifndef UNIT_TESTING
@@ -32,6 +33,7 @@ void Init::splashscreen() {
     ConsoleUtils::resetColor();
 #endif
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::COPYRIGHT_INFO_MESSAGE);
+    cin.clear();
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
 #endif
@@ -44,6 +46,7 @@ void Init::splashscreen() {
 #endif
     
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::INITIALIZATION_MESSAGE);
+    cin.clear();
     this_thread::sleep_for(chrono::seconds(1));
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
@@ -82,6 +85,7 @@ void Init::Menu() {
                 break;
             default:
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+                cin.clear();
         }
     }
 }

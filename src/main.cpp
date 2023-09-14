@@ -35,6 +35,7 @@ try {
         CURL* curl = setupCurlHandle(curlWrapper, useSSL, sslCertPath, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer);
     if (!curl) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        cin.clear();
         return 1;
     }
 
@@ -42,6 +43,7 @@ try {
     string venuesPathCopy = confPaths::venuesCsvPath;
     if (!ConfigManager::loadConfigSettings(useSSL, verifyPeer, verifyHost, verbose, senderEmail, smtpUsername, mailPass, smtpPort, smtpServer, venuesPathCopy, initColor)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::CONFIG_LOAD_ERROR);
+        cin.clear();
         exit(1);
     }
 
@@ -86,6 +88,7 @@ try {
 
     if (!dbReader.initializeDatabaseAndReadVenueData(venuesForEmails, venuesForTemplates, confPaths::venuesCsvPath)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::DATABASE_OPEN_ERROR);
+        cin.clear();
         exit(1);
     }
     
@@ -141,6 +144,7 @@ try {
     } catch (const exception& e) {
         cerr << "Caught exception: " << e.what() << endl;
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::MENU_LOAD_ERROR);
+        ConsoleUtils::clearInputBuffer();
     }
     
     // Function load filters and display menu

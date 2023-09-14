@@ -476,9 +476,8 @@ void VenueFilter::processVenueSelectionForEmails(const vector<VenueForEmails>& v
                     size_t finalIndex = stoul(indexStr);
                     finalSelectedIndices.push_back(finalIndex);
                 } catch (const exception& e) {
-                    ConsoleUtils::clearInputBuffer();
                     ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
-                    cin.clear();
+                    ConsoleUtils::clearInputBuffer();
                     continue;
                 }
             }
@@ -782,9 +781,8 @@ void VenueFilter::processVenueSelectionForTemplates(const vector<VenueForTemplat
                     size_t finalIndex = stoul(indexStr);
                     finalSelectedIndices.push_back(finalIndex);
                 } catch (const exception& e) {
-                    ConsoleUtils::clearInputBuffer();
                     ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::INVALID_INDEX_FORMAT_ERROR);
-                    cin.clear();
+                    ConsoleUtils::clearInputBuffer();
                     continue;
                 }
             }

@@ -64,6 +64,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
     // Prompt the user to enter the subject and perform checks
     do {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_SUBJECT_FOR_EMAIL_MESSAGE);
+        cin.clear();
         string line;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -81,7 +82,9 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 
     if (subject.length() > maxSubjectLength) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
+        cin.clear();
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
+        cin.clear();
         ConsoleUtils::clearInputBuffer();
         cin.get();
 #ifndef UNIT_TESTING
@@ -95,6 +98,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
     bool inputProvided;
     do {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_MESSAGE_FOR_EMAIL_MESSAGE);
+        cin.clear();
         string line;
         inputProvided = false;
 
@@ -105,7 +109,9 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
             if (line.empty()) break;
             if (message.length() + line.length() > maxMessageLength) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
+                cin.clear();
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
+                cin.clear();
                 ConsoleUtils::clearInputBuffer();
 
                 cin.get();
@@ -124,7 +130,9 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
             inputProvided = true;
         } else if (message.empty()) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_BLANK_ERROR);
+            cin.clear();
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
+            cin.clear();
             ConsoleUtils::clearInputBuffer();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -144,6 +152,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
     // Prompt the user to add an attachment
         while (true) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
+            cin.clear();
             char addAttachmentChoice;
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -159,6 +168,7 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
 
         } else if (addAttachmentChoice == ConsoleUtils::YES_UPPER || addAttachmentChoice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -214,10 +224,11 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                     // Check the attachment size doesn't exceed 24MB
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                        cin.clear();
                         clearEmailAttachmentData(attachmentName, attachmentSize, attachmentPath);
                  
                         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
-
+                        cin.clear();
                         char choice;
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -245,22 +256,26 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
                 } else {
                     // Error handling for attachment path
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                    cin.clear();
                     return;  // Exit the function if the path is invalid
                 }
             } catch (const filesystem::filesystem_error& e) {
                 // Error handling for filesystem errors
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+                cin.clear();
                 return;
                 }
 
             } else {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ATTACHMENT_INVALID_CHOICE_MESSAGE);
+                cin.clear();
                 continue;
             }
         }
         // Display a success message
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_CREATION_SUCCESS_MESSAGE);
+        cin.clear();
 }
 
 void EmailManager::viewEditEmails(const string& senderEmail, string& subject, string& message, 
@@ -302,7 +317,7 @@ void EmailManager::viewEditEmails(const string& senderEmail, string& subject, st
     while (attempts < 3) {
 
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_EMAIL_CONFIRMATION_MESSAGE);
-
+        cin.clear();
         char modifyEmailChoice;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -319,6 +334,7 @@ void EmailManager::viewEditEmails(const string& senderEmail, string& subject, st
                 modified = true;
             } catch (const exception& e) {
                 ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+                ConsoleUtils::clearInputBuffer();
                 clearSubjectMessageData(subject, message);
                 attempts++; // Increment the attempts
                 continue; // Loop back to prompt for email details again
@@ -326,14 +342,17 @@ void EmailManager::viewEditEmails(const string& senderEmail, string& subject, st
 
             if (subject.empty() || message.empty()) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_BLANK_ERROR);
+                cin.clear();
                 try {
                     constructEmail(subject, message, attachmentName, attachmentSize, attachmentPath, cin);
                 } catch (const exception& e) {
                     ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SUBJECT_MESSAGE_ERROR);
+                    ConsoleUtils::clearInputBuffer();
                     clearSubjectMessageData(subject, message);
                     attempts++; // Increment the attempts
                     if (attempts >= 3) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_AND_SUBJECT_WRITE_ATTEMPTS_ERROR);                                
+                        cin.clear();
                         return; // Break out of the loop after too many attempts
                     }
                     continue; // Loop back to prompt for email details again
@@ -382,6 +401,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
 
     if (templateForEmail.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_PENDING_ERROR);
+        cin.clear();
         return;
     }
 
@@ -552,6 +572,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 }
             } else {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_REDO_MODIFY_INPUT_ERROR);
+                cin.clear();
                 continue;
             }
         
@@ -617,6 +638,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                         bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                         if (!sent) {
                             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
+                            cin.clear();
                         }
                     } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
                         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
@@ -624,7 +646,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                         templateExists = true;
                     } else {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
-                        // Here you can decide what to do in case of invalid input.
+                        cin.clear();
                         continue;
                     }
                 } else if (satisfiedChoice == ConsoleUtils::NO_UPPER || satisfiedChoice == ConsoleUtils::NO_LOWER) {
@@ -637,6 +659,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                     }
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+                    cin.clear();
                     continue;
                 }
             }
@@ -659,6 +682,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                 if (!sent) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
+                    cin.clear();
                 }
             } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
                 MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
@@ -666,9 +690,11 @@ void EmailManager::viewEditTemplates(CURL* curl,
                 templateExists = true;
             } else {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+                cin.clear();
             }
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+            cin.clear();
             continue;
         }
     }
@@ -696,11 +722,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        cin.clear();
         return false;
     }
 
     if (useSSL && !verifyPeer) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CONFIGURATION_ERROR);
+        cin.clear();
         return false;
     }
 
@@ -710,6 +738,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     if (!isValidEmail(senderEmail)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+        cin.clear();
         return false;
     }
 
@@ -744,6 +773,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     mime = curl_mime_init(curl);
     if (!mime) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_INIT_ERROR);
+        cin.clear();
         return false;
     }
 
@@ -751,6 +781,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     curl_mimepart* part = curl_mime_addpart(mime);
     if (!part) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+        cin.clear();
         return false;
     }
     curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
@@ -762,6 +793,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         part = curl_mime_addpart(mime);
         if (!part) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+            cin.clear();
             return false;
         }
 
@@ -845,12 +877,14 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
             // ANSI escape code check
             if (clearVenuesDecision.find("\033") != string::npos) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                cin.clear();
                 continue;
             }
 
             // Whitespace check (full whitespace)
             if (all_of(clearVenuesDecision.begin(), clearVenuesDecision.end(), ::isspace)) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                cin.clear();
                 continue;
             }
 
@@ -864,11 +898,13 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
                 break;  // Exit the loop
             } else {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                cin.clear();
                 // Loop will continue to ask for a valid input
             }
         }
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
+        cin.clear();
         return false;
     }
     
@@ -876,9 +912,11 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         if (res == CURLE_COULDNT_CONNECT) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
+            cin.clear();
         } else if (res == CURLE_LOGIN_DENIED) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
+            cin.clear();
         }
         return false;
     }
@@ -902,17 +940,20 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        cin.clear();
         return false;
     }
 
     if (!isValidEmail(senderEmail)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+        cin.clear();
         return false;
     }
 
     if (useSSL && !verifyPeer) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CONFIGURATION_ERROR);
+        cin.clear();
         return false;
     }
 
@@ -956,6 +997,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         mime = curl_mime_init(curl);
         if (!mime) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_INIT_ERROR);
+            cin.clear();
             return false;
         }
 
@@ -963,6 +1005,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         curl_mimepart* part = curl_mime_addpart(mime);
         if (!part) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+            cin.clear();
             return false;
         }
         curl_mime_data(part, message.c_str(), CURL_ZERO_TERMINATED);
@@ -974,6 +1017,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
             part = curl_mime_addpart(mime);
             if (!part) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+                cin.clear();
                 return false;
             }
 
@@ -1015,6 +1059,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
             cout.flush();
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SENDING_ERROR);
+            cin.clear();
             continue;  // Skip to the next iteration
         }
 
@@ -1038,6 +1083,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
+        cin.clear();
         return false;
     }
     
@@ -1045,9 +1091,11 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         if (res == CURLE_COULDNT_CONNECT) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
+            cin.clear();
         } else if (res == CURLE_LOGIN_DENIED) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
+            cin.clear();
         }
         return false;
     }
@@ -1161,6 +1209,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
                 char confirmation;
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMPTY_FIELD_CONFIRMATION_TEMPLATE_MESSAGE);
+                cin.clear();
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
@@ -1176,12 +1225,14 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     // Handle the 'No' case if needed
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+                    cin.clear();
                     continue;
                 }
             } else {
                 if (checkURL && !isValidURL(input)) {
                     char confirmation;
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_POSSIBLE_ENTRY_ERROR);
+                    cin.clear();
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif 
@@ -1197,6 +1248,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
                         // Handle the 'Yes' case if needed
                     } else {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+                        cin.clear();
                         continue;
                     }
                 }
@@ -1208,6 +1260,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
         // Check if venues are selected
         if (selectedVenuesForTemplates.empty()) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_FOR_TEMPLATE_ERROR);
+            cin.clear();
             return;  // Exit the function
         }
 
@@ -1234,6 +1287,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             quoteSources.push_back(singleQuoteSource);
 
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -1253,6 +1307,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             getInputWithConfirmation(name, "Enter Your Name: ", true);
             if (name.empty()) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_NAME_FIELD_EMPTY_FIELD_ERROR);
+                cin.clear();
             } else {
                 nameConfirmed = true;
             }
@@ -1289,6 +1344,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
 
     while (true) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
+        cin.clear();
         char addAttachmentChoice;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1303,6 +1359,7 @@ void EmailManager::createBookingTemplate(CURL* curl,
             break;
         } else if (addAttachmentChoice == ConsoleUtils::YES_UPPER || addAttachmentChoice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -1352,9 +1409,10 @@ void EmailManager::createBookingTemplate(CURL* curl,
 #endif
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                        cin.clear();
                         clearTemplateAttachmentData(templateAttachmentName, templateAttachmentSize, templateAttachmentPath);
                         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
-
+                        cin.clear();
                         char choice;
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1381,19 +1439,23 @@ void EmailManager::createBookingTemplate(CURL* curl,
                     break;  // Exit the loop if the file is valid
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                    cin.clear();
                 }
             } catch (const filesystem::filesystem_error& e) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+                ConsoleUtils::clearInputBuffer();
             } 
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_CHOICE_ERROR);
+            cin.clear();
             continue;
         }
     }
 while (modifyTemplate) {
         // Ask user if they want to modify or send
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_TEMPLATE_CONFIRMATION_MESSAGE);
+        cin.clear();
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
@@ -1405,6 +1467,7 @@ while (modifyTemplate) {
 
         if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::REDO_OR_MODIFY_TEMPLATE_MESSAGE);
+            cin.clear();
             string modifyChoice;
             cin >> modifyChoice;
             ConsoleUtils::clearInputBuffer();  // Clear the input buffer
@@ -1435,6 +1498,7 @@ while (modifyTemplate) {
                 cout << "12. Name" << endl;
  
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CHOOSE_FIELDS_TO_MODIFY_MESSSAGE);
+                cin.clear();
                 string indices;
 
 #ifndef UNIT_TESTING
@@ -1464,6 +1528,7 @@ while (modifyTemplate) {
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif                        
                         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_PRESS_QUOTE_MESSAGE);
+                        cin.clear();
                         getline(cin, singlePressQuote);
 #ifndef UNIT_TESTING
                         ConsoleUtils::resetColor();
@@ -1484,6 +1549,7 @@ while (modifyTemplate) {
 
      
                         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ANOTHER_QUOTE_MESSAGE);
+                        cin.clear();
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif       
@@ -1500,6 +1566,7 @@ while (modifyTemplate) {
                     string newField;
                     cout << "Current " << fieldName << ": " << field << endl;
                     cout << "Enter new " << fieldName << " (press Enter to keep the current value): ";
+                    cin.clear();
                     getline(cin, newField);
                     ConsoleUtils::clearInputBuffer();
                     if (!newField.empty()) {
@@ -1527,6 +1594,7 @@ while (modifyTemplate) {
                 }
             } else {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_REDO_MODIFY_INPUT_ERROR);
+                cin.clear();
                 continue;
             }
         
@@ -1560,6 +1628,7 @@ while (modifyTemplate) {
 #endif
                 // Check if the user is satisfied
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_TEMPLATE_SATISFIED_MESSAGE);
+                cin.clear();
                 char satisfiedChoice;
 #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1576,6 +1645,7 @@ while (modifyTemplate) {
 
                     // Ask if the user wants to send the email only when they're satisfied
                     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
+                    cin.clear();
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
@@ -1592,19 +1662,23 @@ while (modifyTemplate) {
                         bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                         if (!sent) {
                             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
+                            cin.clear();
                         }
                     } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
                         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
+                        cin.clear();
                         // If user chooses not to send, the template and subjects stay in the map
                         templateExists = true;
                     } else {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+                        cin.clear();
                         continue;
                     }
                 } else if (satisfiedChoice == ConsoleUtils::NO_UPPER || satisfiedChoice == ConsoleUtils::NO_LOWER) {
                     continue;  // Continue modifying the template if the user is not satisfied
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+                    cin.clear();
                     continue;
                 }
             }            
@@ -1612,6 +1686,7 @@ while (modifyTemplate) {
         modifyTemplate = false;  // Exit the loop
         // Ask if the user wants to send the email
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATE_MESSAGE);
+        cin.clear();
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
@@ -1627,16 +1702,20 @@ while (modifyTemplate) {
             bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             if (!sent) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
+                cin.clear();
             }
         } else if (choice == ConsoleUtils::NO_UPPER || choice == ConsoleUtils::NO_LOWER) {
             MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::TEMPLATE_SAVED_MENU_HEADER);
+            cin.clear();
             // If user chooses not to send, the template and subjects stay in the map
             templateExists = true;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+            cin.clear();
         }
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
+        cin.clear();
         continue;
         }
     }
@@ -1665,17 +1744,20 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        cin.clear();
         return;
     }
 
     if (!isValidEmail(senderEmail)) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+        cin.clear();
         return;
     }
 
     if (useSSL && !verifyPeer) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CONFIGURATION_ERROR);
+        cin.clear();
         return;
     }
 
@@ -1694,6 +1776,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         // Prompt the user for the custom email address
         do {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_CUSTOM_ADDRESS_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -1707,12 +1790,14 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 break;
             } else {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::RECIPIENT_EMAIL_FORMAT_ERROR);
+                cin.clear();
                 return;
             }
         } while (true);
 
         do {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_SUBJECT_FOR_EMAIL_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -1725,6 +1810,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         if (customAddressSubject.length() > maxSubjectLength) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SUBJECT_LENGTH_ERROR);
+            cin.clear();
         #ifndef UNIT_TESTING
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
@@ -1739,6 +1825,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         // Read multiple lines for the message body of the email
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ENTER_MESSAGE_FOR_EMAIL_MESSAGE);
+        cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -1748,6 +1835,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         if (customAddressMessage.length() + customAddressLine.length() > maxMessageLength) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_MESSAGE_LENGTH_ERROR);
+            cin.clear();
         #ifndef UNIT_TESTING
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::PRESS_RETURN_MESSAGE);
             ConsoleUtils::clearInputBuffer();
@@ -1763,7 +1851,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
         while (true) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
-
+            cin.clear();
             char addAttachmentChoice;
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1778,6 +1866,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 break;
         } else if (addAttachmentChoice == ConsoleUtils::YES_UPPER || addAttachmentChoice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -1827,8 +1916,10 @@ void EmailManager::emailCustomAddress(CURL* curl,
 #endif
                 if (fileSize > MAX_ATTACHMENT_SIZE) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                    cin.clear();
                     clearCustomAddressAttachmentData(customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
                     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
+                    cin.clear();
                     char choice;
 #ifndef UNIT_TESTING
                     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -1854,11 +1945,13 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 break;  // Exit the loop if the file is valid
             } else {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                cin.clear();
                 return;
             }
         } catch (const filesystem::filesystem_error& e) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+            cin.clear();
             return;
         }
 
@@ -1867,6 +1960,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
             ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ATTACHMENT_INVALID_CHOICE_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
@@ -1902,7 +1996,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         cout << "\n" << customAddressMessage << "\n";
         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::CYAN_THIN_BORDER);
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::MODIFY_EMAIL_CONFIRMATION_MESSAGE);
-
+        cin.clear();
         char modifyEmailChoice;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
@@ -1922,6 +2016,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
     }
 
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_EMAIL_MESSAGE);
+    cin.clear();
     char confirmSend;
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
@@ -1936,6 +2031,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
         if (confirmSend == ConsoleUtils::YES_UPPER || confirmSend == ConsoleUtils::YES_LOWER) {
             if (!curl) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+                cin.clear();
                 return;
             }
 #ifndef UNIT_TESTING
@@ -1967,6 +2063,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
             mime = curl_mime_init(curl);
             if (!mime) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_INIT_ERROR);
+                cin.clear();
                 return;
             }
 
@@ -1974,6 +2071,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
             curl_mimepart* part = curl_mime_addpart(mime);
             if (!part) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+                cin.clear();
                 return;
             }
             curl_mime_data(part, customAddressMessage.c_str(), CURL_ZERO_TERMINATED);
@@ -1985,6 +2083,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 part = curl_mime_addpart(mime);
                 if (!part) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::MIME_PART_ERROR);
+                    cin.clear();
                     return;
                 }
 
@@ -2001,6 +2100,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
             curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
 
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SMTP_AUTH_MESSAGE);
+            cin.clear();
             cout.flush();
 
             // Push the email
@@ -2042,8 +2142,10 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
             if (res == 0 && customEmailSendingProgressPercentage == 100) {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_SENT_MESSAGE);
+                cin.clear();
             } else {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_SENDING_FAILED_MESSAGE);
+                cin.clear();
             }
 
             // Clear the subject, message, and attachment strings
@@ -2054,13 +2156,16 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 if (res == CURLE_COULDNT_CONNECT) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_CONNECTION_ERROR);
+                    cin.clear();
                 } else if (res == CURLE_LOGIN_DENIED) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_AUTH_ERROR);
+                    cin.clear();
                 }
             }
         } else {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SAVED_MESSAGE);
+            cin.clear();
             return;
     }
 }
@@ -2080,12 +2185,14 @@ void EmailManager::confirmSendEmail(CURL* curl,
 
     if (subject.empty() && message.empty()) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_NOT_CREATED_MESSAGE);
+        cin.clear();
         return;
     }
 
     // Check if any venues are selected for email sending
     if (selectedVenuesForEmail.empty()) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::VENUES_NOT_SELECTED_MESSAGE);
+        cin.clear();
         return;  // Exit the function
     }
 
@@ -2108,6 +2215,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
 
     // Confirm with the user that they want to proceed.
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_EMAILS_MESSAGE);
+    cin.clear();
     char confirmSend;
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
@@ -2123,6 +2231,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_SENDING_ABORTED_MESSAGE);
+        cin.clear();
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -2184,6 +2293,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::NO_BOOKING_TEMPLATES_CREATED_MESSAGE);
+        cin.clear();
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -2196,6 +2306,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::VENUES_NOT_SELECTED_FOR_TEMPLATES_MESSAGE);
+        cin.clear();
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -2236,6 +2347,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
     MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_SEND_TEMPLATES_MESSAGE);
+    cin.clear();
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif
@@ -2254,6 +2366,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
         ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::TEMPLATE_SENDING_ABORTED_MESSAGE);
+        cin.clear();
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -2281,6 +2394,7 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
                                            string& templateAttachmentPath) const {
     while (true) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::CONFIRM_ADD_ATTACHMENT_MESSAGE);
+        cin.clear();
         char addAttachmentChoice;
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -2295,6 +2409,7 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
             break;
         } else if (addAttachmentChoice == ConsoleUtils::YES_UPPER || addAttachmentChoice == ConsoleUtils::YES_LOWER) {
             MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_ATTACHMENT_MESSAGE);
+            cin.clear();
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
 #endif
@@ -2344,9 +2459,10 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
 #endif
                     if (fileSize > MAX_ATTACHMENT_SIZE) {
                         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_SIZE_ERROR);
+                        cin.clear();
                         clearTemplateAttachmentData(templateAttachmentName, templateAttachmentSize, templateAttachmentPath);
                         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::ADD_DIFFERENT_ATTACHMENT_MESSAGE);
-
+                        cin.clear();
                         char choice;
 #ifndef UNIT_TESTING
                         ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
@@ -2373,13 +2489,16 @@ void EmailManager::addAttachmentToTemplate(string& templateAttachmentName,
                     break;  // Exit the loop if the file is valid
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_ERROR);
+                    cin.clear();
                 }
             } catch (const filesystem::filesystem_error& e) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::FILESYSTEM_ERROR, e.what());
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::ATTACHMENT_PATH_EMPTY_ERROR);
+                cin.clear();
             } 
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_MENU_CHOICE_ERROR);
+            cin.clear();
             continue;
         }
     }

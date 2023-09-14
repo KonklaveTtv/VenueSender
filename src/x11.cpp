@@ -71,10 +71,12 @@ bool X11Singleton::isCapsLockOn() {
         // Log or print the exception's what() message, or do something else
         cerr << "Caught exception: " << e.what() << endl;
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR, e.what());
+        ConsoleUtils::clearInputBuffer();
     } catch (...) {
         // Catch-all for other exceptions
         cerr << "Caught an unknown exception" << endl;
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::UNKNOWN_ERROR);
+        ConsoleUtils::clearInputBuffer();
     }
     
     // Release resources

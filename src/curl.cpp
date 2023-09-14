@@ -43,6 +43,7 @@ CurlHandleWrapper::CurlHandleWrapper() : curl(nullptr) {
     curl = curl_easy_init();
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        cin.clear();
         return;
     }
 }
@@ -79,6 +80,7 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const string&
     if (!curl) {
         // Handle error
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        cin.clear();
         return nullptr;
     }
 
