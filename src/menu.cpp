@@ -166,6 +166,7 @@ bool MenuManager::navigateMenus(EmailManager& emailManager,
             }
             default:
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+                cin.clear();
         }
     }
 }
@@ -214,6 +215,7 @@ int MenuManager::displayMenuOptions() {
                 continue;  // Continue to the next iteration of the loop
             } else {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+                cin.clear();
                 continue;  // Continue to the next iteration of the loop
             }
         }
@@ -222,6 +224,7 @@ int MenuManager::displayMenuOptions() {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            cin.clear();
         }
     } while (true);
     return choice;
@@ -249,6 +252,7 @@ int MenuManager::displayVenueSelectionOptions() {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            cin.clear();
         }
     } while (true);
     return choice;
@@ -278,6 +282,7 @@ int MenuManager::displayVenueOptions() {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            cin.clear();
         }
     } while (true);
     return choice;
@@ -307,6 +312,7 @@ int MenuManager::displayEmailOptions() {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            cin.clear();
         }
     } while (true);
     return choice;
@@ -338,6 +344,7 @@ int MenuManager::displayTemplateOptions() {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            cin.clear();
         }
     } while (true);
     return choice;
@@ -365,6 +372,7 @@ int MenuManager::displayConfigurationOptions() {
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHOICE_ERROR);
+            cin.clear();
         }
     } while (true);
     return choice;
@@ -409,6 +417,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            cin.clear();
         }
     }
 
@@ -435,12 +444,14 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         if (count(sslCertPathInput.begin(), sslCertPathInput.end(), ' ') > WHITESPACE_SIZE &&
             all_of(sslCertPathInput.begin(), sslCertPathInput.end(), ::isspace)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CERT_PATH_ERROR);
+            cin.clear();
             continue;
         }
 
         // ANSI escape code check
         if (sslCertPathInput.find("\033") != string::npos) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            cin.clear();
             continue;
         }
 
@@ -448,6 +459,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
             // Check if the path exists
             if (!ConsoleUtils::fileExists(sslCertPathInput)) { // check sslCertPathInput
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SSL_CERT_PATH_ERROR);
+                cin.clear();
                 continue;
             } else {
                 sslCertPath = sslCertPathInput;  // then update sslCertPath
@@ -481,6 +493,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            cin.clear();
         }
     }
 
@@ -505,6 +518,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            cin.clear();
         }
     }
 
@@ -529,6 +543,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
             break;
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            cin.clear();
         }
     }
 
@@ -547,6 +562,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         if (!EmailManager::isValidEmail(senderEmailTempStr)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_ERROR);
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SENDER_EMAIL_FORMAT_ERROR, senderEmail);
+            cin.clear();
             continue;  // Loop back to ask for a valid email
         } else {
             senderEmail = senderEmailTempStr;
@@ -585,11 +601,13 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
             // Check for whitespace and control characters
             if (smtpUsernameTempStr.find_first_of(" \t\n\r\f\v") != string::npos) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                cin.clear();
                 continue;
             }
 
             if (!EmailManager::isValidEmail(smtpUsernameTempStr)) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_USERNAME_NON_MATCH_ERROR);
+                cin.clear();
     #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
     #endif
@@ -604,6 +622,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
                     continue;
                 } else {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+                    cin.clear();
                 }
             } else {
                 smtpUsername = smtpUsernameTempStr;
@@ -612,6 +631,7 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         }
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+        cin.clear();
     }
 
     // Edit SMTP Server
@@ -629,18 +649,21 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         // Length check
         if (smtpServerTempStr.length() < EmailManager::MIN_SMTP_SERVER_LENGTH || smtpServerTempStr.length() > EmailManager::MAX_SMTP_SERVER_LENGTH) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_SERVER_LENGTH_ERROR, " Invalid length.");
+            cin.clear();
             continue;
         }
 
         // Whitespace check
         if (smtpServerTempStr.find_first_of(" \t\n\r\f\v") != string::npos) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            cin.clear();
             continue;
         }
 
         // ANSI escape code check
         if (smtpServerTempStr.find("\033") != string::npos) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            cin.clear();
             continue;
         }
 
@@ -665,12 +688,14 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
         if (count(portInput.begin(), portInput.end(), ' ') > WHITESPACE_SIZE &&
             all_of(portInput.begin(), portInput.end(), ::isspace)) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
+            cin.clear();
             continue;
         }
 
         // ANSI escape code check
         if (portInput.find("\033") != string::npos) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_INPUT_ERROR);
+            cin.clear();
             continue;
         }
 
@@ -679,12 +704,14 @@ bool MenuManager::editConfigurationSettings(bool& useSSL, string& sslCertPath, b
                 smtpPortTempInt = stoi(portInput);  // Convert the string to an integer
                 if (smtpPortTempInt <= 0) {  // Check if the port number is positive
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
+                    cin.clear();
                     continue;
                 }
                 smtpPort = smtpPortTempInt;
                 break;
             } catch (const invalid_argument&) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::SMTP_PORT_FORMAT_ERROR);
+                cin.clear();
                 continue;
             }
         } else {
@@ -741,6 +768,7 @@ void MenuManager::setupCurlHandle(CurlHandleWrapper& curlWrapper,
     CURL* curl = curlWrapper.get();
     if (!curl) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::LIBCURL_ERROR);
+        cin.clear();
         return;
     }
 
@@ -769,6 +797,7 @@ void MenuManager::displaySelectedVenuesForEmails(const vector<SelectedVenueForEm
 
     if (selectedVenuesForEmails.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
+        cin.clear();
     } else {
         for (const auto& venueForEmails : selectedVenuesForEmails) {
 #ifndef UNIT_TESTING
@@ -795,6 +824,7 @@ void MenuManager::displaySelectedVenuesForTemplates(const vector<SelectedVenueFo
 
     if (selectedVenuesForTemplates.empty()) {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::NO_VENUES_SELECTED_ERROR);
+        cin.clear();
     } else {
         for (const auto& venueForTemplates : selectedVenuesForTemplates) {
 #ifndef UNIT_TESTING
