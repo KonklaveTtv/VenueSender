@@ -54,7 +54,7 @@ bool X11Singleton::isCapsLockOn() {
 #elif defined(__APPLE__)
     io_service_t keyService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
     if (keyService == IO_OBJECT_NULL) {
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
     }
 
     CFTypeRef state = nullptr;
@@ -63,14 +63,14 @@ bool X11Singleton::isCapsLockOn() {
     try {
         state = IORegistryEntryCreateCFProperty(keyService, CFSTR(kIOHIDKeyboardCapsLockState), kCFAllocatorDefault, 0);
         if (state == nullptr) {
-            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
+            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
         } else {
             isOn = CFBooleanGetValue((CFBooleanRef)state);
         }
     } catch (const exception& e) {
         // Log or print the exception's what() message, or do something else
         cerr << "Caught exception: " << e.what() << endl;
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR, e.what());
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR, e.what());
         ConsoleUtils::clearInputBuffer();
     } catch (...) {
         // Catch-all for other exceptions
@@ -90,7 +90,7 @@ bool X11Singleton::isCapsLockOn() {
 #elif defined(_WIN32)
     SHORT state = GetKeyState(VK_CAPITAL);
     if (state == 0) {
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::SYSTEM_ERROR);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
     }
 
     return (state & 0x0001) != 0;

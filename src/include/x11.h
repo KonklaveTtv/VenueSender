@@ -2,6 +2,7 @@
 #define X11SINGLETON_H
 
 #include "errorhandler.h"
+#include "fileutils.h"
 
 // For Linux (X11)
 #ifdef __linux__

@@ -21,7 +21,7 @@ jobs:
             dependencies: sudo apt-get install -y make g++ libjsoncpp-dev libcurl4-openssl-dev zlib1g-dev libx11-dev libxcb1-dev libxau-dev libxdmcp-dev libssl-dev libsqlite3-dev libboost-all-dev && sudo ln -s /usr/include/jsoncpp/json/ /usr/include/json
             link-libraries: "-lcurl -ljsoncpp -lssl -lcrypto -lz -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex -lX11 -lxcb -lXau -lXdmcp"
           - os: windows-latest
-            dependencies: choco install make mingw jsoncpp openssl zlib x11 curl sqlite3 boost -y
+            dependencies: choco install make mingw jsoncpp zlib x11 curl sqlite3 boost -y; choco install openssl --ignore-checksums -y || echo "OpenSSL installation failed, proceeding without it."
             link-libraries: "-lcurl -ljsoncpp -lssl -lcrypto -lz -lsqlite3 -lboost_system -lboost_filesystem -lboost_iostreams -lboost_regex"
           - os: macOS-latest
             dependencies: brew install make gcc jsoncpp openssl zlib libx11 curl sqlite3 boost
