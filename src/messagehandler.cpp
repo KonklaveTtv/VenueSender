@@ -484,9 +484,9 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
     ConsoleUtils::setColor(ConsoleUtils::Color::RED);
 #endif
             cout << "============================================" << endl;
-            cout << "          EMAIL/SMTP LIMIT WARNING          " << endl; 
+            cout << "          EMAIL/SMTP LIMIT WARNING          " << endl;
+            cout << "============================================" << endl;
             cout << "   Check Daily Limits With Email Provider   " << endl;
-            cout << "                                            " << endl;
             cout << "       (Press 'Enter' to continue...)       " << endl;                            
             cout << "============================================" << endl;
 #ifndef UNIT_TESTING
