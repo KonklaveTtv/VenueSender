@@ -13,7 +13,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         // Splashscreen Messages
         case MessageType::SPLASH_TITLE_VERSION_MESSAGE:
             cout << "                VenueSender                " << "\n" << endl;
-            cout << "                v0.0.6alpha                " << endl;
+            cout << "                v0.0.7alpha                " << endl;
         break;
         case MessageType::COPYRIGHT_INFO_MESSAGE:
             cout << "    Copyright (c) 2023 | Spencer Lievens   " << endl;
@@ -208,9 +208,9 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-            cout << "=========================" << endl;
-            cout << "Booking Templates Cleared" << endl;
-            cout << "=========================" << endl;
+            cout << "===========================" << endl;
+            cout << " Booking Templates Cleared " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif      
@@ -219,9 +219,9 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
-            cout << "=========================" << endl;
-            cout << "   Attachments Cleared   " << endl;
-            cout << "=========================" << endl;
+            cout << "===========================" << endl;
+            cout << "    Attachments Cleared    " << endl;
+            cout << "===========================" << endl;
 #ifndef UNIT_TESTING
     ConsoleUtils::resetColor();
 #endif      

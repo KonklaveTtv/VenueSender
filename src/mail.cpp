@@ -787,17 +787,17 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     totalEmails = selectedVenuesForEmails.size();
 
     res = curl_easy_perform(curl);
+    double sendEmailProgressPercentage = 0.0;
     if (res == 0) { // Check if email was sent successfully
         successfulSends++;
-        double progressPercentage = 0.0;
         if (totalEmails != 0) {
-            progressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
+            sendEmailProgressPercentage = (static_cast<double>(successfulSends) / totalEmails) * 100;
         }
 #ifndef UNIT_TESTING
         ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif
         MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::GREEN_BORDER);
-        cout << "      Progress: " << progressPercentage << "%" << endl;
+        cout << "      Progress: " << sendEmailProgressPercentage << "%" << endl;
 #ifndef UNIT_TESTING
         ConsoleUtils::resetColor();
 #endif
@@ -819,7 +819,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
     curl_slist_free_all(headers);
     }
 
-    if (res == 0) {
+    if (res == 0 && sendEmailProgressPercentage == 100) {
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
         
         // Variable to capture user's decision
@@ -869,6 +869,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
         }
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
+        return false;
     }
     
     if (!ErrorHandler::handleCurlError(res)) {
@@ -896,6 +897,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
                                              string& templateAttachmentSize,
                                              string& templateAttachmentPath,
                                              bool templateExists) {
+    double templateSendingProgressPercentage = 0.0;
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
     if (!curl) {
@@ -996,17 +998,17 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         totalTemplateEmails = templateForEmail.size();
 
         res = curl_easy_perform(curl);
+        
         if (res == 0) { // Check if email was sent successfully
             successfulTemplateSends++;
-            double progressPercentage = 0.0;
             if (totalTemplateEmails != 0) {
-                progressPercentage = (static_cast<double>(successfulTemplateSends) / totalTemplateEmails) * 100;
+                templateSendingProgressPercentage = (static_cast<double>(successfulTemplateSends) / totalTemplateEmails) * 100;
             }
 #ifndef UNIT_TESTING
             ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
 #endif      
             MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::GREEN_BORDER);
-            cout << "      Progress: " << progressPercentage << "%" << endl;
+            cout << "      Progress: " << templateSendingProgressPercentage << "%" << endl;
 #ifndef UNIT_TESTING
             ConsoleUtils::resetColor();
 #endif
@@ -1031,12 +1033,12 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         }
     }
 
-    if (res == 0) {
-        MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
-        // We clear all the booking data here
+    if (res == 0 && templateSendingProgressPercentage == 100) {
+        // If all emails sent we clear all the booking data here
         clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
+        return false;
     }
     
     if (!ErrorHandler::handleCurlError(res)) {
@@ -1050,6 +1052,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
         return false;
     }
 
+    MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAILS_SENT_MESSAGE);
     return true;
 }
 
@@ -1654,6 +1657,7 @@ void EmailManager::emailCustomAddress(CURL* curl,
 
     const string::size_type maxSubjectLength = EmailManager::MAX_SUBJECT_LENGTH;
     const string::size_type maxMessageLength = EmailManager::MAX_MESSAGE_LENGTH;
+    double customEmailSendingProgressPercentage = 0.0;
 
     CURLcode res = CURLE_FAILED_INIT;  // Initialize to a default value
     struct curl_slist* recipients = nullptr;
@@ -2010,15 +2014,14 @@ void EmailManager::emailCustomAddress(CURL* curl,
             res = curl_easy_perform(curl);
             if (res == 0) { // Check if email was sent successfully
                 successfulCustomSends = CUSTOM_EMAIL_TO_SEND_COUNT;
-                double progressPercentage = 0.0;
                 if (totalCustomEmails != 0 || totalCustomEmails == 1) {
-                    progressPercentage = (static_cast<double>(successfulCustomSends) / totalCustomEmails) * 100;
+                    customEmailSendingProgressPercentage = (static_cast<double>(successfulCustomSends) / totalCustomEmails) * 100;
                 }
         #ifndef UNIT_TESTING
                 ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
         #endif
                 MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::GREEN_BORDER);
-                cout << "      Progress: " << progressPercentage << "%" << endl;
+                cout << "      Progress: " << customEmailSendingProgressPercentage << "%" << endl;
         #ifndef UNIT_TESTING
                 ConsoleUtils::resetColor();
         #endif
@@ -2038,11 +2041,12 @@ void EmailManager::emailCustomAddress(CURL* curl,
                 curl_slist_free_all(headers);
             }
 
-            if (res == 0) {
+            if (res == 0 && customEmailSendingProgressPercentage == 100) {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_SENT_MESSAGE);
             } else {
                 MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::EMAIL_SENDING_FAILED_MESSAGE);
             }
+
             // Clear the subject, message, and attachment strings
             clearAllCustomAddressEmailData(customAddressSubject, customAddressMessage, customAddressAttachmentName, customAddressAttachmentSize, customAddressAttachmentPath);
             return;
