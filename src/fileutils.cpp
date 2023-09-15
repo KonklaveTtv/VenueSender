@@ -84,12 +84,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
 
     while (true) {
 #ifndef UNIT_TESTING
-        // Initialize X11
-        X11Singleton& x11 = X11Singleton::getInstance();
-        x11.openDisplay();
-
-        // Check for Caps Lock
-        bool isOn = x11.isCapsLockOn();
+        bool isOn = false;
 
         #ifdef __linux__
             // Initialize X11 for Linux
@@ -102,7 +97,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
             SHORT state = GetKeyState(VK_CAPITAL);
             isOn = (state & 0x0001) != 0;
         #endif
-            
+
         if (isOn) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_CAPS_LOCK_ERROR);
             cin.clear();
