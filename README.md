@@ -13,7 +13,7 @@ After installing dependencies and you are ready to build invoke:
       make -f Makefile.<compiler/dynamic>
 
 
-### Installing Dependencies To Build Statically
+### Installing Dependencies To Build Statically (Ubuntu)
 
 To build this project statically, you will need the following installed on your system:
 
@@ -101,7 +101,7 @@ To make clean:
 
       make -f Makefile.<compiler/dynamic> clean
 
-### Installing Dependencies To Build Dynamically
+### Installing Dependencies To Build Dynamically (Ubuntu)
 
 To build this project dynamically, you will need the following installed on your system:
 
@@ -151,6 +151,76 @@ Follow the same steps as above but compile using:
 To make clean:
 
       make -f Makefile.dynamic clean
+
+### Installing Dependencies To Build Statically (Windows)
+
+First download, install and run MSYS2:
+
+      https://github.com/msys2/msys2-installer/releases/download/2023-07-18/msys2-x86_64-20230718.exe
+
+Inside the MSYS2 terminal which opens after install enter this line:
+
+      pacman -Syu
+
+MSYS2 should of shut down, if it didn't type exit and then open MSYS2 again and enter:
+
+      pacman -Su
+
+Next enter the below line:
+
+      pacman -S --needed base-devel mingw-w64_64-toolchain
+
+After the above completes open up your environment variables for windows and add the paths:
+
+      C:\msys64\mingw64\bin;
+      C:\msys64\usr\bin;
+
+If everything has gone to plan open a CMD and this line should return the version of GCC:
+
+      gcc --version
+
+Now to install dependencies, open MSYS2 MINGW64 from the start menu and run:
+
+      pacman -S mingw-w64-x86_64-curl-winssl
+
+this will install the deps for curl, here are the rest of the deps, do each one-by-one:
+
+      pacman -S mingw-w64-x86_64-jsoncpp
+      pacman -S mingw-w64-clang-x86_64-libpsl
+      pacman -S mingw-w64-x86_64-openssl
+      pacman -S mingw-w64-x86_64-sqlite3
+      pacman -S mingw-w64-x86_64-boost
+
+Open CMD and navigate to the VenueSender source directory and run:
+
+      make -f Makefile.mingw
+
+This should output a static Windows binary (VenueSender.exe) to the bin directory. Make sure to include the needed DLL files for it to be able to run:
+
+      libboost_filesystem-mt.dll
+      libboost_iostreams-mt.dll
+      libboost_regex-mt.dll
+      libboost_system-mt.dll
+      libbrotlicommon.dll
+      libbrotlidec.dll
+      libbz2-1.dll
+      libcrypto-3-x64.dll
+      libcurl-4.dll
+      libgcc_s_seh-1.dll
+      libiconv-2.dll
+      libidn2-0.dll
+      libintl-8.dll
+      libjsoncpp-25.dll
+      libzlma-5.dll
+      libpsl-5.dll
+      libsqlite3-0.dll
+      libssh2-1.dll
+      libssl-3-x64.dll
+      libstdc++-6.dll
+      libunistring-5.dll
+      libnwinpthread-1.dll
+      libzstd.dll
+      zlib.dll
 
 
 ### Usage
