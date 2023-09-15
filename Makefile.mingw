@@ -38,22 +38,22 @@ STATIC_LIBS = -lcurl \
 
 # Compile rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-    $(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Default target
 all: directories $(TARGET)
 
 # Create necessary directories
 directories:
-    mkdir -p $(OBJDIR)
-    mkdir -p $(BINDIR)
+	mkdir -p $(OBJDIR)
+	mkdir -p $(BINDIR)
 
 # Link the main executable
 $(TARGET): $(OBJS)
-    $(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(STATIC_LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(STATIC_LIBS)
 
 # Clean up
 clean:
-    rm -rf $(OBJDIR) $(BINDIR)
+	rm -rf $(OBJDIR) $(BINDIR)
 
 .PHONY: all directories clean
