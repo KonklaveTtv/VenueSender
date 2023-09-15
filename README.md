@@ -45,7 +45,7 @@ Curl v8.2.1 when installing from source must be run like this:
       make
       sudo make install 
 
-libjoncpp 1.9.5-4 can be installed using:
+libjsoncpp 1.9.5-4 can be installed using:
 
       wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libjsoncpp/1.9.5-4/libjsoncpp_1.9.5.orig.tar.gz
       tar -xvf libjsoncpp_1.9.5.orig.tar.gz
