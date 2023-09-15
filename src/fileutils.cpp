@@ -150,9 +150,6 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
                 ConsoleUtils::resetColor(); // Reset color
 #endif
             }
-#ifndef UNIT_TESTING
-        x11.closeDisplay();
-#endif
         }
 
         // Check for minimum password length
