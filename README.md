@@ -170,7 +170,7 @@ Next enter the below line:
 
       pacman -S --needed base-devel mingw-w64_64-toolchain
 
-After the above completes open up your environment variables for windows and add the paths:
+Now open Environment Variables for Windows and add the paths:
 
       C:\msys64\mingw64\bin;
       C:\msys64\usr\bin;
@@ -183,7 +183,7 @@ Now to install dependencies, open MSYS2 MINGW64 from the start menu and run:
 
       pacman -S mingw-w64-x86_64-curl-winssl
 
-this will install the deps for curl, here are the rest of the deps, do each one-by-one:
+These are the rest of the deps, do each one-by-one:
 
       pacman -S mingw-w64-x86_64-jsoncpp
       pacman -S mingw-w64-clang-x86_64-libpsl
@@ -191,11 +191,11 @@ this will install the deps for curl, here are the rest of the deps, do each one-
       pacman -S mingw-w64-x86_64-sqlite3
       pacman -S mingw-w64-x86_64-boost
 
-Open CMD and navigate to the VenueSender source directory and run:
+Open CMD and navigate to the root of the VenueSender source directory and run:
 
       make -f Makefile.mingw
 
-This should output a static Windows binary (VenueSender.exe) to the bin directory. Make sure to include the needed DLL files for it to be able to run:
+This will output a static Windows binary (VenueSender.exe) to the /VenueSender/bin directory. Make sure to include the needed DLL files for it to be able to run:
 
       libboost_filesystem-mt.dll
       libboost_iostreams-mt.dll
