@@ -5,55 +5,72 @@ UNAME_S := $(shell uname -s)
 
 # Compiler and flags for MinGW-w64
 CXX = x86_64-w64-mingw32-g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -Isrc/include -Isrc -I/mingw64/include
-LDFLAGS = -static-libgcc -static-libstdc++ -L/mingw64/lib
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Isrc/include -Isrc -I/mingw64/include
+LDFLAGS = -static-libgcc -static-libstdc++
+INCLUDES = -Isrc/include -Isrc
 
 # Directories
 SRCDIR = src
 OBJDIR = obj
 BINDIR = bin
+DEBUGOBJDIR = obj/debug
+DEBUGBINDIR = bin/debug
 
 # Targets
 TARGET = $(BINDIR)/VenueSender.exe
+DEBUG_TARGET = $(DEBUGBINDIR)/VenueSender_debug.exe
 
 # Source files
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
 
 # Object files
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
+DEBUG_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(DEBUGOBJDIR)/%.o, $(SRCS))
 
-# Static Libraries for cross-compilation (replace with Windows versions)
-# Note: You will need to cross-compile these or obtain the Windows versions.
-STATIC_LIBS = -lcurl \
-              -lpsl \
-              -ljsoncpp \
-              -lssl \
-              -lcrypto \
-              -lz \
-              -lsqlite3 \
-              -lboost_system-mt \
-              -lboost_filesystem-mt \
-              -lboost_iostreams-mt \
-              -lboost_regex-mt
+# Static Libraries for cross-compilation with full paths
+STATIC_LIBS = /mingw64/lib/libcurl.a \
+              /mingw64/lib/libpsl.a \
+              /mingw64/lib/libjsoncpp.a \
+              /mingw64/lib/libssl.a \
+              /mingw64/lib/libcrypto.a \
+              /mingw64/lib/libz.a \
+              /mingw64/lib/libsqlite3.a \
+              /mingw64/lib/libboost_system-mt.a \
+              /mingw64/lib/libboost_filesystem-mt.a \
+              /mingw64/lib/libboost_iostreams-mt.a \
+              /mingw64/lib/libboost_regex-mt.a
 
 # Compile rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-    $(CXX) $(CXXFLAGS) -c $< -o $@
+    $(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+$(DEBUGOBJDIR)/%.o: $(SRCDIR)/%.cpp
+    $(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # Default target
 all: directories $(TARGET)
+
+# Debug target
+debug: CXXFLAGS += -g
+debug: directories $(DEBUG_TARGET)
 
 # Create necessary directories
 directories:
     mkdir -p $(OBJDIR)
     mkdir -p $(BINDIR)
+    mkdir -p $(DEBUGOBJDIR)
+    mkdir -p $(DEBUGBINDIR)
 
 # Link the main executable
 $(TARGET): $(OBJS)
     $(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(STATIC_LIBS)
 
+# Link the debug executable
+$(DEBUG_TARGET): $(DEBUG_OBJS)
+    $(CXX) $(CXXFLAGS) -o $@ $(DEBUG_OBJS) $(LDFLAGS) $(STATIC_LIBS)
+
 # Clean up
 clean:
-    rm -rf $(OBJDIR) $(BINDIR)
+    rm -rf $(OBJDIR) $(BINDIR) $(DEBUGOBJDIR) $(DEBUGBINDIR)
 
-.PHONY: all directories clean
+.PHONY: all debug directories clean

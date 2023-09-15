@@ -91,6 +91,18 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         // Check for Caps Lock
         bool isOn = x11.isCapsLockOn();
 
+        #ifdef __linux__
+            // Initialize X11 for Linux
+            X11Singleton& x11 = X11Singleton::getInstance();
+            x11.openDisplay();
+            isOn = x11.isCapsLockOn();
+            x11.closeDisplay();
+        #elif defined(_WIN32)
+            // Check for Caps Lock on Windows
+            SHORT state = GetKeyState(VK_CAPITAL);
+            isOn = (state & 0x0001) != 0;
+        #endif
+            
         if (isOn) {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::X11_CAPS_LOCK_ERROR);
             cin.clear();

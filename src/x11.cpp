@@ -89,12 +89,13 @@ bool X11Singleton::isCapsLockOn() {
     return isOn;
 
 #elif defined(_WIN32)
+    // Check for Caps Lock on Windows
     SHORT state = GetKeyState(VK_CAPITAL);
+    bool isOn = (state != 0) && ((state & 0x0001) != 0);  // Adjusted condition
     if (state == 0) {
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        isOn = false;  // Explicitly set to false if state is 0
     }
-
-    return (state & 0x0001) != 0;
+    return isOn;
 
 #else
     ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::UNSUPPORTED_PLATFORM_ERROR);
