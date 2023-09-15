@@ -62,20 +62,25 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     string confirm;
 
     // Disable terminal echoing and enable manual input capture
-    struct termios oldt, newt;
-    memset(&oldt, 0, sizeof(oldt));
-    if (tcgetattr(STDIN_FILENO, &oldt) != 0) {
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR);
-        cin.clear();
-        return "";
-    }
-    newt = oldt;
-    newt.c_lflag &= ~(ECHO | ICANON);
-    if (tcsetattr(STDIN_FILENO, TCSANOW, &newt) != 0) {
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR);
-        cin.clear();
-        return "";
-    }
+    #ifdef _WIN32
+        HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+        DWORD mode;
+        GetConsoleMode(hStdin, &mode);
+        SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
+    #else
+        struct termios oldt, newt;
+        memset(&oldt, 0, sizeof(oldt));
+        if (tcgetattr(STDIN_FILENO, &oldt) != 0) {
+            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_GET_ATTRIBUTES_ERROR);
+            return "";
+        }
+        newt = oldt;
+        newt.c_lflag &= ~(ECHO | ICANON);
+        if (tcsetattr(STDIN_FILENO, TCSANOW, &newt) != 0) {
+            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_SET_ATTRIBUTES_ERROR);
+            return "";
+        }
+    #endif
 
     while (true) {
 #ifndef UNIT_TESTING
@@ -220,10 +225,13 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
     ConsoleUtils::clearConsole();
 
     // Restore terminal settings
-    if (tcsetattr(STDIN_FILENO, TCSANOW, &oldt) != 0) {
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR);
-        cin.clear();
-    }
+    #ifdef _WIN32
+        SetConsoleMode(hStdin, mode);
+    #else
+        if (tcsetattr(STDIN_FILENO, TCSANOW, &oldt) != 0) {
+            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::TERMINAL_RESTORE_ATTRIBUTES_ERROR);
+        }
+    #endif
 
     cout << endl;  // Move to the next line after password entry
     return password;

@@ -6,8 +6,9 @@ using namespace std;
 // Define constants for better readability
 const unsigned CAPS_MASK = 0x01;
 
-X11Singleton::X11Singleton() : d(nullptr) {
+X11Singleton::X11Singleton() {
 #ifdef __linux__
+    d = nullptr;
     openDisplay();
 #endif
 }

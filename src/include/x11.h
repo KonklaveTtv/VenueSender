@@ -4,20 +4,16 @@
 #include "errorhandler.h"
 #include "fileutils.h"
 
-// For Linux (X11)
-#ifdef __linux__
-#include <X11/XKBlib.h>
-#endif
-
-// For macOS
-#ifdef __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#include <IOKit/hidsystem/ev_keymap.h>
-#endif
-
-// For Windows
-#ifdef _WIN32
-#include <windows.h>
+// Platform-specific includes
+#if defined(__linux__)
+    #include <X11/XKBlib.h>
+#elif defined(__APPLE__)
+    #include <CoreFoundation/CoreFoundation.h>
+    #include <IOKit/hidsystem/ev_keymap.h>
+#elif defined(_WIN32)
+    #include <windows.h>
+#else
+    #error "Unsupported platform"
 #endif
 
 #include <iostream>
@@ -37,7 +33,8 @@ private:
     X11Singleton();  // Constructor is private
     ~X11Singleton(); // So is the destructor
 
-#ifdef __linux__
+    // Platform-specific members
+#if defined(__linux__)
     Display *d = nullptr;
 #endif
 

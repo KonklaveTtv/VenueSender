@@ -18,10 +18,15 @@
 #include <memory>
 #include <sstream>
 #include <string>
-#include <termios.h>  
 #include <thread>
-#include <unistd.h>
 #include <vector>
+
+#ifdef _WIN32  // For Windows platform
+    #include <windows.h>
+#else
+    #include <termios.h>
+    #include <unistd.h> 
+#endif
 
 // Boost Libraries
 #define BOOST_BIND_GLOBAL_PLACEHOLDERS
