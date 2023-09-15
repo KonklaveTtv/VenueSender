@@ -28,7 +28,7 @@ To build this project statically, you will need the following installed on your 
 - libboost v1.74.0.3ubuntu7 (Install with apt)
 - Catch2 v2.13.10-1 (Install with apt)
 
-The versions mentioned are the ones that VenueSender was built and tested with, it may build with newer versions but this is not guaranteed.
+The versions mentioned throughout this readme are the ones that VenueSender was built and tested with, it may build with newer versions but this is not guaranteed.
 
 
 Run the following commands to install the first lot of dependencies:
@@ -195,7 +195,7 @@ Open CMD and navigate to the root of the VenueSender source directory and run:
 
       make -f Makefile.mingw
 
-This will output a static Windows binary (VenueSender.exe) to the /VenueSender/bin directory. Make sure to include the needed DLL files for it to be able to run:
+This will output a static Windows binary (VenueSender.exe) to the /VenueSender/bin directory. Make sure to include the needed DLL files for it to be able to run on other systems:
 
       libboost_filesystem-mt.dll
       libboost_iostreams-mt.dll
