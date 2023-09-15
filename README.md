@@ -276,6 +276,8 @@ This project is licensed under the MIT License.
 
 ### Acknowledgments
 
+- MinGW and MSYS2: For providing a seamless development environment on Windows, facilitating the building and testing process.
+- Ubuntu and Apt Package Manager: For the Linux development environment and easy management of some dependencies.
 - libjsoncpp: A C++ library for working with JSON data.
 - libcurl4: A client-side URL transfer library.
 - libx11: The X11 client-side library.
