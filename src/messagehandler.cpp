@@ -13,7 +13,7 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         // Splashscreen Messages
         case MessageType::SPLASH_TITLE_VERSION_MESSAGE:
             cout << "                VenueSender                " << "\n" << endl;
-            cout << "                v0.0.8alpha                " << endl;
+            cout << "                v0.0.9alpha                " << endl;
         break;
         case MessageType::COPYRIGHT_INFO_MESSAGE:
             cout << "    Copyright (c) 2023 | Spencer Lievens   " << endl;
