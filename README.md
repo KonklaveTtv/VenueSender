@@ -282,12 +282,15 @@ Alternatively, run the "run_tests" script, which will output the full test resul
 
 Ubuntu:
 
-      ./run_tests.sh
+      ./run_tests_linux.sh
 
 Windows:
 
-      run_tests.bat
+      run_tests_win.bat
 
+MacOS:
+
+      ./run_tests_macos.sh
 
 ### Contributing
 
