@@ -97,6 +97,10 @@ You may have to edit the paths in the Makefile to the actual locations of the li
                     /usr/lib/x86_64-linux-gnu/libboost_iostreams.a \
                     /usr/lib/x86_64-linux-gnu/libboost_regex.a              
 
+Once the build has completed, the VenueSender binary is located in the VenueSender/bin directory. To amend the permissions and make the binary executable for other users run:
+
+      chmod +x VenueSender
+
 To make clean:
 
       make -f Makefile.<compiler/dynamic> clean
@@ -141,6 +145,10 @@ Navigate to the project directory:
 Compile the project:
 
       make
+
+Once the build has completed, the VenueSender binary is located in the VenueSender/bin directory. To amend the permissions and make the binary executable for other users run:
+
+      chmod +x VenueSender
 
 Installation (with tests)
 
@@ -195,7 +203,16 @@ Open CMD and navigate to the root of the VenueSender source directory and run:
 
       make -f Makefile.mingw
 
-This will output a static Windows binary (VenueSender.exe) to the /VenueSender/bin directory. Make sure to include the needed DLL files for it to be able to run on other systems:
+This will output a static Windows binary (VenueSender.exe) to the /VenueSender/bin directory.
+Make sure to amend its permissions so the executable can be ran by other people:
+
+      icacls VenueSender.exe /grant Everyone:RX
+
+You can also strip the executable/binary:
+
+      strip VenueSender.exe
+
+Make sure to include the needed DLL files for it to be able to run on other systems:
 
       libboost_filesystem-mt.dll
       libboost_iostreams-mt.dll
@@ -253,15 +270,23 @@ Run VenueSender:
 
 Run the test binary:
 
-      ./bin/venuesender 
+Ubuntu:
 
-Or execute:
+      ./bin/venuesender_test
 
-      ./bin/venuesender_test -s
+Windows:
 
-Alternatively, run the bash script, which will output the full test results to test_results.txt:
+      VenueSenderTest.exe
+
+Alternatively, run the "run_tests" script, which will output the full test results to test_results.txt:
+
+Ubuntu:
 
       ./run_tests.sh
+
+Windows:
+
+      run_tests.bat
 
 
 ### Contributing

@@ -7,23 +7,31 @@ UNAME_S := $(shell uname -s)
 CXX = x86_64-w64-mingw32-g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -Isrc/include -Isrc -I/mingw64/include
 LDFLAGS = -static-libgcc -static-libstdc++ -L/mingw64/lib
+DEBUGFLAGS = -g -O0 -DDEBUG
 
 # Directories
 SRCDIR = src
+TESTDIR = src/test
 OBJDIR = obj
+DEBUGOBJDIR = obj/debug
 BINDIR = bin
+DEBUGBINDIR = bin/debug
 
 # Targets
 TARGET = $(BINDIR)/VenueSender.exe
+DEBUG_TARGET = $(DEBUGBINDIR)/VenueSenderDebug.exe
+TEST_TARGET = $(BINDIR)/VenueSenderTest.exe
 
 # Source files
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
+TEST_SRCS = $(wildcard $(TESTDIR)/*.cpp)
 
 # Object files
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
+DEBUG_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(DEBUGOBJDIR)/%.o, $(SRCS))
+TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
 
-# Static Libraries for cross-compilation (replace with Windows versions)
-# Note: You will need to cross-compile these or obtain the Windows versions.
+# Static Libraries for cross-compilation
 STATIC_LIBS = -lcurl \
               -lpsl \
               -ljsoncpp \
@@ -40,20 +48,42 @@ STATIC_LIBS = -lcurl \
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+$(DEBUGOBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o: $(TESTDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 # Default target
 all: directories $(TARGET)
+
+# Debug target
+debug: CXXFLAGS += $(DEBUGFLAGS)
+debug: directories $(DEBUG_TARGET)
+
+# Test target
+test: directories $(TEST_TARGET)
+
+$(TEST_TARGET): $(TEST_OBJS) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(TEST_OBJS) $(OBJS) $(LDFLAGS) $(STATIC_LIBS)
 
 # Create necessary directories
 directories:
 	mkdir -p $(OBJDIR)
+	mkdir -p $(DEBUGOBJDIR)
 	mkdir -p $(BINDIR)
+	mkdir -p $(DEBUGBINDIR)
 
 # Link the main executable
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(STATIC_LIBS)
 
+# Link the debug executable
+$(DEBUG_TARGET): $(DEBUG_OBJS)
+	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -o $@ $(DEBUG_OBJS) $(LDFLAGS) $(STATIC_LIBS)
+
 # Clean up
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	rm -rf $(OBJDIR) $(DEBUGOBJDIR) $(BINDIR) $(DEBUGBINDIR)
 
-.PHONY: all directories clean
+.PHONY: all directories clean debug test
