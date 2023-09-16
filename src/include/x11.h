@@ -10,6 +10,7 @@
 #elif defined(__APPLE__)
     #include <CoreFoundation/CoreFoundation.h>
     #include <IOKit/IOKitLib.h>
+    #include <IOKit/hid/IOHIDLib.h>
     #include <IOKit/hidsystem/ev_keymap.h>
 #elif defined(_WIN32)
     #include <windows.h>

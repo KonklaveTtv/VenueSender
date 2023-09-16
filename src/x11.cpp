@@ -55,40 +55,25 @@ bool X11Singleton::isCapsLockOn() {
     return (n & CAPS_MASK) == 1;
 
 #elif defined(__APPLE__)
-    io_service_t keyService = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
-    if (keyService == IO_OBJECT_NULL) {
+    CFMutableDictionaryRef mdict;
+    mdict = IOServiceMatching(kIOHIDSystemClass);
+    io_service_t ios;
+    ios = IOServiceGetMatchingService(kIOMainPortDefault, (CFDictionaryRef) mdict);
+    if (!ios) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
     }
 
-    CFTypeRef state = nullptr;
-    bool isOn = false;
+    bool state = false;
+    CFTypeRef cfState;
 
-    try {
-        state = IORegistryEntryCreateCFProperty(keyService, CFSTR("some_string_value"), kCFAllocatorDefault, 0);
-        if (state == nullptr) {
-            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
-        } else {
-            isOn = CFBooleanGetValue((CFBooleanRef)state);
-        }
-    } catch (const exception& e) {
-        // Log or print the exception's what() message, or do something else
-        cerr << "Caught exception: " << e.what() << endl;
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR, e.what());
-        ConsoleUtils::clearInputBuffer();
-    } catch (...) {
-        // Catch-all for other exceptions
-        cerr << "Caught an unknown exception" << endl;
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::UNKNOWN_ERROR);
-        ConsoleUtils::clearInputBuffer();
+    cfState = IORegistryEntryCreateCFProperty(ios, CFSTR(kIOHIDCapsLockStateKey), kCFAllocatorDefault, 0);
+    if (cfState) {
+        state = CFBooleanGetValue((CFBooleanRef)cfState);
+        CFRelease(cfState);
     }
-    
-    // Release resources
-    if (state != nullptr) {
-        CFRelease(state);
-    }
-    IOObjectRelease(keyService);
 
-    return isOn;
+    IOObjectRelease(ios);
+    return state;
 
 #elif defined(_WIN32)
     // Check for Caps Lock on Windows
