@@ -10,7 +10,7 @@ VenueSender has multiple Makefiles to build statically with GCC, Clang, ICX or t
 
 After installing dependencies and you are ready to build invoke:
 
-      make -f Makefile.<compiler/dynamic>
+      make -f Makefile.<compiler/dynamic>-<OS>
 
 
 ### Installing Dependencies To Build Statically (Ubuntu)
@@ -103,7 +103,7 @@ Once the build has completed, the VenueSender binary is located in the VenueSend
 
 To make clean:
 
-      make -f Makefile.<compiler/dynamic> clean
+      make -f Makefile.<compiler/dynamic>-<OS> clean
 
 ### Installing Dependencies & Building Dynamically (Ubuntu)
 
@@ -144,7 +144,7 @@ Navigate to the project directory:
 
 Compile the project:
 
-      make -f Makefile.dynamic
+      make -f Makefile.dynamic-linux
 
 Once the build has completed, the VenueSender binary is located in the VenueSender/bin directory. To amend the permissions and make the binary executable for other users run:
 
@@ -154,11 +154,11 @@ Installation (with tests)
 
 Follow the same steps as above but compile using:
 
-      make -f Makefile.dynamic test
+      make -f Makefile.dynamic-linux test
 
 To make clean:
 
-      make -f Makefile.dynamic clean
+      make -f Makefile.dynamic-linux clean
 
 ### Installing Dependencies & Building Statically (Windows)
 
@@ -201,7 +201,7 @@ These are the rest of the deps, do each one-by-one:
 
 Open CMD and navigate to the root of the VenueSender source directory and run:
 
-      make -f Makefile.mingw
+      make -f Makefile.mingw-win
 
 This will output a static Windows binary (VenueSender.exe) to the /VenueSender/bin directory.
 Make sure to amend its permissions so the executable can be ran by other people:
@@ -239,6 +239,9 @@ Make sure to include the needed DLL files for it to be able to run on other syst
       libzstd.dll
       zlib.dll
 
+To make clean:
+
+      make -f Makefile.mingw-win clean
 
 ### Installing Dependencies & Building Dynamically (MacOS)
 
@@ -292,7 +295,7 @@ If you wish to run unit tests, install Catch2:
 
 Now navigate to the root of the VenueSender source directory and run:
 
-      make -f Makefile.macos
+      make -f Makefile.clang-macos
 
 You may have to edit the paths in the Makefile to the actual locations of the libraries, this is how they are currently pathed:
 
@@ -314,7 +317,7 @@ Once the build has completed, the VenueSender binary is located in the VenueSend
 
 To make clean:
 
-      make -f Makefile.macos clean
+      make -f Makefile.clang-macos clean
 
 
 ### Usage
