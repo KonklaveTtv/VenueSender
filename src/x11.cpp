@@ -3,9 +3,6 @@
 // Use the standard namespace
 using namespace std;
 
-// Define constants for better readability
-const unsigned CAPS_MASK = 0x01;
-
 X11Singleton::X11Singleton() {
 #ifdef __linux__
     d = nullptr;
@@ -53,7 +50,7 @@ bool X11Singleton::isCapsLockOn() {
     return (n & CAPS_MASK) == 1;
 
 #elif defined(__APPLE__)
-    io_service_t keyService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
+    io_service_t keyService = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
     if (keyService == IO_OBJECT_NULL) {
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
     }
@@ -62,7 +59,7 @@ bool X11Singleton::isCapsLockOn() {
     bool isOn = false;
 
     try {
-        state = IORegistryEntryCreateCFProperty(keyService, CFSTR(kIOHIDKeyboardCapsLockState), kCFAllocatorDefault, 0);
+        state = IORegistryEntryCreateCFProperty(keyService, CFSTR("some_string_value"), kCFAllocatorDefault, 0);
         if (state == nullptr) {
             ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
         } else {
