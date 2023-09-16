@@ -7,7 +7,7 @@ UNAME_S := $(shell uname -s)
 CXX = clang++
 # Compiler and flags
 CXX = clang++
-CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter \
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter -Wno-attributes \
            -Isrc/include -Isrc \
            -I/usr/local/opt/openssl@3.1/include \
            -I/usr/local/include \
