@@ -105,7 +105,7 @@ To make clean:
 
       make -f Makefile.<compiler/dynamic> clean
 
-### Installing Dependencies To Build Dynamically (Ubuntu)
+### Installing Dependencies & Building Dynamically (Ubuntu)
 
 To build this project dynamically, you will need the following installed on your system:
 
@@ -136,15 +136,15 @@ To run unit tests, install Catch2:
 
 Clone the repository:
 
-      git clone https://github.com/konklavettv/venuesender.git
+      git clone https://github.com/KonklaveTtv/VenueSender.git
 
 Navigate to the project directory:
 
-      cd venuesender
+      cd VenueSender
 
 Compile the project:
 
-      make
+      make -f Makefile.dynamic
 
 Once the build has completed, the VenueSender binary is located in the VenueSender/bin directory. To amend the permissions and make the binary executable for other users run:
 
@@ -154,13 +154,13 @@ Installation (with tests)
 
 Follow the same steps as above but compile using:
 
-      make test
+      make -f Makefile.dynamic test
 
 To make clean:
 
       make -f Makefile.dynamic clean
 
-### Installing Dependencies To Build Statically (Windows)
+### Installing Dependencies & Building Statically (Windows)
 
 First download, install and run MSYS2:
 
@@ -240,6 +240,83 @@ Make sure to include the needed DLL files for it to be able to run on other syst
       zlib.dll
 
 
+### Installing Dependencies & Building Dynamically (MacOS)
+
+Open a terminal and install the Homebrew package manager and Command Line Tools For Xcode:
+
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+We need a few build tools for the next steps:
+
+      brew install wget cmake
+
+Now to install the dependencies we need to build from source beginning with Curl v8.2.1:
+
+      wget https://github.com/curl/curl/releases/download/curl-8_2_1/curl-8.2.1.tar.gz
+      tar -xvf curl-8.2.1.tar.gz
+      cd curl-8.2.1
+      ./configure --with-openssl --enable-static --disable-shared --without-libidn2 --disable-ldap
+      make
+      sudo make install 
+
+libjsoncpp 1.9.5 can be installed using:
+
+      wget https://github.com/open-source-parsers/jsoncpp/archive/refs/tags/1.9.5.tar.gz
+      tar -xvf 1.9.5.tar.gz
+      cd jsoncpp-1.9.5
+      mkdir -p build/debug
+      cd build/debug
+      cmake -DCMAKE_BUILD_TYPE=debug -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -G "Unix Makefiles" ../../
+      make
+      sudo make install
+
+libpsl v0.21.2 can be installed using:
+
+      wget https://github.com/rockdaboot/libpsl/releases/download/0.21.2/libpsl-0.21.2.tar.gz
+      tar -xvf libpsl-0.21.2.tar.gz
+      cd libpsl-0.21.2
+      ./configure --enable-static --disable-shared
+      make
+      sudo make install
+
+Now lets install the rest of the dependencies via Homebrew, allow each to complete:
+
+      brew install zlib
+      brew install openssl@3
+      brew install sqlite
+      brew install boost
+
+If you wish to run unit tests, install Catch2:
+
+      brew install catch2
+
+Now navigate to the root of the VenueSender source directory and run:
+
+      make -f Makefile.macos
+
+You may have to edit the paths in the Makefile to the actual locations of the libraries, this is how they are currently pathed:
+
+      STATIC_LIBS = /usr/local/lib/libcurl.a \
+                    /usr/local/lib/libpsl.a \
+                    /usr/local/lib/libjsoncpp.a \
+                    /usr/local/opt/openssl@3.1/lib/libssl.a \
+                    /usr/local/opt/openssl@3.1/lib/libcrypto.a \
+                    /usr/local/opt/zlib/lib/libz.a \
+                    /usr/local/opt/sqlite3/lib/libsqlite3.a \
+                    /usr/local/opt/boost@1.82/lib/libboost_system.a \
+                    /usr/local/opt/boost@1.82/lib/libboost_filesystem.a \
+                    /usr/local/opt/boost@1.82/lib/libboost_iostreams.a \
+                    /usr/local/opt/boost@1.82/lib/libboost_regex.a           
+
+Once the build has completed, the VenueSender binary is located in the VenueSender/bin directory. To amend the permissions and make the binary executable for other users run:
+
+      chmod +x VenueSender
+
+To make clean:
+
+      make -f Makefile.macos clean
+
+
 ### Usage
 
 Prepare your config.json file with the necessary SMTP and email settings:
@@ -263,7 +340,7 @@ Prepare a custom venues.csv file with the list of your personalised venues in th
 
 Run VenueSender:
 
-      ./venuesender
+      ./VenueSender
 
 
 ### Running Tests
@@ -272,12 +349,15 @@ Run the test binary:
 
 Ubuntu:
 
-      ./bin/venuesender_test
+      ./VenueSender_test
 
 Windows:
 
       VenueSenderTest.exe
 
+Mac:
+
+      ./VenueSender_test
 Alternatively, run the "run_tests" script, which will output the full test results to test_results.txt:
 
 Ubuntu:

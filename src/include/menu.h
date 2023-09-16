@@ -19,11 +19,11 @@ class EmailManager;
 // Class to manage menu-related operations
 class MenuManager {
 private:
-    bool useSSL;
+    [[maybe_unused]]bool useSSL;
     std::string sslCertPath;
-    bool verifyPeer;
-    bool verifyHost;
-    bool verbose;
+    [[maybe_unused]]bool verifyPeer;
+    [[maybe_unused]]bool verifyHost;
+    [[maybe_unused]]bool verbose;
     std::string senderEmail;
     std::string mailPass;
     std::string smtpUsername;

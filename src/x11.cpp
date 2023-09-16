@@ -3,6 +3,11 @@
 // Use the standard namespace
 using namespace std;
 
+#ifdef __linux__
+// Define constants for better readability
+const unsigned CAPS_MASK = 0x01;
+#endif
+
 X11Singleton::X11Singleton() {
 #ifdef __linux__
     d = nullptr;
