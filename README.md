@@ -34,7 +34,7 @@ The versions mentioned throughout this readme are the ones that VenueSender was 
 Run the following commands to install the first lot of dependencies:
 
       sudo apt-get update
-      sudo apt-get install make cmake autogen libtool shtool pkg-config xutils-dev g++ libx11-dev libssl-dev libsqlite3-dev libboost-all-dev
+      sudo apt-get install make cmake autogen libtool shtool pkg-config xutils-dev g++ libssl-dev libsqlite3-dev libboost-all-dev
 
 Curl v8.2.1 when installing from source must be run like this:
 
