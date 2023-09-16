@@ -30,6 +30,7 @@ TEST_SRCS = $(wildcard $(TESTDIR)/*.cpp)
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 DEBUG_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(DEBUGOBJDIR)/%.o, $(SRCS))
 TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
+TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
 
 # Static Libraries for cross-compilation
 STATIC_LIBS = -lcurl \
@@ -51,8 +52,11 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 $(DEBUGOBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c $< -o $@
 
+$(OBJDIR)/test_%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -DUNIT_TESTING -c $< -o $@
+
 $(OBJDIR)/%.o: $(TESTDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -DUNIT_TESTING -c $< -o $@
 
 # Default target
 all: directories $(TARGET)
@@ -64,8 +68,8 @@ debug: directories $(DEBUG_TARGET)
 # Test target
 test: directories $(TEST_TARGET)
 
-$(TEST_TARGET): $(TEST_OBJS) $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $(TEST_OBJS) $(OBJS) $(LDFLAGS) $(STATIC_LIBS)
+$(TEST_TARGET): $(TEST_OBJS) $(TEST_MAIN_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(TEST_OBJS) $(filter-out $(OBJDIR)/test_main.o, $(TEST_MAIN_OBJS)) $(LDFLAGS) $(STATIC_LIBS)
 
 # Create necessary directories
 directories:
