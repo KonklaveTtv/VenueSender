@@ -1,0 +1,116 @@
+# Makefile for VenueSender project using the Clang compiler
+
+# Detect the OS type
+UNAME_S := $(shell uname -s)
+
+# Compiler and flags
+CXX = clang++
+# Compiler and flags
+CXX = clang++
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -Wunused-parameter \
+           -Isrc/include -Isrc \
+           -I/usr/local/opt/openssl@3.1/include \
+           -I/usr/local/include \
+           -I/usr/local/opt/libjsoncpp/include \
+           -I/usr/local/opt/sqlite3/include \
+           -I/usr/local/opt/boost@1.82/include \
+
+LDFLAGS = -L/usr/local/lib \
+          -L/usr/local/opt/openssl@3.1/lib \
+          -L/usr/local/opt/sqlite3/lib \
+          -L/usr/local/opt/boost@1.82/lib \
+          
+INCLUDES = -Isrc/include -Isrc
+
+# Directories
+SRCDIR = src
+TESTDIR = src/test
+OBJDIR = obj
+DEBUGOBJDIR = obj/debug
+BINDIR = bin
+DEBUGBINDIR = bin/debug
+
+# Targets
+TARGET = $(BINDIR)/VenueSender
+DEBUG_TARGET = $(DEBUGBINDIR)/VenueSender_debug
+TEST_TARGET = $(BINDIR)/VenueSender_test
+
+# Source files
+SRCS = $(wildcard $(SRCDIR)/*.cpp)
+TEST_SRCS = $(wildcard $(TESTDIR)/*.cpp)
+
+# Object files
+OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
+DEBUG_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(DEBUGOBJDIR)/%.o, $(SRCS))
+TEST_OBJS = $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SRCS))
+TEST_MAIN_OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(SRCS))
+
+# Static Libraries for macOS (replace with actual paths if they differ)
+STATIC_LIBS = /usr/local/lib/libcurl.a \
+              /usr/local/lib/libpsl.a \
+              /usr/local/lib/libjsoncpp.a \
+              /usr/local/opt/openssl@3.1/lib/libssl.a \
+              /usr/local/opt/openssl@3.1/lib/libcrypto.a \
+              /usr/local/lib/libz.a \
+              /usr/local/opt/sqlite3/lib/libsqlite3.a \
+              /usr/local/opt/boost@1.82/lib/libboost_system.a \
+              /usr/local/opt/boost@1.82/lib/libboost_filesystem.a \
+              /usr/local/opt/boost@1.82/lib/libboost_iostreams.a \
+              /usr/local/opt/boost@1.82/lib/libboost_regex.a
+
+# Add platform-specific libraries for macOS
+ifeq ($(UNAME_S),Darwin)
+	LDFLAGS += -framework Cocoa -framework CoreFoundation -framework IOKit -framework SystemConfiguration
+endif
+
+# Compile rules
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+$(DEBUGOBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJDIR)/test_%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -DUNIT_TESTING -g $(INCLUDES) -c $< -o $@
+
+$(OBJDIR)/%.o: $(TESTDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -DUNIT_TESTING -g $(INCLUDES) -c $< -o $@
+
+# Default target
+all: directories $(TARGET)
+
+# Debug target
+debug: CXXFLAGS += -g
+debug: directories $(DEBUG_TARGET)
+
+# Test target
+test: directories $(TEST_TARGET)
+
+# Create necessary directories
+directories:
+	mkdir -p $(OBJDIR)
+	mkdir -p $(DEBUGOBJDIR)
+	mkdir -p $(BINDIR)
+	mkdir -p $(DEBUGBINDIR)
+
+# Link the main executable
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(STATIC_LIBS) $(LDFLAGS)
+
+# Link the debug executable
+$(DEBUG_TARGET): $(DEBUG_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(DEBUG_OBJS) $(STATIC_LIBS) $(LDFLAGS)
+
+# Link the test executable
+$(TEST_TARGET): $(TEST_OBJS) $(TEST_MAIN_OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_OBJS) $(filter-out $(OBJDIR)/test_main.o, $(TEST_MAIN_OBJS))  $(STATIC_LIBS) $(LDFLAGS)
+
+# Run tests
+run_tests: test $(TEST_TARGET)
+	$(TEST_TARGET)
+
+# Clean up
+clean:
+	rm -rf $(OBJDIR) $(DEBUGOBJDIR) $(BINDIR) $(DEBUGBINDIR) test_output.txt
+
+.PHONY: all debug directories clean test run_tests
