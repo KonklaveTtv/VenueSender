@@ -41,7 +41,7 @@ Curl v8.2.1 when installing from source must be run like this:
       wget https://github.com/curl/curl/releases/download/curl-8_2_1/curl-8.2.1.tar.gz
       tar -xvf curl-8.2.1.tar.gz
       cd curl-8.2.1
-      ./configure --with-openssl --enable-static --disable-shared
+      ./configure --with-openssl --enable-static --disable-shared --without-libidn2 --disable-ldap
       make
       sudo make install 
 
