@@ -55,6 +55,7 @@ public:
 
             // Email Menu
             EMAIL_SAVED_MENU_HEADER,
+            LOAD_TEMPLATE_MENU_HEADER,
             TEMPLATE_SAVED_MENU_HEADER,
             GREEN_BORDER
     };

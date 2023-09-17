@@ -284,6 +284,18 @@ void MenuTitleHandler::displayMenuTitle(MenuTitleType menutitle) {
 #endif	
 		break;
 
+		case MenuTitleType::LOAD_TEMPLATE_MENU_HEADER:
+#ifndef UNIT_TESTING
+        	ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);
+#endif
+			cout << "===========================" << endl;
+			cout << "       Load Template       " << endl;
+			cout << "===========================" << endl;
+#ifndef UNIT_TESTING
+        	ConsoleUtils::resetColor();
+#endif	
+		break;
+
 		case MenuTitleType::TEMPLATE_SAVED_MENU_HEADER:
 #ifndef UNIT_TESTING
         	ConsoleUtils::setColor(ConsoleUtils::Color::GREEN);

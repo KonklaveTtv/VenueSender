@@ -145,6 +145,12 @@ void ErrorHandler::handleErrorAndReturn(ErrorType error, const string& extraInfo
         case ErrorType::TEMPLATE_CREATION_ERROR:
             cerr << "ERROR: No templates have been created. Please create a template first." << endl;
             break;
+        case ErrorType::TEMPLATE_NOT_FOUND_ERROR:
+            cerr << "ERROR: Template not found." << endl;
+            break;
+        case ErrorType::TEMPLATE_NAME_IN_USE_ERROR:
+            cerr << "ERROR: Template save name in use." << endl;
+            break;       
         case ErrorType::TEMPLATE_EMPTY_ERROR:
             cerr << "ERROR: The template fields are empty." << endl;
             break;

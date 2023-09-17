@@ -446,6 +446,42 @@ void MessageHandler::handleMessageAndReturn(MessageType message) {
         break;
 
         // Template Messages
+        case MessageType::LOAD_TEMPLATE_CONFIRMATION_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Load Template? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;        
+        case MessageType::ENTER_SAVED_TEMPLATE_INDEX_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Select Template Using The Index Number: ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::SAVE_TEMPLATE_CONFIRMATION_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Save Template? (Y/N): ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
+        case MessageType::ENTER_TEMPLATE_NAME_MESSAGE:
+#ifndef UNIT_TESTING
+    ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);
+#endif
+            cout << "Save Template As: ";
+#ifndef UNIT_TESTING
+    ConsoleUtils::resetColor();
+#endif      
+        break;
         case MessageType::ENTER_PRESS_QUOTE_MESSAGE:
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::ORANGE);

@@ -18,8 +18,15 @@ unordered_set<string> EmailManager::sentEmailAddressesForEmails;
 unordered_set<string> EmailManager::sentEmailAddressesForTemplates;
 
 // Function to display current email settings
-void EmailManager::viewEmailSettings(bool useSSL, const string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
-                                     const string& senderEmail, const string& smtpUsername, int smtpPort, const string& smtpServer) {
+void EmailManager::viewEmailSettings(bool useSSL, 
+                                     const string& sslCertPath, 
+                                     bool verifyPeer, 
+                                     bool verifyHost, 
+                                     bool verbose,
+                                     const string& senderEmail, 
+                                     const string& smtpUsername, 
+                                     int smtpPort, 
+                                     const string& smtpServer) {
     // Display the email settings in a structured format
     MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EMAIL_SETTINGS_MENU_HEADER);
 #ifndef UNIT_TESTING
@@ -278,8 +285,12 @@ void EmailManager::constructEmail(string& subject, string& message, string& atta
         cin.clear();
 }
 
-void EmailManager::viewEditEmails(const string& senderEmail, string& subject, string& message, 
-                                  string& attachmentName, string& attachmentSize, string& attachmentPath) const {
+void EmailManager::viewEditEmails(const string& senderEmail, 
+                                  string& subject, 
+                                  string& message, 
+                                  string& attachmentName, 
+                                  string& attachmentSize, 
+                                  string& attachmentPath) const {
     MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::EMAIL_DETAILS_MENU_HEADER);
 #ifndef UNIT_TESTING
     ConsoleUtils::setColor(ConsoleUtils::Color::CYAN);
@@ -378,6 +389,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                                      bool useSSL,
                                      bool verifyPeer,
                                      const string& senderEmail,
+                                     map<string, pair<string, string>>& savedTemplates,
                                      map<string, pair<string, string>>& templateForEmail,
                                      string& genre, 
                                      string& performanceType, 
@@ -461,9 +473,9 @@ void EmailManager::viewEditTemplates(CURL* curl,
 
             if (modifyChoice == "REDO" || modifyChoice == "redo" || modifyChoice == "R" || modifyChoice == "r") {
                 // Clear the existing template and start over
-                clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                clearAllBookingTemplateData(savedTemplates, templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                 EmailManager emailManager;
-                emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
+                emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, savedTemplates, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
                                                     pressQuotes, quoteSources, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             } else if (modifyChoice == "MODIFY" || modifyChoice == "modify" || modifyChoice == "M" || modifyChoice == "m") {
                 // Display available fields to the user
@@ -635,7 +647,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
                     if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                         templateExists = false; // Reset the flag since we're sending the email
                         // Now, send the email to all venues
-                        bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                        bool sent = sendBookingTemplateEmails(curl, senderEmail, savedTemplates, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                         if (!sent) {
                             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                             cin.clear();
@@ -679,7 +691,7 @@ void EmailManager::viewEditTemplates(CURL* curl,
             if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                 templateExists = false; // Reset the flag since we're sending the email
                 // Now, send the email to all venues
-                bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                bool sent = sendBookingTemplateEmails(curl, senderEmail, savedTemplates, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                 if (!sent) {
                     ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                     cin.clear();
@@ -926,6 +938,7 @@ bool EmailManager::sendIndividualEmail(CURL* curl,
 
 bool EmailManager::sendBookingTemplateEmails(CURL* curl,
                                              const string& senderEmail,
+                                             map<string, pair<string, string>>& savedTemplates,
                                              map<string, pair<string, string>>& templateForEmail,
                                              const string& smtpServer,
                                              int smtpPort,
@@ -1080,7 +1093,7 @@ bool EmailManager::sendBookingTemplateEmails(CURL* curl,
 
     if (res == 0 && templateSendingProgressPercentage == 100) {
         // If all emails sent we clear all the booking data here
-        clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+        clearAllBookingTemplateData(savedTemplates, templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
     } else {
         ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::EMAIL_SEND_FAILURE_ERROR);
         cin.clear();
@@ -1162,6 +1175,7 @@ void EmailManager::constructBookingTemplateMessage(const SelectedVenueForTemplat
 void EmailManager::createBookingTemplate(CURL* curl,
                                          vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                          const string& senderEmail,
+                                         map<string, pair<string, string>>& savedTemplates,
                                          map<string, pair<string, string>>& templateForEmail,
                                          const string& smtpServer,
                                          int smtpPort,
@@ -1477,9 +1491,9 @@ while (modifyTemplate) {
             
             if (modifyChoice == "REDO" || modifyChoice == "redo" || modifyChoice == "R" || modifyChoice == "r") {
                 // Clear the existing template and start over
-                clearAllBookingTemplateData(templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                clearAllBookingTemplateData(savedTemplates, templateForEmail, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                 EmailManager emailManager;
-                emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
+                emailManager.createBookingTemplate(curl, selectedVenuesForTemplates, senderEmail, savedTemplates, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, genre, performanceType, performanceName, hometown, similarArtists, date, musicLink, livePerfVideo, musicVideo, 
                                                                 pressQuotes, quoteSources, socials, name, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             } else if (modifyChoice == "MODIFY" || modifyChoice == "modify" || modifyChoice == "M" || modifyChoice == "m") {
                 // Display available fields to the user
@@ -1659,7 +1673,7 @@ while (modifyTemplate) {
                     if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
                         templateExists = false; // Reset the flag since we're sending the email
                         // Now, send the email to all venues
-                        bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+                        bool sent = sendBookingTemplateEmails(curl, senderEmail, savedTemplates, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
                         if (!sent) {
                             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                             cin.clear();
@@ -1699,7 +1713,7 @@ while (modifyTemplate) {
         if (choice == ConsoleUtils::YES_UPPER || choice == ConsoleUtils::YES_LOWER) {
             templateExists = false; // Reset the flag since we're sending the email
             // Now, send the email to all venues
-            bool sent = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+            bool sent = sendBookingTemplateEmails(curl, senderEmail, savedTemplates, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
             if (!sent) {
                 ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::TEMPLATE_SENDING_FAILED_ERROR);
                 cin.clear();
@@ -1709,6 +1723,7 @@ while (modifyTemplate) {
             cin.clear();
             // If user chooses not to send, the template and subjects stay in the map
             templateExists = true;
+
         } else {
             ErrorHandler::handleErrorAndReturn(ErrorHandler::ErrorType::INVALID_CHAR_INPUT_ERROR);
             cin.clear();
@@ -2278,6 +2293,7 @@ void EmailManager::confirmSendEmail(CURL* curl,
 void EmailManager::confirmSendBookingTemplates(CURL* curl,
                                                vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                                const string& senderEmail,
+                                               map<string, pair<string, string>>& savedTemplates,
                                                map<string, pair<string, string>>& templateForEmail,
                                                const string& smtpServer,
                                                int smtpPort,
@@ -2374,7 +2390,7 @@ void EmailManager::confirmSendBookingTemplates(CURL* curl,
     }
 
     // Send each template, displaying progress as it goes.
-    bool sendStatus = sendBookingTemplateEmails(curl, senderEmail, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
+    bool sendStatus = sendBookingTemplateEmails(curl, senderEmail, savedTemplates, templateForEmail, smtpServer, smtpPort, useSSL, verifyPeer, templateAttachmentName, templateAttachmentSize, templateAttachmentPath, templateExists);
 
     // Set the initial color to Orange
     MenuTitleHandler::displayMenuTitle(MenuTitleHandler::MenuTitleType::ORANGE_BORDER);

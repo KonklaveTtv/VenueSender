@@ -74,7 +74,11 @@ public:
         return sanitized;
     }
 
-    static inline void clearAllEmailData(std::string& subject, std::string& message, std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath) {
+    static inline void clearAllEmailData(std::string& subject, 
+                                         std::string& message, 
+                                         std::string& attachmentName, 
+                                         std::string& attachmentSize, 
+                                         std::string& attachmentPath) {
         subject.clear();
         message.clear();
         attachmentName.clear();
@@ -82,7 +86,11 @@ public:
         attachmentPath.clear();
     }
 
-    static inline void clearAllCustomAddressEmailData(std::string& customAddressSubject, std::string& customAddressMessage, std::string& customAddressAttachmentName, std::string& customAddressAttachmentSize, std::string& customAddressAttachmentPath) {
+    static inline void clearAllCustomAddressEmailData(std::string& customAddressSubject, 
+                                                      std::string& customAddressMessage, 
+                                                      std::string& customAddressAttachmentName, 
+                                                      std::string& customAddressAttachmentSize, 
+                                                      std::string& customAddressAttachmentPath) {
         customAddressSubject.clear();
         customAddressMessage.clear();
         customAddressAttachmentName.clear();
@@ -90,7 +98,11 @@ public:
         customAddressAttachmentPath.clear();
     }
 
-    static inline void clearAllBookingTemplateData(std::map<std::string, std::pair<std::string, std::string>>& templateForEmail, std::string& templateAttachmentName, std::string& templateAttachmentSize, std::string& templateAttachmentPath, bool& templateExists) {
+    static inline void clearAllBookingTemplateData(std::map<std::string, std::pair<std::string, std::string>>& savedTemplates,
+                                                   std::map<std::string, std::pair<std::string, std::string>>& templateForEmail, 
+                                                   std::string& templateAttachmentName, std::string& templateAttachmentSize, 
+                                                   std::string& templateAttachmentPath, bool& templateExists) {
+        savedTemplates.clear();
         templateForEmail.clear();
         templateAttachmentName.clear();
         templateAttachmentSize.clear();
@@ -109,32 +121,46 @@ public:
         MessageHandler::handleMessageAndReturn(MessageHandler::MessageType::SELECTED_VENUES_FOR_TEMPLATES_CLEARED);
     }
 
-    static inline void clearCustomAddressAttachmentData(std::string& customAddressAttachmentName, std::string& customAddressAttachmentSize, std::string& customAddressAttachmentPath) {
+    static inline void clearCustomAddressAttachmentData(std::string& customAddressAttachmentName, 
+                                                        std::string& customAddressAttachmentSize, 
+                                                        std::string& customAddressAttachmentPath) {
         customAddressAttachmentName.clear();
         customAddressAttachmentSize.clear();
         customAddressAttachmentPath.clear();
     }
 
-    static inline void clearEmailAttachmentData(std::string& attachmentName, std::string& attachmentSize, std::string& attachmentPath) {
+    static inline void clearEmailAttachmentData(std::string& attachmentName, 
+                                                std::string& attachmentSize, 
+                                                std::string& attachmentPath) {
         attachmentName.clear();
         attachmentSize.clear();
         attachmentPath.clear();
     }
 
-    static inline void clearTemplateAttachmentData(std::string& templateAttachmentName, std::string& templateAttachmentSize, std::string& templateAttachmentPath) {
+    static inline void clearTemplateAttachmentData(std::string& templateAttachmentName, 
+                                                   std::string& templateAttachmentSize, 
+                                                   std::string& templateAttachmentPath) {
         templateAttachmentName.clear();
         templateAttachmentSize.clear();
         templateAttachmentPath.clear();
     }
 
-    static inline void clearSubjectMessageData(std::string& subject, std::string& message) {
+    static inline void clearSubjectMessageData(std::string& subject, 
+                                               std::string& message) {
         subject.clear();
         message.clear();
     }
 
     // Function to display the email settings from the configuration file
-    static void viewEmailSettings(bool useSSL, const std::string& sslCertPath, bool verifyPeer, bool verifyHost, bool verbose,
-                           const std::string& senderEmail, const std::string& smtpUsername, int smtpPort, const std::string& smtpServer);
+    static void viewEmailSettings(bool useSSL, 
+                                  const std::string& sslCertPath, 
+                                  bool verifyPeer, 
+                                  bool verifyHost, 
+                                  bool verbose,
+                                  const std::string& senderEmail, 
+                                  const std::string& smtpUsername, 
+                                  int smtpPort, 
+                                  const std::string& smtpServer);
 
     // Function to validate an email address format
     static bool isValidEmail(const std::string& email);
@@ -142,7 +168,12 @@ public:
     static bool isValidURL(const std::string& url);
 
     // Function to construct an email, including the subject, message, and attachment details
-    void constructEmail(std::string& subject, std::string& message, std::string& attachmentPath, std::string& attachmentName, std::string& attachmentSize, std::istream &in = std::cin) const;
+    void constructEmail(std::string& subject, 
+                        std::string& message, 
+                        std::string& attachmentPath, 
+                        std::string& attachmentName, 
+                        std::string& attachmentSize, 
+                        std::istream &in = std::cin) const;
 
     // Function to allow the user to modify the email
     void viewEditEmails(const std::string& senderEmail, 
@@ -159,6 +190,7 @@ public:
                            bool useSSL,
                            bool verifyPeer,
                            const std::string& senderEmail,
+                           std::map<std::string, std::pair<std::string, std::string>>& savedTemplates,
                            std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                            std::string& genre, 
                            std::string& performanceType, 
@@ -195,6 +227,7 @@ public:
 
     static bool sendBookingTemplateEmails(CURL* curl,
                                           const std::string& senderEmail,
+                                          std::map<std::string, std::pair<std::string, std::string>>& savedTemplates,
                                           std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                                           const std::string& smtpServer,
                                           int smtpPort,
@@ -208,7 +241,7 @@ public:
     // Function to append the string for the booking template
     static void appendIfNotEmpty(std::ostringstream& os, const std::string& label, const std::string& value) ;
 
-    void constructBookingTemplateMessage(const SelectedVenueForTemplates& venueForTemplates,
+    void constructBookingTemplateMessage(const SelectedVenueForTemplates& venueForTemplates, 
                                          std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                                          std::string& genre, 
                                          std::string& performanceType, 
@@ -228,6 +261,7 @@ public:
     void createBookingTemplate(CURL* curl,
                                std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                const std::string& senderEmail,
+                               std::map<std::string, std::pair<std::string, std::string>>& savedTemplates,
                                std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                                const std::string& smtpServer,
                                int smtpPort,
@@ -281,6 +315,7 @@ public:
     static void confirmSendBookingTemplates(CURL* curl,
                                             std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                                             const std::string& senderEmail,
+                                            std::map<std::string, std::pair<std::string, std::string>>& savedTemplates,
                                             std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                                             const std::string& smtpServer,
                                             int smtpPort,

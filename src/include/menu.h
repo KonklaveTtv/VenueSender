@@ -145,6 +145,7 @@ public:
                        std::vector<VenueForTemplates>& venuesForTemplates,
                        std::vector<SelectedVenueForTemplates>& selectedVenuesForTemplates,
                        std::vector<SelectedVenueForEmails>& selectedVenuesForEmails,
+                       std::map<std::string, std::pair<std::string, std::string>>& savedTemplates,
                        std::map<std::string, std::pair<std::string, std::string>>& templateForEmail,
                        std::string& sslCertPath,
                        std::string& subject,

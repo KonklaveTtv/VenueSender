@@ -95,6 +95,9 @@ try {
     // Initialize map for booking templates
     map<string, pair<string, string>> templateForEmail;
 
+    // Initialize map to save templates
+    map<string, pair<string, string>> savedTemplates;
+
     // Initialize the vectors for templates
     vector<string> pressQuotes;
     vector<string> quoteSources;
@@ -111,6 +114,7 @@ try {
                               venuesForTemplates,
                               selectedVenuesForTemplates,
                               selectedVenuesForEmails,
+                              savedTemplates,
                               templateForEmail,
                               sslCertPath,
                               subject,
