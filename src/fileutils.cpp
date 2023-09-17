@@ -95,10 +95,17 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         #elif defined(_WIN32)
             // Check for Caps Lock on Windows
             SHORT state = GetKeyState(VK_CAPITAL);
-            isOn = (state & 0x0001) != 0;
+            isOn = (state & CAPS_LOCK) != 0;
         #elif defined(__APPLE__)
             // Check for Caps Lock on macOS
-            isOn = X11Singleton::getInstance().isCapsLockOn();
+            #if MACOS_MONTEREY_OR_NEWER
+                isOn = isMacOSCapsLockOn();
+            #else
+                X11Singleton& x11 = X11Singleton::getInstance();
+                x11.openDisplay();
+                isOn = x11.isCapsLockOn();
+                x11.closeDisplay();
+            #endif
         #endif
 
         if (isOn) {

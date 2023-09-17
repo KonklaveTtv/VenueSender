@@ -21,6 +21,26 @@
 
 #include <iostream>
 
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < 120000) // Before macOS 12 Monterey
+  #define kIOMainPortDefault kIOMasterPortDefault
+#endif
+
+#ifdef __linux__
+const unsigned CAPS_MASK = 0x01;
+#endif
+
+#if defined (_WIN32)
+    unsigned CAPS_LOCK = 0x0001;
+#endif
+
+// Define a macro to check for macOS Monterey or newer
+#define MACOS_MONTEREY_OR_NEWER (MAC_OS_X_VERSION_MAX_ALLOWED >= 120000)
+
+// Declare the macOS Caps Lock checking function for Monterey and newer
+#if MACOS_MONTEREY_OR_NEWER
+bool isMacOSCapsLockOn();
+#endif
+
 class X11Singleton {
 public:
     static X11Singleton& getInstance() {

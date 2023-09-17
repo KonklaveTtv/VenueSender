@@ -3,15 +3,6 @@
 // Use the standard namespace
 using namespace std;
 
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < 120000) // Before macOS 12 Monterey
-  #define kIOMainPortDefault kIOMasterPortDefault
-#endif
-
-#ifdef __linux__
-// Define constants for better readability
-const unsigned CAPS_MASK = 0x01;
-#endif
-
 X11Singleton::X11Singleton() {
 #ifdef __linux__
     d = nullptr;
@@ -94,7 +85,7 @@ bool X11Singleton::isCapsLockOn() {
 #elif defined(_WIN32)
     // Check for Caps Lock on Windows
     SHORT state = GetKeyState(VK_CAPITAL);
-    bool isOn = (state != 0) && ((state & 0x0001) != 0);  // Adjusted condition
+    bool isOn = (state != 0) && ((state & CAPS_LOCK) != 0);  // Adjusted condition
     if (state == 0) {
         isOn = false;  // Explicitly set to false if state is 0
     }
@@ -106,3 +97,46 @@ bool X11Singleton::isCapsLockOn() {
 
 #endif
 }
+
+// Implement the macOS Caps Lock checking function for Monterey and newer
+#if MACOS_MONTEREY_OR_NEWER
+bool isMacOSCapsLockOn() {
+    bool capsLockState = false;
+    
+    kern_return_t kr;
+    io_service_t ios;
+    io_connect_t ioc;
+    CFMutableDictionaryRef mdict;
+
+    mdict = IOServiceMatching(kIOHIDSystemClass);
+    ios = IOServiceGetMatchingService(kIOMainPortDefault, (CFDictionaryRef)mdict);
+
+    if (!ios) {
+        if (mdict) {
+            CFRelease(mdict);
+        }
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
+    }
+
+    kr = IOServiceOpen(ios, mach_task_self(), kIOHIDParamConnectType, &ioc);
+    IOObjectRelease(ios);
+    
+    if (kr != KERN_SUCCESS) {
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
+    }
+
+    bool state;
+    kr = IOHIDGetModifierLockState(ioc, kIOHIDCapsLockState, &state);
+    IOServiceClose(ioc);
+    
+    if (kr != KERN_SUCCESS) {
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
+    }
+
+    capsLockState = state;
+    return capsLockState;
+}
+#endif
