@@ -95,7 +95,7 @@ string ConsoleUtils::passwordEntry(bool& initColor) {
         #elif defined(_WIN32)
             // Check for Caps Lock on Windows
             SHORT state = GetKeyState(VK_CAPITAL);
-            isOn = (state & CAPS_LOCK) != 0;
+            isOn = (state & 0x0001) != 0;
         #elif defined(__APPLE__)
             // Check for Caps Lock on macOS
             #if MACOS_MONTEREY_OR_NEWER

@@ -21,16 +21,13 @@
 
 #include <iostream>
 
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < 120000) // Before macOS 12 Monterey
-  #define kIOMainPortDefault kIOMasterPortDefault
-#endif
-
 #ifdef __linux__
 const unsigned CAPS_MASK = 0x01;
 #endif
 
-#if defined (_WIN32)
-    unsigned CAPS_LOCK = 0x0001;
+// Define a macro to check for versions older than Monterey
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < 120000) // Before macOS 12 Monterey
+  #define kIOMainPortDefault kIOMasterPortDefault
 #endif
 
 // Define a macro to check for macOS Monterey or newer

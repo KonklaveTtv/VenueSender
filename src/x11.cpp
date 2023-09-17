@@ -85,7 +85,7 @@ bool X11Singleton::isCapsLockOn() {
 #elif defined(_WIN32)
     // Check for Caps Lock on Windows
     SHORT state = GetKeyState(VK_CAPITAL);
-    bool isOn = (state != 0) && ((state & CAPS_LOCK) != 0);  // Adjusted condition
+    bool isOn = (state != 0) && ((state & 0x0001) != 0);  // Adjusted condition
     if (state == 0) {
         isOn = false;  // Explicitly set to false if state is 0
     }
