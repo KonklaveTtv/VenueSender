@@ -3,6 +3,10 @@
 // Use the standard namespace
 using namespace std;
 
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < 120000) // Before macOS 12 Monterey
+  #define kIOMainPortDefault kIOMasterPortDefault
+#endif
+
 #ifdef __linux__
 // Define constants for better readability
 const unsigned CAPS_MASK = 0x01;
@@ -55,24 +59,36 @@ bool X11Singleton::isCapsLockOn() {
     return (n & CAPS_MASK) == 1;
 
 #elif defined(__APPLE__)
-    CFMutableDictionaryRef mdict;
-    mdict = IOServiceMatching(kIOHIDSystemClass);
+    kern_return_t kr;
     io_service_t ios;
+    io_connect_t ioc;
+    CFMutableDictionaryRef mdict;
+
+    mdict = IOServiceMatching(kIOHIDSystemClass);
     ios = IOServiceGetMatchingService(kIOMainPortDefault, (CFDictionaryRef) mdict);
     if (!ios) {
+        if (mdict) {
+            CFRelease(mdict);
+        }
         ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
     }
 
-    bool state = false;
-    CFTypeRef cfState;
-
-    cfState = IORegistryEntryCreateCFProperty(ios, CFSTR(kIOHIDCapsLockStateKey), kCFAllocatorDefault, 0);
-    if (cfState) {
-        state = CFBooleanGetValue((CFBooleanRef)cfState);
-        CFRelease(cfState);
-    }
-
+    kr = IOServiceOpen(ios, mach_task_self(), kIOHIDParamConnectType, &ioc);
     IOObjectRelease(ios);
+    if (kr != KERN_SUCCESS) {
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
+    }
+
+    bool state;
+    kr = IOHIDGetModifierLockState(ioc, kIOHIDCapsLockState, &state);
+    if (kr != KERN_SUCCESS) {
+        IOServiceClose(ioc);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
+    }
+    IOServiceClose(ioc);
     return state;
 
 #elif defined(_WIN32)
