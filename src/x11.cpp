@@ -3,6 +3,10 @@
 // Use the standard namespace
 using namespace std;
 
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < 120000) // Before macOS 12 Monterey
+  #define kIOMainPortDefault kIOMasterPortDefault
+#endif
+
 #ifdef __linux__
 // Define constants for better readability
 const unsigned CAPS_MASK = 0x01;
@@ -55,40 +59,37 @@ bool X11Singleton::isCapsLockOn() {
     return (n & CAPS_MASK) == 1;
 
 #elif defined(__APPLE__)
-    io_service_t keyService = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("AppleEmbeddedKeyboard"));
-    if (keyService == IO_OBJECT_NULL) {
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
-    }
+    kern_return_t kr;
+    io_service_t ios;
+    io_connect_t ioc;
+    CFMutableDictionaryRef mdict;
 
-    CFTypeRef state = nullptr;
-    bool isOn = false;
-
-    try {
-        state = IORegistryEntryCreateCFProperty(keyService, CFSTR("some_string_value"), kCFAllocatorDefault, 0);
-        if (state == nullptr) {
-            ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
-        } else {
-            isOn = CFBooleanGetValue((CFBooleanRef)state);
+    mdict = IOServiceMatching(kIOHIDSystemClass);
+    ios = IOServiceGetMatchingService(kIOMainPortDefault, (CFDictionaryRef) mdict);
+    if (!ios) {
+        if (mdict) {
+            CFRelease(mdict);
         }
-    } catch (const exception& e) {
-        // Log or print the exception's what() message, or do something else
-        cerr << "Caught exception: " << e.what() << endl;
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR, e.what());
-        ConsoleUtils::clearInputBuffer();
-    } catch (...) {
-        // Catch-all for other exceptions
-        cerr << "Caught an unknown exception" << endl;
-        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::UNKNOWN_ERROR);
-        ConsoleUtils::clearInputBuffer();
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
     }
-    
-    // Release resources
-    if (state != nullptr) {
-        CFRelease(state);
-    }
-    IOObjectRelease(keyService);
 
-    return isOn;
+    kr = IOServiceOpen(ios, mach_task_self(), kIOHIDParamConnectType, &ioc);
+    IOObjectRelease(ios);
+    if (kr != KERN_SUCCESS) {
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
+    }
+
+    bool state;
+    kr = IOHIDGetModifierLockState(ioc, kIOHIDCapsLockState, &state);
+    if (kr != KERN_SUCCESS) {
+        IOServiceClose(ioc);
+        ErrorHandler::handleErrorAndThrow(ErrorHandler::ErrorType::X11_SYSTEM_ERROR);
+        return false;
+    }
+    IOServiceClose(ioc);
+    return state;
 
 #elif defined(_WIN32)
     // Check for Caps Lock on Windows
