@@ -2,6 +2,8 @@
 
 VenueSender is a command-line tool designed to facilitate the process of sending emails and attachments to different venues based on specific criteria. Users can filter venues by genre, city, state, and capacity to send custom email messages to the selected venues.
 
+(Current keys stored in the application are for the beta period/testing)
+
 ## Getting Started
 
 ### Prerequisites
