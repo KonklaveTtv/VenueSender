@@ -6,24 +6,6 @@ using namespace std;
 /* CurlHandleWrapper Class Implementation */
 /*---------------------------------------*/
 
-// Callback function to read data for sending in the request
-size_t CurlHandleWrapper::readCallback(void* ptr, size_t size, size_t nmemb, void* userp) {
-    auto* payload = static_cast<string*>(userp);
-    size_t totalsize = size * nmemb;
-
-    if (!payload->empty()) {
-        // Calculate the size of data to copy to ptr
-        size_t toCopy = (totalsize < payload->size() ? totalsize : payload->size());
-
-        memcpy(ptr, payload->c_str(), toCopy); // Copy data to ptr
-        payload->erase(0, toCopy); // Remove the portion that has been read from the payload
-
-        return toCopy;
-    }
-
-    return 0; // Return 0 to signify no data left to read
-}
-
 // Function to set SSL options for cURL
 void CurlHandleWrapper::setSSLOptions(bool useSSL, bool verifyPeer, bool verifyHost) {
     if (useSSL) {
@@ -88,8 +70,10 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const string&
     if (!sslCertPath.empty()) {
         curl_easy_setopt(curl, CURLOPT_CAINFO, sslCertPath.c_str());
     } else {
+        // DO NOTHING AND USE COMPILED CURL CERTIFICATES
+        
         // Set up native location of SSL certificates
-        curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+        // curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
     }
 
     // SMTP server configuration
@@ -106,11 +90,9 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const string&
     // Set SSL options using the CurlHandleWrapper method
     curlWrapper.setSSLOptions(useSSL, verifyPeer, verifyHost);
 
-    // Time is currently set to 60 seconds
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 60L);
-
-    // Set callback function to read data for sending in the request
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, CurlHandleWrapper::readCallback);
+    // Timeouts
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 120L); // 120 seconds
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30L);  // 30 seconds
 
     // Enable verbose mode for debugging in config.json (if needed)
     curl_easy_setopt(curl, CURLOPT_VERBOSE, verbose ? 1L : 0L);
