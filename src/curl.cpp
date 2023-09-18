@@ -70,9 +70,8 @@ CURL* setupCurlHandle(CurlHandleWrapper &curlWrapper, bool useSSL, const string&
     if (!sslCertPath.empty()) {
         curl_easy_setopt(curl, CURLOPT_CAINFO, sslCertPath.c_str());
     } else {
-        // DO NOTHING AND USE COMPILED CURL CERTIFICATES
-        
-        // Set up native location of SSL certificates
+        // Do nothing and use cURL compiled certificates
+        // Previously we fell back to the OS cert location but this isnt reliable
         // curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
     }
 
