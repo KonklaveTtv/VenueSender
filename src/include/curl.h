@@ -35,10 +35,6 @@ public:
 
     // Set SSL options for the cURL handle
     void setSSLOptions(bool useSSL = true, bool verifyPeer = true, bool verifyHost = true);
-
-    // Callback function for reading the email payload
-    static size_t readCallback(void* ptr, size_t size, size_t nmemb, void* userp);
-
 private:
     CurlHandleWrapper();  // Made private to enforce Singleton pattern
     ~CurlHandleWrapper(); // Destructor
